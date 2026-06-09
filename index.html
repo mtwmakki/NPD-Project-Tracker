@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V41</title>
+<title>NPD Tracker V43</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -864,7 +864,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V41</div>
+    <div class="login-logo">NPD Tracker V43</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -890,7 +890,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V36</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V43</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1728,6 +1728,7 @@ let inactivityTimer    = null;
 let inactivityWarningTimer = null;
 let inactivityTimeout  = 30;
 let presenceInterval   = null;
+let saveTimer          = null;
 let fbDb = null;           // Firestore instance
 let fbUnsubscribe = null;  // live listener unsubscribe handle
 let fbSaving = false;      // prevent listener re-triggering own save
@@ -3476,9 +3477,29 @@ function duplicateMTask(id) {
 //  MODALS
 // ══════════════════════════════════════════════════════
 function openModal(name) {
-  if (name === 'inq') document.getElementById('inq-date').value = todayStr();
-  if (name === 'proj') document.getElementById('proj-date').value = todayStr();
+  const today = todayStr();
+  if (name === 'inq') {
+    document.getElementById('inq-date').value = today;
+    // Reset form fields for new inquiry
+    if (!editingInqId) {
+      document.getElementById('inq-code').value = '';
+      document.getElementById('inq-name').value = '';
+      document.getElementById('inq-customer').value = '';
+    }
+  }
+  if (name === 'proj') {
+    document.getElementById('proj-date').value = today;
+    if (!editingProjId) {
+      document.getElementById('proj-code').value = '';
+      document.getElementById('proj-name').value = '';
+    }
+  }
   document.getElementById('modal-'+name).classList.add('open');
+  // Always scroll modal body to top
+  setTimeout(() => {
+    const mbody = document.querySelector('#modal-'+name+' .mbody');
+    if (mbody) mbody.scrollTop = 0;
+  }, 50);
 }
 function closeModal(name) { document.getElementById('modal-'+name).classList.remove('open'); }
 
@@ -3487,7 +3508,17 @@ function submitInquiry() {
   const name   = document.getElementById('inq-name').value.trim();
   const date   = document.getElementById('inq-date').value;
   const status = document.getElementById('inq-status').value;
-  if (!code || !name || !date) { alert('Please fill in NPD Code, Name, and Date.'); return; }
+  if (!code || !name || !date) {
+    const missing = [];
+    if (!code) missing.push('NPD Code');
+    if (!name) missing.push('Product Name');
+    if (!date) missing.push('Date');
+    alert('Please fill in: ' + missing.join(', '));
+    // Scroll modal to top so user can see the missing fields
+    const mbody = document.querySelector('#modal-inq .mbody');
+    if (mbody) mbody.scrollTop = 0;
+    return;
+  }
 
   const inqObj = {
     id: editingInqId || uid(),
@@ -3571,7 +3602,16 @@ function submitProject() {
   const classification = document.getElementById('proj-class').value;
   const brief = document.getElementById('proj-brief').value.trim();
   const factory = document.getElementById('proj-factory').value;
-  if (!code||!name||!date) { alert('Please fill in Code, Name and Date.'); return; }
+  if (!code||!name||!date) {
+    const missing = [];
+    if (!code) missing.push('Code');
+    if (!name) missing.push('Project Name');
+    if (!date) missing.push('Date');
+    alert('Please fill in: ' + missing.join(', '));
+    const mbody = document.querySelector('#modal-proj .mbody');
+    if (mbody) mbody.scrollTop = 0;
+    return;
+  }
 
   if (editingProjId) {
     const idx = data.projects.findIndex(x => x.id === editingProjId);

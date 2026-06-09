@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V40</title>
+<title>NPD Tracker V41</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -864,7 +864,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V40</div>
+    <div class="login-logo">NPD Tracker V41</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1907,7 +1907,7 @@ function startFirebaseListener() {
     }
 
     // Skip re-render only if WE just saved (echo prevention)
-    if (fbSaving) { fbSaving = false; return; }
+    if (fbSaving) return;
 
     const remote = snap.data();
     if (remote && remote._data) {
@@ -1956,8 +1956,8 @@ async function saveToFirebase() {
     });
     localStorage.setItem('npd_last_saved', ts);
     setFBStatus('saved', 'Saved ✓');
-    // Reset fbSaving after a short delay so the listener echo is absorbed
-    setTimeout(() => { fbSaving = false; }, 1500);
+    // Reset fbSaving after enough time for the listener echo to be absorbed
+    setTimeout(() => { fbSaving = false; }, 3000);
   } catch(e) {
     console.error('Firebase save error:', e);
     fbSaving = false;
@@ -2059,6 +2059,8 @@ async function saveToOneDrive() { return false; }
 function save() {
   saveLocal(); // always keep local fallback fresh
   if (!FIREBASE_READY || !fbDb) { setSyncStatus('error', 'Not synced'); return; }
+  // Mark as saving immediately so the listener doesn't overwrite our local changes
+  fbSaving = true;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => { saveToFirebase(); }, 800);
 }

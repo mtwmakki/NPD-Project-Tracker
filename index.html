@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V39</title>
+<title>NPD Tracker V40</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -864,7 +864,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V39</div>
+    <div class="login-logo">NPD Tracker V40</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -5816,9 +5816,19 @@ const PERM_SECTIONS = {
 
 function can(section, action) {
   if (!currentUserProfile) return false;
+  // Master check — by role OR by email (belt and braces)
   if (currentUserProfile.role === 'master') return true;
-  const perms = currentUserProfile.permissions || DEFAULT_PERMISSIONS[currentUserProfile.role] || {};
-  return !!(perms[section] && perms[section][action]);
+  if (currentAuthUser && currentAuthUser.email === 'npd@my.tpacpackaging.com') return true;
+  const role = currentUserProfile.role || 'member';
+  // Merge stored permissions with role defaults — stored perms take priority
+  // but fall back to role defaults for any missing section/action
+  const roleDefaults = DEFAULT_PERMISSIONS[role] || DEFAULT_PERMISSIONS.member;
+  const storedPerms  = currentUserProfile.permissions || {};
+  const merged = {};
+  Object.keys(roleDefaults).forEach(sec => {
+    merged[sec] = { ...roleDefaults[sec], ...(storedPerms[sec] || {}) };
+  });
+  return !!(merged[section] && merged[section][action]);
 }
 
 // ══════════════════════════════════════════════════════
@@ -5878,6 +5888,13 @@ async function onUserSignedIn(firebaseUser) {
     const doc = await fbDb.collection('users').doc(firebaseUser.uid).get();
     if (doc.exists) {
       currentUserProfile = doc.data();
+      // Always enforce master role for master email
+      const isMaster = firebaseUser.email === 'npd@my.tpacpackaging.com';
+      if (isMaster && currentUserProfile.role !== 'master') {
+        currentUserProfile.role = 'master';
+        currentUserProfile.permissions = DEFAULT_PERMISSIONS.master;
+        await fbDb.collection('users').doc(firebaseUser.uid).update({ role: 'master', permissions: DEFAULT_PERMISSIONS.master });
+      }
     } else {
       // First sign-in — create master profile if this is the master email
       const isMaster = firebaseUser.email === 'npd@my.tpacpackaging.com';
@@ -5905,6 +5922,9 @@ async function onUserSignedIn(firebaseUser) {
 
   // Show/hide nav items based on role
   applyNavPermissions();
+
+  // Re-render now that profile is loaded — buttons will show/hide correctly
+  renderAll();
 
   // Hide login, show app
   document.getElementById('login-screen').style.display = 'none';

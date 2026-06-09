@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V37</title>
+<title>NPD Tracker V38</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -864,7 +864,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V37</div>
+    <div class="login-logo">NPD Tracker V38</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -965,7 +965,7 @@ html{scroll-behavior:smooth;}
       <button class="filter-toggle-btn panel-open" id="inq-filter-toggle" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span id="inq-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="inq-dupes-btn" onclick="openDuplicatesModal()"><i class="ti ti-copy"></i> Duplicates</button>
       <button class="icon-btn" id="inq-active-btn" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
-      <button class="add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
+      <button class="add-btn" id="inq-add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
   <div class="filter-panel" id="inq-filter-panel">
@@ -1009,7 +1009,7 @@ html{scroll-behavior:smooth;}
       <button class="icon-btn" onclick="expandCollapseAllProjects(true)" title="Expand all"><i class="ti ti-fold-up"></i></button>
       <button class="filter-toggle-btn panel-open" id="proj-filter-toggle" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span id="proj-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="proj-active-btn" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
-      <button class="add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
+      <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
   <div class="filter-panel" id="proj-filter-panel">
@@ -1131,7 +1131,7 @@ html{scroll-behavior:smooth;}
       </div>
       <button class="filter-toggle-btn panel-open" id="tasks-filter-toggle" onclick="toggleFilterPanel('tasks')"><i class="ti ti-filter"></i><span id="tasks-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="tasks-active-btn" onclick="toggleTasksActiveFilter()"><i class="ti ti-flame"></i> Active</button>
-      <button class="add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
+      <button class="add-btn" id="task-add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
   <div class="filter-panel" id="tasks-filter-panel">
@@ -1326,7 +1326,7 @@ html{scroll-behavior:smooth;}
         <div class="proj-detail-badges" id="pd-badges"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
-        <button onclick="toggleInlineForm('pd-edit-form')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Edit project info"><i class="ti ti-pencil"></i> Edit</button>
+        ${can('projects','edit') ? `<button onclick="toggleInlineForm('pd-edit-form')" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Edit project info"><i class="ti ti-pencil"></i> Edit</button>` : ''}
         <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -2744,9 +2744,9 @@ function renderInquiryListRow(item) {
       <span class="sbadge ${statusKey}" style="font-size:9px;padding:1px 6px;">${statusLabel(item.status)}</span>
       <div class="inq-list-acts">
         <button class="cact-btn" onclick="event.stopPropagation();openAddTask('inquiry','${item.id}')"><i class="ti ti-plus"></i></button>
-        <button class="cact-btn" onclick="event.stopPropagation();openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i></button>
-        <button class="cact-btn" onclick="event.stopPropagation();openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i></button>
-        <button class="cact-btn danger" onclick="event.stopPropagation();startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i></button>
+        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i></button>` : ''}
+        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i></button>` : ''}
+        ${can('inquiries','delete') ? `<button class="cact-btn danger" onclick="event.stopPropagation();startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i></button>` : ''}
       </div>
     </div>
   </div>`;
@@ -3212,10 +3212,10 @@ function renderInquiryCard(item) {
       ${!tasks.length ? '<div style="padding:11px 13px;font-size:12px;color:var(--text3);">No tasks yet.</div>' : (aHTML+fHTML+dHTML)}
       <div class="card-acts">
         <button class="cact-btn" onclick="openAddTask('inquiry','${item.id}')"><i class="ti ti-plus"></i> Task</button>
-        <button class="cact-btn" onclick="openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i> Edit</button>
-        <button class="cact-btn" onclick="openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i> Status</button>
-        <button class="cact-btn" onclick="duplicateItem('inquiry','${item.id}')"><i class="ti ti-copy"></i> Duplicate</button>
-        <button class="cact-btn danger" onclick="startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i> Delete</button>
+        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i> Edit</button>` : ''}
+        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i> Status</button>` : ''}
+        ${can('inquiries','add') ? `<button class="cact-btn" onclick="duplicateItem('inquiry','${item.id}')"><i class="ti ti-copy"></i> Duplicate</button>` : ''}
+        ${can('inquiries','delete') ? `<button class="cact-btn danger" onclick="startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i> Delete</button>` : ''}
       </div>
     </div>
   </div>`;
@@ -3320,11 +3320,11 @@ function renderCard(item, type) {
       ${subHTML}
       ${!tasks.length ? '<div style="padding:11px 13px;font-size:12px;color:var(--text3);border-top:1px solid var(--border)">No actions yet.</div>' : (aHTML+fHTML+dHTML)}
       <div class="card-acts-row">
-        <button class="cact-icon" onclick="openProjTaskModal('${item.id}',null)" title="Add Action"><i class="ti ti-plus"></i></button>
+        ${can('actions','add') ? `<button class="cact-icon" onclick="openProjTaskModal('${item.id}',null)" title="Add Action"><i class="ti ti-plus"></i></button>` : ''}
         <button class="cact-icon" onclick="openProjDetail('${item.id}')" title="Full View"><i class="ti ti-layout-sidebar-right"></i></button>
-        <button class="cact-icon status-btn" onclick="openEditSt('${type}','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>
-        <button class="cact-icon" onclick="duplicateItem('project','${item.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>
-        <button class="cact-icon danger" onclick="startDelete('${type}','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>
+        ${can('projects','edit') ? `<button class="cact-icon status-btn" onclick="openEditSt('${type}','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>` : ''}
+        ${can('projects','add') ? `<button class="cact-icon" onclick="duplicateItem('project','${item.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>` : ''}
+        ${can('projects','delete') ? `<button class="cact-icon danger" onclick="startDelete('${type}','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>` : ''}
       </div>
     </div>
   </div>`;
@@ -4786,9 +4786,9 @@ function renderMTaskCard(task) {
       </div>
     </div>
     <div class="mtask-acts">
-      <button class="mtask-act" onclick="duplicateMTask('${task.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>
-      <button class="mtask-act" onclick="openEditMTask('${task.id}')" title="Edit"><i class="ti ti-pencil"></i></button>
-      <button class="mtask-act" onclick="deleteMTask('${task.id}')" title="Delete" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+      ${can('tasks','add') ? `<button class="mtask-act" onclick="duplicateMTask('${task.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>` : ''}
+      ${can('tasks','edit') ? `<button class="mtask-act" onclick="openEditMTask('${task.id}')" title="Edit"><i class="ti ti-pencil"></i></button>` : ''}
+      ${can('tasks','delete') ? `<button class="mtask-act" onclick="deleteMTask('${task.id}')" title="Delete" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
     </div>
   </div>`;
 }
@@ -5114,7 +5114,7 @@ function renderProjDetail() {
     const subs = p.subStatuses||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Sub-Status <span style="font-weight:400;color:var(--text3)">(${subs.length})</span>
-        <button class="proj-detail-slabel-add" onclick="toggleInlineForm('ss-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>
+        ${can('subStatus','add') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('ss-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>` : ''}
       </div>
       <div id="ss-add-form-${p.id}" style="display:none">
         <div class="inline-form">
@@ -5150,8 +5150,8 @@ function renderProjDetail() {
             </div>
           </div>
           <div class="substatus-acts">
-            <button class="tact-btn" onclick="toggleInlineForm('ss-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>
-            <button class="tact-btn" onclick="inlineDeleteSubStatus('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+            ${can('subStatus','edit') ? `<button class="tact-btn" onclick="toggleInlineForm('ss-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>` : ''}
+            ${can('subStatus','delete') ? `<button class="tact-btn" onclick="inlineDeleteSubStatus('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
           </div>
         </div>
         <div id="ss-edit-${p.id}-${i}" style="display:none;margin:0 0 8px;">
@@ -5183,7 +5183,7 @@ function renderProjDetail() {
     const pics = p.pics||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">People In Charge <span style="font-weight:400;color:var(--text3)">(${pics.length})</span>
-        <button class="proj-detail-slabel-add" onclick="toggleInlineForm('pic-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>
+        ${can('projects','edit') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('pic-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>` : ''}
       </div>
       <div id="pic-add-form-${p.id}" style="display:none">
         <div class="inline-form">
@@ -5202,8 +5202,8 @@ function renderProjDetail() {
           <div class="pic-avatar" style="background:${picColor(pic.name)}22;color:${picColor(pic.name)}">${picAvatar(pic.name)}</div>
           <div class="pic-info"><div class="pic-name">${pic.name}</div>${pic.role?`<div class="pic-role">${pic.role}</div>`:''}</div>
           <div class="pic-acts">
-            <button class="tact-btn" onclick="toggleInlineForm('pic-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>
-            <button class="tact-btn" onclick="inlineDeletePIC('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+            ${can('projects','edit') ? `<button class="tact-btn" onclick="toggleInlineForm('pic-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>` : ''}
+            ${can('projects','edit') ? `<button class="tact-btn" onclick="inlineDeletePIC('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
           </div>
         </div>
         <div id="pic-edit-${p.id}-${i}" style="display:none;margin:0 0 8px;">
@@ -5226,7 +5226,7 @@ function renderProjDetail() {
     // Add action inline form
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Rolling Action Plan <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
-        <button class="proj-detail-slabel-add" onclick="toggleInlineForm('task-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add Action</button>
+        ${can('actions','add') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('task-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add Action</button>` : ''}
       </div>
       <div id="task-add-form-${p.id}" style="display:none">
         <div class="inline-form">
@@ -5281,8 +5281,8 @@ function renderProjDetail() {
             </div>
           </div>
           <div class="rap-acts">
-            <button class="tact-btn" onclick="toggleInlineForm('task-edit-${p.id}-${idx}')"><i class="ti ti-pencil"></i></button>
-            <button class="tact-btn" onclick="deleteTaskInDetail('${p.id}',${idx})" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+            ${can('actions','edit') ? `<button class="tact-btn" onclick="toggleInlineForm('task-edit-${p.id}-${idx}')"><i class="ti ti-pencil"></i></button>` : ''}
+            ${can('actions','delete') ? `<button class="tact-btn" onclick="deleteTaskInDetail('${p.id}',${idx})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
           </div>
         </div>
         <div id="task-edit-${p.id}-${idx}" style="display:none;margin:0 0 8px;">
@@ -5337,7 +5337,7 @@ function renderProjDetail() {
 
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Milestones <span style="font-weight:400;color:var(--text3)">(${milestones.length})</span>
-        <button class="proj-detail-slabel-add" onclick="toggleInlineForm('ms-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>
+        ${can('milestones','add') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('ms-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>` : ''}
       </div>
 
       <div id="ms-add-form-${p.id}" style="display:none">
@@ -5381,8 +5381,8 @@ function renderProjDetail() {
               <div class="ms-header-row">
                 <div class="ms-title ${st}">${ms.title}</div>
                 <div class="ms-acts">
-                  <button class="tact-btn" onclick="toggleInlineForm('ms-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>
-                  <button class="tact-btn" onclick="inlineDeleteMilestone('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+                  ${can('milestones','edit') ? `<button class="tact-btn" onclick="toggleInlineForm('ms-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>` : ''}
+                  ${can('milestones','delete') ? `<button class="tact-btn" onclick="inlineDeleteMilestone('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
                 </div>
               </div>
               <div class="ms-meta">
@@ -5962,12 +5962,16 @@ function applyNavPermissions() {
 }
 
 function applyPermissionUI() {
-  // Hide add buttons for sections user can't access
-  const addBtns = {
-    'proj': can('projects','add'),
-    'inq':  can('inquiries','add'),
-  };
-  // We'll hide buttons dynamically — renderAll handles this via can() checks
+  // Page-level add buttons
+  const showHide = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? '' : 'none'; };
+  showHide('inq-add-btn',  can('inquiries','add'));
+  showHide('proj-add-btn', can('projects','add'));
+  showHide('task-add-btn', can('tasks','add'));
+  // Collapse/expand all (projects) — always visible if can view
+  showHide('proj-collapse-btn', can('projects','view'));
+  showHide('proj-expand-btn',   can('projects','view'));
+  // Re-render to apply dynamic button visibility
+  renderAll();
 }
 
 // ══════════════════════════════════════════════════════

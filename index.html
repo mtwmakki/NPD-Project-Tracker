@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V38</title>
+<title>NPD Tracker V39</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -864,7 +864,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V38</div>
+    <div class="login-logo">NPD Tracker V39</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1720,11 +1720,18 @@ let dashTab = 'inq', dashView = 'month', dashDate = new Date();
 let binFilter = 'all';
 let charts = {};
 let taskViewAll = false; // master toggle to see all users' tasks
+
+// ── Auth state (declared early so can() works before Firebase loads) ──
+let currentAuthUser    = null;
+let currentUserProfile = null;
+let inactivityTimer    = null;
+let inactivityWarningTimer = null;
+let inactivityTimeout  = 30;
+let presenceInterval   = null;
 let fbDb = null;           // Firestore instance
 let fbUnsubscribe = null;  // live listener unsubscribe handle
 let fbSaving = false;      // prevent listener re-triggering own save
 let currentUser = localStorage.getItem('npd_username') || 'User';
-let presenceInterval = null;
 let editingInqId = null;
 let editingMTaskId = null;
 // Firebase handles auth — no separate token needed
@@ -5788,11 +5795,7 @@ showDensityBar(inqView === 'card'); // show on inquiries page only in card mode
 // ══════════════════════════════════════════════════════
 //  AUTH STATE & CURRENT USER
 // ══════════════════════════════════════════════════════
-let currentAuthUser = null;   // Firebase Auth user object
-let currentUserProfile = null; // Firestore profile {name, role, permissions}
-let inactivityTimer = null;
-let inactivityWarningTimer = null;
-let inactivityTimeout = 30; // minutes, loaded from Firestore settings
+// ── Auth state variables declared at top of script ──
 
 const DEFAULT_PERMISSIONS = {
   master:  { inquiries:{view:true,add:true,edit:true,delete:true}, projects:{view:true,add:true,edit:true,delete:true}, actions:{view:true,add:true,edit:true,complete:true,delete:true}, subStatus:{view:true,add:true,edit:true,delete:true}, milestones:{view:true,add:true,edit:true,delete:true}, tasks:{view:true,add:true,edit:true,complete:true,delete:true}, reports:{view:true,export:true}, dashboard:{view:true}, users:{view:true,add:true,edit:true,delete:true} },

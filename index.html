@@ -857,6 +857,54 @@ html{scroll-behavior:smooth;}
 .cl-text{font-size:12px;color:var(--text);line-height:1.4;}
 .cl-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .cl-user-pill{background:var(--surface2);padding:1px 6px;border-radius:10px;font-size:9px;}
+/* ── NPD Pipeline ── */
+.pipeline-target-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.pipeline-target-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.pipeline-target-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+.pipeline-target-nums{display:flex;align-items:baseline;gap:6px;margin-bottom:8px;}
+.pipeline-target-val{font-size:28px;font-weight:800;color:var(--text);line-height:1;}
+.pipeline-target-total{font-size:13px;color:var(--text3);}
+.pipeline-target-bar{height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:4px;}
+.pipeline-target-fill{height:100%;border-radius:4px;transition:width .4s;}
+.pipeline-target-pct{font-size:10px;color:var(--text3);font-family:var(--fm);}
+/* Kanban */
+.pipeline-kanban{display:flex;gap:10px;overflow-x:auto;padding-bottom:12px;min-height:400px;}
+.pipeline-kanban::-webkit-scrollbar{height:5px;}
+.pipeline-kanban::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.pipeline-col{flex:0 0 240px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);display:flex;flex-direction:column;max-height:calc(100vh - 340px);}
+.pipeline-col-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.pipeline-col-title{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px;}
+.pipeline-col-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pipeline-col-count{font-size:10px;font-family:var(--fm);color:var(--text3);background:var(--surface);padding:1px 7px;border-radius:20px;}
+.pipeline-col-body{flex:1;overflow-y:auto;padding:8px;}
+.pipeline-col-body::-webkit-scrollbar{width:3px;}
+.pipeline-col-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.pipeline-col-add{padding:8px;border-top:1px solid var(--border);flex-shrink:0;}
+.pipeline-col-add-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:var(--rs);padding:6px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;}
+.pipeline-col-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--al);}
+.pipeline-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;position:relative;}
+.pipeline-card:hover{border-color:var(--accent);}
+.pipeline-card-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3;}
+.pipeline-card-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;}
+.pipeline-card-date{font-size:10px;color:var(--text3);font-family:var(--fm);display:flex;align-items:center;gap:3px;margin-top:4px;}
+.pipeline-card-revenue{font-size:11px;font-weight:600;color:var(--accent);margin-top:3px;}
+.pipeline-linked-badge{font-size:9px;padding:1px 6px;border-radius:20px;background:var(--blbg);color:var(--blue);font-family:var(--fm);font-weight:600;}
+/* Timeline */
+.pipeline-timeline{overflow-x:auto;padding-bottom:8px;}
+.pipeline-tl-head{display:flex;gap:0;margin-bottom:2px;}
+.pipeline-tl-month{flex:0 0 120px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);padding:4px 8px;border-left:1px solid var(--border);}
+.pipeline-tl-row{display:flex;align-items:center;gap:0;border-top:1px solid var(--border);min-height:38px;position:relative;}
+.pipeline-tl-label{flex:0 0 140px;font-size:11px;font-weight:600;color:var(--text);padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--border);background:var(--surface);}
+.pipeline-tl-track{flex:1;position:relative;height:38px;}
+.pipeline-tl-bar{position:absolute;height:22px;top:8px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;cursor:pointer;transition:opacity .15s;}
+.pipeline-tl-bar:hover{opacity:.85;}
+.pipeline-view-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.pl-view-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:none;font-size:11px;font-weight:500;font-family:var(--f);cursor:pointer;color:var(--text3);display:flex;align-items:center;gap:5px;transition:all .15s;}
+.pl-view-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+/* Pipeline settings */
+.stage-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.stage-row:last-child{border-bottom:none;}
+.stage-color-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;cursor:pointer;border:2px solid var(--border);}
 </style>
 </head>
 <body>
@@ -890,7 +938,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V43</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V45</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -924,6 +972,7 @@ html{scroll-behavior:smooth;}
       <button class="nav-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="nav-item-label">Tasks</span></button>
       <button class="nav-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="nav-item-label">Notifications</span><span class="nav-badge" id="notif-nav-badge" style="display:none">0</span></button>
       <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="nav-item-label">Dashboard</span></button>
+      <button class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')"><i class="ti ti-git-branch"></i><span class="nav-item-label">NPD Pipeline</span></button>
       <button class="nav-item" id="nav-calendar" onclick="showPage('calendar')"><i class="ti ti-calendar"></i><span class="nav-item-label">Calendar</span></button>
       <button class="nav-item" id="nav-changelog" onclick="showPage('changelog')"><i class="ti ti-history"></i><span class="nav-item-label">Changelog</span></button>
       <button class="nav-item" id="nav-users" style="display:none;" onclick="showPage('users')"><i class="ti ti-users"></i><span class="nav-item-label">Users</span></button>
@@ -1038,6 +1087,102 @@ html{scroll-behavior:smooth;}
     </div>
   </div>
   <div id="projects-list"></div>
+</div>
+
+<!-- NPD PIPELINE PAGE -->
+<div class="page" id="page-pipeline">
+  <div class="sec-head">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="sec-title">NPD Pipeline</span>
+      <select id="pipeline-year-sel" class="finput" style="font-size:11px;padding:4px 8px;width:90px;" onchange="renderPipeline()"></select>
+    </div>
+    <div class="btn-row">
+      <button id="pipeline-revenue-toggle" onclick="togglePipelineRevenue()" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;"><i class="ti ti-eye"></i> Revenue</button>
+      <button onclick="openPipelineSettings()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;" id="pipeline-settings-btn"><i class="ti ti-adjustments"></i> Stages</button>
+      <button class="add-btn" onclick="openAddPipelineItem(null)"><i class="ti ti-plus"></i> New Item</button>
+    </div>
+  </div>
+  <!-- Target Dashboard -->
+  <div id="pipeline-targets" style="padding:0 16px;"></div>
+  <!-- View Tabs -->
+  <div style="padding:0 16px 10px;display:flex;gap:6px;">
+    <button class="pl-view-btn active" id="plv-kanban" onclick="setPipelineView('kanban')"><i class="ti ti-layout-columns"></i> Kanban</button>
+    <button class="pl-view-btn" id="plv-timeline" onclick="setPipelineView('timeline')"><i class="ti ti-timeline"></i> Timeline</button>
+  </div>
+  <!-- Kanban -->
+  <div id="pipeline-kanban-wrap" style="padding:0 16px;"></div>
+  <!-- Timeline -->
+  <div id="pipeline-timeline-wrap" style="padding:0 16px;display:none;"></div>
+</div>
+
+<!-- PIPELINE ITEM MODAL -->
+<div class="overlay" id="modal-pipeline-item">
+  <div class="modal" style="max-width:500px;">
+    <div class="mtitle"><span id="pipeline-item-modal-title">New Pipeline Item</span><button class="modal-close-btn" onclick="closeModal('pipeline-item')"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <div class="fg"><label class="flabel">Item Name</label><input class="finput" id="pl-name" type="text" placeholder="e.g. Nestle 1L Tub — New Mold"></div>
+      <div class="frow2">
+        <div class="fg"><label class="flabel">Stage</label><select class="finput" id="pl-stage"></select></div>
+        <div class="fg"><label class="flabel">Factory</label>
+          <select class="finput" id="pl-factory">
+            <option value="">— Select —</option>
+            <option value="Combi-Pack">Combi-Pack</option>
+            <option value="Super Uniart">Super Uniart</option>
+            <option value="Reachpac">Reachpac</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow2">
+        <div class="fg"><label class="flabel">Target Launch Date</label><input class="finput" id="pl-date" type="date"></div>
+        <div class="fg"><label class="flabel">PIC</label><select class="finput" id="pl-pic"></select></div>
+      </div>
+      <div class="fg" id="pl-revenue-field"><label class="flabel">Revenue Value (RM)</label><input class="finput" id="pl-revenue" type="number" placeholder="0.00" min="0" step="1000"></div>
+      <div class="fg"><label class="flabel">Link to Existing <span style="color:var(--text3);font-weight:400;">(optional)</span></label>
+        <select class="finput" id="pl-link">
+          <option value="">— None (standalone) —</option>
+        </select>
+      </div>
+      <div class="fg"><label class="flabel">Notes</label><textarea class="finput" id="pl-notes" rows="2" style="resize:vertical;width:100%;box-sizing:border-box;" placeholder="Optional notes…"></textarea></div>
+    </div>
+    <div class="mfooter"><button class="btn-secondary" onclick="closeModal('pipeline-item')">Cancel</button><button class="btn-primary" id="pl-submit-btn" onclick="submitPipelineItem()">Add Item</button></div>
+  </div>
+</div>
+
+<!-- PIPELINE SETTINGS MODAL -->
+<div class="overlay" id="modal-pipeline-settings">
+  <div class="modal" style="max-width:420px;">
+    <div class="mtitle"><span>Pipeline Stages</span><button class="modal-close-btn" onclick="closeModal('pipeline-settings')"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Define the stages for your pipeline. Drag to reorder. Click the dot to change color.</div>
+      <div id="pipeline-stages-list"></div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <input class="finput" id="new-stage-name" type="text" placeholder="New stage name…" style="flex:1;">
+        <button class="btn-primary" style="font-size:11px;padding:5px 12px;" onclick="addPipelineStage()">Add</button>
+      </div>
+    </div>
+    <div class="mfooter"><button class="btn-secondary" onclick="closeModal('pipeline-settings')">Cancel</button><button class="btn-primary" onclick="savePipelineStages()">Save Stages</button></div>
+  </div>
+</div>
+
+<!-- PIPELINE TARGET EDIT MODAL -->
+<div class="overlay" id="modal-pipeline-targets">
+  <div class="modal" style="max-width:380px;">
+    <div class="mtitle"><span>Set Yearly Targets</span><button class="modal-close-btn" onclick="closeModal('pipeline-targets')"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <div class="fg"><label class="flabel">Year</label><input class="finput" id="pt-year" type="number" value="2026"></div>
+      <div class="fg"><label class="flabel">Project Count Target</label><input class="finput" id="pt-count" type="number" placeholder="e.g. 20" min="0"></div>
+      <div class="fg"><label class="flabel">Revenue Target (RM)</label><input class="finput" id="pt-rev" type="number" placeholder="e.g. 500000" min="0"></div>
+    </div>
+    <div class="mfooter"><button class="btn-secondary" onclick="closeModal('pipeline-targets')">Cancel</button><button class="btn-primary" onclick="savePipelineTargets()">Save Targets</button></div>
+  </div>
+</div>
+
+<!-- PIPELINE ITEM DETAIL OVERLAY -->
+<div class="overlay" id="pipeline-detail-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-width:480px;max-height:80vh;overflow-y:auto;">
+    <div class="mtitle"><span id="pl-detail-title">Pipeline Item</span><button class="modal-close-btn" onclick="document.getElementById('pipeline-detail-overlay').classList.remove('open')"><i class="ti ti-x"></i></button></div>
+    <div id="pl-detail-body" class="mbody"></div>
+  </div>
 </div>
 
 <!-- DASHBOARD PAGE -->
@@ -1241,6 +1386,13 @@ html{scroll-behavior:smooth;}
       </div>
     </div>
   </div>
+  <!-- PIC filter — master only, populated dynamically -->
+  <div id="notif-pic-filter" style="display:none;padding:6px 16px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:10px;font-family:var(--fm);color:var(--text3);font-weight:600;">VIEW:</span>
+    <button class="notif-filter-chip active" id="npf-mine" onclick="setNotifPICFilter('mine')">My Tasks</button>
+    <button class="notif-filter-chip" id="npf-all" onclick="setNotifPICFilter('all')">All Users</button>
+    <div id="npf-users" style="display:contents;"></div>
+  </div>
   <div class="notif-filter">
     <button class="notif-filter-chip active" id="nf-all" onclick="setNotifFilter('all')">All</button>
     <button class="notif-filter-chip" id="nf-week" onclick="setNotifFilter('week')">This Week</button>
@@ -1363,7 +1515,7 @@ html{scroll-behavior:smooth;}
       <div class="frow2">
         <div class="fg"><label class="flabel">Deadline</label><input class="finput" id="pt-deadline" type="date"></div>
         <div class="fg"><label class="flabel">Assigned To (PIC)</label>
-          <input class="finput" id="pt-pic" type="text" placeholder="Name (blank → Adam)">
+          <select class="finput" id="pt-pic"></select>
         </div>
       </div>
       <div class="frow2">
@@ -1729,6 +1881,37 @@ let inactivityWarningTimer = null;
 let inactivityTimeout  = 30;
 let presenceInterval   = null;
 let saveTimer          = null;
+let notifPICFilter     = 'mine';
+let pipelineView       = 'kanban'; // 'kanban' | 'timeline'
+let showPipelineRevenue = true;
+let pipelineYear       = new Date().getFullYear();
+
+const DEFAULT_PIPELINE_STAGES = [
+  { id:'prospect',    name:'Prospect',     color:'#64748b' },
+  { id:'scoping',     name:'Scoping',      color:'#3a8ef5' },
+  { id:'development', name:'Development',  color:'#f5a623' },
+  { id:'sampling',    name:'Sampling',     color:'#a06aee' },
+  { id:'launched',    name:'Launched',     color:'#30c060' },
+  { id:'cancelled',   name:'Cancelled',    color:'#f0445a' },
+]; // 'mine' | 'all' | specific name — master only
+
+// ── Get registered users for PIC dropdowns ──
+let cachedUserList = ['Adam', "Muti'ah"]; // default fallback, refreshed from Firestore
+async function refreshUserList() {
+  if (!fbDb) return;
+  try {
+    const snap = await fbDb.collection('users').get();
+    cachedUserList = snap.docs.map(d => d.data().name).filter(Boolean).sort();
+    if (!cachedUserList.length) cachedUserList = ['Adam', "Muti'ah"];
+  } catch(e) {}
+}
+
+function picDropdownHTML(selectedId, defaultVal) {
+  const selected = selectedId || defaultVal || currentUserProfile?.name || 'Adam';
+  return cachedUserList.map(n =>
+    `<option value="${n}" ${n === selected ? 'selected' : ''}>${n}</option>`
+  ).join('');
+}
 let fbDb = null;           // Firestore instance
 let fbUnsubscribe = null;  // live listener unsubscribe handle
 let fbSaving = false;      // prevent listener re-triggering own save
@@ -1806,7 +1989,7 @@ function updateStorageIndicator(byteLen) {
   `;
 }
 function loadLocal() {
-  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[]; data.mtasks = data.mtasks||[]; } } catch(e) {}
+  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[]; data.mtasks = data.mtasks||[]; data.pipeline = data.pipeline||[]; data.pipelineStages = data.pipelineStages||JSON.parse(JSON.stringify(DEFAULT_PIPELINE_STAGES)); data.pipelineTargets = data.pipelineTargets||{}; } } catch(e) {}
   migrateStatusNoteToSubStatus();
 }
 
@@ -1836,9 +2019,21 @@ function migrateStatusNoteToSubStatus() {
       changed = true;
     }
   });
-  // ── Stamp existing tasks with owner: 'Adam' ──
+  // ── Stamp existing tasks with owner: 'Adam' and pic: 'Adam' if missing ──
   (data.mtasks||[]).forEach(t => {
     if (!t.owner) { t.owner = 'Adam'; changed = true; }
+  });
+  // Stamp project tasks with pic if missing
+  (data.projects||[]).forEach(p => {
+    (p.tasks||[]).forEach(t => {
+      if (!t.pic) { t.pic = 'Adam'; changed = true; }
+    });
+  });
+  // Stamp inquiry tasks with pic if missing
+  (data.inquiries||[]).forEach(inq => {
+    (inq.tasks||[]).forEach(t => {
+      if (!t.pic) { t.pic = 'Adam'; changed = true; }
+    });
   });
   if (changed) saveLocal();
 }
@@ -3838,30 +4033,42 @@ function addDaysToStr(s, n) {
 function collectNotifications() {
   const today = todayStr();
   const missed = [], upcoming = [], awaiting = [];
+  const myName = currentUserProfile?.name || 'Adam';
+  const isMaster = currentUserProfile?.role === 'master';
+  // Determine whose tasks to show in notifications
+  const showAll = isMaster && notifPICFilter === 'all';
+  const filterName = notifPICFilter === 'mine' ? myName : (notifPICFilter === 'all' ? null : notifPICFilter);
 
-  // Inquiries tasks (3-day upcoming)
+  const taskVisible = (t) => {
+    if (showAll) return true;
+    return (t.pic || 'Adam') === filterName;
+  };
+
+  // Inquiries tasks
   data.inquiries.forEach(item => {
-    (item.tasks||[]).filter(t => !t.done).forEach(t => {
+    (item.tasks||[]).filter(t => !t.done && taskVisible(t)).forEach(t => {
+      const pic = t.pic || 'Adam';
       if (t.status === 'awaiting-reply') {
-        if (!t.reminder || t.reminder <= today) awaiting.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, itemType:'task-of-inquiry'});
+        if (!t.reminder || t.reminder <= today) awaiting.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, itemType:'task-of-inquiry', pic});
         return;
       }
       if (!t.deadline) return;
-      if (t.deadline < today) missed.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-inquiry'});
-      else if (t.deadline <= addDaysToStr(today, TASK_UPCOMING_DAYS)) upcoming.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-inquiry'});
+      if (t.deadline < today) missed.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-inquiry', pic});
+      else if (t.deadline <= addDaysToStr(today, TASK_UPCOMING_DAYS)) upcoming.push({type:'inquiry', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-inquiry', pic});
     });
   });
 
-  // Projects tasks (7-day upcoming)
+  // Projects tasks
   data.projects.forEach(item => {
-    (item.tasks||[]).filter(t => !t.done).forEach(t => {
+    (item.tasks||[]).filter(t => !t.done && taskVisible(t)).forEach(t => {
+      const pic = t.pic || 'Adam';
       if (t.status === 'awaiting-reply') {
-        if (!t.reminder || t.reminder <= today) awaiting.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, itemType:'task-of-project'});
+        if (!t.reminder || t.reminder <= today) awaiting.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, itemType:'task-of-project', pic});
         return;
       }
       if (!t.deadline) return;
-      if (t.deadline < today) missed.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-project'});
-      else if (t.deadline <= addDaysToStr(today, PROJECT_UPCOMING_DAYS)) upcoming.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-project'});
+      if (t.deadline < today) missed.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-project', pic});
+      else if (t.deadline <= addDaysToStr(today, PROJECT_UPCOMING_DAYS)) upcoming.push({type:'project', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, itemType:'task-of-project', pic});
     });
   });
 
@@ -3892,6 +4099,9 @@ function showNotifications() {
   const {missed, upcoming, awaiting} = collectNotifications();
   const total = missed.length + upcoming.length + awaiting.length;
 
+  // Render PIC filter for master
+  renderNotifPICFilter();
+
   const badge = document.getElementById('notif-nav-badge');
   if (badge) {
     if (total > 0) { badge.textContent = total; badge.style.display = 'block'; }
@@ -3902,7 +4112,7 @@ function showNotifications() {
   if (missed.length && !globalBannerDismissed) {
     area.style.display = 'block';
     document.getElementById('notif-list').innerHTML = missed.map(n =>
-      `<div class="notif-item"><strong>${n.taskName}</strong> · ${n.parentCode} · due ${fmtDate(n.deadline)}</div>`
+      `<div class="notif-item"><strong>${n.taskName}</strong> · ${n.parentCode}${n.pic?' · <span style="color:var(--purple);font-family:var(--fm);font-size:9px;">'+n.pic+'</span>':''} · due ${fmtDate(n.deadline)}</div>`
     ).join('');
   } else if (!missed.length) {
     area.style.display = 'none';
@@ -4069,7 +4279,7 @@ function renderNotifExpanded(missed, upcoming, awaiting, completed) {
         <i class="ti ti-chevron-down notif-exp-chevron"></i>
       </div>
       <div class="notif-exp-body">
-        <div class="notif-exp-meta">${n.parentCode}${n.type!=='mtask'?' · '+n.parentName:''}${n.deadline?' · '+fmtDate(n.deadline):''}</div>
+        <div class="notif-exp-meta">${n.parentCode}${n.type!=='mtask'?' · '+n.parentName:''}${n.deadline?' · '+fmtDate(n.deadline):''}${n.pic?` · <span class="rap-pic-pill">${n.pic}</span>`:''}</div>
         <div class="notif-exp-acts">
           <button class="notif-act-btn edit" onclick="toggleNotifEdit('${uid}')"><i class="ti ti-pencil" style="font-size:11px"></i> Edit Deadline</button>
           <button class="notif-act-btn goto" onclick="goToItem('${gotoPage}','${n.parentId}')"><i class="ti ti-arrow-right" style="font-size:11px"></i> Go to ${gotoLabel}</button>
@@ -4510,11 +4720,21 @@ function renderDashboard() {
 // ══════════════════════════════════════════════════════
 function getAllTasks() {
   const tasks = [];
+  const myName = currentUserProfile?.name || 'Adam';
+  const isMaster = currentUserProfile?.role === 'master';
+  const showAll = isMaster && notifPICFilter === 'all';
+  const filterName = notifPICFilter === 'mine' ? myName : (notifPICFilter === 'all' ? null : notifPICFilter);
+
+  const taskVisible = (t) => showAll || (t.pic || 'Adam') === filterName;
+
   [...data.inquiries,...data.projects].forEach(item => {
-    (item.tasks||[]).forEach(t => tasks.push({...t, parentCode:item.code, parentName:item.name}));
+    (item.tasks||[]).filter(taskVisible).forEach(t => tasks.push({...t, parentCode:item.code, parentName:item.name}));
   });
   (data.mtasks||[]).forEach(t => {
-    if (t.deadline) tasks.push({id:t.id, name:t.title, deadline:t.deadline, done:t.status==='done', parentCode:'TASK', parentName:t.title});
+    const owner = t.owner || 'Adam';
+    if (showAll || owner === filterName) {
+      if (t.deadline) tasks.push({id:t.id, name:t.title, deadline:t.deadline, done:t.status==='done', parentCode:'TASK', parentName:t.title, pic:owner});
+    }
   });
   return tasks;
 }
@@ -4900,6 +5120,433 @@ function submitMTask() {
   save(); closeMTaskModal(); renderMTasks(); showNotifications();
 }
 
+function setNotifPICFilter(val) {
+  notifPICFilter = val;
+  // Update button states
+  document.querySelectorAll('[id^="npf-"]').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('npf-' + val) || document.getElementById('npf-mine');
+  if (btn) btn.classList.add('active');
+  showNotifications();
+}
+
+function renderNotifPICFilter() {
+  const isMaster = currentUserProfile?.role === 'master';
+  const wrap = document.getElementById('notif-pic-filter');
+  if (!wrap) return;
+  wrap.style.display = isMaster ? 'flex' : 'none';
+  if (!isMaster) return;
+  // Populate per-user buttons
+  const usersWrap = document.getElementById('npf-users');
+  if (usersWrap) {
+    usersWrap.innerHTML = cachedUserList
+      .filter(n => n !== currentUserProfile?.name)
+      .map(n => `<button class="notif-filter-chip ${notifPICFilter===n?'active':''}" id="npf-u-${n.replace(/\s+/g,'_')}" onclick="setNotifPICFilter('${n}')">${n}</button>`)
+      .join('');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  NPD PIPELINE
+// ══════════════════════════════════════════════════════
+function getPipelineStages() {
+  return (data.pipelineStages && data.pipelineStages.length) ? data.pipelineStages : DEFAULT_PIPELINE_STAGES;
+}
+
+function getPipelineItems(year) {
+  return (data.pipeline||[]).filter(item => {
+    if (!year) return true;
+    const y = item.targetDate ? new Date(item.targetDate+'T00:00:00').getFullYear() : (item.year||new Date().getFullYear());
+    return y === parseInt(year);
+  });
+}
+
+function setPipelineView(v) {
+  pipelineView = v;
+  document.getElementById('plv-kanban').classList.toggle('active', v==='kanban');
+  document.getElementById('plv-timeline').classList.toggle('active', v==='timeline');
+  document.getElementById('pipeline-kanban-wrap').style.display = v==='kanban' ? '' : 'none';
+  document.getElementById('pipeline-timeline-wrap').style.display = v==='timeline' ? '' : 'none';
+  renderPipeline();
+}
+
+function togglePipelineRevenue() {
+  showPipelineRevenue = !showPipelineRevenue;
+  const btn = document.getElementById('pipeline-revenue-toggle');
+  if (btn) {
+    btn.style.borderColor = showPipelineRevenue ? 'var(--accent)' : 'var(--border)';
+    btn.style.color = showPipelineRevenue ? 'var(--accent)' : 'var(--text3)';
+    btn.innerHTML = `<i class="ti ti-${showPipelineRevenue?'eye':'eye-off'}"></i> Revenue`;
+  }
+  renderPipeline();
+}
+
+function renderPipeline() {
+  // Populate year selector
+  const yearSel = document.getElementById('pipeline-year-sel');
+  if (yearSel) {
+    const years = new Set();
+    const cy = new Date().getFullYear();
+    [cy-1, cy, cy+1, cy+2].forEach(y => years.add(y));
+    (data.pipeline||[]).forEach(item => {
+      if (item.targetDate) years.add(new Date(item.targetDate+'T00:00:00').getFullYear());
+    });
+    const sorted = [...years].sort();
+    yearSel.innerHTML = sorted.map(y => `<option value="${y}" ${y===pipelineYear?'selected':''}>${y}</option>`).join('');
+    pipelineYear = parseInt(yearSel.value);
+  }
+
+  renderPipelineTargets();
+  if (pipelineView === 'kanban') renderPipelineKanban();
+  else renderPipelineTimeline();
+}
+
+function renderPipelineTargets() {
+  const el = document.getElementById('pipeline-targets');
+  if (!el) return;
+  const targets = (data.pipelineTargets||{})[pipelineYear] || { count: 0, revenue: 0 };
+  const items = getPipelineItems(pipelineYear);
+  const stages = getPipelineStages();
+  const launchedStage = stages.find(s => s.name.toLowerCase().includes('launch'));
+  const launched = launchedStage ? items.filter(i => i.stage === launchedStage.id).length : items.filter(i => i.stage === 'launched').length;
+  const launchedRev = items.filter(i => i.stage === (launchedStage?.id||'launched')).reduce((s,i) => s+(parseFloat(i.revenue)||0), 0);
+  const countTarget = targets.count || 0;
+  const revTarget   = targets.revenue || 0;
+  const countPct    = countTarget ? Math.min(100, Math.round(launched/countTarget*100)) : 0;
+  const revPct      = revTarget ? Math.min(100, Math.round(launchedRev/revTarget*100)) : 0;
+  const countColor  = countPct >= 100 ? 'var(--accent)' : countPct >= 60 ? 'var(--blue)' : 'var(--amber)';
+  const revColor    = revPct >= 100 ? 'var(--accent)' : revPct >= 60 ? 'var(--blue)' : 'var(--amber)';
+
+  const isMaster = currentUserProfile?.role === 'master';
+  el.innerHTML = `
+    <div class="pipeline-target-row">
+      <div class="pipeline-target-card">
+        <div class="pipeline-target-label">
+          <span><i class="ti ti-target" style="margin-right:4px"></i>Projects Launched ${pipelineYear}</span>
+          ${isMaster ? `<button onclick="openPipelineTargetModal()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:10px;font-family:var(--fm);">Edit target</button>` : ''}
+        </div>
+        <div class="pipeline-target-nums">
+          <span class="pipeline-target-val" style="color:${countColor}">${launched}</span>
+          <span class="pipeline-target-total">/ ${countTarget || '—'}</span>
+        </div>
+        <div class="pipeline-target-bar"><div class="pipeline-target-fill" style="width:${countPct}%;background:${countColor}"></div></div>
+        <div class="pipeline-target-pct">${countTarget ? countPct+'% of target' : 'No target set'} · ${items.length} total in pipeline</div>
+      </div>
+      ${showPipelineRevenue ? `
+      <div class="pipeline-target-card">
+        <div class="pipeline-target-label">
+          <span><i class="ti ti-currency-dollar" style="margin-right:4px"></i>Revenue (RM) ${pipelineYear}</span>
+          ${isMaster ? `<button onclick="openPipelineTargetModal()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:10px;font-family:var(--fm);">Edit target</button>` : ''}
+        </div>
+        <div class="pipeline-target-nums">
+          <span class="pipeline-target-val" style="color:${revColor};font-size:22px;">RM ${launchedRev.toLocaleString('en-MY')}</span>
+          <span class="pipeline-target-total">/ RM ${revTarget ? revTarget.toLocaleString('en-MY') : '—'}</span>
+        </div>
+        <div class="pipeline-target-bar"><div class="pipeline-target-fill" style="width:${revPct}%;background:${revColor}"></div></div>
+        <div class="pipeline-target-pct">${revTarget ? revPct+'% of target' : 'No target set'}</div>
+      </div>` : `
+      <div class="pipeline-target-card" style="display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;">
+        <span><i class="ti ti-eye-off" style="margin-right:6px"></i>Revenue hidden</span>
+      </div>`}
+    </div>`;
+}
+
+function renderPipelineKanban() {
+  const el = document.getElementById('pipeline-kanban-wrap');
+  if (!el) return;
+  const stages = getPipelineStages();
+  const items = getPipelineItems(pipelineYear);
+  const isMaster = currentUserProfile?.role === 'master';
+  const today = todayStr();
+
+  el.innerHTML = `<div class="pipeline-kanban">` +
+    stages.map(stage => {
+      const stageItems = items.filter(i => i.stage === stage.id);
+      return `<div class="pipeline-col" id="plcol-${stage.id}">
+        <div class="pipeline-col-head">
+          <div class="pipeline-col-title">
+            <div class="pipeline-col-dot" style="background:${stage.color}"></div>
+            ${stage.name}
+          </div>
+          <span class="pipeline-col-count">${stageItems.length}</span>
+        </div>
+        <div class="pipeline-col-body">
+          ${stageItems.map(item => renderPipelineCard(item, stage, today)).join('')}
+        </div>
+        ${can('projects','add') ? `
+        <div class="pipeline-col-add">
+          <button class="pipeline-col-add-btn" onclick="openAddPipelineItem('${stage.id}')">
+            <i class="ti ti-plus" style="font-size:12px"></i> Add
+          </button>
+        </div>` : ''}
+      </div>`;
+    }).join('') +
+  `</div>`;
+}
+
+function renderPipelineCard(item, stage, today) {
+  const isOverdue = item.targetDate && item.targetDate < today && item.stage !== 'launched' && item.stage !== 'cancelled';
+  const linked = item.linkedType === 'inquiry'
+    ? data.inquiries.find(x => x.id === item.linkedId)
+    : item.linkedType === 'project'
+    ? data.projects.find(x => x.id === item.linkedId)
+    : null;
+  return `<div class="pipeline-card" onclick="openPipelineDetail('${item.id}')" style="${isOverdue?'border-left:3px solid var(--red);':''}">
+    <div class="pipeline-card-name">${item.name}</div>
+    <div class="pipeline-card-meta">
+      ${item.factory ? `<span class="factory-pill" style="font-size:9px;">${item.factory}</span>` : ''}
+      ${linked ? `<span class="pipeline-linked-badge"><i class="ti ti-link" style="font-size:8px"></i> ${linked.code||linked.name}</span>` : ''}
+      ${item.pic ? `<span class="rap-pic-pill">${item.pic}</span>` : ''}
+    </div>
+    ${item.targetDate ? `<div class="pipeline-card-date ${isOverdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:9px"></i> ${fmtDate(item.targetDate)}${isOverdue?' ⚠':''}</div>` : ''}
+    ${showPipelineRevenue && item.revenue ? `<div class="pipeline-card-revenue">RM ${parseFloat(item.revenue).toLocaleString('en-MY')}</div>` : ''}
+  </div>`;
+}
+
+function renderPipelineTimeline() {
+  const el = document.getElementById('pipeline-timeline-wrap');
+  if (!el) return;
+  const items = getPipelineItems(pipelineYear).filter(i => i.targetDate);
+  const stages = getPipelineStages();
+  if (!items.length) { el.innerHTML = '<div style="padding:20px;color:var(--text3);font-size:12px;text-align:center;">No pipeline items with target dates for this year.</div>'; return; }
+
+  // Build 12-month columns
+  const months = [];
+  for (let m = 0; m < 12; m++) months.push(new Date(pipelineYear, m, 1));
+  const monthW = 120; // px per month
+
+  let html = `<div class="pipeline-timeline" style="min-width:${140 + monthW*12}px;">`;
+  // Header
+  html += `<div class="pipeline-tl-head"><div style="flex:0 0 140px;"></div>`;
+  months.forEach(m => {
+    html += `<div class="pipeline-tl-month" style="flex:0 0 ${monthW}px;">${m.toLocaleDateString('en-GB',{month:'short'})}</div>`;
+  });
+  html += '</div>';
+
+  // One row per item
+  items.forEach(item => {
+    const stage = stages.find(s => s.id === item.stage) || stages[0];
+    const td = new Date(item.targetDate+'T00:00:00');
+    const monthIdx = td.getMonth();
+    const dayPct = td.getDate() / 31;
+    const leftPx = 140 + monthIdx * monthW + dayPct * monthW;
+    const barW = Math.max(60, item.name.length * 7);
+    html += `<div class="pipeline-tl-row">
+      <div class="pipeline-tl-label" title="${item.name}">${item.name}</div>
+      <div class="pipeline-tl-track" style="width:${monthW*12}px;">
+        <div class="pipeline-tl-bar" style="left:${leftPx-140}px;width:${barW}px;background:${stage.color};" onclick="openPipelineDetail('${item.id}')" title="${item.name} · ${fmtDate(item.targetDate)}">
+          ${stage.name}
+        </div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── Pipeline item CRUD ──
+let editingPipelineId = null;
+
+function openAddPipelineItem(defaultStage) {
+  editingPipelineId = null;
+  document.getElementById('pipeline-item-modal-title').textContent = 'New Pipeline Item';
+  document.getElementById('pl-submit-btn').textContent = 'Add Item';
+  document.getElementById('pl-name').value = '';
+  document.getElementById('pl-date').value = '';
+  document.getElementById('pl-factory').value = '';
+  document.getElementById('pl-notes').value = '';
+  document.getElementById('pl-revenue').value = '';
+  // Populate stage dropdown
+  const stages = getPipelineStages();
+  document.getElementById('pl-stage').innerHTML = stages.map(s =>
+    `<option value="${s.id}" ${s.id === defaultStage ? 'selected' : ''}>${s.name}</option>`
+  ).join('');
+  // Populate PIC dropdown
+  document.getElementById('pl-pic').innerHTML = picDropdownHTML(currentUserProfile?.name||'Adam');
+  // Populate link dropdown
+  const linkSel = document.getElementById('pl-link');
+  linkSel.innerHTML = '<option value="">— None (standalone) —</option>' +
+    '<optgroup label="Inquiries">' +
+    data.inquiries.map(i => `<option value="inquiry:${i.id}">${i.code} — ${i.name}</option>`).join('') +
+    '</optgroup><optgroup label="Projects">' +
+    data.projects.map(p => `<option value="project:${p.id}">${p.code} — ${p.name}</option>`).join('') +
+    '</optgroup>';
+  // Show/hide revenue field
+  document.getElementById('pl-revenue-field').style.display = showPipelineRevenue ? '' : 'none';
+  document.getElementById('modal-pipeline-item').classList.add('open');
+}
+
+function openEditPipelineItem(id) {
+  const item = (data.pipeline||[]).find(x => x.id === id);
+  if (!item) return;
+  editingPipelineId = id;
+  document.getElementById('pipeline-item-modal-title').textContent = 'Edit Pipeline Item';
+  document.getElementById('pl-submit-btn').textContent = 'Save Changes';
+  document.getElementById('pl-name').value = item.name||'';
+  document.getElementById('pl-date').value = item.targetDate||'';
+  document.getElementById('pl-factory').value = item.factory||'';
+  document.getElementById('pl-notes').value = item.notes||'';
+  document.getElementById('pl-revenue').value = item.revenue||'';
+  const stages = getPipelineStages();
+  document.getElementById('pl-stage').innerHTML = stages.map(s =>
+    `<option value="${s.id}" ${s.id === item.stage ? 'selected' : ''}>${s.name}</option>`
+  ).join('');
+  document.getElementById('pl-pic').innerHTML = picDropdownHTML(item.pic||currentUserProfile?.name||'Adam');
+  const linkSel = document.getElementById('pl-link');
+  linkSel.innerHTML = '<option value="">— None (standalone) —</option>' +
+    '<optgroup label="Inquiries">' + data.inquiries.map(i => `<option value="inquiry:${i.id}" ${item.linkedType==='inquiry'&&item.linkedId===i.id?'selected':''}>${i.code} — ${i.name}</option>`).join('') + '</optgroup>' +
+    '<optgroup label="Projects">' + data.projects.map(p => `<option value="project:${p.id}" ${item.linkedType==='project'&&item.linkedId===p.id?'selected':''}>${p.code} — ${p.name}</option>`).join('') + '</optgroup>';
+  document.getElementById('pl-revenue-field').style.display = showPipelineRevenue ? '' : 'none';
+  document.getElementById('modal-pipeline-item').classList.add('open');
+}
+
+function submitPipelineItem() {
+  const name = (document.getElementById('pl-name').value||'').trim();
+  if (!name) { alert('Please enter an item name.'); return; }
+  const linkVal = document.getElementById('pl-link').value;
+  const [linkedType, linkedId] = linkVal ? linkVal.split(':') : ['',''];
+  const obj = {
+    id:          editingPipelineId || uid(),
+    name,
+    stage:       document.getElementById('pl-stage').value,
+    factory:     document.getElementById('pl-factory').value,
+    targetDate:  document.getElementById('pl-date').value,
+    pic:         document.getElementById('pl-pic').value,
+    revenue:     document.getElementById('pl-revenue').value||'',
+    notes:       document.getElementById('pl-notes').value.trim(),
+    linkedType:  linkedType||'',
+    linkedId:    linkedId||'',
+    createdAt:   editingPipelineId ? ((data.pipeline||[]).find(x=>x.id===editingPipelineId)||{}).createdAt||todayStr() : todayStr()
+  };
+  if (!data.pipeline) data.pipeline = [];
+  if (editingPipelineId) {
+    const idx = data.pipeline.findIndex(x => x.id === editingPipelineId);
+    if (idx >= 0) data.pipeline[idx] = obj;
+  } else {
+    data.pipeline.push(obj);
+  }
+  appendChangelog({ type: editingPipelineId ? 'update':'create', icon:'git-branch', text:`${editingPipelineId?'Updated':'Added'} pipeline item: <strong>${name}</strong>`, section:'pipeline' });
+  save(); closeModal('pipeline-item'); renderPipeline();
+}
+
+function deletePipelineItem(id) {
+  const item = (data.pipeline||[]).find(x => x.id === id);
+  if (!item || !confirm(`Delete "${item.name}" from pipeline?`)) return;
+  data.pipeline = data.pipeline.filter(x => x.id !== id);
+  appendChangelog({ type:'delete', icon:'trash', text:`Removed pipeline item: <strong>${item.name}</strong>`, section:'pipeline' });
+  save(); document.getElementById('pipeline-detail-overlay').classList.remove('open'); renderPipeline();
+}
+
+function openPipelineDetail(id) {
+  const item = (data.pipeline||[]).find(x => x.id === id);
+  if (!item) return;
+  const stages = getPipelineStages();
+  const stage = stages.find(s => s.id === item.stage)||{name:item.stage, color:'#888'};
+  const linked = item.linkedType === 'inquiry' ? data.inquiries.find(x=>x.id===item.linkedId)
+               : item.linkedType === 'project' ? data.projects.find(x=>x.id===item.linkedId) : null;
+  document.getElementById('pl-detail-title').textContent = item.name;
+  document.getElementById('pl-detail-body').innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <span style="background:${stage.color}22;color:${stage.color};padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">${stage.name}</span>
+      ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
+      ${item.pic ? `<span class="rap-pic-pill">${item.pic}</span>` : ''}
+    </div>
+    ${item.targetDate ? `<div style="font-size:12px;color:var(--text2);margin-bottom:8px;"><i class="ti ti-calendar" style="margin-right:5px;"></i>Target: <strong>${fmtDate(item.targetDate)}</strong></div>` : ''}
+    ${showPipelineRevenue && item.revenue ? `<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;">RM ${parseFloat(item.revenue).toLocaleString('en-MY')}</div>` : ''}
+    ${linked ? `<div style="font-size:12px;color:var(--blue);margin-bottom:8px;"><i class="ti ti-link" style="margin-right:5px;"></i>Linked: <strong>${item.linkedType==='inquiry'?'Inquiry':'Project'}</strong> — ${linked.code||''} ${linked.name||''}</div>` : ''}
+    ${item.notes ? `<div style="font-size:12px;color:var(--text2);margin-bottom:8px;border-top:1px solid var(--border);padding-top:8px;">${item.notes}</div>` : ''}
+    <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:12px;">Added ${fmtDate(item.createdAt||'')}</div>
+    ${can('projects','edit') ? `
+    <div style="display:flex;gap:8px;">
+      <button class="btn-secondary" style="font-size:11px;flex:1;" onclick="document.getElementById('pipeline-detail-overlay').classList.remove('open');openEditPipelineItem('${item.id}')"><i class="ti ti-pencil"></i> Edit</button>
+      <button style="background:var(--rebg);color:var(--red);border:1px solid var(--red);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:11px;font-family:var(--f);" onclick="deletePipelineItem('${item.id}')"><i class="ti ti-trash"></i> Delete</button>
+    </div>` : ''}`;
+  document.getElementById('pipeline-detail-overlay').classList.add('open');
+}
+
+// ── Pipeline Stages Settings ──
+function openPipelineSettings() {
+  renderPipelineStagesList();
+  document.getElementById('modal-pipeline-settings').classList.add('open');
+}
+
+function renderPipelineStagesList() {
+  const stages = getPipelineStages();
+  const COLORS = ['#64748b','#3a8ef5','#f5a623','#30c060','#f0445a','#a06aee','#e8501a','#0891b2'];
+  document.getElementById('pipeline-stages-list').innerHTML = stages.map((s,i) => `
+    <div class="stage-row" id="stage-row-${i}">
+      <div class="stage-color-dot" style="background:${s.color}" onclick="cycleStageColor(${i})" title="Click to change color"></div>
+      <input class="finput" value="${s.name}" id="stage-name-${i}" style="flex:1;padding:5px 8px;font-size:12px;">
+      <button class="tact-btn" onclick="removeStageRow(${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+let stageColorIdx = {};
+const STAGE_COLORS = ['#64748b','#3a8ef5','#f5a623','#30c060','#f0445a','#a06aee','#e8501a','#0891b2','#0d9488','#dc2626'];
+function cycleStageColor(idx) {
+  const dot = document.querySelector(`#stage-row-${idx} .stage-color-dot`);
+  if (!dot) return;
+  stageColorIdx[idx] = ((stageColorIdx[idx]||0) + 1) % STAGE_COLORS.length;
+  dot.style.background = STAGE_COLORS[stageColorIdx[idx]];
+}
+
+function removeStageRow(idx) {
+  const row = document.getElementById(`stage-row-${idx}`);
+  if (row) row.remove();
+}
+
+function addPipelineStage() {
+  const name = (document.getElementById('new-stage-name').value||'').trim();
+  if (!name) return;
+  const stages = getPipelineStages();
+  const newStage = { id: name.toLowerCase().replace(/\s+/g,'-'), name, color: STAGE_COLORS[stages.length % STAGE_COLORS.length] };
+  if (!data.pipelineStages) data.pipelineStages = [...DEFAULT_PIPELINE_STAGES];
+  data.pipelineStages.push(newStage);
+  document.getElementById('new-stage-name').value = '';
+  renderPipelineStagesList();
+}
+
+function savePipelineStages() {
+  const rows = document.querySelectorAll('#pipeline-stages-list .stage-row');
+  const stages = [];
+  rows.forEach((row, i) => {
+    const nameInput = row.querySelector('input');
+    const dot = row.querySelector('.stage-color-dot');
+    const name = (nameInput?.value||'').trim();
+    if (!name) return;
+    const id = name.toLowerCase().replace(/\s+/g,'-');
+    const color = dot?.style.background || STAGE_COLORS[i%STAGE_COLORS.length];
+    stages.push({id, name, color});
+  });
+  if (!stages.length) { alert('Need at least one stage.'); return; }
+  data.pipelineStages = stages;
+  save(); closeModal('pipeline-settings'); renderPipeline();
+}
+
+// ── Pipeline Targets ──
+function openPipelineTargetModal() {
+  const targets = (data.pipelineTargets||{})[pipelineYear]||{count:0,revenue:0};
+  document.getElementById('pt-year').value = pipelineYear;
+  document.getElementById('pt-count').value = targets.count||'';
+  document.getElementById('pt-rev').value = targets.revenue||'';
+  document.getElementById('modal-pipeline-targets').classList.add('open');
+}
+
+function savePipelineTargets() {
+  const year = parseInt(document.getElementById('pt-year').value)||pipelineYear;
+  const count = parseInt(document.getElementById('pt-count').value)||0;
+  const revenue = parseFloat(document.getElementById('pt-rev').value)||0;
+  if (!data.pipelineTargets) data.pipelineTargets = {};
+  data.pipelineTargets[year] = {count, revenue};
+  save(); closeModal('pipeline-targets'); renderPipeline();
+}
+
+// Hook into showPage to render pipeline when navigating to it
+const _origShowPageV45 = showPage;
+showPage = function(name) {
+  _origShowPageV45(name);
+  if (name === 'pipeline') renderPipeline();
+};
+
 function toggleTaskViewAll() {
   if (currentUserProfile?.role !== 'master') return;
   taskViewAll = !taskViewAll;
@@ -5037,7 +5684,7 @@ function inlineAddTask(projId) {
   if (!p) return;
   if (!p.tasks) p.tasks = [];
   const status = document.getElementById('il-task-status').value;
-  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value.trim()||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'' });
+  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'' });
   logActivity(projId, 'add', 'circle-check', `Added action: <strong>${name}</strong>`);
   appendChangelog({ type:'create', icon:'circle-check', text:`Added action to <strong>${p.name||p.code}</strong>: ${name}`, section:'actions' });
   save(); renderProjects(); renderProjDetail(); showNotifications();
@@ -5049,7 +5696,7 @@ function inlineEditTask(projId, idx) {
   if (!name) { alert('Please enter an action name.'); return; }
   const status = document.getElementById(`il-te-status-${idx}`).value;
   const old = p.tasks[idx];
-  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value.trim()||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'' };
+  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'' };
   logActivity(projId, 'edit', 'pencil', `Updated action: <strong>${name}</strong>`);
   save(); renderProjects(); renderProjDetail(); showNotifications();
 }
@@ -5282,7 +5929,9 @@ function renderProjDetail() {
           <div class="fg"><label class="flabel">Action / Task</label><input class="finput" id="il-task-name" type="text" placeholder="What needs to be done…"></div>
           <div class="frow2">
             <div class="fg"><label class="flabel">Deadline</label><input class="finput" id="il-task-dl" type="date" value="${today}"></div>
-            <div class="fg"><label class="flabel">Assigned To</label><input class="finput" id="il-task-pic" type="text" placeholder="Name (default: Adam)"></div>
+            <div class="fg"><label class="flabel">Assigned To (PIC)</label>
+              <select class="finput" id="il-task-pic">${picDropdownHTML(currentUserProfile?.name||'Adam')}</select>
+            </div>
           </div>
           <div class="frow2">
             <div class="fg"><label class="flabel">Status</label>
@@ -5339,7 +5988,9 @@ function renderProjDetail() {
             <div class="fg"><label class="flabel">Action</label><input class="finput" id="il-te-name-${idx}" type="text" value="${t.name}"></div>
             <div class="frow2">
               <div class="fg"><label class="flabel">Deadline</label><input class="finput" id="il-te-dl-${idx}" type="date" value="${t.deadline||today}"></div>
-              <div class="fg"><label class="flabel">Assigned To</label><input class="finput" id="il-te-pic-${idx}" type="text" value="${t.pic||''}"></div>
+              <div class="fg"><label class="flabel">Assigned To (PIC)</label>
+                <select class="finput" id="il-te-pic-${idx}">${picDropdownHTML(t.pic||currentUserProfile?.name||'Adam')}</select>
+              </div>
             </div>
             <div class="frow2">
               <div class="fg"><label class="flabel">Status</label>
@@ -5607,27 +6258,30 @@ function openProjTaskModal(projId, taskIdx) {
   editingProjTaskCtx = {projId, taskIdx};
   const isEdit = taskIdx !== null && taskIdx !== undefined;
   document.getElementById('proj-task-modal-title').textContent = isEdit ? 'Edit Action' : 'Add Action';
-  // Populate linked sub-status dropdown
   const p = data.projects.find(x => x.id === projId);
   const subs = (p && p.subStatuses) || [];
   const ssSel = document.getElementById('pt-substatus');
   ssSel.innerHTML = '<option value="">— None —</option>' +
     subs.map((ss, i) => `<option value="${ss.id||i}">${ss.title}${ss.date ? ' ('+fmtDate(ss.date)+')' : ''}</option>`).join('');
+
+  // Populate PIC dropdown
+  const ptPic = document.getElementById('pt-pic');
+  const defaultPIC = currentUserProfile?.name || 'Adam';
   if (isEdit) {
     const t = (p&&p.tasks||[])[taskIdx];
     if (t) {
+      ptPic.innerHTML = picDropdownHTML(t.pic || defaultPIC);
       document.getElementById('pt-name').value = t.name||'';
       document.getElementById('pt-deadline').value = t.deadline||'';
-      document.getElementById('pt-pic').value = t.pic||'';
       document.getElementById('pt-status').value = t.status||'todo';
       document.getElementById('pt-reminder').value = t.reminder||'';
       ssSel.value = t.linkedSubStatus || '';
       toggleAwaitingReminderProj(t.status||'todo');
     }
   } else {
+    ptPic.innerHTML = picDropdownHTML(defaultPIC);
     document.getElementById('pt-name').value = '';
     document.getElementById('pt-deadline').value = todayStr();
-    document.getElementById('pt-pic').value = '';
     document.getElementById('pt-status').value = 'todo';
     document.getElementById('pt-reminder').value = '';
     ssSel.value = '';
@@ -5640,8 +6294,7 @@ function submitProjTask() {
   const name = document.getElementById('pt-name').value.trim();
   if (!name) { alert('Please enter an action name.'); return; }
   const deadline = document.getElementById('pt-deadline').value;
-  const picVal = document.getElementById('pt-pic').value.trim();
-  const pic = picVal || 'Adam';
+  const pic = document.getElementById('pt-pic').value || currentUserProfile?.name || 'Adam';
   const status = document.getElementById('pt-status').value;
   const reminder = status === 'awaiting-reply' ? (document.getElementById('pt-reminder').value||'') : '';
   const linkedSubStatus = document.getElementById('pt-substatus').value || '';
@@ -5967,6 +6620,7 @@ async function onUserSignedIn(firebaseUser) {
 
   // Re-render now that profile is loaded — buttons will show/hide correctly
   renderAll();
+  refreshUserList();
 
   // Hide login, show app
   document.getElementById('login-screen').style.display = 'none';

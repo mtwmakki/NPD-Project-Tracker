@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V47</title>
+<title>NPD Tracker V48</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -972,7 +972,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V47</div>
+    <div class="login-logo">NPD Tracker V48</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -998,7 +998,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V47</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V48</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -3509,13 +3509,12 @@ function renderInquiryCard(item) {
       ${pipelineHTML}
       ${remarkHTML}
       ${!tasks.length ? '<div style="padding:11px 13px;font-size:12px;color:var(--text3);">No tasks yet.</div>' : (aHTML+fHTML+dHTML)}
-      <div class="card-acts">
-        <button class="cact-btn" onclick="openAddTask('inquiry','${item.id}')"><i class="ti ti-plus"></i> Task</button>
-        <button class="cact-btn" onclick="openInqDetail('${item.id}')"><i class="ti ti-layout-sidebar-right"></i> Full View</button>
-        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i> Edit</button>` : ''}
-        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i> Status</button>` : ''}
-        ${can('inquiries','add') ? `<button class="cact-btn" onclick="duplicateItem('inquiry','${item.id}')"><i class="ti ti-copy"></i> Duplicate</button>` : ''}
-        ${can('inquiries','delete') ? `<button class="cact-btn danger" onclick="startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i> Delete</button>` : ''}
+      <div class="card-acts-row">
+        ${can('inquiries','add') ? `<button class="cact-icon" onclick="openAddTask('inquiry','${item.id}')" title="Add Task"><i class="ti ti-plus"></i></button>` : ''}
+        <button class="cact-icon" onclick="openInqDetail('${item.id}')" title="Full View"><i class="ti ti-layout-sidebar-right"></i></button>
+        ${can('inquiries','edit') ? `<button class="cact-icon status-btn" onclick="openEditSt('inquiry','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>` : ''}
+        ${can('inquiries','add') ? `<button class="cact-icon" onclick="duplicateItem('inquiry','${item.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>` : ''}
+        ${can('inquiries','delete') ? `<button class="cact-icon danger" onclick="startDelete('inquiry','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>` : ''}
       </div>
     </div>
   </div>`;
@@ -3941,6 +3940,8 @@ function openInqDetail(inqId) {
   currentInqDetailId = inqId;
   currentInqDTab = 'overview';
   renderInqDetail();
+  const editBtn = document.getElementById('inq-d-edit-btn');
+  if (editBtn) editBtn.style.display = can('inquiries','edit') ? 'flex' : 'none';
   document.getElementById('inq-detail-overlay').classList.add('open');
 }
 
@@ -4205,6 +4206,7 @@ function submitProject() {
     return;
   }
 
+  const isEditProj = !!editingProjId;
   if (editingProjId) {
     const idx = data.projects.findIndex(x => x.id === editingProjId);
     if (idx >= 0) {
@@ -4217,8 +4219,8 @@ function submitProject() {
   } else {
     data.projects.unshift({id:uid(), code, name, date, status, classification, brief, factory, subStatuses:[], tasks:[], milestones:[], pics:[], expanded:true});
   }
+  appendChangelog({ type: isEditProj ? 'update' : 'create', icon: isEditProj ? 'pencil' : 'circle-plus', text: `${isEditProj ? 'Updated' : 'Created'} project: <strong>${name}</strong>`, section: 'projects' });
   save(); closeModal('proj'); renderAll();
-  appendChangelog({ type: editingProjId ? 'update' : 'create', icon: editingProjId ? 'pencil' : 'circle-plus', text: `${editingProjId ? 'Updated' : 'Created'} project: <strong>${name}</strong>`, section: 'projects' });
 }
 
 function openEditProject(id) {

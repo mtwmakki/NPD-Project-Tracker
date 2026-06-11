@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V48</title>
+<title>NPD Tracker V49</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -965,6 +965,33 @@ html{scroll-behavior:smooth;}
 .na-text{font-size:12px;color:var(--text);flex:1;}
 .na-deadline{font-size:10px;color:var(--text3);font-family:var(--fm);flex-shrink:0;}
 .na-deadline.overdue{color:var(--red);}
+/* ── Simple Gantt ── */
+.gantt-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0 12px;}
+.gantt-toolbar input,.gantt-toolbar select{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);}
+.gantt-mode-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.gantt-mode-btn{padding:4px 10px;font-size:11px;font-weight:500;font-family:var(--f);border:none;background:none;cursor:pointer;color:var(--text3);}
+.gantt-mode-btn.active{background:var(--accent);color:#fff;}
+.gantt-wrap{overflow-x:auto;overflow-y:visible;}
+.gantt-wrap::-webkit-scrollbar{height:5px;}
+.gantt-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.gantt-task-row{display:flex;align-items:center;min-height:30px;border-bottom:1px solid var(--border);}
+.gantt-task-row:hover{background:var(--surface2);}
+.gantt-task-name{flex-shrink:0;padding:0 8px;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-right:1px solid var(--border);}
+.gantt-task-bars{flex:1;position:relative;height:30px;}
+.gantt-bar{position:absolute;height:14px;top:8px;border-radius:3px;cursor:pointer;transition:opacity .15s;}
+.gantt-bar:hover{opacity:.8;}
+.gantt-bar.baseline{background:var(--blue);opacity:.35;}
+.gantt-bar.actual{background:var(--accent);}
+.gantt-bar.milestone{width:10px!important;height:10px;top:10px;transform:rotate(45deg);border-radius:1px;}
+.gantt-header-row{display:flex;border-bottom:2px solid var(--border);background:var(--surface2);}
+.gantt-header-name{flex-shrink:0;padding:6px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-family:var(--fm);border-right:1px solid var(--border);}
+.gantt-header-weeks{flex:1;display:flex;}
+.gantt-week-label{text-align:center;font-size:9px;font-family:var(--fm);color:var(--text3);padding:6px 0;border-right:1px solid var(--border);}
+.gantt-seg-badge{font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;flex-shrink:0;}
+.gantt-empty{text-align:center;padding:24px;color:var(--text3);font-size:12px;}
+.gantt-add-row{display:flex;gap:6px;padding:8px 0;align-items:center;flex-wrap:wrap;}
+.gantt-add-row input,.gantt-add-row select{font-size:11px;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);}
+.gantt-actual-inputs{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text3);}
 </style>
 </head>
 <body>
@@ -972,7 +999,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V48</div>
+    <div class="login-logo">NPD Tracker V49</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -998,7 +1025,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V48</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V49</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1546,6 +1573,7 @@ html{scroll-behavior:smooth;}
       <button class="pd-tab active" data-tab="overview" onclick="switchPDTab('overview')"><i class="ti ti-layout-list"></i> Overview</button>
       <button class="pd-tab" data-tab="actions" onclick="switchPDTab('actions')"><i class="ti ti-checkbox"></i> Actions</button>
       <button class="pd-tab" data-tab="milestones" onclick="switchPDTab('milestones')"><i class="ti ti-flag"></i> Milestones</button>
+      <button class="pd-tab" data-tab="gantt" onclick="switchPDTab('gantt')"><i class="ti ti-chart-gantt"></i> Gantt</button>
       <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-history"></i> Activity</button>
     </div>
     <div class="proj-detail-body" id="pd-body"></div>
@@ -5946,6 +5974,224 @@ showPage = function(name) {
   if (name === 'pipeline') renderPipeline();
 };
 
+// ══════════════════════════════════════════════════════
+//  SIMPLE GANTT
+// ══════════════════════════════════════════════════════
+const SEG_COLORS = { Mold:'#3a8ef5', Machine:'#f5a623', Material:'#30c060', Delivery:'#a06aee', General:'#64748b' };
+const GANTT_NAME_W = 160;
+const GANTT_WEEK_W = 28;
+
+function getGanttTasks(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p) return [];
+  if (!p.ganttTasks) p.ganttTasks = [];
+  return p.ganttTasks;
+}
+
+function setGanttMode(projId, isActual) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p) return;
+  p.ganttActual = isActual;
+  save(); renderProjDetail();
+}
+
+function ganttAddTask(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p) return;
+  const name = (document.getElementById(`g-new-name-${projId}`)?.value||'').trim();
+  if (!name) { alert('Enter a task name.'); return; }
+  if (!p.ganttTasks) p.ganttTasks = [];
+  p.ganttTasks.push({
+    id: uid(),
+    name,
+    seg: document.getElementById(`g-new-seg-${projId}`)?.value || 'General',
+    start: parseInt(document.getElementById(`g-new-start-${projId}`)?.value)||1,
+    dur:   parseInt(document.getElementById(`g-new-dur-${projId}`)?.value)||1,
+    actStart: 0, actDur: 0
+  });
+  save(); renderProjDetail();
+}
+
+function ganttDeleteTask(projId, taskId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !p.ganttTasks) return;
+  p.ganttTasks = p.ganttTasks.filter(t => t.id !== taskId);
+  save(); renderProjDetail();
+}
+
+function ganttUpdateActual(projId, taskId, field, val) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !p.ganttTasks) return;
+  const t = p.ganttTasks.find(x => x.id === taskId);
+  if (t) { t[field] = parseInt(val)||0; save(); ganttRedrawBars(projId); }
+}
+
+function ganttRedrawBars(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !p.ganttTasks) return;
+  const tasks = p.ganttTasks;
+  const isActual = p.ganttActual;
+  const totalWeeks = Math.max(12, ...tasks.map(t => Math.max(t.start+t.dur-1, isActual&&t.actStart&&t.actDur ? t.actStart+t.actDur-1 : 0))) + 2;
+  tasks.forEach(t => {
+    const baseBar = document.getElementById(`gb-base-${t.id}`);
+    const actBar  = document.getElementById(`gb-act-${t.id}`);
+    if (baseBar) { baseBar.style.left = ((t.start-1)/totalWeeks*100)+'%'; baseBar.style.width = (t.dur/totalWeeks*100)+'%'; }
+    if (actBar && isActual && t.actStart && t.actDur) {
+      actBar.style.display = 'block';
+      actBar.style.left  = ((t.actStart-1)/totalWeeks*100)+'%';
+      actBar.style.width = (t.actDur/totalWeeks*100)+'%';
+    }
+  });
+}
+
+function renderGanttTab(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p) return;
+  if (!p.ganttTasks) p.ganttTasks = [];
+  const tasks = p.ganttTasks;
+  const isActual = p.ganttActual;
+  const el = document.getElementById(`gantt-chart-${projId}`);
+  if (!el) return;
+  if (!tasks.length) { el.innerHTML = '<div class="gantt-empty"><i class="ti ti-chart-gantt" style="font-size:20px;display:block;margin-bottom:8px;"></i>No tasks yet. Add one below.</div>'; return; }
+
+  const totalWeeks = Math.max(12, ...tasks.map(t => Math.max(t.start+t.dur-1, isActual&&t.actStart&&t.actDur ? t.actStart+t.actDur-1 : 0))) + 2;
+  const startDate = new Date((p.ganttStart||p.date||todayStr())+'T00:00:00');
+
+  // Header
+  let html = `<div class="gantt-wrap" id="gantt-wrap-${projId}"><div style="min-width:${GANTT_NAME_W + totalWeeks*GANTT_WEEK_W}px;">`;
+  html += `<div class="gantt-header-row">
+    <div class="gantt-header-name" style="width:${GANTT_NAME_W}px;">Task</div>
+    <div class="gantt-header-weeks" style="flex:1;">`;
+  for (let w = 1; w <= totalWeeks; w++) {
+    const wDate = new Date(startDate.getTime() + (w-1)*7*86400000);
+    const label = wDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    html += `<div class="gantt-week-label" style="flex:0 0 ${GANTT_WEEK_W}px;overflow:hidden;">${w%2===1?label:''}</div>`;
+  }
+  html += `</div></div>`;
+
+  // Legend
+  if (isActual) {
+    html += `<div style="display:flex;gap:12px;padding:4px 8px;font-size:10px;color:var(--text3);font-family:var(--fm);">
+      <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:var(--blue);opacity:.35;"></span> Preliminary</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:var(--accent);"></span> Actual</span>
+    </div>`;
+  }
+
+  // Rows
+  tasks.forEach(t => {
+    const color = SEG_COLORS[t.seg] || '#64748b';
+    const baseLeft = ((t.start-1)/totalWeeks*100).toFixed(2)+'%';
+    const baseW    = (t.dur/totalWeeks*100).toFixed(2)+'%';
+    const hasActual = isActual && t.actStart && t.actDur;
+    const actLeft  = hasActual ? ((t.actStart-1)/totalWeeks*100).toFixed(2)+'%' : '0%';
+    const actW     = hasActual ? (t.actDur/totalWeeks*100).toFixed(2)+'%' : '0%';
+
+    html += `<div class="gantt-task-row">
+      <div class="gantt-task-name" style="width:${GANTT_NAME_W}px;" title="${t.name}">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${color};margin-right:4px;flex-shrink:0;vertical-align:middle;"></span>${t.name}
+        <button onclick="ganttDeleteTask('${projId}','${t.id}')" style="float:right;background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;padding:0;"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="gantt-task-bars" style="flex:1;position:relative;height:${isActual?44:30}px;">
+        <div class="gantt-bar baseline" id="gb-base-${t.id}" style="left:${baseLeft};width:${baseW};background:${color};${isActual?'opacity:.3;top:5px;':'top:8px;opacity:1;'}" title="${t.name} · Wk${t.start}–${t.start+t.dur-1}"></div>
+        ${isActual ? `<div class="gantt-bar actual" id="gb-act-${t.id}" style="left:${actLeft};width:${actW};background:${color};top:24px;display:${hasActual?'block':'none'};" title="Actual Wk${t.actStart}–${t.actStart+t.actDur-1}"></div>` : ''}
+      </div>
+      ${isActual ? `<div class="gantt-actual-inputs" style="padding:0 6px;flex-shrink:0;">
+        <span>Actual:</span>
+        <input type="number" value="${t.actStart||''}" min="1" placeholder="Start" style="width:52px;" onchange="ganttUpdateActual('${projId}','${t.id}','actStart',this.value)">
+        <input type="number" value="${t.actDur||''}" min="1" placeholder="Wks" style="width:52px;" onchange="ganttUpdateActual('${projId}','${t.id}','actDur',this.value)">
+      </div>` : ''}
+    </div>`;
+  });
+
+  html += '</div></div>';
+  el.innerHTML = html;
+
+  // Save start date if changed
+  if (p.ganttStart !== document.getElementById(`g-start-${projId}`)?.value) {
+    p.ganttStart = document.getElementById(`g-start-${projId}`)?.value || p.date;
+    save();
+  }
+}
+
+function ganttExportXLSX(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !p.ganttTasks) { alert('No Gantt tasks to export.'); return; }
+  const wb = XLSX.utils.book_new();
+  const info = [['Project', p.name],['Code', p.code],['StartDate', p.ganttStart||p.date||''],['Mode', p.ganttActual?'actual':'baseline']];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'Info');
+  const rows = [['ID','Name','Category','PlanStart(wk)','PlanDuration(wks)','ActualStart(wk)','ActualDuration(wks)']];
+  p.ganttTasks.forEach(t => rows.push([t.id, t.name, t.seg, t.start, t.dur, t.actStart||'', t.actDur||'']));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Tasks');
+  XLSX.writeFile(wb, `${p.code||'Gantt'}_timeline.xlsx`);
+}
+
+function ganttImportXLSX(event, projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p) return;
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'binary'});
+      if (wb.SheetNames.includes('Info')) {
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets['Info'], {header:1});
+        rows.forEach(r => {
+          if (r[0]==='StartDate') p.ganttStart = r[1]||'';
+          if (r[0]==='Mode') p.ganttActual = r[1]==='actual';
+        });
+      }
+      if (wb.SheetNames.includes('Tasks')) {
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets['Tasks'], {header:1});
+        p.ganttTasks = [];
+        for (let i=1; i<rows.length; i++) {
+          const r = rows[i]; if (!r||!r[1]) continue;
+          p.ganttTasks.push({ id:uid(), name:String(r[1]), seg:String(r[2]||'General'), start:+r[3]||1, dur:+r[4]||1, actStart:+r[5]||0, actDur:+r[6]||0 });
+        }
+      }
+      save(); renderProjDetail();
+      alert('Gantt imported successfully!');
+    } catch(err) { alert('Import error: ' + err.message); }
+  };
+  reader.readAsBinaryString(file);
+  event.target.value = '';
+}
+
+function ganttExportPDF(projId) {
+  const el = document.getElementById(`gantt-wrap-${projId}`);
+  if (!el) { alert('No Gantt chart to print.'); return; }
+  const p = data.projects.find(x => x.id === projId);
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html><html><head><title>${p?.name||'Gantt'} — Timeline</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:16px;}
+      h2{font-size:14px;margin-bottom:8px;color:#1a1a2e;}
+      .gantt-wrap{overflow:visible;}
+      .gantt-task-row{display:flex;border-bottom:1px solid #e0e0e0;min-height:28px;}
+      .gantt-task-name{font-size:10px;padding:4px 6px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-right:1px solid #e0e0e0;}
+      .gantt-task-bars{flex:1;position:relative;height:28px;}
+      .gantt-bar{position:absolute;height:12px;top:8px;border-radius:2px;}
+      .gantt-header-row{display:flex;background:#f5f7fa;border-bottom:2px solid #ccc;}
+      .gantt-header-name{padding:5px 6px;font-size:10px;font-weight:700;border-right:1px solid #ccc;}
+      .gantt-week-label{text-align:center;font-size:8px;color:#666;border-right:1px solid #e0e0e0;padding:5px 0;}
+      @media print{@page{size:A4 landscape;margin:10mm;}}
+    </style></head><body>
+    <h2>${p?.code||''} — ${p?.name||''} — Gantt Timeline</h2>
+    ${el.outerHTML}
+    <script>window.onload=function(){window.print();window.close();}<\/script>
+  </body></html>`);
+  printWin.document.close();
+}
+
+// Trigger Gantt render after tab content is injected
+const _origSwitchPDTab = switchPDTab;
+switchPDTab = function(tab) {
+  _origSwitchPDTab(tab);
+  if (tab === 'gantt') {
+    setTimeout(() => renderGanttTab(currentProjDetailId), 100);
+  }
+};
+
 function toggleTaskViewAll() {
   if (currentUserProfile?.role !== 'master') return;
   taskViewAll = !taskViewAll;
@@ -6553,6 +6799,39 @@ function renderProjDetail() {
           </div>`;
         }).join('') + `</div>`
       : `<div class="ms-empty"><i class="ti ti-flag"></i>No milestones yet.<br><span style="font-size:11px;">Add key dates like sample targets, approvals, and deadlines.</span></div>`}
+    </div>`;
+  }
+
+  if (tab === 'gantt') {
+    html += `<div class="proj-detail-section" id="gantt-section-${p.id}">
+      <div class="gantt-toolbar">
+        <div>
+          <label style="font-size:10px;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:2px;">START DATE</label>
+          <input type="date" id="g-start-${p.id}" value="${p.ganttStart||p.date||todayStr()}" onchange="renderGanttTab('${p.id}')">
+        </div>
+        <div class="gantt-mode-toggle">
+          <button class="gantt-mode-btn ${!p.ganttActual?'active':''}" onclick="setGanttMode('${p.id}',false)">Preliminary</button>
+          <button class="gantt-mode-btn ${p.ganttActual?'active':''}" onclick="setGanttMode('${p.id}',true)">Actual</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-left:auto;">
+          <label style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;">
+            <i class="ti ti-upload" style="font-size:11px"></i> Import
+            <input type="file" accept=".xlsx" style="display:none" onchange="ganttImportXLSX(event,'${p.id}')">
+          </label>
+          <button onclick="ganttExportXLSX('${p.id}')" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;"><i class="ti ti-download" style="font-size:11px"></i> Export</button>
+          <button onclick="ganttExportPDF('${p.id}')" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;"><i class="ti ti-printer" style="font-size:11px"></i> PDF</button>
+        </div>
+      </div>
+      <div id="gantt-chart-${p.id}"></div>
+      <div class="gantt-add-row">
+        <input id="g-new-name-${p.id}" type="text" placeholder="Task name…" style="flex:1;min-width:120px;">
+        <select id="g-new-seg-${p.id}">
+          ${ACTION_CLASSES.map(c=>`<option value="${c}">${c}</option>`).join('')}
+        </select>
+        <input id="g-new-start-${p.id}" type="number" placeholder="Start wk" min="1" value="1" style="width:70px;">
+        <input id="g-new-dur-${p.id}" type="number" placeholder="Weeks" min="1" value="2" style="width:70px;">
+        <button onclick="ganttAddTask('${p.id}')" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:11px;font-family:var(--f);cursor:pointer;"><i class="ti ti-plus"></i> Add</button>
+      </div>
     </div>`;
   }
 

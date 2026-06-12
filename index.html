@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V60</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>NPD Tracker V61</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -13,13 +13,41 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
-html.dark-mode{--bg:#0f1117;--surface:#161b26;--surface2:#1e2535;--text:#eef1f7;--text2:#8fa3bf;--text3:#546480;--border:#2a3550;--accent:#3a8ef5;--al:#0a1a38;--amber:#f5a623;--ambg:#2a1e08;--red:#f0445a;--rebg:#2a0a10;--blue:#3a8ef5;--blbg:#0a1838;--purple:#a06aee;--pubg:#1a0a2e;}
-html.light-mode{--bg:#f0f4ff;--surface:#ffffff;--surface2:#e8eeff;--text:#0a1428;--text2:#3a5070;--text3:#7090b0;--border:#c8d8f0;--accent:#1a6ef0;--al:#ddeaff;--amber:#d08010;--ambg:#fff5e0;--red:#e0203a;--rebg:#ffebee;--blue:#1a6ef0;--blbg:#ddeaff;--purple:#7040c8;--pubg:#f0e8ff;}
-:root{--r:10px;--rs:6px;--f:'IBM Plex Sans',sans-serif;--fm:'IBM Plex Mono',monospace;}
+html.dark-mode{
+  --bg:#111318;--surface:#1a1d24;--surface2:#22262f;--surface3:#2a2f3a;
+  --text:#eef1f7;--text2:#9aa8be;--text3:#5a6a82;
+  --border:#2e3444;--border2:#3a4155;
+  --accent:#3a8ef5;--al:#0d1e3a;
+  --amber:#f5a623;--ambg:#2a1e08;
+  --red:#f0445a;--rebg:#2a0a10;
+  --blue:#3a8ef5;--blbg:#0a1838;
+  --purple:#a06aee;--pubg:#1a0a2e;
+  --green:#30c060;--gbg:#0a2018;
+  --sidebar-bg:#0d0f14;--sidebar-text:#9aa8be;--sidebar-active:#eef1f7;--sidebar-hover:#1e2230;
+  --card-shadow:0 1px 3px rgba(0,0,0,.3);--card-shadow-hover:0 4px 16px rgba(0,0,0,.4);
+}
+html.light-mode{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0ede8;--surface3:#e8e4dd;
+  --text:#1a1a2e;--text2:#4a5568;--text3:#8a96a8;
+  --border:#e2ddd6;--border2:#ccc8c0;
+  --accent:#1a6ef0;--al:#ddeaff;
+  --amber:#d08010;--ambg:#fff5e0;
+  --red:#e0203a;--rebg:#ffebee;
+  --blue:#1a6ef0;--blbg:#ddeaff;
+  --purple:#7040c8;--pubg:#f0e8ff;
+  --green:#18a050;--gbg:#e8f5ee;
+  --sidebar-bg:#1a1a2e;--sidebar-text:#9aa8be;--sidebar-active:#ffffff;--sidebar-hover:#252540;
+  --card-shadow:0 1px 4px rgba(0,0,0,.08);--card-shadow-hover:0 6px 20px rgba(0,0,0,.12);
+}
+:root{
+  --r:12px;--rs:8px;
+  --f:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;display:flex;flex-direction:column;}
 /* ── Top bar ── */
-.topbar{background:var(--surface);border-bottom:2px solid transparent;background-clip:padding-box;padding:10px 14px 9px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 2px 0 0 transparent;}
+.topbar{display:none !important;}
 .topbar::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:linear-gradient(90deg,#f5a623,#f0445a,#3a8ef5,#30c060);}
 .topbar-title{font-size:13px;font-weight:700;letter-spacing:.02em;background:linear-gradient(135deg,#f0445a 0%,#3a8ef5 60%,#30c060 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .topbar-sub{font-size:9px;color:var(--text3);font-family:var(--fm);margin-top:1px;}
@@ -32,25 +60,37 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;
 /* ── App body: sidebar + content ── */
 .app-body{display:flex;flex:1;}
 /* ── Left Sidebar — fully fixed, never moves ── */
-.sidebar{position:fixed;top:45px;left:0;width:56px;height:calc(100vh - 45px);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:150;overflow:visible;transition:width .22s cubic-bezier(.4,0,.2,1);}
-.sidebar:hover{width:200px;}
-.sidebar.pinned{width:200px;}
-.sidebar-toggle{position:absolute;top:14px;right:-13px;width:24px;height:24px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;color:var(--text3);font-size:10px;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.sidebar{position:fixed;top:0;left:0;width:64px;height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;z-index:150;overflow:visible;transition:width .22s cubic-bezier(.4,0,.2,1);box-shadow:2px 0 12px rgba(0,0,0,.15);}
+.sidebar:hover,.sidebar.pinned{width:220px;}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:18px 0 14px;height:64px;flex-shrink:0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06);}
+.sidebar-logo-icon{width:64px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sidebar-logo-text{font-size:14px;font-weight:700;white-space:nowrap;opacity:0;max-width:0;overflow:hidden;transition:opacity .15s ease .05s,max-width .2s ease;background:linear-gradient(135deg,#f0445a,#3a8ef5,#30c060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar:hover .sidebar-logo-text,.sidebar.pinned .sidebar-logo-text{opacity:1;max-width:160px;}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:12px 0;margin:0 8px;border-radius:var(--rs);overflow:hidden;flex-shrink:0;cursor:pointer;transition:background .15s;}
+.sidebar-user:hover{background:var(--sidebar-hover);}
+.sidebar-user-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-left:8px;}
+.sidebar-user-info{opacity:0;max-width:0;overflow:hidden;white-space:nowrap;transition:opacity .15s ease .05s,max-width .2s ease;}
+.sidebar:hover .sidebar-user-info,.sidebar.pinned .sidebar-user-info{opacity:1;max-width:160px;}
+.sidebar-user-name{font-size:12px;font-weight:600;color:var(--sidebar-active);}
+.sidebar-user-role{font-size:10px;color:var(--sidebar-text);font-family:var(--fm);}
+.sidebar-toggle{position:absolute;top:20px;right:-12px;width:22px;height:22px;background:var(--sidebar-bg);border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;color:var(--sidebar-text);font-size:9px;box-shadow:0 1px 4px rgba(0,0,0,.2);}
 .sidebar-inner{display:flex;flex-direction:column;height:100%;overflow:hidden;}
-.sidebar-nav{flex:1;padding:10px 0 6px;display:flex;flex-direction:column;gap:2px;overflow:hidden;}
-.sidebar-bottom{padding:6px 0 12px;border-top:1px solid var(--border);flex-shrink:0;}
-.nav-item{display:flex;align-items:center;gap:0;padding:10px 0;cursor:pointer;border:none;background:none;color:var(--text3);font-size:12px;font-family:var(--f);font-weight:500;white-space:nowrap;width:100%;text-align:left;position:relative;transition:background .12s,color .12s;border-left:2px solid transparent;}
-.nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:var(--al);color:var(--accent);border-left:2px solid var(--accent);}
-.nav-item i{font-size:18px;flex-shrink:0;width:56px;text-align:center;}
-.nav-item-label{font-size:12px;font-weight:500;overflow:hidden;white-space:nowrap;opacity:0;max-width:0;transition:opacity .15s ease .05s, max-width .2s ease;flex:1;}
+.sidebar-nav{flex:1;padding:10px 0 6px;display:flex;flex-direction:column;gap:1px;overflow:hidden;}
+.sidebar-section-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--sidebar-text);opacity:.5;padding:8px 0 4px;white-space:nowrap;overflow:hidden;width:64px;text-align:center;transition:width .2s,opacity .15s,text-align .15s;}
+.sidebar:hover .sidebar-section-label,.sidebar.pinned .sidebar-section-label{width:auto;padding:8px 16px 4px;text-align:left;opacity:.7;}
+.sidebar-bottom{padding:6px 0 16px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.nav-item{display:flex;align-items:center;gap:0;padding:9px 0;cursor:pointer;border:none;background:none;color:var(--sidebar-text);font-size:12px;font-family:var(--f);font-weight:500;white-space:nowrap;width:100%;text-align:left;position:relative;transition:background .12s,color .12s;border-radius:0;}
+.nav-item:hover{background:var(--sidebar-hover);color:var(--sidebar-active);}
+.nav-item.active{background:rgba(58,142,245,.15);color:#3a8ef5;border-left:2px solid #3a8ef5;}
+.nav-item:not(.active){border-left:2px solid transparent;}
+.nav-item i{font-size:17px;flex-shrink:0;width:64px;text-align:center;transition:none;}
+.nav-item-label{font-size:12px;font-weight:500;overflow:hidden;white-space:nowrap;opacity:0;max-width:0;transition:opacity .15s ease .05s,max-width .2s ease;flex:1;}
 .sidebar:hover .nav-item-label,.sidebar.pinned .nav-item-label{opacity:1;max-width:160px;}
-.nav-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:20px;font-family:var(--fm);min-width:14px;text-align:center;pointer-events:none;position:absolute;top:6px;left:32px;transition:opacity .15s;}
+.nav-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:20px;font-family:var(--fm);min-width:14px;text-align:center;pointer-events:none;position:absolute;top:7px;left:34px;transition:all .15s;}
 .sidebar:hover .nav-badge,.sidebar.pinned .nav-badge{position:relative;top:auto;left:auto;margin-left:auto;margin-right:12px;}
 /* ── Main content ── */
-.main-content{margin-left:56px;flex:1;overflow-y:auto;overflow-x:hidden;height:calc(100vh - 45px);transition:margin-left .22s ease;}
-.main-content.sidebar-collapsed{margin-left:56px;}
-.main-content.sidebar-pinned{margin-left:200px;}
+.main-content{margin-left:64px;flex:1;overflow-y:auto;overflow-x:hidden;height:100vh;transition:margin-left .22s ease;}
+.main-content.sidebar-pinned{margin-left:220px;}
 /* ── Overlays — centred popup ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;}
 .overlay.open{display:flex;}
@@ -1024,7 +1064,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V60</div>
+    <div class="login-logo">NPD Tracker V61</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1090,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V60</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V61</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1076,12 +1116,36 @@ html{scroll-behavior:smooth;}
 
 <!-- LEFT SIDEBAR -->
 <nav class="sidebar" id="sidebar">
-  <div class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn"><i class="ti ti-chevron-left" id="sidebar-toggle-icon"></i></div>
+  <div class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn"><i class="ti ti-chevron-right" id="sidebar-toggle-icon"></i></div>
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="url(#sg)"/>
+        <text x="14" y="19" text-anchor="middle" font-size="13" font-weight="700" fill="white" font-family="sans-serif">T</text>
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
+      </svg>
+    </div>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V61</span></span>
+  </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
+      <!-- User info -->
+      <div class="sidebar-user" id="sidebar-user-block" onclick="showPage('settings')" style="display:none;">
+        <div class="sidebar-user-avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#f0445a,#3a8ef5);">A</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-username">Adam</div>
+          <div class="sidebar-user-role" id="sidebar-userrole">Master</div>
+        </div>
+      </div>
+      <!-- Status -->
+      <div style="display:flex;align-items:center;padding:4px 0 8px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:4px;">
+        <div style="width:64px;text-align:center;flex-shrink:0;"><div id="sidebar-sync" style="width:8px;height:8px;border-radius:50%;background:#30c060;display:inline-block;" title="Online"></div></div>
+        <div id="sidebar-sync-label" style="font-size:10px;color:var(--sidebar-text);opacity:.6;white-space:nowrap;overflow:hidden;max-width:0;opacity:0;transition:max-width .2s,opacity .15s ease .05s;"></div>
+      </div>
       <button class="nav-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i><span class="nav-item-label">Inquiries</span></button>
       <button class="nav-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i><span class="nav-item-label">Projects</span></button>
-      <button class="nav-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="nav-item-label">Tasks</span></button>
+      <button class="nav-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="nav-item-label">Tasks</span><span class="nav-badge" id="tasks-viewall-badge" style="display:none"></span></button>
       <button class="nav-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="nav-item-label">Notifications</span><span class="nav-badge" id="notif-nav-badge" style="display:none">0</span></button>
       <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="nav-item-label">Dashboard</span></button>
       <button class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')"><i class="ti ti-git-branch"></i><span class="nav-item-label">NPD Pipeline</span></button>
@@ -1090,7 +1154,9 @@ html{scroll-behavior:smooth;}
       <button class="nav-item" id="nav-users" style="display:none;" onclick="showPage('users')"><i class="ti ti-users"></i><span class="nav-item-label">Users</span></button>
     </div>
     <div class="sidebar-bottom">
+      <button class="nav-item" onclick="toggleTheme()" id="sidebar-theme-btn"><i class="ti ti-moon" id="sidebar-theme-icon"></i><span class="nav-item-label" id="sidebar-theme-label">Dark Mode</span></button>
       <button class="nav-item" id="nav-settings" onclick="showPage('settings')"><i class="ti ti-settings"></i><span class="nav-item-label">Settings</span></button>
+      <button class="nav-item" onclick="doLogout()"><i class="ti ti-logout"></i><span class="nav-item-label">Sign Out</span></button>
     </div>
   </div>
 </nav>
@@ -1458,7 +1524,27 @@ html{scroll-behavior:smooth;}
 
   <div class="settings-section">
     <div class="settings-row">
-      <div><div class="settings-label">Delivery Performance Thresholds</div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
+      <div><div class="settings-label">Appearance</div><div class="settings-sub">Sidebar style and font</div></div>
+    </div>
+    <div class="settings-row">
+      <div><div class="settings-label">Sidebar Style</div><div class="settings-sub">Dark sidebar or match background</div></div>
+      <div style="display:flex;gap:6px;">
+        <button id="sb-dark-btn" onclick="setSidebarStyle('dark')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:var(--f);cursor:pointer;background:#0d0f14;color:#fff;">Dark</button>
+        <button id="sb-light-btn" onclick="setSidebarStyle('light')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:var(--f);cursor:pointer;background:var(--surface2);color:var(--text);">Match BG</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div><div class="settings-label">Font</div><div class="settings-sub">Switch between IBM Plex Sans and DM Sans</div></div>
+      <div style="display:flex;gap:6px;">
+        <button id="font-ibm-btn" onclick="setAppFont('ibm')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--accent);font-size:11px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;background:var(--al);color:var(--accent);">IBM Plex Sans</button>
+        <button id="font-dm-btn" onclick="setAppFont('dm')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--surface2);color:var(--text);">DM Sans</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div><div class="settings-label">Color Mode</div><div class="settings-sub">Light or dark theme</div></div>
+      <button class="settings-action" onclick="toggleTheme()" style="display:flex;align-items:center;gap:5px;"><i id="settings-theme-icon" class="ti ti-moon" style="font-size:13px;"></i> <span id="settings-theme-label">Toggle Theme</span></button>
+    </div>
+  </div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
       <div style="display:flex;gap:6px;align-items:center;">
         <input class="finput" id="deliv-thresh-yellow" type="number" min="1" max="365" value="14" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="14">
         <span style="font-size:11px;color:var(--amber);">⚠</span>
@@ -6483,6 +6569,40 @@ function resetWindowPosition(type) {
   if (!windowClipped[type]) windowClipped[type] = false;
 }
 
+function setSidebarStyle(style) {
+  const sb = document.getElementById('sidebar');
+  if (!sb) return;
+  if (style === 'light') {
+    sb.style.background = 'var(--surface)';
+    sb.style.borderRight = '1px solid var(--border)';
+    sb.style.boxShadow = 'none';
+    document.querySelectorAll('.nav-item').forEach(el => { el.style.color = 'var(--text3)'; });
+  } else {
+    sb.style.background = '';
+    sb.style.borderRight = '';
+    sb.style.boxShadow = '';
+    document.querySelectorAll('.nav-item').forEach(el => { el.style.color = ''; });
+  }
+  localStorage.setItem('pm_sidebar_style', style);
+  const db = document.getElementById('sb-dark-btn');
+  const lb = document.getElementById('sb-light-btn');
+  if (db) { db.style.border = style==='dark'?'1px solid var(--accent)':'1px solid var(--border)'; }
+  if (lb) { lb.style.border = style==='light'?'1px solid var(--accent)':'1px solid var(--border)'; }
+}
+
+function setAppFont(font) {
+  const fontMap = { ibm: "'IBM Plex Sans',sans-serif", dm: "'DM Sans',sans-serif" };
+  document.documentElement.style.setProperty('--f', fontMap[font]);
+  document.body.style.fontFamily = fontMap[font];
+  localStorage.setItem('pm_font', font);
+  document.getElementById('font-ibm-btn').style.borderColor = font==='ibm'?'var(--accent)':'var(--border)';
+  document.getElementById('font-ibm-btn').style.background  = font==='ibm'?'var(--al)':'var(--surface2)';
+  document.getElementById('font-ibm-btn').style.color       = font==='ibm'?'var(--accent)':'var(--text)';
+  document.getElementById('font-dm-btn').style.borderColor  = font==='dm'?'var(--accent)':'var(--border)';
+  document.getElementById('font-dm-btn').style.background   = font==='dm'?'var(--al)':'var(--surface2)';
+  document.getElementById('font-dm-btn').style.color        = font==='dm'?'var(--accent)':'var(--text)';
+}
+
 function saveDeliveryThresholds() {
   if (currentUserProfile?.role !== 'master') return;
   const yellow = parseInt(document.getElementById('deliv-thresh-yellow')?.value)||14;
@@ -7440,8 +7560,12 @@ function goToItem(page, itemId) {
 function applyTheme(mode) {
   document.documentElement.classList.remove('light-mode','dark-mode');
   document.documentElement.classList.add(mode==='dark'?'dark-mode':'light-mode');
-  document.getElementById('theme-icon').className = mode==='dark'?'ti ti-sun':'ti ti-moon';
-  document.getElementById('theme-label').textContent = mode==='dark'?'Light':'Dark';
+  // Topbar (hidden)
+  const ti = document.getElementById('theme-icon'); if(ti) ti.className = mode==='dark'?'ti ti-sun':'ti ti-moon';
+  const tl = document.getElementById('theme-label'); if(tl) tl.textContent = mode==='dark'?'Light':'Dark';
+  // Sidebar theme button
+  const si = document.getElementById('sidebar-theme-icon'); if(si) si.className = mode==='dark'?'ti ti-sun':'ti ti-moon';
+  const sl = document.getElementById('sidebar-theme-label'); if(sl) sl.textContent = mode==='dark'?'Light Mode':'Dark Mode';
   localStorage.setItem('pm_theme', mode);
 }
 function toggleTheme() { applyTheme(localStorage.getItem('pm_theme')==='dark'?'light':'dark'); }
@@ -7518,6 +7642,12 @@ if (savedSidebar === '0') {
 
 // Restore density preference
 const savedDensity = localStorage.getItem('pm_density');
+
+// Restore appearance settings
+const savedFont = localStorage.getItem('pm_font') || 'ibm';
+if (savedFont === 'dm') setAppFont('dm');
+const savedSidebarStyle = localStorage.getItem('pm_sidebar_style') || 'dark';
+if (savedSidebarStyle === 'light') setSidebarStyle('light');
 if (savedDensity) currentDensity = parseInt(savedDensity);
 applyDensity();
 showDensityBar(inqView === 'card'); // show on inquiries page only in card mode
@@ -7693,18 +7823,34 @@ function onUserSignedOut() {
 
 function updateTopbarUser() {
   if (!currentUserProfile) return;
-  const wrap = document.getElementById('topbar-user');
-  const av   = document.getElementById('topbar-avatar');
-  const nm   = document.getElementById('topbar-username');
-  const rb   = document.getElementById('topbar-role-badge');
   const name = currentUserProfile.name || 'User';
   const role = currentUserProfile.role || 'member';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const colors = { master:'linear-gradient(135deg,#f0445a,#3a8ef5)', manager:'#3a8ef5', member:'#30c060' };
+
+  // Update topbar (hidden but kept for compatibility)
+  const wrap = document.getElementById('topbar-user');
+  const av   = document.getElementById('topbar-avatar');
+  const nm   = document.getElementById('topbar-username');
+  const rb   = document.getElementById('topbar-role-badge');
   if (wrap) wrap.style.display = 'flex';
   if (av)  { av.style.background = colors[role]||'#888'; av.textContent = initials; }
   if (nm)  nm.textContent = name;
   if (rb)  { rb.textContent = role.charAt(0).toUpperCase()+role.slice(1); rb.className = `user-role-badge ${role}`; }
+
+  // Update sidebar user block
+  const sidebarUser = document.getElementById('sidebar-user-block');
+  const sidebarAv   = document.getElementById('sidebar-avatar');
+  const sidebarNm   = document.getElementById('sidebar-username');
+  const sidebarRole = document.getElementById('sidebar-userrole');
+  if (sidebarUser) sidebarUser.style.display = 'flex';
+  if (sidebarAv)  { sidebarAv.style.background = colors[role]||'#888'; sidebarAv.textContent = initials; }
+  if (sidebarNm)  sidebarNm.textContent = name;
+  if (sidebarRole) sidebarRole.textContent = role.charAt(0).toUpperCase()+role.slice(1);
+
+  // Update version in sidebar
+  const verEl = document.getElementById('sidebar-version');
+  if (verEl) verEl.textContent = 'V61';
 }
 
 function applyNavPermissions() {

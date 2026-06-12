@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V58</title>
+<title>NPD Tracker V59</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1024,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V58</div>
+    <div class="login-logo">NPD Tracker V59</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V58</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V59</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -4214,6 +4214,7 @@ function _renderInqDetailInner() {
     </div>`;
 
     // Products & Revenue
+    const totalRev = (inq.products||[]).reduce((s,p) => s + (p.volume||0)*(p.cost||0), 0);
     if ((inq.products||[]).length) {
       html += `<div class="proj-detail-section">
         <div class="proj-detail-slabel">Products &amp; Volume ${totalRev>0?`<span style="color:var(--accent);font-weight:600;font-size:10px;">Est. RM ${totalRev.toLocaleString('en-MY',{minimumFractionDigits:2})}</span>`:''}</div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V53</title>
+<title>NPD Tracker V54</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1024,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V53</div>
+    <div class="login-logo">NPD Tracker V54</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V53</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V54</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -2966,7 +2966,11 @@ function showDensityBar(show) {
 
 function renderAll() {
   if (!currentUserProfile) return; // wait for auth
-  renderInquiries(); renderProjects(); renderMTasks(); showNotifications(); updateCountBadges();
+  try { renderInquiries(); } catch(e) { console.error('renderInquiries error:', e); }
+  try { renderProjects(); } catch(e) { console.error('renderProjects error:', e); }
+  try { renderMTasks(); } catch(e) { console.error('renderMTasks error:', e); }
+  try { showNotifications(); } catch(e) { console.error('showNotifications error:', e); }
+  try { updateCountBadges(); } catch(e) { console.error('updateCountBadges error:', e); }
 }
 
 function updateCountBadges() {
@@ -3576,7 +3580,11 @@ function renderInquiryCard(item) {
   const delivThreshRed    = (data.settings?.deliveryThresholdRed)||30;
   const inqDate   = item.date||'';
   const priceDate = item.pipeline?.priceSubmission?.date||'';
-  const delivDays = inqDate && priceDate ? Math.round((new Date(priceDate+'T00:00:00') - new Date(inqDate+'T00:00:00')) / 86400000) : null;
+  let delivDays = null;
+  try {
+    delivDays = inqDate && priceDate ? Math.round((new Date(priceDate+'T00:00:00') - new Date(inqDate+'T00:00:00')) / 86400000) : null;
+    if (isNaN(delivDays)) delivDays = null;
+  } catch(e) { delivDays = null; }
   const delivColor = delivDays===null?'':delivDays>=delivThreshRed?'var(--red)':delivDays>=delivThreshYellow?'var(--amber)':'var(--accent)';
   const delivPill  = delivDays!==null ? `<span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;background:${delivDays>=delivThreshRed?'var(--rebg)':delivDays>=delivThreshYellow?'var(--ambg)':'var(--al)'};color:${delivColor};font-family:var(--fm);" title="Delivery performance">⏱ ${delivDays}d</span>` : '';
 
@@ -7628,12 +7636,13 @@ async function onUserSignedIn(firebaseUser) {
   document.querySelector('.topbar').style.display = '';
   document.querySelector('.app-body').style.display = '';
 
-  // Load data
+  // Load data then render
   loadLocal();
-  renderAll();
-  renderBin();
-  populateYearDropdowns();
-  checkDailyBackup();
+  migrateStatusNoteToSubStatus();
+  try { renderAll(); } catch(e) { console.error('Initial render error:', e); }
+  try { renderBin(); } catch(e) {}
+  try { populateYearDropdowns(); } catch(e) {}
+  try { checkDailyBackup(); } catch(e) {}
 
   // Start inactivity timer
   startInactivityTimer();

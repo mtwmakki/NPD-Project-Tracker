@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V54</title>
+<title>NPD Tracker V55</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1024,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V54</div>
+    <div class="login-logo">NPD Tracker V55</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V54</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V55</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1460,9 +1460,9 @@ html{scroll-behavior:smooth;}
     <div class="settings-row">
       <div><div class="settings-label">Delivery Performance Thresholds</div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
       <div style="display:flex;gap:6px;align-items:center;">
-        <input class="finput" id="deliv-thresh-yellow" type="number" min="1" max="365" value="${data.settings?.deliveryThresholdYellow||14}" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="14">
+        <input class="finput" id="deliv-thresh-yellow" type="number" min="1" max="365" value="14" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="14">
         <span style="font-size:11px;color:var(--amber);">⚠</span>
-        <input class="finput" id="deliv-thresh-red" type="number" min="1" max="365" value="${data.settings?.deliveryThresholdRed||30}" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="30">
+        <input class="finput" id="deliv-thresh-red" type="number" min="1" max="365" value="30" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="30">
         <span style="font-size:11px;color:var(--red);">🔴</span>
         <button class="settings-action" onclick="saveDeliveryThresholds()">Save</button>
       </div>
@@ -6163,10 +6163,16 @@ function savePipelineTargets() {
 }
 
 // Hook into showPage to render pipeline when navigating to it
-const _origShowPageV45 = showPage;
+const _origShowPageV55 = showPage;
 showPage = function(name) {
-  _origShowPageV45(name);
+  _origShowPageV55(name);
   if (name === 'pipeline') renderPipeline();
+  if (name === 'settings') {
+    const y = document.getElementById('deliv-thresh-yellow');
+    const r = document.getElementById('deliv-thresh-red');
+    if (y) y.value = (data.settings?.deliveryThresholdYellow)||14;
+    if (r) r.value = (data.settings?.deliveryThresholdRed)||30;
+  }
 };
 
 // ══════════════════════════════════════════════════════

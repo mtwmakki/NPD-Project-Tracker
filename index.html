@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V59</title>
+<title>NPD Tracker V60</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -32,25 +32,25 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;
 /* ── App body: sidebar + content ── */
 .app-body{display:flex;flex:1;}
 /* ── Left Sidebar — fully fixed, never moves ── */
-.sidebar{position:fixed;top:45px;left:0;width:200px;height:calc(100vh - 45px);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .22s ease;z-index:150;overflow:visible;}
-.sidebar.collapsed{width:52px;}
-.sidebar-toggle{position:absolute;top:14px;right:-13px;width:26px;height:26px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;color:var(--text3);font-size:11px;box-shadow:0 1px 5px rgba(0,0,0,.18);}
-.sidebar-inner{display:flex;flex-direction:column;height:100%;width:100%;}
-.sidebar-nav{flex:1;padding:8px 0;display:flex;flex-direction:column;gap:1px;}
-.sidebar-bottom{padding:8px 0 10px;border-top:1px solid var(--border);flex-shrink:0;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:12px;font-family:var(--f);font-weight:500;white-space:nowrap;width:100%;text-align:left;position:relative;transition:background .12s,color .12s;}
+.sidebar{position:fixed;top:45px;left:0;width:56px;height:calc(100vh - 45px);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:150;overflow:visible;transition:width .22s cubic-bezier(.4,0,.2,1);}
+.sidebar:hover{width:200px;}
+.sidebar.pinned{width:200px;}
+.sidebar-toggle{position:absolute;top:14px;right:-13px;width:24px;height:24px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;color:var(--text3);font-size:10px;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.sidebar-inner{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.sidebar-nav{flex:1;padding:10px 0 6px;display:flex;flex-direction:column;gap:2px;overflow:hidden;}
+.sidebar-bottom{padding:6px 0 12px;border-top:1px solid var(--border);flex-shrink:0;}
+.nav-item{display:flex;align-items:center;gap:0;padding:10px 0;cursor:pointer;border:none;background:none;color:var(--text3);font-size:12px;font-family:var(--f);font-weight:500;white-space:nowrap;width:100%;text-align:left;position:relative;transition:background .12s,color .12s;border-left:2px solid transparent;}
 .nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:var(--al);color:var(--accent);border-left:3px solid var(--accent);}
-.nav-item:not(.active){border-left:3px solid transparent;}
-.nav-item i{font-size:18px;flex-shrink:0;width:24px;text-align:center;}
-.nav-item-label{font-size:12px;overflow:hidden;white-space:nowrap;flex:1;}
-.sidebar.collapsed .nav-item-label{display:none;}
-.sidebar.collapsed .nav-item{justify-content:center;padding:9px 0;}
-.nav-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:14px;text-align:center;pointer-events:none;flex-shrink:0;margin-left:auto;}
-.sidebar.collapsed .nav-badge{position:absolute;top:4px;right:2px;margin-left:0;}
-/* ── Main content — offset by sidebar width, scrolls independently ── */
-.main-content{margin-left:200px;flex:1;overflow-y:auto;overflow-x:hidden;height:calc(100vh - 45px);transition:margin-left .22s ease;}
-.main-content.sidebar-collapsed{margin-left:52px;}
+.nav-item.active{background:var(--al);color:var(--accent);border-left:2px solid var(--accent);}
+.nav-item i{font-size:18px;flex-shrink:0;width:56px;text-align:center;}
+.nav-item-label{font-size:12px;font-weight:500;overflow:hidden;white-space:nowrap;opacity:0;max-width:0;transition:opacity .15s ease .05s, max-width .2s ease;flex:1;}
+.sidebar:hover .nav-item-label,.sidebar.pinned .nav-item-label{opacity:1;max-width:160px;}
+.nav-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:20px;font-family:var(--fm);min-width:14px;text-align:center;pointer-events:none;position:absolute;top:6px;left:32px;transition:opacity .15s;}
+.sidebar:hover .nav-badge,.sidebar.pinned .nav-badge{position:relative;top:auto;left:auto;margin-left:auto;margin-right:12px;}
+/* ── Main content ── */
+.main-content{margin-left:56px;flex:1;overflow-y:auto;overflow-x:hidden;height:calc(100vh - 45px);transition:margin-left .22s ease;}
+.main-content.sidebar-collapsed{margin-left:56px;}
+.main-content.sidebar-pinned{margin-left:200px;}
 /* ── Overlays — centred popup ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;}
 .overlay.open{display:flex;}
@@ -126,7 +126,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;
 .cal-split.sz-l .cal-day{min-height:64px;}
 /* XL: stacked, full width task list below */
 .cal-split.sz-xl .cal-tasks-panel{margin-top:0;}
-@media(max-width:900px){.cal-split{grid-template-columns:1fr !important;}.sidebar{width:52px;}.sidebar .nav-item-label{display:none;}.sidebar .nav-item{justify-content:center;padding:9px 0;}}
+@media(max-width:900px){.cal-split{grid-template-columns:1fr !important;}}
 /* ── Main content ── */
 .page{display:none;padding:12px 14px;}
 .page.active{display:block;}
@@ -1024,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V59</div>
+    <div class="login-logo">NPD Tracker V60</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V59</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V60</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -7388,8 +7388,9 @@ function toggleSidebar() {
   const sb = document.getElementById('sidebar');
   const mc = document.getElementById('main-content');
   const icon = document.getElementById('sidebar-toggle-icon');
-  if (sb) sb.classList.toggle('collapsed', sidebarCollapsed);
-  if (mc) mc.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+  // Pinned = always expanded, unpinned = icon-only with hover expand
+  if (sb) sb.classList.toggle('pinned', !sidebarCollapsed);
+  if (mc) mc.classList.toggle('sidebar-pinned', !sidebarCollapsed);
   if (icon) icon.className = sidebarCollapsed ? 'ti ti-chevron-right' : 'ti ti-chevron-left';
   localStorage.setItem('pm_sidebar', sidebarCollapsed ? '1' : '0');
 }
@@ -7500,13 +7501,18 @@ if (savedTaskSort) setTaskSort(savedTaskSort);
 const savedCalSize = localStorage.getItem('pm_calsize');
 if (savedCalSize) setCalSize(savedCalSize);
 const savedSidebar = localStorage.getItem('pm_sidebar');
-if (savedSidebar === '1') {
-  sidebarCollapsed = true;
+// Default is unpinned (icon-only with hover). '0' = pinned (always expanded)
+if (savedSidebar === '0') {
+  sidebarCollapsed = false;
   const sb = document.getElementById('sidebar');
   const mc = document.getElementById('main-content');
   const icon = document.getElementById('sidebar-toggle-icon');
-  if (sb) sb.classList.add('collapsed');
-  if (mc) mc.classList.add('sidebar-collapsed');
+  if (sb) sb.classList.add('pinned');
+  if (mc) mc.classList.add('sidebar-pinned');
+  if (icon) icon.className = 'ti ti-chevron-left';
+} else {
+  sidebarCollapsed = true;
+  const icon = document.getElementById('sidebar-toggle-icon');
   if (icon) icon.className = 'ti ti-chevron-right';
 }
 

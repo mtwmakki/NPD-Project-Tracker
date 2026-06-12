@@ -1467,7 +1467,11 @@ html{scroll-behavior:smooth;}
         <button class="settings-action" onclick="saveDeliveryThresholds()">Save</button>
       </div>
     </div>
-  </div><div class="settings-sub">Auto sign-out after inactivity (applies to all users)</div></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-row">
+      <div><div class="settings-label">Session Timeout</div><div class="settings-sub">Auto sign-out after inactivity (applies to all users)</div></div>
       <div style="display:flex;gap:6px;align-items:center;">
         <input class="finput" id="inactivity-input" type="number" min="5" max="240" value="30" style="width:60px;padding:5px 8px;font-size:12px;">
         <span style="font-size:11px;color:var(--text3);">min</span>
@@ -3506,11 +3510,9 @@ function renderInquiries() {
 
   if (useDateGrouping) {
     const groups = groupByYearMonth(list);
-    renderGroupedCards(el, groups, 'inq', renderInquiryCard);
-  } else if (inqYearFilter && inqMonthFilter) {
-    el.innerHTML = `<div class="cards-grid">${list.map(i=>renderInquiryCard(i)).join('')}</div>`;
+    renderGroupedCards(el, groups, 'inq', (item) => { try { return renderInquiryCard(item); } catch(e) { console.error('renderInquiryCard error:', e, item); return `<div style="padding:8px;color:var(--red);font-size:11px;">Error rendering: ${item?.code||item?.id}</div>`; } });
   } else {
-    el.innerHTML = `<div class="cards-grid">${list.map(i=>renderInquiryCard(i)).join('')}</div>`;
+    el.innerHTML = `<div class="cards-grid">${list.map(i => { try { return renderInquiryCard(i); } catch(e) { console.error('renderInquiryCard error:', e, i); return `<div style="padding:8px;color:var(--red);font-size:11px;">Error: ${i?.code||i?.id}</div>`; } }).join('')}</div>`;
   }
   applyDensity();
 }

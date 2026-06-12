@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V50</title>
+<title>NPD Tracker V51</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -633,7 +633,7 @@ html{scroll-behavior:smooth;}
 /* Banner dismiss button */
 .notif-dismiss-btn{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px;line-height:1;}
 .notif-dismiss-btn:hover{color:var(--red);}
-/* ── Project / Inquiry Detail Floating Window ── */
+/* ── Draggable floating window ── */
 .proj-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.58);z-index:700;display:none;align-items:flex-start;justify-content:flex-start;padding:24px 0 24px 260px;}
 .proj-overlay.open{display:flex;}
 .proj-detail{
@@ -651,8 +651,19 @@ html{scroll-behavior:smooth;}
   transition:opacity .18s ease, transform .18s ease;
   cursor:default;
   flex-shrink:0;
+  position:relative;
 }
 .proj-overlay.open .proj-detail{opacity:1;transform:translateY(0);}
+/* When dragging, overlay becomes position:fixed passthrough */
+.proj-overlay.dragging{pointer-events:none;}
+.proj-overlay.dragging .proj-detail{pointer-events:all;}
+.proj-detail.is-draggable{position:fixed;cursor:default;}
+/* Drag handle */
+.proj-drag-handle{position:absolute;top:0;left:0;right:0;height:52px;cursor:grab;z-index:1;}
+.proj-drag-handle:active{cursor:grabbing;}
+/* Clip button */
+.proj-clip-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:10px;font-family:var(--f);display:flex;align-items:center;gap:3px;transition:all .15s;}
+.proj-clip-btn.clipped{border-color:var(--accent);color:var(--accent);background:var(--al);}
 .proj-detail-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;background:var(--surface);flex-shrink:0;}
 .proj-detail-hl{flex:1;min-width:0;}
 .proj-detail-code{font-size:10px;font-family:var(--fm);color:var(--text3);margin-bottom:3px;}
@@ -1015,7 +1026,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V50</div>
+    <div class="login-logo">NPD Tracker V51</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1041,7 +1052,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V50</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V51</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1574,6 +1585,7 @@ html{scroll-behavior:smooth;}
 <!-- PROJECT DETAIL OVERLAY -->
 <div class="proj-overlay" id="proj-detail-overlay" onclick="closeProjDetail(event)">
   <div class="proj-detail" id="proj-detail-panel">
+    <div class="proj-drag-handle" id="pd-drag-handle" title="Drag to move"></div>
     <div class="proj-detail-header">
       <div class="proj-detail-hl">
         <div class="proj-detail-code" id="pd-code"></div>
@@ -1581,9 +1593,10 @@ html{scroll-behavior:smooth;}
         <div class="proj-detail-badges" id="pd-badges"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
+        <button class="proj-clip-btn" id="pd-clip-btn" onclick="toggleClipWindow('proj')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
         <button onclick="openGanttForProject(currentProjDetailId)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Open Gantt Chart"><i class="ti ti-chart-gantt"></i> Gantt</button>
         <button id="pd-edit-btn" onclick="toggleInlineForm('pd-edit-form')" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);align-items:center;gap:4px;" title="Edit project info"><i class="ti ti-pencil"></i> Edit</button>
-        <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open')"><i class="ti ti-x"></i></button>
+        <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open');resetWindowPosition('proj')"><i class="ti ti-x"></i></button>
       </div>
     </div>
     <div class="pd-tabs" id="pd-tabs">
@@ -1599,6 +1612,7 @@ html{scroll-behavior:smooth;}
 <!-- INQUIRY DETAIL OVERLAY -->
 <div class="proj-overlay" id="inq-detail-overlay" onclick="closeInqDetail(event)">
   <div class="proj-detail" id="inq-detail-panel">
+    <div class="proj-drag-handle" id="inq-drag-handle" title="Drag to move"></div>
     <div class="proj-detail-header">
       <div class="proj-detail-hl">
         <div class="proj-detail-code" id="inq-d-code"></div>
@@ -1606,8 +1620,9 @@ html{scroll-behavior:smooth;}
         <div class="proj-detail-badges" id="inq-d-badges"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
+        <button class="proj-clip-btn" id="inq-clip-btn" onclick="toggleClipWindow('inq')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
         <button id="inq-d-edit-btn" onclick="toggleInlineForm('inq-edit-form')" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);align-items:center;gap:4px;"><i class="ti ti-pencil"></i> Edit</button>
-        <button class="proj-detail-close" onclick="document.getElementById('inq-detail-overlay').classList.remove('open')"><i class="ti ti-x"></i></button>
+        <button class="proj-detail-close" onclick="document.getElementById('inq-detail-overlay').classList.remove('open');resetWindowPosition('inq')"><i class="ti ti-x"></i></button>
       </div>
     </div>
     <div class="pd-tabs" id="inq-d-tabs">
@@ -2036,6 +2051,7 @@ let pipelineYear       = new Date().getFullYear();
 
 const SS_CLASSES     = ['General','Mold','Machine','Material','Delivery'];
 const ACTION_CLASSES = ['General','Mold','Machine','Material','Delivery'];
+const INQ_STATUS_MAP = { 'OPEN':'open', 'CLOSED':'closed', 'ON-HOLD':'on-hold', 'open':'open', 'closed':'closed', 'on-hold':'on-hold' };
 
 const DEFAULT_PIPELINE_STAGES = [
   { id:'prospect',    name:'Prospect',     color:'#64748b' },
@@ -4062,6 +4078,7 @@ function openInqDetail(inqId) {
   const editBtn = document.getElementById('inq-d-edit-btn');
   if (editBtn) editBtn.style.display = can('inquiries','edit') ? 'flex' : 'none';
   document.getElementById('inq-detail-overlay').classList.add('open');
+  setTimeout(() => { initDraggableWindow('inq'); applyClippedPosition('inq'); }, 50);
 }
 
 function closeInqDetail(event) {
@@ -4175,7 +4192,7 @@ function renderInqDetail() {
           <span class="na-pic">${na.pic||'—'}</span>
           <span class="na-text">${na.action}</span>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-            ${na.dateAdded ? `<span style="font-size:9px;color:var(--text3);font-family:var(--fm);">Added ${fmtDate(na.dateAdded)}</span>` : ''}
+            <span style="font-size:9px;color:var(--text3);font-family:var(--fm);">Added ${fmtDate(na.dateAdded||na.date||todayStr())}</span>
             ${na.deadline ? `<span class="na-deadline ${isOverdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:9px"></i> ${fmtDate(na.deadline)}${isOverdue?' ⚠':''}</span>` : ''}
           </div>
         </div>`;
@@ -6287,10 +6304,10 @@ function ganttExportPDF(projId) {
       .gantt-header-name{padding:5px 6px;font-size:10px;font-weight:700;border-right:1px solid #ccc;}
       .gantt-week-label{text-align:center;font-size:8px;color:#666;border-right:1px solid #e0e0e0;padding:5px 0;}
       @media print{@page{size:A4 landscape;margin:10mm;}}
-    </style></head><body>
+    <\/style></head><body>
     <h2>${p?.code||''} — ${p?.name||''} — Gantt Timeline</h2>
     ${el.outerHTML}
-    <script>window.onload=function(){window.print();window.close();}<\/script>
+    <scr\ipt>window.onload=function(){window.print();window.close();}<\/script>
   </body></html>`);
   printWin.document.close();
 }
@@ -6303,6 +6320,117 @@ switchPDTab = function(tab) {
     setTimeout(() => renderGanttTab(currentProjDetailId), 100);
   }
 };
+
+// ══════════════════════════════════════════════════════
+//  DRAGGABLE FLOATING WINDOWS
+// ══════════════════════════════════════════════════════
+const windowPositions = { proj: null, inq: null }; // saved clipped positions
+const windowClipped   = { proj: false, inq: false };
+
+function initDraggableWindow(type) {
+  const handleId  = type === 'proj' ? 'pd-drag-handle'  : 'inq-drag-handle';
+  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
+  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
+  const clipBtnId = type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn';
+
+  const handle  = document.getElementById(handleId);
+  const panel   = document.getElementById(panelId);
+  const overlay = document.getElementById(overlayId);
+  if (!handle || !panel) return;
+
+  let isDragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    // Switch to free-floating mode
+    if (!panel.classList.contains('is-draggable')) {
+      const rect = panel.getBoundingClientRect();
+      panel.classList.add('is-draggable');
+      panel.style.left  = rect.left + 'px';
+      panel.style.top   = rect.top  + 'px';
+      panel.style.width = rect.width + 'px';
+      panel.style.margin = '0';
+      overlay.style.padding = '0';
+      overlay.style.alignItems = 'unset';
+      overlay.style.justifyContent = 'unset';
+    }
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startLeft = parseInt(panel.style.left)||0;
+    startTop  = parseInt(panel.style.top)||0;
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  startLeft + dx));
+    const newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, startTop  + dy));
+    panel.style.left = newLeft + 'px';
+    panel.style.top  = newTop  + 'px';
+    // Update clip button state
+    windowClipped[type] = false;
+    const clipBtn = document.getElementById(clipBtnId);
+    if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
+  });
+
+  document.addEventListener('mouseup', () => { isDragging = false; });
+}
+
+function toggleClipWindow(type) {
+  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
+  const clipBtnId = type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn';
+  const panel   = document.getElementById(panelId);
+  const clipBtn = document.getElementById(clipBtnId);
+  if (!panel) return;
+
+  if (!windowClipped[type]) {
+    // Save current position as clipped
+    windowPositions[type] = { left: panel.style.left, top: panel.style.top, width: panel.style.width };
+    windowClipped[type] = true;
+    if (clipBtn) { clipBtn.classList.add('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin-filled"></i> Clipped'; }
+  } else {
+    // Unclip — restore saved position
+    windowClipped[type] = false;
+    if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
+  }
+}
+
+function resetWindowPosition(type) {
+  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
+  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
+  const clipBtnId = type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn';
+  const panel   = document.getElementById(panelId);
+  const overlay = document.getElementById(overlayId);
+  const clipBtn = document.getElementById(clipBtnId);
+  if (!panel) return;
+  // Only reset if not clipped
+  if (!windowClipped[type]) {
+    panel.classList.remove('is-draggable');
+    panel.style.left = ''; panel.style.top = ''; panel.style.width = ''; panel.style.margin = '';
+    if (overlay) { overlay.style.padding = ''; overlay.style.alignItems = ''; overlay.style.justifyContent = ''; }
+  }
+  if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
+  windowClipped[type] = false;
+}
+
+function applyClippedPosition(type) {
+  if (!windowClipped[type] || !windowPositions[type]) return;
+  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
+  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
+  const panel   = document.getElementById(panelId);
+  const overlay = document.getElementById(overlayId);
+  if (!panel) return;
+  const pos = windowPositions[type];
+  panel.classList.add('is-draggable');
+  panel.style.left  = pos.left;
+  panel.style.top   = pos.top;
+  panel.style.width = pos.width;
+  panel.style.margin = '0';
+  if (overlay) { overlay.style.padding = '0'; overlay.style.alignItems = 'unset'; overlay.style.justifyContent = 'unset'; }
+}
 
 function openGanttForProject(projId) {
   if (!projId) return;
@@ -6480,10 +6608,10 @@ function openProjDetail(projId) {
   currentProjDetailId = projId;
   currentPDTab = 'overview';
   renderProjDetail();
-  // Show/hide edit button based on permission
   const editBtn = document.getElementById('pd-edit-btn');
   if (editBtn) editBtn.style.display = can('projects','edit') ? 'flex' : 'none';
   document.getElementById('proj-detail-overlay').classList.add('open');
+  setTimeout(() => { initDraggableWindow('proj'); applyClippedPosition('proj'); }, 50);
 }
 
 function closeProjDetail(e) {

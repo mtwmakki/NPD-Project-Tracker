@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V57</title>
+<title>NPD Tracker V58</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1024,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V57</div>
+    <div class="login-logo">NPD Tracker V58</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1050,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V57</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V58</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -3832,6 +3832,7 @@ function duplicateItem(type, id) {
   if (type === 'inquiry') {
     const orig = data.inquiries.find(x => x.id === id);
     if (!orig) return;
+    if (!confirm(`Duplicate inquiry "${orig.code} — ${orig.name}"?\n\nA copy will be created with the same details.`)) return;
     const copy = JSON.parse(JSON.stringify(orig));
     copy.id = uid();
     copy.code = orig.code + '-COPY';
@@ -4124,6 +4125,16 @@ function switchInqDTab(tab) {
 }
 
 function renderInqDetail() {
+  try {
+    _renderInqDetailInner();
+  } catch(e) {
+    console.error('renderInqDetail crash:', e);
+    const body = document.getElementById('inq-d-body');
+    if (body) body.innerHTML = `<div style="padding:20px;color:var(--red);font-size:12px;"><strong>Error opening inquiry:</strong><br>${e.message}<br><br><small>${e.stack?.split('\n')[1]||''}</small></div>`;
+  }
+}
+
+function _renderInqDetailInner() {
   const inq = data.inquiries.find(x => x.id === currentInqDetailId);
   if (!inq) return;
   const today = todayStr();
@@ -4377,7 +4388,7 @@ function renderInqDetail() {
   // Set status in edit form
   const stSel = document.getElementById('inq-de-status');
   if (stSel) stSel.value = inq.status||'OPEN';
-}
+} // end _renderInqDetailInner
 
 function toggleInqTask(inqId, taskId) {
   const inq = data.inquiries.find(x => x.id === inqId);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V51</title>
+<title>NPD Tracker V53</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -634,8 +634,8 @@ html{scroll-behavior:smooth;}
 .notif-dismiss-btn{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px;line-height:1;}
 .notif-dismiss-btn:hover{color:var(--red);}
 /* ── Draggable floating window ── */
-.proj-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.58);z-index:700;display:none;align-items:flex-start;justify-content:flex-start;padding:24px 0 24px 260px;}
-.proj-overlay.open{display:flex;}
+.proj-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.58);z-index:700;display:none;}
+.proj-overlay.open{display:block;}
 .proj-detail{
   background:var(--surface);
   border-radius:14px;
@@ -650,17 +650,15 @@ html{scroll-behavior:smooth;}
   transform:translateY(14px);
   transition:opacity .18s ease, transform .18s ease;
   cursor:default;
-  flex-shrink:0;
-  position:relative;
+  position:fixed;
+  top:24px;
+  left:280px;
 }
 .proj-overlay.open .proj-detail{opacity:1;transform:translateY(0);}
-/* When dragging, overlay becomes position:fixed passthrough */
-.proj-overlay.dragging{pointer-events:none;}
-.proj-overlay.dragging .proj-detail{pointer-events:all;}
-.proj-detail.is-draggable{position:fixed;cursor:default;}
 /* Drag handle */
-.proj-drag-handle{position:absolute;top:0;left:0;right:0;height:52px;cursor:grab;z-index:1;}
+.proj-drag-handle{height:8px;background:var(--surface2);border-radius:14px 14px 0 0;cursor:grab;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .proj-drag-handle:active{cursor:grabbing;}
+.proj-drag-handle::after{content:'';width:36px;height:3px;border-radius:2px;background:var(--border);}
 /* Clip button */
 .proj-clip-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:10px;font-family:var(--f);display:flex;align-items:center;gap:3px;transition:all .15s;}
 .proj-clip-btn.clipped{border-color:var(--accent);color:var(--accent);background:var(--al);}
@@ -1026,7 +1024,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V51</div>
+    <div class="login-logo">NPD Tracker V53</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1052,7 +1050,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V51</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V53</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1460,7 +1458,16 @@ html{scroll-behavior:smooth;}
 
   <div class="settings-section">
     <div class="settings-row">
-      <div><div class="settings-label">Session Timeout</div><div class="settings-sub">Auto sign-out after inactivity (applies to all users)</div></div>
+      <div><div class="settings-label">Delivery Performance Thresholds</div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <input class="finput" id="deliv-thresh-yellow" type="number" min="1" max="365" value="${data.settings?.deliveryThresholdYellow||14}" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="14">
+        <span style="font-size:11px;color:var(--amber);">⚠</span>
+        <input class="finput" id="deliv-thresh-red" type="number" min="1" max="365" value="${data.settings?.deliveryThresholdRed||30}" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="30">
+        <span style="font-size:11px;color:var(--red);">🔴</span>
+        <button class="settings-action" onclick="saveDeliveryThresholds()">Save</button>
+      </div>
+    </div>
+  </div><div class="settings-sub">Auto sign-out after inactivity (applies to all users)</div></div>
       <div style="display:flex;gap:6px;align-items:center;">
         <input class="finput" id="inactivity-input" type="number" min="5" max="240" value="30" style="width:60px;padding:5px 8px;font-size:12px;">
         <span style="font-size:11px;color:var(--text3);">min</span>
@@ -3564,6 +3571,15 @@ function renderInquiryCard(item) {
   const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '';
   const overdueBadge = active.length ? `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--rebg);color:var(--red);font-family:var(--fm);">⚠ ${active.length} overdue</span>` : '';
 
+  // Delivery performance pill
+  const delivThreshYellow = (data.settings?.deliveryThresholdYellow)||14;
+  const delivThreshRed    = (data.settings?.deliveryThresholdRed)||30;
+  const inqDate   = item.date||'';
+  const priceDate = item.pipeline?.priceSubmission?.date||'';
+  const delivDays = inqDate && priceDate ? Math.round((new Date(priceDate+'T00:00:00') - new Date(inqDate+'T00:00:00')) / 86400000) : null;
+  const delivColor = delivDays===null?'':delivDays>=delivThreshRed?'var(--red)':delivDays>=delivThreshYellow?'var(--amber)':'var(--accent)';
+  const delivPill  = delivDays!==null ? `<span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;background:${delivDays>=delivThreshRed?'var(--rebg)':delivDays>=delivThreshYellow?'var(--ambg)':'var(--al)'};color:${delivColor};font-family:var(--fm);" title="Delivery performance">⏱ ${delivDays}d</span>` : '';
+
   return `<div class="card ${exp} ${overdueClass}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard('${item.id}','inquiry')">
       <div class="card-hl">
@@ -3575,9 +3591,13 @@ function renderInquiryCard(item) {
           ${priPill}${bdPill}${overdueBadge}
           ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
           <span class="ppill">${doneFrac||'—'}</span>
+          ${deliveryPill}
         </div>
       </div>
-      <i class="ti ti-chevron-down chevron"></i>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <button class="cact-icon" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Full View" style="width:26px;height:26px;font-size:12px;"><i class="ti ti-layout-sidebar-right"></i></button>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
     </div>
     <div class="prog-wrap"><div class="prog-bg"><div class="prog-fill" style="width:${rate}%"></div></div></div>
     <div class="card-body">
@@ -4112,7 +4132,7 @@ function renderInqDetail() {
     ${inq.customer ? `<span class="factory-pill">${inq.customer}</span>` : ''}
     ${inq.factory ? `<span class="factory-pill">${inq.factory}</span>` : ''}
     ${inq.bdPerson ? `<span class="rap-pic-pill">${inq.bdPerson}</span>` : ''}
-    ${PRI_LABELS[inq.priority] ? `<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--ambg);color:${PRI_COLORS[inq.priority]};font-family:var(--fm);">${PRI_LABELS[inq.priority]}</span>` : ''}`;
+    ${inq.priority && inq.priority !== '2' ? `<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--ambg);color:${inq.priority==='3'?'var(--red)':inq.priority==='1'?'var(--text3)':'var(--amber)'};font-family:var(--fm);">${inq.priority==='3'?'High':inq.priority==='1'?'Low':'Med'}</span>` : ''}`;
 
   // Sync tabs
   document.querySelectorAll('#inq-d-tabs .pd-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === currentInqDTab));
@@ -4142,8 +4162,24 @@ function renderInqDetail() {
   </div>`;
 
   if (currentInqDTab === 'overview') {
-    // Basic info
-    const totalRev = (inq.products||[]).reduce((s,p) => s + (p.volume||0)*(p.cost||0), 0);
+    // Delivery Performance big number in overview
+    const delivThreshY = (data.settings?.deliveryThresholdYellow)||14;
+    const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
+    const ovInqDate    = inq.date||'';
+    const ovPriceDate  = (inq.pipeline?.priceSubmission?.date)||'';
+    const ovDelivDays  = ovInqDate && ovPriceDate ? Math.round((new Date(ovPriceDate+'T00:00:00') - new Date(ovInqDate+'T00:00:00')) / 86400000) : null;
+    const ovDelivColor = ovDelivDays===null?'var(--text3)':ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
+    if (ovDelivDays !== null || ovInqDate) {
+      html += `<div class="proj-detail-section" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;">
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;">Delivery Performance</div>
+          <div style="font-size:11px;color:var(--text3);">Inquiry received → Price submitted${ovDelivDays===null?' (price not yet submitted)':''}</div>
+        </div>
+        <div style="font-size:${ovDelivDays!==null?'36px':'20px'};font-weight:800;color:${ovDelivColor};line-height:1;">
+          ${ovDelivDays!==null ? ovDelivDays+'<span style="font-size:14px;font-weight:600;margin-left:3px;">days</span>' : '—'}
+        </div>
+      </div>`;
+    }
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Basic Info</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
@@ -4185,7 +4221,9 @@ function renderInqDetail() {
     // Next Actions (structured PIC + Action + Date Added + Deadline)
     const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy', pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span></div>
+      <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span>
+        ${can('inquiries','edit') ? `<button class="proj-detail-slabel-add" onclick="openInqEditForActions('${inq.id}')"><i class="ti ti-pencil" style="font-size:10px"></i> Edit</button>` : ''}
+      </div>
       ${nas.length ? nas.map(na => {
         const isOverdue = na.deadline && na.deadline < today;
         return `<div class="next-action-row">
@@ -4199,10 +4237,10 @@ function renderInqDetail() {
       }).join('') : '<div style="font-size:11px;color:var(--text3);">No next actions.</div>'}
     </div>`;
 
-    // Tasks
+    // Inquiry Progress (renamed from Tasks)
     const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Tasks <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span></div>
+      <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span></div>
       ${!tasks.length ? '<div style="font-size:11px;color:var(--text3);">No tasks.</div>' :
         tasks.map(t => {
           const dlCls = t.done?'ok':t.deadline<today?'overdue':t.deadline===today?'today':'ok';
@@ -4242,53 +4280,71 @@ function renderInqDetail() {
   }
 
   if (currentInqDTab === 'matrix') {
-    // Delivery Matrix
-    const inquiryDate = inq.date||'';
-    const moldDate = mi.date||'';
-    const npdInputDate = (inq.tasks||[]).find(t => t.name.toLowerCase().includes('compile') || t.name.toLowerCase().includes('npd'))?.deadline||'';
-    const priceDate = pr.date||'';
+    const delivThreshY = (data.settings?.deliveryThresholdYellow)||14;
+    const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
+    const inquiryDate  = inq.date||'';
+    const moldDate     = (inq.pipeline?.moldInquiry?.date)||'';
+    const npdInputTask = (inq.tasks||[]).find(t => t.name.toLowerCase().includes('compile') || t.name.toLowerCase().includes('npd input'));
+    const npdInputDate = npdInputTask?.deadline||'';
+    const priceDate    = (inq.pipeline?.priceSubmission?.date)||'';
+    const costingDate  = (inq.pipeline?.costing?.date)||'';
 
-    const steps = [
-      { label:'Inquiry Received', date:inquiryDate, desc:'Date inquiry was first received' },
-      { label:'Mold Inquiry Sent', date:moldDate, desc:'Date mold inquiry was sent to moldmaker' },
-      { label:'NPD Input Compiled', date:npdInputDate, desc:'Date NPD input was compiled' },
-      { label:'Price Submitted', date:priceDate, desc:'Date price was submitted to customer' },
-    ];
-
-    const daysBetween = (d1, d2) => {
+    const daysBetween = (d1,d2) => {
       if (!d1||!d2) return null;
-      const diff = Math.round((new Date(d2+'T00:00:00') - new Date(d1+'T00:00:00')) / 86400000);
-      return diff;
+      return Math.round((new Date(d2+'T00:00:00') - new Date(d1+'T00:00:00')) / 86400000);
     };
 
-    html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Delivery Matrix</div>
-      <div class="delivery-matrix">`;
+    const steps = [
+      { label:'Inquiry Received',    date:inquiryDate,  icon:'mail',          desc:'Date inquiry received from customer' },
+      { label:'Mold Inquiry Sent',   date:moldDate,     icon:'building-factory', desc:'Sent to moldmaker' },
+      { label:'NPD Input Compiled',  date:npdInputDate, icon:'file-check',    desc:'Internal NPD input compiled' },
+      { label:'Costing Done',        date:costingDate,  icon:'calculator',    desc:'Costing completed' },
+      { label:'Price Submitted',     date:priceDate,    icon:'send',          desc:'Price submitted to customer' },
+    ];
 
+    const totalDays   = daysBetween(inquiryDate, priceDate);
+    const totalColor  = totalDays===null?'var(--text3)':totalDays>=delivThreshR?'var(--red)':totalDays>=delivThreshY?'var(--amber)':'var(--accent)';
+
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Delivery Performance
+        ${totalDays!==null?`<span style="font-size:20px;font-weight:800;color:${totalColor};letter-spacing:-0.5px;">${totalDays}<span style="font-size:11px;font-weight:600;margin-left:2px;">days</span></span>`:'<span style="color:var(--text3);font-weight:400;">pending</span>'}
+      </div>
+      <div style="margin-bottom:12px;">`;
+
+    // Timeline steps
     steps.forEach((step, i) => {
-      const dotCls = step.date ? 'done' : 'empty';
+      const hasDone  = !!step.date;
       const interval = i > 0 ? daysBetween(steps[i-1].date, step.date) : null;
-      const isSlow = interval !== null && interval > 14;
-      html += `<div class="dm-row">
-        <div class="dm-dot ${dotCls}">${i+1}</div>
-        <div class="dm-info">
-          <div class="dm-label">${step.label}</div>
-          <div class="dm-date">${step.date ? fmtDate(step.date) : 'Not recorded'} · ${step.desc}</div>
-        </div>
-        ${interval !== null ? `<div class="dm-interval ${isSlow?'slow':''}">${interval}d</div>` : ''}
-      </div>`;
+      const isSlowI  = interval !== null && interval > 7;
+      const dotBg    = hasDone ? 'var(--accent)' : 'var(--surface2)';
+      const dotBorder= hasDone ? 'var(--accent)' : 'var(--border)';
+      const dotColor = hasDone ? '#fff' : 'var(--text3)';
+      html += `
+        <div style="display:flex;gap:12px;align-items:stretch;min-height:44px;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:32px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:${dotBg};border:2px solid ${dotBorder};display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+              <i class="ti ti-${hasDone?'check':'clock'}" style="font-size:13px;color:${dotColor};"></i>
+            </div>
+            ${i < steps.length-1 ? `<div style="flex:1;width:2px;background:${hasDone&&steps[i+1].date?'var(--accent)':'var(--border)'};margin:2px 0;min-height:12px;"></div>` : ''}
+          </div>
+          <div style="flex:1;padding-bottom:${i<steps.length-1?'12px':'0'};">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <div style="font-size:12px;font-weight:${hasDone?'600':'500'};color:${hasDone?'var(--text)':'var(--text3)'};">${step.label}</div>
+                <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:1px;">${hasDone?fmtDate(step.date):step.desc}</div>
+              </div>
+              ${interval!==null?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${isSlowI?'var(--ambg)':'var(--al)'};color:${isSlowI?'var(--amber)':'var(--accent)'};flex-shrink:0;">+${interval}d</span>`:''}
+            </div>
+          </div>
+        </div>`;
     });
 
-    // Total time
-    const totalDays = daysBetween(inquiryDate, priceDate);
-    if (totalDays !== null) {
-      html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:600;color:var(--text);">Total Time (Inquiry → Price)</span>
-        <span style="font-size:16px;font-weight:800;color:${totalDays>30?'var(--red)':totalDays>14?'var(--amber)':'var(--accent)'};">${totalDays} days</span>
-      </div>`;
-    }
-
-    html += `</div></div>`;
+    html += `</div>
+      ${totalDays!==null?`<div style="background:${totalDays>=delivThreshR?'var(--rebg)':totalDays>=delivThreshY?'var(--ambg)':'var(--al)'};border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;font-weight:600;color:var(--text);">Total: Inquiry → Price Submission</span>
+        <span style="font-size:22px;font-weight:800;color:${totalColor};">${totalDays}d</span>
+      </div>`:''}
+    </div>`;
   }
 
   if (currentInqDTab === 'changelog') {
@@ -6328,55 +6384,35 @@ const windowPositions = { proj: null, inq: null }; // saved clipped positions
 const windowClipped   = { proj: false, inq: false };
 
 function initDraggableWindow(type) {
-  const handleId  = type === 'proj' ? 'pd-drag-handle'  : 'inq-drag-handle';
-  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
-  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
+  const handleId = type === 'proj' ? 'pd-drag-handle' : 'inq-drag-handle';
+  const panelId  = type === 'proj' ? 'proj-detail-panel' : 'inq-detail-panel';
   const clipBtnId = type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn';
-
-  const handle  = document.getElementById(handleId);
-  const panel   = document.getElementById(panelId);
-  const overlay = document.getElementById(overlayId);
+  const handle = document.getElementById(handleId);
+  const panel  = document.getElementById(panelId);
   if (!handle || !panel) return;
-
+  // Clone to remove old listeners
+  const newHandle = handle.cloneNode(true);
+  handle.parentNode.replaceChild(newHandle, handle);
   let isDragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
-
-  handle.addEventListener('mousedown', e => {
+  newHandle.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
-    // Switch to free-floating mode
-    if (!panel.classList.contains('is-draggable')) {
-      const rect = panel.getBoundingClientRect();
-      panel.classList.add('is-draggable');
-      panel.style.left  = rect.left + 'px';
-      panel.style.top   = rect.top  + 'px';
-      panel.style.width = rect.width + 'px';
-      panel.style.margin = '0';
-      overlay.style.padding = '0';
-      overlay.style.alignItems = 'unset';
-      overlay.style.justifyContent = 'unset';
-    }
     isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    startLeft = parseInt(panel.style.left)||0;
-    startTop  = parseInt(panel.style.top)||0;
+    startX = e.clientX; startY = e.clientY;
+    const rect = panel.getBoundingClientRect();
+    startLeft = rect.left; startTop = rect.top;
+    panel.style.transition = 'none';
     e.preventDefault();
   });
-
   document.addEventListener('mousemove', e => {
     if (!isDragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    const newLeft = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  startLeft + dx));
-    const newTop  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, startTop  + dy));
-    panel.style.left = newLeft + 'px';
-    panel.style.top  = newTop  + 'px';
-    // Update clip button state
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    panel.style.left = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  startLeft + dx)) + 'px';
+    panel.style.top  = Math.max(0, Math.min(window.innerHeight - 60, startTop + dy)) + 'px';
     windowClipped[type] = false;
     const clipBtn = document.getElementById(clipBtnId);
     if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
   });
-
-  document.addEventListener('mouseup', () => { isDragging = false; });
+  document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; panel.style.transition = ''; } });
 }
 
 function toggleClipWindow(type) {
@@ -6398,38 +6434,45 @@ function toggleClipWindow(type) {
   }
 }
 
-function resetWindowPosition(type) {
-  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
-  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
-  const clipBtnId = type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn';
-  const panel   = document.getElementById(panelId);
-  const overlay = document.getElementById(overlayId);
-  const clipBtn = document.getElementById(clipBtnId);
-  if (!panel) return;
-  // Only reset if not clipped
-  if (!windowClipped[type]) {
-    panel.classList.remove('is-draggable');
-    panel.style.left = ''; panel.style.top = ''; panel.style.width = ''; panel.style.margin = '';
-    if (overlay) { overlay.style.padding = ''; overlay.style.alignItems = ''; overlay.style.justifyContent = ''; }
-  }
-  if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
-  windowClipped[type] = false;
-}
-
 function applyClippedPosition(type) {
   if (!windowClipped[type] || !windowPositions[type]) return;
-  const panelId   = type === 'proj' ? 'proj-detail-panel': 'inq-detail-panel';
-  const overlayId = type === 'proj' ? 'proj-detail-overlay' : 'inq-detail-overlay';
-  const panel   = document.getElementById(panelId);
-  const overlay = document.getElementById(overlayId);
+  const panel = document.getElementById(type === 'proj' ? 'proj-detail-panel' : 'inq-detail-panel');
   if (!panel) return;
   const pos = windowPositions[type];
-  panel.classList.add('is-draggable');
-  panel.style.left  = pos.left;
-  panel.style.top   = pos.top;
-  panel.style.width = pos.width;
-  panel.style.margin = '0';
-  if (overlay) { overlay.style.padding = '0'; overlay.style.alignItems = 'unset'; overlay.style.justifyContent = 'unset'; }
+  if (pos.left) panel.style.left = pos.left;
+  if (pos.top)  panel.style.top  = pos.top;
+}
+
+function resetWindowPosition(type) {
+  const panel = document.getElementById(type === 'proj' ? 'proj-detail-panel' : 'inq-detail-panel');
+  const clipBtn = document.getElementById(type === 'proj' ? 'pd-clip-btn' : 'inq-clip-btn');
+  if (!windowClipped[type] && panel) {
+    // Reset to default position
+    panel.style.left = type === 'proj' ? '280px' : '280px';
+    panel.style.top  = '24px';
+  }
+  if (clipBtn) { clipBtn.classList.remove('clipped'); clipBtn.innerHTML = '<i class="ti ti-pin"></i> Clip'; }
+  if (!windowClipped[type]) windowClipped[type] = false;
+}
+
+function saveDeliveryThresholds() {
+  if (currentUserProfile?.role !== 'master') return;
+  const yellow = parseInt(document.getElementById('deliv-thresh-yellow')?.value)||14;
+  const red    = parseInt(document.getElementById('deliv-thresh-red')?.value)||30;
+  if (!data.settings) data.settings = {};
+  data.settings.deliveryThresholdYellow = yellow;
+  data.settings.deliveryThresholdRed    = red;
+  save();
+  alert(`Thresholds saved: Yellow ≥${yellow}d, Red ≥${red}d`);
+}
+
+function openInqEditForActions(inqId) {
+  openEditInquiry(inqId);
+  // Scroll to next actions section after modal opens
+  setTimeout(() => {
+    const naList = document.getElementById('inq-next-actions-list');
+    if (naList) naList.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 200);
 }
 
 function openGanttForProject(projId) {

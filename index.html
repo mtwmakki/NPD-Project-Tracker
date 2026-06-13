@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V61</title>
+<title>NPD Tracker V63</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -168,7 +168,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;
 .cal-split.sz-xl .cal-tasks-panel{margin-top:0;}
 @media(max-width:900px){.cal-split{grid-template-columns:1fr !important;}}
 /* ── Main content ── */
-.page{display:none;padding:12px 14px;}
+.page{display:none;padding:0;}
+.page-content{padding:0 28px 24px;}
+/* Hide old sec-heads replaced by dynamic page headers */
+.page .sec-head{display:none !important;}
+/* Page body content padding — scoped properly */
+.page-body{padding:0 28px 24px;}
+/* Add padding to page content, but header-wrap has its own padding */
+.page > *:not(.page-header-wrap):not(.proj-overlay):not(.overlay):not(#inq-detail-overlay):not(#proj-detail-overlay){padding-left:28px;padding-right:28px;box-sizing:border-box;}
+.page > .settings-section{margin-left:0;margin-right:0;padding:0;}
+.page > .filter-panel,.page > .notif-filter{padding-left:28px;padding-right:28px;}
+.page > #pipeline-targets,.page > #pipeline-kanban-wrap,.page > #pipeline-timeline-wrap{padding-left:28px;padding-right:28px;}
+.page > #cl-filter-wrap{padding-left:0;padding-right:0;}
 .page.active{display:block;}
 .notif-wrap{padding:10px 11px 0;}
 .notif-banner{background:var(--rebg);border:1px solid var(--red);border-radius:var(--rs);padding:9px 11px;display:flex;gap:9px;align-items:flex-start;}
@@ -955,7 +966,23 @@ html{scroll-behavior:smooth;}
 .cl-text{font-size:12px;color:var(--text);line-height:1.4;}
 .cl-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .cl-user-pill{background:var(--surface2);padding:1px 6px;border-radius:10px;font-size:9px;}
-/* ── NPD Pipeline ── */
+/* ── Page Header ── */
+.page-header{padding:24px 28px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.page-header-left{flex:1;min-width:0;}
+.page-header-title{font-size:26px;font-weight:700;color:var(--text);line-height:1.2;letter-spacing:-.3px;}
+.page-header-sub{font-size:12px;color:var(--text3);font-family:var(--fm);margin-top:3px;}
+.page-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:2px;}
+.page-header-avatar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:4px 10px 4px 4px;cursor:pointer;transition:background .15s;}
+.page-header-avatar:hover{background:var(--surface2);}
+.page-header-av-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.page-header-av-name{font-size:11px;font-weight:600;color:var(--text);}
+.page-header-av-role{font-size:9px;color:var(--text3);font-family:var(--fm);}
+.page-header-bell{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s;}
+.page-header-bell:hover{background:var(--surface2);}
+.page-header-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg);}
+.page-header-divider{height:1px;background:var(--border);margin:0 28px 4px;}
+.page-header-actions{padding:0 28px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.page-header-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .pipeline-target-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
 .pipeline-target-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
 .pipeline-target-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
@@ -1064,7 +1091,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V61</div>
+    <div class="login-logo">NPD Tracker V63</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1090,7 +1117,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V61</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V63</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1126,7 +1153,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V61</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V63</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -1480,7 +1507,7 @@ html{scroll-behavior:smooth;}
 
 <!-- SETTINGS PAGE -->
 <div class="page" id="page-settings">
-  <div class="sec-head"><span class="sec-title">Settings & Sync</span></div>
+  
 
   <!-- Firebase Sync Section -->
   <div class="settings-section">
@@ -1544,7 +1571,11 @@ html{scroll-behavior:smooth;}
       <div><div class="settings-label">Color Mode</div><div class="settings-sub">Light or dark theme</div></div>
       <button class="settings-action" onclick="toggleTheme()" style="display:flex;align-items:center;gap:5px;"><i id="settings-theme-icon" class="ti ti-moon" style="font-size:13px;"></i> <span id="settings-theme-label">Toggle Theme</span></button>
     </div>
-  </div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-row">
+      <div><div class="settings-label">Delivery Performance Thresholds</div><div class="settings-sub">Days from inquiry to price submission — Yellow warning / Red alert (Master only)</div></div>
       <div style="display:flex;gap:6px;align-items:center;">
         <input class="finput" id="deliv-thresh-yellow" type="number" min="1" max="365" value="14" style="width:55px;padding:5px 8px;font-size:12px;" placeholder="14">
         <span style="font-size:11px;color:var(--amber);">⚠</span>
@@ -1614,10 +1645,7 @@ html{scroll-behavior:smooth;}
 
 <!-- USERS PAGE (Master only) -->
 <div class="page" id="page-users">
-  <div class="sec-head">
-    <span class="sec-title">User Management</span>
-    <button class="add-btn" onclick="openAddUserModal()"><i class="ti ti-plus"></i> Add User</button>
-  </div>
+  
   <div id="users-list"></div>
 </div>
 
@@ -6271,7 +6299,59 @@ showPage = function(name) {
     if (y) y.value = (data.settings?.deliveryThresholdYellow)||14;
     if (r) r.value = (data.settings?.deliveryThresholdRed)||30;
   }
+  // Render page header for each page
+  _renderPageHeaderForPage(name);
 };
+
+function _renderPageHeaderForPage(name) {
+  const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  switch(name) {
+    case 'inquiries':
+      renderPageHeader('inquiries', 'Inquiries',
+        `${(data.inquiries||[]).length} inquiries · ${today}`,
+        `<div class="page-header-filters" id="inq-header-filters"></div>
+         <div style="display:flex;gap:6px;">${can('inquiries','add')?`<button class="add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>`:''}</div>`
+      ); break;
+    case 'projects':
+      renderPageHeader('projects', 'Projects',
+        `${(data.projects||[]).length} projects · ${today}`,
+        `<div class="page-header-filters" id="proj-header-filters"></div>
+         <div style="display:flex;gap:6px;">${can('projects','add')?`<button class="add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>`:''}</div>`
+      ); break;
+    case 'tasks':
+      renderPageHeader('tasks', 'Tasks',
+        `My tasks · ${today}`,
+        `<div class="page-header-filters"></div>
+         <div style="display:flex;gap:6px;">
+           <button id="tasks-viewall-btn" onclick="toggleTaskViewAll()" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);align-items:center;gap:5px;"><i class="ti ti-users"></i> <span id="tasks-viewall-label">View All</span></button>
+           <button class="add-btn" id="task-add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
+         </div>`
+      ); break;
+    case 'notifications':
+      renderPageHeader('notifications', 'Notifications', today, ''); break;
+    case 'dashboard':
+      renderPageHeader('dashboard', 'Dashboard', today, ''); break;
+    case 'pipeline':
+      renderPageHeader('pipeline', 'NPD Pipeline', today,
+        `<div></div>
+         <div style="display:flex;gap:6px;">
+           <button id="pipeline-revenue-toggle" onclick="togglePipelineRevenue()" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;"><i class="ti ti-eye"></i> Revenue</button>
+           <button onclick="openPipelineSettings()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;" id="pipeline-settings-btn"><i class="ti ti-adjustments"></i> Stages</button>
+           <button class="add-btn" onclick="openAddPipelineItem(null)"><i class="ti ti-plus"></i> New Item</button>
+         </div>`
+      ); break;
+    case 'calendar':
+      renderPageHeader('calendar', 'Calendar', today, ''); break;
+    case 'changelog':
+      renderPageHeader('changelog', 'Changelog', today, ''); break;
+    case 'users':
+      renderPageHeader('users', 'Users', 'Manage team access',
+        `<div></div><button class="add-btn" onclick="openAddUserModal()"><i class="ti ti-plus"></i> Add User</button>`
+      ); break;
+    case 'settings':
+      renderPageHeader('settings', 'Settings', 'Customize your workspace', ''); break;
+  }
+}
 
 // ══════════════════════════════════════════════════════
 //  SIMPLE GANTT
@@ -6601,6 +6681,51 @@ function setAppFont(font) {
   document.getElementById('font-dm-btn').style.borderColor  = font==='dm'?'var(--accent)':'var(--border)';
   document.getElementById('font-dm-btn').style.background   = font==='dm'?'var(--al)':'var(--surface2)';
   document.getElementById('font-dm-btn').style.color        = font==='dm'?'var(--accent)':'var(--text)';
+}
+
+// ══════════════════════════════════════════════════════
+//  PAGE HEADER
+// ══════════════════════════════════════════════════════
+function renderPageHeader(pageId, title, subtitle, actionsHTML) {
+  const page = document.getElementById('page-' + pageId);
+  if (!page) return;
+  const name = currentUserProfile?.name || 'Adam';
+  const role = currentUserProfile?.role || 'member';
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const colors = { master:'linear-gradient(135deg,#f0445a,#3a8ef5)', manager:'#3a8ef5', member:'#30c060' };
+  const hasNotif = (document.getElementById('notif-nav-badge')?.style.display !== 'none');
+
+  const headerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-header-title">${title}</div>
+        ${subtitle ? `<div class="page-header-sub">${subtitle}</div>` : ''}
+      </div>
+      <div class="page-header-right">
+        <div class="page-header-bell" onclick="showPage('notifications')" title="Notifications">
+          <i class="ti ti-bell" style="font-size:15px;color:var(--text3);"></i>
+          ${hasNotif ? '<div class="page-header-bell-dot"></div>' : ''}
+        </div>
+        <div class="page-header-avatar" onclick="showPage('settings')">
+          <div class="page-header-av-circle" style="background:${colors[role]||'#888'}">${initials}</div>
+          <div>
+            <div class="page-header-av-name">${name}</div>
+            <div class="page-header-av-role">${role.charAt(0).toUpperCase()+role.slice(1)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${actionsHTML ? `<div class="page-header-divider"></div><div class="page-header-actions">${actionsHTML}</div>` : '<div class="page-header-divider"></div>'}`;
+
+  // Insert at top of page if not already there
+  let existingHeader = page.querySelector('.page-header-wrap');
+  if (!existingHeader) {
+    const wrap = document.createElement('div');
+    wrap.className = 'page-header-wrap';
+    page.insertBefore(wrap, page.firstChild);
+    existingHeader = wrap;
+  }
+  existingHeader.innerHTML = headerHTML;
 }
 
 function saveDeliveryThresholds() {
@@ -7786,6 +7911,9 @@ async function onUserSignedIn(firebaseUser) {
   // Re-render now that profile is loaded — buttons will show/hide correctly
   renderAll();
   refreshUserList();
+  // Render page header for the active page
+  const activePage = document.querySelector('.page.active');
+  if (activePage) _renderPageHeaderForPage(activePage.id.replace('page-',''));
 
   // Hide login, show app
   document.getElementById('login-screen').style.display = 'none';

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V67</title>
+<title>NPD Tracker V68</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1126,7 +1126,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V67</div>
+    <div class="login-logo">NPD Tracker V68</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1152,7 +1152,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V67</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V68</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1190,7 +1190,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V67</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V68</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -1781,7 +1781,6 @@ html{scroll-behavior:smooth;}
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="pd-clip-btn" onclick="toggleClipWindow('proj')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
         <button onclick="openGanttForProject(currentProjDetailId)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Open Gantt Chart"><i class="ti ti-chart-gantt"></i> Gantt</button>
-        <button id="pd-edit-btn" onclick="toggleInlineForm('pd-edit-form')" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);align-items:center;gap:4px;" title="Edit project info"><i class="ti ti-pencil"></i> Edit</button>
         <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open');resetWindowPosition('proj')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -1807,7 +1806,6 @@ html{scroll-behavior:smooth;}
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="inq-clip-btn" onclick="toggleClipWindow('inq')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
-        <button id="inq-d-edit-btn" onclick="toggleInlineForm('inq-edit-form')" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);align-items:center;gap:4px;"><i class="ti ti-pencil"></i> Edit</button>
         <button class="proj-detail-close" onclick="document.getElementById('inq-detail-overlay').classList.remove('open');resetWindowPosition('inq')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -4320,8 +4318,6 @@ function openInqDetail(inqId) {
   currentInqDetailId = inqId;
   currentInqDTab = 'overview';
   renderInqDetail();
-  const editBtn = document.getElementById('inq-d-edit-btn');
-  if (editBtn) editBtn.style.display = can('inquiries','edit') ? 'flex' : 'none';
   document.getElementById('inq-detail-overlay').classList.add('open');
   setTimeout(() => { initDraggableWindow('inq'); applyClippedPosition('inq'); }, 50);
 }
@@ -4356,55 +4352,62 @@ function _renderInqDetailInner() {
   const mi = p.moldInquiry||{};
   const co = p.costing||{};
   const pr = p.priceSubmission||{};
+  const canEdit = can('inquiries','edit');
 
-  // Header
-  document.getElementById('inq-d-code').textContent = inq.code + (inq.date ? ' · '+fmtDate(inq.date) : '') + (inq.bdNum ? ' · BD#'+inq.bdNum : '');
-  document.getElementById('inq-d-name').textContent = inq.name;
-  const badges = document.getElementById('inq-d-badges');
+  // ── HEADER ──
+  // Inline-editable header fields
   const statusKey = INQ_STATUS_MAP[inq.status]||inq.status?.toLowerCase()||'';
-  badges.innerHTML = `
-    <span class="sbadge ${statusKey}">${statusLabel(inq.status)}</span>
-    ${inq.customer ? `<span class="factory-pill">${inq.customer}</span>` : ''}
-    ${inq.factory ? `<span class="factory-pill">${inq.factory}</span>` : ''}
-    ${inq.bdPerson ? `<span class="rap-pic-pill">${inq.bdPerson}</span>` : ''}
-    ${inq.priority && inq.priority !== '2' ? `<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--ambg);color:${inq.priority==='3'?'var(--red)':inq.priority==='1'?'var(--text3)':'var(--amber)'};font-family:var(--fm);">${inq.priority==='3'?'High':inq.priority==='1'?'Low':'Med'}</span>` : ''}`;
+  document.getElementById('inq-d-code').innerHTML = `
+    <span contenteditable="${canEdit}" id="inq-de-code-inline"
+      onblur="saveInqField('${inq.id}','code',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
+      title="${canEdit?'Click to edit':''}">${inq.code||''}</span>
+    ${inq.date?` · <span contenteditable="false" style="opacity:.7;">${fmtDate(inq.date)}</span>`:''}
+    ${inq.bdNum?` · BD#${inq.bdNum}`:''}`;
+
+  document.getElementById('inq-d-name').innerHTML = `
+    <span contenteditable="${canEdit}" id="inq-de-name-inline"
+      onblur="saveInqField('${inq.id}','name',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
+      title="${canEdit?'Click to edit name':''}">${inq.name||''}</span>`;
+
+  document.getElementById('inq-d-badges').innerHTML = `
+    ${canEdit ? `
+      <select onchange="saveInqField('${inq.id}','status',this.value);renderInqDetail()" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="OPEN" ${inq.status==='OPEN'?'selected':''}>Open</option>
+        <option value="CLOSED" ${inq.status==='CLOSED'?'selected':''}>Closed</option>
+        <option value="ON-HOLD" ${inq.status==='ON-HOLD'?'selected':''}>On Hold</option>
+      </select>
+      <select onchange="saveInqField('${inq.id}','factory',this.value)" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="">Factory…</option>
+        <option value="Combi-Pack" ${inq.factory==='Combi-Pack'?'selected':''}>Combi-Pack</option>
+        <option value="Super Uniart" ${inq.factory==='Super Uniart'?'selected':''}>Super Uniart</option>
+        <option value="Reachpac" ${inq.factory==='Reachpac'?'selected':''}>Reachpac</option>
+      </select>
+      <select onchange="saveInqField('${inq.id}','priority',this.value)" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="1" ${inq.priority==='1'?'selected':''}>Low</option>
+        <option value="2" ${inq.priority==='2'?'selected':''}>Med</option>
+        <option value="3" ${inq.priority==='3'?'selected':''}>High</option>
+      </select>` :
+    `<span class="sbadge ${statusKey}">${statusLabel(inq.status)}</span>
+     ${inq.factory?`<span class="factory-pill">${inq.factory}</span>`:''}
+     ${inq.priority&&inq.priority!=='2'?`<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--ambg);color:${inq.priority==='3'?'var(--red)':'var(--text3)'};font-family:var(--fm);">${inq.priority==='3'?'High':'Low'}</span>`:''}`}
+    ${inq.customer?`<span class="factory-pill">${inq.customer}</span>`:''}
+    ${inq.bdPerson?`<span class="rap-pic-pill">${inq.bdPerson}</span>`:''}`;
 
   // Sync tabs
   document.querySelectorAll('#inq-d-tabs .pd-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === currentInqDTab));
 
   let html = '';
 
-  // ── INLINE EDIT FORM ──
-  html += `<div id="inq-edit-form" style="display:none;border-bottom:1px solid var(--border);">
-    <div style="padding:12px 16px;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-family:var(--fm);margin-bottom:10px;"><i class="ti ti-pencil"></i> Edit Inquiry</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">NPD Code</label><input class="finput" id="inq-de-code" type="text" value="${inq.code||''}" style="width:100%;box-sizing:border-box;"></div>
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Status</label>
-          <select class="finput" id="inq-de-status" style="width:100%;box-sizing:border-box;"><option value="OPEN">Open</option><option value="CLOSED">Closed</option><option value="ON-HOLD">On Hold</option></select></div>
-      </div>
-      <div style="margin-bottom:8px;"><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Product Name</label><input class="finput" id="inq-de-name" type="text" value="${inq.name||''}" style="width:100%;box-sizing:border-box;"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Customer</label><input class="finput" id="inq-de-customer" type="text" value="${inq.customer||''}" style="width:100%;box-sizing:border-box;"></div>
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Material</label><input class="finput" id="inq-de-material" type="text" value="${inq.material||''}" style="width:100%;box-sizing:border-box;"></div>
-      </div>
-      <div style="margin-bottom:10px;"><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Remark / Current Status</label><textarea class="finput" id="inq-de-remark" rows="2" style="width:100%;box-sizing:border-box;resize:vertical;">${inq.remark||''}</textarea></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button class="btn-secondary" style="font-size:11px;padding:5px 12px;" onclick="toggleInlineForm('inq-edit-form')">Cancel</button>
-        <button class="btn-primary" style="font-size:11px;padding:5px 14px;" onclick="submitInlineInqEdit('${inq.id}')">Save Changes</button>
-      </div>
-    </div>
-  </div>`;
-
   if (currentInqDTab === 'overview') {
-    // Delivery Performance big number in overview
+    // Delivery Performance
     const delivThreshY = (data.settings?.deliveryThresholdYellow)||14;
     const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
-    const ovInqDate    = inq.date||'';
     const ovPriceDate  = (inq.pipeline?.priceSubmission?.date)||'';
-    const ovDelivDays  = ovInqDate && ovPriceDate ? Math.round((new Date(ovPriceDate+'T00:00:00') - new Date(ovInqDate+'T00:00:00')) / 86400000) : null;
+    const ovDelivDays  = inq.date && ovPriceDate ? Math.round((new Date(ovPriceDate+'T00:00:00') - new Date(inq.date+'T00:00:00')) / 86400000) : null;
     const ovDelivColor = ovDelivDays===null?'var(--text3)':ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
-    if (ovDelivDays !== null || ovInqDate) {
+    if (ovDelivDays !== null || inq.date) {
       html += `<div class="proj-detail-section" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;">
         <div>
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;">Delivery Performance</div>
@@ -4415,69 +4418,96 @@ function _renderInqDetailInner() {
         </div>
       </div>`;
     }
+
+    // Basic Info — inline editable
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Basic Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
-        <div><span style="color:var(--text3);">Date:</span> <strong>${inq.date?fmtDate(inq.date):'—'}</strong></div>
-        <div><span style="color:var(--text3);">Type:</span> <strong>${inq.type||'—'}</strong></div>
-        <div><span style="color:var(--text3);">Material:</span> <strong>${inq.material||'—'}</strong></div>
-        <div><span style="color:var(--text3);">Factory:</span> <strong>${inq.factory||'—'}</strong></div>
-        <div><span style="color:var(--text3);">BD Person:</span> <strong>${inq.bdPerson||'—'}</strong></div>
-        <div><span style="color:var(--text3);">Customer:</span> <strong>${inq.customer||'—'}</strong></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Date</span>
+          ${canEdit?`<input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:pointer;">`:
+          `<strong>${inq.date?fmtDate(inq.date):'—'}</strong>`}
+        </div>
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Customer</span>
+          ${canEdit?`<input type="text" value="${inq.customer||''}" onblur="saveInqField('${inq.id}','customer',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="Customer name">`:
+          `<strong>${inq.customer||'—'}</strong>`}
+        </div>
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Material</span>
+          ${canEdit?`<input type="text" value="${inq.material||''}" onblur="saveInqField('${inq.id}','material',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="PP / HDPE / PET">`:
+          `<strong>${inq.material||'—'}</strong>`}
+        </div>
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">BD Person</span>
+          ${canEdit?`<input type="text" value="${inq.bdPerson||''}" onblur="saveInqField('${inq.id}','bdPerson',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="BD person">`:
+          `<strong>${inq.bdPerson||'—'}</strong>`}
+        </div>
       </div>
     </div>`;
 
-    // Products & Revenue
-    const totalRev = (inq.products||[]).reduce((s,p) => s + (p.volume||0)*(p.cost||0), 0);
-    if ((inq.products||[]).length) {
-      html += `<div class="proj-detail-section">
-        <div class="proj-detail-slabel">Products &amp; Volume ${totalRev>0?`<span style="color:var(--accent);font-weight:600;font-size:10px;">Est. RM ${totalRev.toLocaleString('en-MY',{minimumFractionDigits:2})}</span>`:''}</div>
-        <div style="display:grid;grid-template-columns:1fr auto auto;gap:0;font-size:11px;">
-          <div style="font-weight:700;color:var(--text3);padding:4px 8px 4px 0;border-bottom:1px solid var(--border);">Product</div>
-          <div style="font-weight:700;color:var(--text3);padding:4px 8px;border-bottom:1px solid var(--border);text-align:right;">Volume</div>
-          <div style="font-weight:700;color:var(--text3);padding:4px 0 4px 8px;border-bottom:1px solid var(--border);text-align:right;">Unit Cost (RM)</div>
-          ${inq.products.map(p => `
-            <div style="padding:5px 8px 5px 0;border-bottom:1px solid var(--border);color:var(--text);">${p.name}</div>
-            <div style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--text2);">${p.volume?.toLocaleString()||'—'}</div>
-            <div style="padding:5px 0 5px 8px;border-bottom:1px solid var(--border);text-align:right;color:${p.cost?'var(--accent)':'var(--text3)'};">${p.cost?'RM '+p.cost.toFixed(2):'Pending'}</div>
-          `).join('')}
-        </div>
-      </div>`;
-    }
+    // Products & Revenue — inline editable
+    const totalRev = (inq.products||[]).reduce((s,pr) => s + (pr.volume||0)*(pr.cost||0), 0);
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Products &amp; Volume
+        ${totalRev>0?`<span style="color:var(--accent);font-weight:600;font-size:10px;">Est. RM ${totalRev.toLocaleString('en-MY',{minimumFractionDigits:2})}</span>`:''}
+        ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddProduct('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
+      </div>
+      <div style="font-size:11px;" id="inq-products-inline-${inq.id}">`;
 
-    // Inquiry Brief
-    if (inq.remark) {
-      html += `<div class="proj-detail-section">
-        <div class="proj-detail-slabel">Inquiry Brief ${inq.remarkDate?`<span style="font-weight:400;color:var(--text3);font-size:10px;">· ${fmtDate(inq.remarkDate)}</span>`:''}
-        </div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark}</div>
+    (inq.products||[]).forEach(prod => {
+      html += `<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+        ${canEdit?`<input type="text" value="${prod.name||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','name',this.value)" style="font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;min-width:0;">`:
+        `<span>${prod.name}</span>`}
+        ${canEdit?`<input type="number" value="${prod.volume||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','volume',this.value)" style="width:80px;font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 4px;text-align:right;" placeholder="Volume">`:
+        `<span style="color:var(--text2);text-align:right;">${prod.volume?.toLocaleString()||'—'}</span>`}
+        ${canEdit?`<input type="number" value="${prod.cost||''}" step="0.01" onblur="saveInqProduct('${inq.id}','${prod.id}','cost',this.value)" style="width:90px;font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--accent);font-family:var(--f);padding:1px 4px;text-align:right;" placeholder="Cost (RM)">`:
+        `<span style="color:${prod.cost?'var(--accent)':'var(--text3)'}">${prod.cost?'RM '+prod.cost.toFixed(2):'Pending'}</span>`}
+        ${canEdit?`<button onclick="deleteInqProduct('${inq.id}','${prod.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 4px;"><i class="ti ti-trash"></i></button>`:''}
       </div>`;
-    }
+    });
+    if (!(inq.products||[]).length) html += `<div style="color:var(--text3);font-size:11px;padding:4px 0;">No products yet.${canEdit?' Click + Add to start.':''}</div>`;
+    html += `</div></div>`;
 
-    // Next Actions (structured PIC + Action + Date Added + Deadline)
-    const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy', pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
+    // Inquiry Brief — inline editable
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Inquiry Brief
+        ${inq.remarkDate?`<span style="font-weight:400;color:var(--text3);font-size:10px;">· ${fmtDate(inq.remarkDate)}</span>`:''}
+        ${canEdit?`<input type="date" value="${inq.remarkDate||today}" onchange="saveInqField('${inq.id}','remarkDate',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;margin-left:6px;" title="Brief date">`:''}</div>
+      ${canEdit?`<textarea onblur="saveInqField('${inq.id}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:60px;line-height:1.6;" placeholder="Write the inquiry brief here…">${inq.remark||''}</textarea>`:
+      `<div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark||'<span style="color:var(--text3);">No brief yet.</span>'}</div>`}
+    </div>`;
+
+    // Next Actions — fully inline editable
+    const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy-'+uid(), pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span>
-        ${can('inquiries','edit') ? `<button class="proj-detail-slabel-add" onclick="openInqEditForActions('${inq.id}')"><i class="ti ti-pencil" style="font-size:10px"></i> Edit</button>` : ''}
-      </div>
-      ${nas.length ? nas.map(na => {
+        ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddNextAction('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
+      </div>`;
+    if (nas.length) {
+      nas.forEach(na => {
         const isOverdue = na.deadline && na.deadline < today;
-        return `<div class="next-action-row">
-          <span class="na-pic">${na.pic||'—'}</span>
-          <span class="na-text">${na.action}</span>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-            <span style="font-size:9px;color:var(--text3);font-family:var(--fm);">Added ${fmtDate(na.dateAdded||na.date||todayStr())}</span>
-            ${na.deadline ? `<span class="na-deadline ${isOverdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:9px"></i> ${fmtDate(na.deadline)}${isOverdue?' ⚠':''}</span>` : ''}
+        html += `<div style="display:flex;gap:6px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);" id="na-row-${na.id}">
+          ${canEdit?`<select onchange="saveInqNA('${inq.id}','${na.id}','pic',this.value)" style="font-size:10px;padding:2px 4px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--accent);font-family:var(--fm);flex-shrink:0;cursor:pointer;">${picDropdownHTML(na.pic||'Adam')}</select>`:
+          `<span class="na-pic">${na.pic||'—'}</span>`}
+          ${canEdit?`<input type="text" value="${na.action||''}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" style="flex:1;font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:2px 0;min-width:0;" placeholder="Action…">`:
+          `<span class="na-text" style="flex:1;">${na.action}</span>`}
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;">
+            <span style="font-size:9px;color:var(--text3);font-family:var(--fm);">Added ${fmtDate(na.dateAdded||today)}</span>
+            ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')" style="font-size:10px;background:none;border:none;border-bottom:1px dashed ${isOverdue?'var(--red)':'var(--border)'};color:${isOverdue?'var(--red)':'var(--text3)'};font-family:var(--fm);padding:1px;cursor:pointer;" title="Deadline">`:
+            na.deadline?`<span class="na-deadline ${isOverdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:9px"></i> ${fmtDate(na.deadline)}${isOverdue?' ⚠':''}</span>`:''}
           </div>
+          ${canEdit?`<button onclick="deleteInqNA('${inq.id}','${na.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 2px;flex-shrink:0;"><i class="ti ti-trash"></i></button>`:''}
         </div>`;
-      }).join('') : '<div style="font-size:11px;color:var(--text3);">No next actions.</div>'}
-    </div>`;
+      });
+    } else {
+      html += `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No next actions.${canEdit?' Click + Add to start.':''}</div>`;
+    }
+    html += `</div>`;
 
-    // Inquiry Progress (renamed from Tasks)
+    // Inquiry Progress (Tasks)
     const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span></div>
-      ${!tasks.length ? '<div style="font-size:11px;color:var(--text3);">No tasks.</div>' :
+      <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
+        ${canEdit?`<button class="proj-detail-slabel-add" onclick="openAddTask('inquiry','${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
+      </div>
+      ${!tasks.length ? `<div style="font-size:11px;color:var(--text3);">No tasks yet.${canEdit?' Click + Add to start.':''}</div>` :
         tasks.map(t => {
           const dlCls = t.done?'ok':t.deadline<today?'overdue':t.deadline===today?'today':'ok';
           const dlTxt = t.deadline?(t.deadline<today&&!t.done?'⚠ ':t.deadline===today&&!t.done?'⏰ ':'')+fmtDate(t.deadline):'—';
@@ -4501,15 +4531,27 @@ function _renderInqDetailInner() {
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Pipeline Phases</div>
       ${phases.map(ph => {
-        const st = ph.data.status||'—';
+        const st = ph.data.status||'';
         const stCss = st==='Done'?'completed':st==='Ongoing'?'in-progress':st==='Not Started'?'not-started':'on-hold';
         return `<div style="background:var(--surface2);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <span style="font-size:12px;font-weight:700;color:var(--text);">${ph.label}</span>
-            <span class="sbadge ${stCss}" style="font-size:10px;">${st}</span>
+            ${canEdit?`<select onchange="saveInqPipeline('${inq.id}','${ph.key}','status',this.value)" style="font-size:10px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--f);cursor:pointer;">
+              <option value="" ${!st?'selected':''}>— Status —</option>
+              <option value="Not Started" ${st==='Not Started'?'selected':''}>Not Started</option>
+              <option value="Ongoing" ${st==='Ongoing'?'selected':''}>Ongoing</option>
+              <option value="Done" ${st==='Done'?'selected':''}>Done</option>
+              <option value="On Hold" ${st==='On Hold'?'selected':''}>On Hold</option>
+            </select>`:
+            `<span class="sbadge ${stCss}" style="font-size:10px;">${st||'—'}</span>`}
           </div>
-          ${ph.data.date ? `<div style="font-size:11px;color:var(--text3);font-family:var(--fm);margin-bottom:4px;"><i class="ti ti-calendar" style="font-size:9px;margin-right:3px;"></i>${fmtDate(ph.data.date)}</div>` : ''}
-          ${ph.data.remark ? `<div style="font-size:12px;color:var(--text2);">${ph.data.remark}</div>` : ''}
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            <span style="font-size:10px;color:var(--text3);flex-shrink:0;">Date:</span>
+            ${canEdit?`<input type="date" value="${ph.data.date||''}" onchange="saveInqPipeline('${inq.id}','${ph.key}','date',this.value)" style="font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px;cursor:pointer;">`:
+            `<span style="font-size:11px;color:var(--text2);">${ph.data.date?fmtDate(ph.data.date):'Not recorded'}</span>`}
+          </div>
+          ${canEdit?`<textarea onblur="saveInqPipeline('${inq.id}','${ph.key}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:11px;font-family:var(--f);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;resize:vertical;min-height:40px;color:var(--text2);" placeholder="Notes…">${ph.data.remark||''}</textarea>`:
+          ph.data.remark?`<div style="font-size:11px;color:var(--text2);">${ph.data.remark}</div>`:'' }
         </div>`;
       }).join('')}
     </div>`;
@@ -4520,89 +4562,60 @@ function _renderInqDetailInner() {
     const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
     const inquiryDate  = inq.date||'';
     const moldDate     = (inq.pipeline?.moldInquiry?.date)||'';
-    const npdInputTask = (inq.tasks||[]).find(t => t.name.toLowerCase().includes('compile') || t.name.toLowerCase().includes('npd input'));
+    const npdInputTask = (inq.tasks||[]).find(t => t.name?.toLowerCase().includes('compile') || t.name?.toLowerCase().includes('npd input'));
     const npdInputDate = npdInputTask?.deadline||'';
     const priceDate    = (inq.pipeline?.priceSubmission?.date)||'';
     const costingDate  = (inq.pipeline?.costing?.date)||'';
-
-    const daysBetween = (d1,d2) => {
-      if (!d1||!d2) return null;
-      return Math.round((new Date(d2+'T00:00:00') - new Date(d1+'T00:00:00')) / 86400000);
-    };
-
+    const daysBetween = (d1,d2) => { if (!d1||!d2) return null; return Math.round((new Date(d2+'T00:00:00') - new Date(d1+'T00:00:00')) / 86400000); };
     const steps = [
-      { label:'Inquiry Received',    date:inquiryDate,  icon:'mail',          desc:'Date inquiry received from customer' },
-      { label:'Mold Inquiry Sent',   date:moldDate,     icon:'building-factory', desc:'Sent to moldmaker' },
-      { label:'NPD Input Compiled',  date:npdInputDate, icon:'file-check',    desc:'Internal NPD input compiled' },
-      { label:'Costing Done',        date:costingDate,  icon:'calculator',    desc:'Costing completed' },
-      { label:'Price Submitted',     date:priceDate,    icon:'send',          desc:'Price submitted to customer' },
+      { label:'Inquiry Received',   date:inquiryDate,  icon:'mail',          desc:'Date inquiry received from customer' },
+      { label:'Mold Inquiry Sent',  date:moldDate,     icon:'building-factory', desc:'Sent to moldmaker' },
+      { label:'NPD Input Compiled', date:npdInputDate, icon:'file-check',    desc:'Internal NPD input compiled' },
+      { label:'Costing Done',       date:costingDate,  icon:'calculator',    desc:'Costing completed' },
+      { label:'Price Submitted',    date:priceDate,    icon:'send',          desc:'Price submitted to customer' },
     ];
-
-    const totalDays   = daysBetween(inquiryDate, priceDate);
-    const totalColor  = totalDays===null?'var(--text3)':totalDays>=delivThreshR?'var(--red)':totalDays>=delivThreshY?'var(--amber)':'var(--accent)';
-
-    html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Delivery Performance
-        ${totalDays!==null?`<span style="font-size:20px;font-weight:800;color:${totalColor};letter-spacing:-0.5px;">${totalDays}<span style="font-size:11px;font-weight:600;margin-left:2px;">days</span></span>`:'<span style="color:var(--text3);font-weight:400;">pending</span>'}
-      </div>
-      <div style="margin-bottom:12px;">`;
-
-    // Timeline steps
+    const totalDays  = daysBetween(inquiryDate, priceDate);
+    const totalColor = totalDays===null?'var(--text3)':totalDays>=delivThreshR?'var(--red)':totalDays>=delivThreshY?'var(--amber)':'var(--accent)';
+    html += `<div class="proj-detail-section"><div class="proj-detail-slabel">Delivery Performance
+      ${totalDays!==null?`<span style="font-size:20px;font-weight:800;color:${totalColor};letter-spacing:-0.5px;">${totalDays}<span style="font-size:11px;font-weight:600;margin-left:2px;">days</span></span>`:'<span style="color:var(--text3);font-weight:400;">pending</span>'}
+    </div><div style="margin-bottom:12px;">`;
     steps.forEach((step, i) => {
-      const hasDone  = !!step.date;
+      const hasDone = !!step.date;
       const interval = i > 0 ? daysBetween(steps[i-1].date, step.date) : null;
-      const isSlowI  = interval !== null && interval > 7;
-      const dotBg    = hasDone ? 'var(--accent)' : 'var(--surface2)';
-      const dotBorder= hasDone ? 'var(--accent)' : 'var(--border)';
-      const dotColor = hasDone ? '#fff' : 'var(--text3)';
-      html += `
-        <div style="display:flex;gap:12px;align-items:stretch;min-height:44px;">
-          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:32px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:${dotBg};border:2px solid ${dotBorder};display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
-              <i class="ti ti-${hasDone?'check':'clock'}" style="font-size:13px;color:${dotColor};"></i>
-            </div>
-            ${i < steps.length-1 ? `<div style="flex:1;width:2px;background:${hasDone&&steps[i+1].date?'var(--accent)':'var(--border)'};margin:2px 0;min-height:12px;"></div>` : ''}
+      const isSlowI = interval !== null && interval > 7;
+      html += `<div style="display:flex;gap:12px;align-items:stretch;min-height:44px;">
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:32px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:${hasDone?'var(--accent)':'var(--surface2)'};border:2px solid ${hasDone?'var(--accent)':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+            <i class="ti ti-${hasDone?'check':'clock'}" style="font-size:13px;color:${hasDone?'#fff':'var(--text3)'};"></i>
           </div>
-          <div style="flex:1;padding-bottom:${i<steps.length-1?'12px':'0'};">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div>
-                <div style="font-size:12px;font-weight:${hasDone?'600':'500'};color:${hasDone?'var(--text)':'var(--text3)'};">${step.label}</div>
-                <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:1px;">${hasDone?fmtDate(step.date):step.desc}</div>
-              </div>
-              ${interval!==null?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${isSlowI?'var(--ambg)':'var(--al)'};color:${isSlowI?'var(--amber)':'var(--accent)'};flex-shrink:0;">+${interval}d</span>`:''}
+          ${i < steps.length-1 ? `<div style="flex:1;width:2px;background:${hasDone&&steps[i+1].date?'var(--accent)':'var(--border)'};margin:2px 0;min-height:12px;"></div>` : ''}
+        </div>
+        <div style="flex:1;padding-bottom:${i<steps.length-1?'12px':'0'};">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div>
+              <div style="font-size:12px;font-weight:${hasDone?'600':'500'};color:${hasDone?'var(--text)':'var(--text3)'};">${step.label}</div>
+              <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:1px;">${hasDone?fmtDate(step.date):step.desc}</div>
             </div>
+            ${interval!==null?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${isSlowI?'var(--ambg)':'var(--al)'};color:${isSlowI?'var(--amber)':'var(--accent)'};flex-shrink:0;">+${interval}d</span>`:''}
           </div>
-        </div>`;
+        </div>
+      </div>`;
     });
-
-    html += `</div>
-      ${totalDays!==null?`<div style="background:${totalDays>=delivThreshR?'var(--rebg)':totalDays>=delivThreshY?'var(--ambg)':'var(--al)'};border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:600;color:var(--text);">Total: Inquiry → Price Submission</span>
-        <span style="font-size:22px;font-weight:800;color:${totalColor};">${totalDays}d</span>
-      </div>`:''}
-    </div>`;
+    html += `</div>${totalDays!==null?`<div style="background:${totalDays>=delivThreshR?'var(--rebg)':totalDays>=delivThreshY?'var(--ambg)':'var(--al)'};border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;font-weight:600;color:var(--text);">Total: Inquiry → Price Submission</span><span style="font-size:22px;font-weight:800;color:${totalColor};">${totalDays}d</span></div>`:''}</div>`;
   }
 
   if (currentInqDTab === 'changelog') {
     const log = (inq.activityLog||[]).slice().reverse();
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Changelog <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
-      ${log.length ? log.map(e => `
-        <div class="act-log-entry">
-          <div class="act-log-icon ${e.type||'update'}"><i class="ti ti-${e.icon||'activity'}"></i></div>
-          <div class="act-log-body">
-            <div class="act-log-text">${e.text}</div>
-            <div class="act-log-meta">${e.by||'Adam'} · ${fmtDate(e.date)} ${e.time||''}</div>
-          </div>
-        </div>`).join('')
-      : '<div class="act-log-empty"><i class="ti ti-history"></i>No changes logged yet.</div>'}
+      <div class="proj-detail-slabel">Activity Log <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
+      ${log.length ? log.map(e => `<div class="act-log-entry">
+        <div class="act-log-icon ${e.type}"><i class="ti ti-${e.icon||'activity'}"></i></div>
+        <div class="act-log-body"><div class="act-log-text">${e.text}</div><div class="act-log-meta">${e.by||'Adam'} · ${fmtDate(e.date)} ${e.time||''}</div></div>
+      </div>`).join('') : '<div style="font-size:11px;color:var(--text3);">No activity recorded yet.</div>'}
     </div>`;
   }
 
   document.getElementById('inq-d-body').innerHTML = html;
-  // Set status in edit form
-  const stSel = document.getElementById('inq-de-status');
-  if (stSel) stSel.value = inq.status||'OPEN';
 } // end _renderInqDetailInner
 
 function toggleInqTask(inqId, taskId) {
@@ -7001,6 +7014,99 @@ function fabAction(page) {
   }
 }
 
+// ── Inline Inquiry Edit Helpers ──
+function saveInqField(inqId, field, value) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const oldVal = inq[field];
+  inq[field] = value;
+  if (oldVal !== value) {
+    appendInqLog(inqId, 'update', 'pencil', `Updated <strong>${field}</strong>: ${oldVal||'—'} → ${value}`);
+    save();
+    if (['status','factory','priority'].includes(field)) renderInqDetail();
+  }
+}
+
+function saveInqProduct(inqId, prodId, field, value) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const prod = (inq.products||[]).find(p => p.id === prodId);
+  if (!prod) return;
+  prod[field] = field==='volume'||field==='cost' ? parseFloat(value)||0 : value;
+  save();
+  // Refresh just the revenue total without full re-render
+  renderInqDetail();
+}
+
+function deleteInqProduct(inqId, prodId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  inq.products = (inq.products||[]).filter(p => p.id !== prodId);
+  save(); renderInqDetail();
+}
+
+function inqAddProduct(inqId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  if (!inq.products) inq.products = [];
+  inq.products.push({ id: uid(), name: 'New Product', volume: 0, cost: 0 });
+  save(); renderInqDetail();
+}
+
+function saveInqNA(inqId, naId, field, value) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const na = (inq.nextActions||[]).find(n => n.id === naId);
+  if (!na) return;
+  na[field] = value;
+  save();
+}
+
+function saveInqNADeadline(inqId, naId, newDl, oldDl) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const na = (inq.nextActions||[]).find(n => n.id === naId);
+  if (!na) return;
+  if (oldDl && newDl && oldDl !== newDl) {
+    appendInqLog(inqId, 'update', 'calendar', `Deadline changed for "<strong>${na.action}</strong>": ${fmtDate(oldDl)} → ${fmtDate(newDl)}`);
+  }
+  na.deadline = newDl;
+  save(); renderInqDetail();
+}
+
+function deleteInqNA(inqId, naId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  inq.nextActions = (inq.nextActions||[]).filter(n => n.id !== naId);
+  save(); renderInqDetail();
+}
+
+function inqAddNextAction(inqId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  if (!inq.nextActions) inq.nextActions = [];
+  inq.nextActions.push({ id: uid(), pic: currentUserProfile?.name||'Adam', action: '', deadline: '', dateAdded: todayStr() });
+  save(); renderInqDetail();
+  // Focus the new action input
+  setTimeout(() => {
+    const rows = document.querySelectorAll('[id^="na-row-"]');
+    const last = rows[rows.length-1];
+    if (last) { const inp = last.querySelector('input[type="text"]'); if (inp) inp.focus(); }
+  }, 100);
+}
+
+function saveInqPipeline(inqId, phase, field, value) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  if (!inq.pipeline) inq.pipeline = {};
+  if (!inq.pipeline[phase]) inq.pipeline[phase] = {};
+  inq.pipeline[phase][field] = value;
+  appendInqLog(inqId, 'update', 'git-fork', `Updated pipeline <strong>${phase} ${field}</strong>: ${value}`);
+  save();
+  if (field === 'status') renderInqDetail();
+}
+
+
 function saveDeliveryThresholds() {
   if (currentUserProfile?.role !== 'master') return;
   const yellow = parseInt(document.getElementById('deliv-thresh-yellow')?.value)||14;
@@ -7019,6 +7125,19 @@ function openInqEditForActions(inqId) {
     const naList = document.getElementById('inq-next-actions-list');
     if (naList) naList.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 200);
+}
+
+// ── Inline Project Edit Helpers ──
+function saveProjField(projId, field, value) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !can('projects','edit')) return;
+  const old = p[field];
+  p[field] = value;
+  if (old !== value) {
+    appendChangelog({ type:'update', icon:'pencil', text:`Updated project <strong>${p.name}</strong> — ${field}: ${value}`, section:'projects' });
+    save();
+    if (['status','classification','factory'].includes(field)) renderProjDetail();
+  }
 }
 
 function openGanttForProject(projId) {
@@ -7197,8 +7316,6 @@ function openProjDetail(projId) {
   currentProjDetailId = projId;
   currentPDTab = 'overview';
   renderProjDetail();
-  const editBtn = document.getElementById('pd-edit-btn');
-  if (editBtn) editBtn.style.display = can('projects','edit') ? 'flex' : 'none';
   document.getElementById('proj-detail-overlay').classList.add('open');
   setTimeout(() => { initDraggableWindow('proj'); applyClippedPosition('proj'); }, 50);
 }
@@ -7233,73 +7350,56 @@ function renderProjDetail() {
   const tasks = p.tasks||[];
   const rate = completion(tasks);
   const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '0/0';
+  const canEdit = can('projects','edit');
 
-  // Header
-  document.getElementById('pd-code').textContent = p.code + (p.date ? ' · ' + fmtDate(p.date) : '');
-  document.getElementById('pd-name').textContent = p.name;
-  const badges = document.getElementById('pd-badges');
-  badges.innerHTML = `
-    <span class="sbadge ${p.status}">${statusLabel(p.status)}</span>
-    ${p.classification ? `<span class="cbadge ${classCSS(p.classification)}">${classLabel(p.classification)}</span>` : ''}
-    ${p.factory ? `<span class="factory-pill">${p.factory}</span>` : ''}
+  // ── INLINE EDITABLE HEADER ──
+  document.getElementById('pd-code').innerHTML = `
+    <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','code',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
+      title="${canEdit?'Click to edit code':''}">${p.code||''}</span>
+    ${p.date?` · <input type="date" value="${p.date||''}" onchange="saveProjField('${p.id}','date',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;">`:' · No date'}`;
+
+  document.getElementById('pd-name').innerHTML = `
+    <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','name',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
+      title="${canEdit?'Click to edit name':''}">${p.name||''}</span>`;
+
+  document.getElementById('pd-badges').innerHTML = `
+    ${canEdit ? `
+      <select onchange="saveProjField('${p.id}','status',this.value);renderProjDetail()" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="not-started" ${p.status==='not-started'?'selected':''}>Not Started</option>
+        <option value="in-progress" ${p.status==='in-progress'?'selected':''}>In Progress</option>
+        <option value="completed" ${p.status==='completed'?'selected':''}>Completed</option>
+        <option value="on-hold" ${p.status==='on-hold'?'selected':''}>On Hold</option>
+      </select>
+      <select onchange="saveProjField('${p.id}','classification',this.value);renderProjDetail()" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="new-mold" ${p.classification==='new-mold'?'selected':''}>New Mold</option>
+        <option value="improvement" ${p.classification==='improvement'?'selected':''}>Improvement</option>
+        <option value="masterbatch" ${p.classification==='masterbatch'?'selected':''}>Masterbatch</option>
+        <option value="new-iml" ${p.classification==='new-iml'?'selected':''}>New IML</option>
+      </select>
+      <select onchange="saveProjField('${p.id}','factory',this.value)" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
+        <option value="">Factory…</option>
+        <option value="Combi-Pack" ${p.factory==='Combi-Pack'?'selected':''}>Combi-Pack</option>
+        <option value="Super Uniart" ${p.factory==='Super Uniart'?'selected':''}>Super Uniart</option>
+        <option value="Reachpac" ${p.factory==='Reachpac'?'selected':''}>Reachpac</option>
+      </select>` :
+    `<span class="sbadge ${p.status}">${statusLabel(p.status)}</span>
+     ${p.classification?`<span class="cbadge ${classCSS(p.classification)}">${classLabel(p.classification)}</span>`:''}
+     ${p.factory?`<span class="factory-pill">${p.factory}</span>`:''}`}
     <span class="ppill">${rate}% · ${doneFrac} actions</span>`;
 
   const tab = currentPDTab || 'overview';
-
-  // Sync tab button states
   document.querySelectorAll('.pd-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
 
-  // Inline edit form (always rendered at top, hidden by default)
-  const editFormHTML = `<div id="pd-edit-form" style="display:none;border-bottom:1px solid var(--border);">
-    <div style="padding:14px 20px;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-family:var(--fm);margin-bottom:12px;display:flex;align-items:center;gap:6px;"><i class="ti ti-pencil"></i> Edit Project Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Code</label>
-          <input class="finput" id="pd-edit-code" type="text" value="${p.code||''}" style="width:100%;box-sizing:border-box;"></div>
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Date Started</label>
-          <input class="finput" id="pd-edit-date" type="date" value="${p.date||''}" style="width:100%;box-sizing:border-box;"></div>
-      </div>
-      <div style="margin-bottom:8px;"><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Project Name</label>
-        <input class="finput" id="pd-edit-name" type="text" value="${p.name||''}" style="width:100%;box-sizing:border-box;"></div>
-      <div style="margin-bottom:8px;"><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Brief</label>
-        <textarea class="finput" id="pd-edit-brief" rows="2" style="width:100%;box-sizing:border-box;resize:vertical;">${p.brief||''}</textarea></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Classification</label>
-          <select class="finput" id="pd-edit-class" style="width:100%;box-sizing:border-box;">
-            <option value="new-mold" ${p.classification==='new-mold'?'selected':''}>New Mold</option>
-            <option value="improvement" ${p.classification==='improvement'?'selected':''}>Improvement</option>
-            <option value="masterbatch" ${p.classification==='masterbatch'?'selected':''}>Masterbatch</option>
-            <option value="new-iml" ${p.classification==='new-iml'?'selected':''}>New IML</option>
-          </select></div>
-        <div><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Factory</label>
-          <select class="finput" id="pd-edit-factory" style="width:100%;box-sizing:border-box;">
-            <option value="" ${!p.factory?'selected':''}>— Select —</option>
-            <option value="Combi-Pack" ${p.factory==='Combi-Pack'?'selected':''}>Combi-Pack</option>
-            <option value="Super Uniart" ${p.factory==='Super Uniart'?'selected':''}>Super Uniart</option>
-            <option value="Reachpac" ${p.factory==='Reachpac'?'selected':''}>Reachpac</option>
-          </select></div>
-      </div>
-      <div style="margin-bottom:12px;"><label style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);display:block;margin-bottom:4px;">Status</label>
-        <select class="finput" id="pd-edit-status" style="width:100%;box-sizing:border-box;">
-          <option value="not-started" ${p.status==='not-started'?'selected':''}>Not Started</option>
-          <option value="in-progress" ${p.status==='in-progress'?'selected':''}>In Progress</option>
-          <option value="completed" ${p.status==='completed'?'selected':''}>Completed</option>
-          <option value="on-hold" ${p.status==='on-hold'?'selected':''}>On Hold</option>
-        </select></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button class="btn-secondary" style="font-size:11px;padding:5px 12px;" onclick="toggleInlineForm('pd-edit-form')">Cancel</button>
-        <button class="btn-primary" style="font-size:11px;padding:5px 14px;" onclick="submitInlineProjectEdit('${p.id}')">Save Changes</button>
-      </div>
-    </div>
-  </div>`;
-
-  let html = editFormHTML;
+  let html = '';
 
   if (tab === 'overview') {
-    // Progress bar + brief
+    // Progress bar + brief — inline editable
     html += `<div class="proj-detail-section">
       <div class="proj-detail-prog"><div class="proj-detail-prog-fill" style="width:${rate}%"></div></div>
-      ${p.brief ? `<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;">${p.brief}</div>` : ''}
+      ${canEdit ? `<textarea onblur="saveProjField('${p.id}','brief',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:52px;line-height:1.6;margin-top:8px;" placeholder="Project brief…">${p.brief||''}</textarea>` :
+      p.brief ? `<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;">${p.brief}</div>` : ''}
     </div>`;
 
     // Sub-Statuses with inline add/edit

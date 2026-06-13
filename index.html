@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V63</title>
+<title>NPD Tracker V67</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -200,8 +200,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;
 .ftab{flex-shrink:0;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);font-family:var(--f);white-space:nowrap;transition:all .15s;}
 .ftab.active{background:linear-gradient(135deg,#3a8ef5,#30c060);color:#fff;border-color:transparent;}
 /* Collapsible filter panel */
-.filter-panel{overflow:hidden;transition:max-height .22s ease,opacity .18s ease;max-height:400px;opacity:1;}
+.filter-panel{overflow:hidden;transition:max-height .22s ease,opacity .18s ease;max-height:500px;opacity:1;}
 .filter-panel.collapsed{max-height:0;opacity:0;pointer-events:none;margin:0 !important;}
+.filter-zoom-row{display:flex;align-items:center;gap:10px;padding:8px 0 4px;border-top:1px solid var(--border);margin-top:6px;}
+.filter-zoom-row i{font-size:13px;color:var(--text3);flex-shrink:0;}
+.zoom-slider-wrap{position:relative;width:160px;flex-shrink:0;}
+.zoom-slider-wrap input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:20px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--accent) 0%,var(--accent) 50%,var(--border) 50%,var(--border) 100%);}
+.zoom-slider-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface);box-shadow:0 2px 6px rgba(58,142,245,.4);}
+.zoom-slider-wrap input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface);box-shadow:0 2px 6px rgba(58,142,245,.4);}
+.zoom-tooltip{position:absolute;top:-36px;transform:translateX(-50%);background:#1a1a2e;color:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px;pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;font-family:var(--fm);}
+.zoom-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1a1a2e;}
+.zoom-slider-wrap:hover .zoom-tooltip,.zoom-slider-wrap:active .zoom-tooltip,.zoom-slider-wrap.dragging .zoom-tooltip{opacity:1;}
 .filter-toggle-btn{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 9px;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);font-family:var(--f);white-space:nowrap;transition:background .12s,color .12s;}
 .filter-toggle-btn:hover{color:var(--text);}
 .filter-toggle-btn.filters-active{background:var(--al);border-color:var(--accent);color:var(--accent);}
@@ -493,7 +502,7 @@ select.finput{appearance:none;-webkit-appearance:none;background-image:url("data
 .onedrive-status{font-size:11px;padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
 
 /* ── Density Slider ── */
-.density-bar{display:flex;align-items:center;gap:8px;padding:7px 14px 4px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:90;}
+.density-bar{display:none !important;}
 .density-bar i{font-size:13px;color:var(--text3);flex-shrink:0;}
 .density-bar input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;}
 .density-bar input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--surface);}
@@ -966,6 +975,32 @@ html{scroll-behavior:smooth;}
 .cl-text{font-size:12px;color:var(--text);line-height:1.4;}
 .cl-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .cl-user-pill{background:var(--surface2);padding:1px 6px;border-radius:10px;font-size:9px;}
+/* ── Global Search ── */
+.search-wrap{position:relative;}
+.search-btn{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,width .2s,border-radius .2s;flex-shrink:0;}
+.search-btn:hover{background:var(--surface2);}
+.search-input-wrap{position:absolute;top:0;right:0;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--accent);border-radius:20px;padding:0 10px 0 14px;width:0;overflow:hidden;opacity:0;transition:width .22s cubic-bezier(.4,0,.2,1),opacity .15s;pointer-events:none;height:34px;box-shadow:0 2px 12px rgba(58,142,245,.2);}
+.search-input-wrap.open{width:300px;opacity:1;pointer-events:all;}
+.search-input-wrap input{flex:1;border:none;background:none;outline:none;font-size:12px;font-family:var(--f);color:var(--text);min-width:0;}
+.search-input-wrap input::placeholder{color:var(--text3);}
+.search-close-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0;flex-shrink:0;}
+.search-results{position:absolute;top:42px;right:0;width:380px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:900;max-height:420px;overflow-y:auto;display:none;}
+.search-results.open{display:block;}
+.search-results::-webkit-scrollbar{width:4px;}
+.search-results::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.search-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--fm);padding:10px 14px 4px;border-top:1px solid var(--border);}
+.search-section-label:first-child{border-top:none;}
+.search-result-item{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;transition:background .1s;}
+.search-result-item:hover{background:var(--surface2);}
+.search-result-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.search-result-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-result-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:1px;}
+.search-empty{padding:20px 14px;text-align:center;font-size:12px;color:var(--text3);}
+.search-highlight{background:var(--ambg);color:var(--amber);border-radius:2px;padding:0 1px;}
+.fab-btn{position:fixed;bottom:28px;right:28px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#f0445a,#3a8ef5 60%,#30c060);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(58,142,245,.4);z-index:600;transition:transform .15s,box-shadow .15s;}
+.fab-btn:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(58,142,245,.5);}
+.fab-btn.visible{display:flex;}
+.fab-btn i{font-size:22px;color:#fff;}
 /* ── Page Header ── */
 .page-header{padding:24px 28px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
 .page-header-left{flex:1;min-width:0;}
@@ -1091,7 +1126,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V63</div>
+    <div class="login-logo">NPD Tracker V67</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1117,7 +1152,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V63</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V67</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1140,6 +1175,8 @@ html{scroll-behavior:smooth;}
 </div>
 
 <div class="app-body">
+<!-- FAB Add Button -->
+<button class="fab-btn" id="fab-btn" onclick="fabAction()" title="Add New"><i class="ti ti-plus"></i></button>
 
 <!-- LEFT SIDEBAR -->
 <nav class="sidebar" id="sidebar">
@@ -1153,7 +1190,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V63</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V67</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -1250,6 +1287,14 @@ html{scroll-behavior:smooth;}
       <button class="sort-chip" id="inq-sort-overdue" onclick="setInqSort('overdue')"><i class="ti ti-alert-circle"></i> Overdue</button>
       <button class="sort-chip" id="inq-sort-name" onclick="setInqSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
     </div>
+    <div class="filter-zoom-row">
+      <i class="ti ti-zoom-out"></i>
+      <div class="zoom-slider-wrap" id="zoom-wrap-inq">
+        <div class="zoom-tooltip" id="zoom-tip-inq">280px</div>
+        <input type="range" id="density-slider" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'inq')">
+      </div>
+      <i class="ti ti-zoom-in"></i>
+    </div>
   </div>
   <div id="inquiries-list"></div>
 </div>
@@ -1289,6 +1334,14 @@ html{scroll-behavior:smooth;}
       <button class="sort-chip" id="proj-sort-status" onclick="setProjSort('status')"><i class="ti ti-progress"></i> Status</button>
       <button class="sort-chip" id="proj-sort-name" onclick="setProjSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
       <button class="sort-chip" id="proj-sort-stale" onclick="setProjSort('stale')"><i class="ti ti-clock-off"></i> Least Updated</button>
+    </div>
+    <div class="filter-zoom-row">
+      <i class="ti ti-zoom-out"></i>
+      <div class="zoom-slider-wrap" id="zoom-wrap-proj">
+        <div class="zoom-tooltip" id="zoom-tip-proj">280px</div>
+        <input type="range" id="density-slider-proj" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'proj')">
+      </div>
+      <i class="ti ti-zoom-in"></i>
     </div>
   </div>
   <div id="projects-list"></div>
@@ -1500,6 +1553,14 @@ html{scroll-behavior:smooth;}
       <button class="sort-chip" id="task-sort-priority" onclick="setTaskSort('priority')"><i class="ti ti-flame"></i> Priority</button>
       <button class="sort-chip" id="task-sort-name" onclick="setTaskSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
       <button class="sort-chip" id="task-sort-category" onclick="setTaskSort('category')"><i class="ti ti-tag"></i> Category</button>
+    </div>
+    <div class="filter-zoom-row">
+      <i class="ti ti-zoom-out"></i>
+      <div class="zoom-slider-wrap" id="zoom-wrap-tasks">
+        <div class="zoom-tooltip" id="zoom-tip-tasks">280px</div>
+        <input type="range" id="density-slider-tasks" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'tasks')">
+      </div>
+      <i class="ti ti-zoom-in"></i>
     </div>
   </div>
   <div id="mtasks-list" class="mtasks-grid d-normal"></div>
@@ -3051,18 +3112,57 @@ function pipeStatusCSS(s) {
 // ══════════════════════════════════════════════════════
 let currentDensity = 280; // default card min-width in px
 
-function onDensityChange(val) {
+function onDensityChange(val, source) {
   currentDensity = parseInt(val);
   applyDensity();
   localStorage.setItem('pm_density', val);
+  // Sync all sliders and tooltips
+  const sliders = ['density-slider','density-slider-proj','density-slider-tasks'];
+  const tips = { 'density-slider':'zoom-tip-inq', 'density-slider-proj':'zoom-tip-proj', 'density-slider-tasks':'zoom-tip-tasks' };
+  const wraps = { 'density-slider':'zoom-wrap-inq', 'density-slider-proj':'zoom-wrap-proj', 'density-slider-tasks':'zoom-wrap-tasks' };
+  sliders.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = currentDensity;
+      // Update gradient fill
+      const min = parseInt(el.min)||160, max = parseInt(el.max)||600;
+      const pct = ((currentDensity - min) / (max - min) * 100).toFixed(1);
+      el.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+      // Update tooltip
+      const tip = document.getElementById(tips[id]);
+      if (tip) tip.textContent = currentDensity + 'px';
+      // Tooltip position
+      const wrap = document.getElementById(wraps[id]);
+      if (wrap) {
+        const tipEl = wrap.querySelector('.zoom-tooltip');
+        if (tipEl) {
+          const thumbPct = (currentDensity - min) / (max - min);
+          const wrapW = wrap.offsetWidth || 160;
+          const thumbX = thumbPct * wrapW;
+          tipEl.style.left = thumbX + 'px';
+        }
+      }
+    }
+  });
+  // Update old label if still exists
+  const lbl = document.getElementById('density-label');
+  if (lbl) lbl.textContent = currentDensity + 'px';
 }
 
 function applyDensity() {
   const w = currentDensity;
   const lbl = document.getElementById('density-label');
   if (lbl) lbl.textContent = w + 'px';
-  const slider = document.getElementById('density-slider');
-  if (slider) slider.value = w;
+  // Sync all sliders
+  ['density-slider','density-slider-proj','density-slider-tasks'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = w;
+      const min = parseInt(el.min)||160, max = parseInt(el.max)||600;
+      const pct = ((w - min) / (max - min) * 100).toFixed(1);
+      el.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+    }
+  });
 
   const cardCols = `repeat(auto-fill, minmax(${w}px, 1fr))`;
   const taskCols = `repeat(auto-fill, minmax(${Math.max(160, w - 40)}px, 1fr))`;
@@ -6305,27 +6405,39 @@ showPage = function(name) {
 
 function _renderPageHeaderForPage(name) {
   const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Show/hide FAB
+  const fab = document.getElementById('fab-btn');
+  if (fab) {
+    fab.classList.toggle('visible', ['inquiries','projects','tasks','pipeline'].includes(name));
+    // Update FAB action
+    fab.onclick = () => fabAction(name);
+  }
   switch(name) {
     case 'inquiries':
       renderPageHeader('inquiries', 'Inquiries',
         `${(data.inquiries||[]).length} inquiries · ${today}`,
-        `<div class="page-header-filters" id="inq-header-filters"></div>
-         <div style="display:flex;gap:6px;">${can('inquiries','add')?`<button class="add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>`:''}</div>`
+        `<div style="display:flex;gap:6px;align-items:center;">
+           <button class="filter-toggle-btn panel-open" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
+           <button class="icon-btn" id="inq-active-btn-h" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
+           ${currentUserProfile?.role==='master'?`<button class="icon-btn" onclick="openDuplicatesModal()" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
+         </div><div></div>`
       ); break;
     case 'projects':
       renderPageHeader('projects', 'Projects',
         `${(data.projects||[]).length} projects · ${today}`,
-        `<div class="page-header-filters" id="proj-header-filters"></div>
-         <div style="display:flex;gap:6px;">${can('projects','add')?`<button class="add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>`:''}</div>`
+        `<div style="display:flex;gap:6px;align-items:center;">
+           <button class="filter-toggle-btn panel-open" id="proj-filter-toggle-h" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
+           <button class="icon-btn" onclick="expandCollapseAllProjects(false)"><i class="ti ti-fold"></i></button>
+           <button class="icon-btn" id="proj-active-btn-h" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
+         </div><div></div>`
       ); break;
     case 'tasks':
       renderPageHeader('tasks', 'Tasks',
         `My tasks · ${today}`,
-        `<div class="page-header-filters"></div>
-         <div style="display:flex;gap:6px;">
+        `<div style="display:flex;gap:6px;align-items:center;">
+           <button class="filter-toggle-btn panel-open" id="tasks-filter-toggle-h" onclick="toggleFilterPanel('tasks')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button id="tasks-viewall-btn" onclick="toggleTaskViewAll()" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);align-items:center;gap:5px;"><i class="ti ti-users"></i> <span id="tasks-viewall-label">View All</span></button>
-           <button class="add-btn" id="task-add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
-         </div>`
+         </div><div></div>`
       ); break;
     case 'notifications':
       renderPageHeader('notifications', 'Notifications', today, ''); break;
@@ -6333,20 +6445,20 @@ function _renderPageHeaderForPage(name) {
       renderPageHeader('dashboard', 'Dashboard', today, ''); break;
     case 'pipeline':
       renderPageHeader('pipeline', 'NPD Pipeline', today,
-        `<div></div>
-         <div style="display:flex;gap:6px;">
+        `<div style="display:flex;gap:6px;align-items:center;">
            <button id="pipeline-revenue-toggle" onclick="togglePipelineRevenue()" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;"><i class="ti ti-eye"></i> Revenue</button>
            <button onclick="openPipelineSettings()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:5px;" id="pipeline-settings-btn"><i class="ti ti-adjustments"></i> Stages</button>
-           <button class="add-btn" onclick="openAddPipelineItem(null)"><i class="ti ti-plus"></i> New Item</button>
-         </div>`
+         </div><div></div>`
       ); break;
     case 'calendar':
       renderPageHeader('calendar', 'Calendar', today, ''); break;
     case 'changelog':
-      renderPageHeader('changelog', 'Changelog', today, ''); break;
+      renderPageHeader('changelog', 'Changelog', today,
+        `<div style="display:flex;gap:6px;"><select id="cl-filter-user" class="finput" style="font-size:11px;padding:4px 8px;width:140px;" onchange="renderChangelog()"><option value="">All Users</option></select><select id="cl-filter-type" class="finput" style="font-size:11px;padding:4px 8px;width:130px;" onchange="renderChangelog()"><option value="">All Actions</option><option value="create">Created</option><option value="update">Updated</option><option value="delete">Deleted</option><option value="status">Status Change</option><option value="complete">Completed</option></select></div><div></div>`
+      ); break;
     case 'users':
       renderPageHeader('users', 'Users', 'Manage team access',
-        `<div></div><button class="add-btn" onclick="openAddUserModal()"><i class="ti ti-plus"></i> Add User</button>`
+        `<div></div><div></div>`
       ); break;
     case 'settings':
       renderPageHeader('settings', 'Settings', 'Customize your workspace', ''); break;
@@ -6702,6 +6814,16 @@ function renderPageHeader(pageId, title, subtitle, actionsHTML) {
         ${subtitle ? `<div class="page-header-sub">${subtitle}</div>` : ''}
       </div>
       <div class="page-header-right">
+        <div class="search-wrap" id="global-search-wrap">
+          <div class="search-btn" onclick="toggleSearch()" id="search-toggle-btn" title="Search">
+            <i class="ti ti-search" style="font-size:15px;color:var(--text3);"></i>
+          </div>
+          <div class="search-input-wrap" id="search-input-wrap">
+            <input type="text" id="global-search-input" placeholder="Search inquiries, projects, tasks…" oninput="runGlobalSearch(this.value)" onkeydown="onSearchKey(event)">
+            <button class="search-close-btn" onclick="closeSearch()"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="search-results" id="search-results"></div>
+        </div>
         <div class="page-header-bell" onclick="showPage('notifications')" title="Notifications">
           <i class="ti ti-bell" style="font-size:15px;color:var(--text3);"></i>
           ${hasNotif ? '<div class="page-header-bell-dot"></div>' : ''}
@@ -6726,6 +6848,157 @@ function renderPageHeader(pageId, title, subtitle, actionsHTML) {
     existingHeader = wrap;
   }
   existingHeader.innerHTML = headerHTML;
+}
+
+// ══════════════════════════════════════════════════════
+//  GLOBAL SEARCH
+// ══════════════════════════════════════════════════════
+let searchOpen = false;
+
+function toggleSearch() {
+  searchOpen ? closeSearch() : openSearch();
+}
+
+function openSearch() {
+  searchOpen = true;
+  const wrap = document.getElementById('search-input-wrap');
+  const input = document.getElementById('global-search-input');
+  const btn = document.getElementById('search-toggle-btn');
+  if (wrap) wrap.classList.add('open');
+  if (btn) btn.style.opacity = '0';
+  setTimeout(() => { if (input) { input.focus(); } }, 220);
+}
+
+function closeSearch() {
+  searchOpen = false;
+  const wrap = document.getElementById('search-input-wrap');
+  const results = document.getElementById('search-results');
+  const input = document.getElementById('global-search-input');
+  const btn = document.getElementById('search-toggle-btn');
+  if (wrap) wrap.classList.remove('open');
+  if (results) results.classList.remove('open');
+  if (input) input.value = '';
+  if (btn) btn.style.opacity = '1';
+}
+
+function onSearchKey(e) {
+  if (e.key === 'Escape') closeSearch();
+}
+
+// Close search when clicking outside
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('global-search-wrap');
+  if (wrap && !wrap.contains(e.target)) closeSearch();
+});
+
+function highlight(text, query) {
+  if (!query) return text;
+  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return (text||'').replace(new RegExp(`(${safe})`, 'gi'), '<span class="search-highlight">$1</span>');
+}
+
+function runGlobalSearch(query) {
+  const results = document.getElementById('search-results');
+  if (!results) return;
+  const q = (query||'').trim().toLowerCase();
+  if (q.length < 2) { results.classList.remove('open'); return; }
+
+  const inqs = (data.inquiries||[]).filter(i =>
+    (i.name||'').toLowerCase().includes(q) ||
+    (i.code||'').toLowerCase().includes(q) ||
+    (i.customer||'').toLowerCase().includes(q)
+  ).slice(0, 5);
+
+  const projs = (data.projects||[]).filter(p =>
+    (p.name||'').toLowerCase().includes(q) ||
+    (p.code||'').toLowerCase().includes(q)
+  ).slice(0, 5);
+
+  const tasks = (data.mtasks||[]).filter(t =>
+    (t.title||'').toLowerCase().includes(q) ||
+    (t.description||'').toLowerCase().includes(q)
+  ).slice(0, 4);
+
+  let html = '';
+
+  if (inqs.length) {
+    html += `<div class="search-section-label">Inquiries</div>`;
+    inqs.forEach(i => {
+      html += `<div class="search-result-item" onclick="goToInquiry('${i.id}')">
+        <div class="search-result-icon" style="background:var(--blbg);color:var(--blue);"><i class="ti ti-file-description"></i></div>
+        <div style="flex:1;min-width:0;">
+          <div class="search-result-name">${highlight(i.name, query)}</div>
+          <div class="search-result-meta">${i.code||''} · ${i.customer||''}</div>
+        </div>
+        <span class="sbadge ${i.status?.toLowerCase()||''}" style="font-size:9px;">${i.status||''}</span>
+      </div>`;
+    });
+  }
+
+  if (projs.length) {
+    html += `<div class="search-section-label">Projects</div>`;
+    projs.forEach(p => {
+      html += `<div class="search-result-item" onclick="goToProject('${p.id}')">
+        <div class="search-result-icon" style="background:var(--al);color:var(--accent);"><i class="ti ti-folder"></i></div>
+        <div style="flex:1;min-width:0;">
+          <div class="search-result-name">${highlight(p.name, query)}</div>
+          <div class="search-result-meta">${p.code||''} · ${p.status||''}</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  if (tasks.length) {
+    html += `<div class="search-section-label">Tasks</div>`;
+    tasks.forEach(t => {
+      html += `<div class="search-result-item" onclick="showPage('tasks');closeSearch()">
+        <div class="search-result-icon" style="background:var(--gbg);color:var(--green);"><i class="ti ti-checkbox"></i></div>
+        <div style="flex:1;min-width:0;">
+          <div class="search-result-name">${highlight(t.title, query)}</div>
+          <div class="search-result-meta">${t.category||''} · ${t.deadline?fmtDate(t.deadline):''}</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  if (!html) {
+    html = `<div class="search-empty"><i class="ti ti-search-off" style="display:block;font-size:20px;margin-bottom:6px;"></i>No results for "<strong>${query}</strong>"</div>`;
+  }
+
+  results.innerHTML = html;
+  results.classList.add('open');
+}
+
+function goToInquiry(id) {
+  closeSearch();
+  showPage('inquiries');
+  setTimeout(() => {
+    const el = document.getElementById('card-' + id);
+    if (el) { el.scrollIntoView({behavior:'smooth', block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),2000); }
+    // Also open full view
+    openInqDetail(id);
+  }, 150);
+}
+
+function goToProject(id) {
+  closeSearch();
+  showPage('projects');
+  setTimeout(() => {
+    const el = document.getElementById('card-' + id);
+    if (el) { el.scrollIntoView({behavior:'smooth', block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),2000); }
+    openProjDetail(id);
+  }, 150);
+}
+
+function fabAction(page) {
+  const activePage = page || document.querySelector('.page.active')?.id?.replace('page-','');
+  switch(activePage) {
+    case 'inquiries': if(can('inquiries','add')) openModal('inq'); break;
+    case 'projects':  if(can('projects','add'))  openModal('proj'); break;
+    case 'tasks':     openModal('mtask'); break;
+    case 'pipeline':  openAddPipelineItem(null); break;
+    default: break;
+  }
 }
 
 function saveDeliveryThresholds() {

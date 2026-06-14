@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V71</title>
+<title>NPD Tracker V73</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -978,6 +978,50 @@ html{scroll-behavior:smooth;}
 .cl-text{font-size:12px;color:var(--text);line-height:1.4;}
 .cl-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .cl-user-pill{background:var(--surface2);padding:1px 6px;border-radius:10px;font-size:9px;}
+/* ── Next Action Rows (inline in expanded card) ── */
+.na-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);position:relative;}
+.na-row:last-child{border-bottom:none;}
+.na-pic-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fm);cursor:pointer;border:none;transition:opacity .15s;flex-shrink:0;position:relative;}
+.na-pic-pill:hover{opacity:.8;}
+.na-pic-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.na-pic-select-wrap{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none;min-width:140px;padding:5px;overflow:hidden;}
+.na-pic-select-wrap.open{display:block;}
+.na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);}
+.na-pic-option:hover{background:var(--surface2);}
+.na-action-wrap{flex:1;min-width:0;}
+.na-action-text{font-size:12px;color:var(--text);background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);padding:2px 0;outline:none;line-height:1.5;}
+.na-action-text:focus{border-bottom-color:var(--accent);}
+.na-meta{display:flex;align-items:center;gap:8px;margin-top:5px;}
+.na-added-chip{font-size:9px;color:var(--text3);font-family:var(--fm);}
+.na-deadline-chip{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-family:var(--fm);padding:2px 8px;border-radius:20px;cursor:pointer;position:relative;}
+.na-deadline-chip.empty{background:var(--surface2);color:var(--text3);border:1px dashed var(--border);}
+.na-deadline-chip.set{background:var(--al);color:var(--accent);border:1px solid var(--accent);}
+.na-deadline-chip.overdue{background:var(--rebg);color:var(--red);border:1px solid var(--red);}
+.na-deadline-chip input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;border:none;}
+.na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;margin-top:1px;}
+.na-delete-btn:hover{color:var(--red);}
+/* ── Inquiry Progress Task Rows ── */
+.ip-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.ip-row:last-child{border-bottom:none;}
+.ip-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.ip-check.done{background:var(--accent);border-color:var(--accent);}
+.ip-check.done i{color:#fff;}
+.ip-check i{font-size:11px;color:transparent;}
+.ip-body{flex:1;min-width:0;}
+.ip-name{font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);color:var(--text);padding:2px 0;outline:none;}
+.ip-name.done{text-decoration:line-through;opacity:.5;}
+.ip-name:focus{border-bottom-color:var(--accent);}
+.ip-meta{display:flex;align-items:center;gap:6px;margin-top:5px;}
+/* ── Auto-task cards in modal ── */
+.autotask-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);margin-bottom:8px;cursor:pointer;transition:all .15s;user-select:none;}
+.autotask-card.checked{border-color:var(--accent);background:var(--al);}
+.autotask-check{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.autotask-card.checked .autotask-check{background:var(--accent);border-color:var(--accent);}
+.autotask-check i{font-size:11px;color:#fff;opacity:0;transition:opacity .1s;}
+.autotask-card.checked .autotask-check i{opacity:1;}
+.autotask-info{flex:1;}
+.autotask-name{font-size:12px;font-weight:500;color:var(--text);}
+.autotask-dl{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;}
 /* ── Global Search ── */
 .search-wrap{position:relative;}
 .search-btn{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,width .2s,border-radius .2s;flex-shrink:0;}
@@ -1129,7 +1173,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V71</div>
+    <div class="login-logo">NPD Tracker V73</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1155,7 +1199,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V71</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V73</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1193,7 +1237,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V71</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V73</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -1996,14 +2040,37 @@ html{scroll-behavior:smooth;}
         <div class="fg"><label class="flabel">Price Submission Date</label><input class="finput" id="inq-price-date" type="date"></div>
       </div>
       <div class="fg"><label class="flabel">Price Submission Remark</label><input class="finput" id="inq-price-remark" type="text" placeholder="Price notes…"></div>
-      <div class="fsection">Tasks</div>
-      <div class="fg"><label class="flabel">Auto-generate tasks</label>
-        <label class="chkrow"><input type="checkbox" id="inq-t1" checked><div><div class="chklabel">Send Mold Inquiry</div><div class="chksub">Deadline: +2 days</div></div></label>
-        <label class="chkrow"><input type="checkbox" id="inq-t2" checked><div><div class="chklabel">Send IML Inquiry</div><div class="chksub">Deadline: +2 days</div></div></label>
-        <label class="chkrow"><input type="checkbox" id="inq-t3" checked><div><div class="chklabel">Compile NPD Input</div><div class="chksub">Deadline: +4 days</div></div></label>
+      <div class="fsection"><i class="ti ti-list-check"></i> Quick Tasks</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Select tasks to auto-create when this inquiry is saved:</div>
+      <div class="autotask-card checked" id="autotask-card-t1" onclick="toggleAutoTask('t1')">
+        <div class="autotask-check"><i class="ti ti-check"></i></div>
+        <div class="autotask-info">
+          <div class="autotask-name">Send Mold Inquiry</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 days from inquiry date</div>
+        </div>
+        <input type="checkbox" id="inq-t1" checked style="display:none;">
+      </div>
+      <div class="autotask-card checked" id="autotask-card-t2" onclick="toggleAutoTask('t2')">
+        <div class="autotask-check"><i class="ti ti-check"></i></div>
+        <div class="autotask-info">
+          <div class="autotask-name">Send IML Inquiry</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 days from inquiry date</div>
+        </div>
+        <input type="checkbox" id="inq-t2" checked style="display:none;">
+      </div>
+      <div class="autotask-card checked" id="autotask-card-t3" onclick="toggleAutoTask('t3')">
+        <div class="autotask-check"><i class="ti ti-check"></i></div>
+        <div class="autotask-info">
+          <div class="autotask-name">Compile NPD Input</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +4 days from inquiry date</div>
+        </div>
+        <input type="checkbox" id="inq-t3" checked style="display:none;">
       </div>
     </div>
-    <div class="mfooter"><button class="btn-secondary" onclick="closeModal('inq')">Cancel</button><button class="btn-primary" id="inq-submit-btn" onclick="submitInquiry()">Create</button></div>
+    <div class="mfooter">
+      <button class="modal-cancel-btn" onclick="closeModal('inq')">Cancel</button>
+      <button class="modal-submit-btn" id="inq-submit-btn" onclick="submitInquiry()">Create Inquiry</button>
+    </div>
   </div>
 </div>
 
@@ -2283,6 +2350,7 @@ let fbUnsubscribe = null;  // live listener unsubscribe handle
 let fbSaving = false;      // prevent listener re-triggering own save
 let currentUser = localStorage.getItem('npd_username') || 'User';
 let editingInqId = null;
+let editingProjId = null;
 let editingMTaskId = null;
 // Firebase handles auth — no separate token needed
 let mtaskFilter = 'all', mtaskActiveOnly = false;
@@ -4489,8 +4557,9 @@ function _renderInqDetailInner() {
       `<div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark||'<span style="color:var(--text3);">No brief yet.</span>'}</div>`}
     </div>`;
 
-    // Next Actions — fully inline editable
+    // Next Actions — pill-style inline editable
     const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy-'+uid(), pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
+    const picColors = {Adam:'#3a8ef5','Muti\'ah':'#a06aee',Sylvia:'#30c060',Juana:'#f5a623',Other:'#f0445a'};
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddNextAction('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
@@ -4498,25 +4567,41 @@ function _renderInqDetailInner() {
     if (nas.length) {
       nas.forEach(na => {
         const isOverdue = na.deadline && na.deadline < today;
-        html += `<div style="display:flex;gap:6px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);" id="na-row-${na.id}">
-          ${canEdit?`<select onchange="saveInqNA('${inq.id}','${na.id}','pic',this.value)" style="font-size:10px;padding:2px 4px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--accent);font-family:var(--fm);flex-shrink:0;cursor:pointer;">${picDropdownHTML(na.pic||'Adam')}</select>`:
-          `<span class="na-pic">${na.pic||'—'}</span>`}
-          ${canEdit?`<input type="text" value="${na.action||''}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" style="flex:1;font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:2px 0;min-width:0;" placeholder="Action…">`:
-          `<span class="na-text" style="flex:1;">${na.action}</span>`}
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;">
-            <span style="font-size:9px;color:var(--text3);font-family:var(--fm);">Added ${fmtDate(na.dateAdded||today)}</span>
-            ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')" style="font-size:10px;background:none;border:none;border-bottom:1px dashed ${isOverdue?'var(--red)':'var(--border)'};color:${isOverdue?'var(--red)':'var(--text3)'};font-family:var(--fm);padding:1px;cursor:pointer;" title="Deadline">`:
-            na.deadline?`<span class="na-deadline ${isOverdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:9px"></i> ${fmtDate(na.deadline)}${isOverdue?' ⚠':''}</span>`:''}
+        const picColor = picColors[na.pic] || '#64748b';
+        const dlClass = !na.deadline ? 'empty' : isOverdue ? 'overdue' : 'set';
+        const dlLabel = na.deadline ? fmtDate(na.deadline)+(isOverdue?' ⚠':'') : '+ Deadline';
+        const users = (data.users||[]).map(u=>u.name).filter(Boolean);
+        const allPics = [...new Set(['Adam','Muti\'ah','Sylvia','Juana',...users])];
+        html += `<div class="na-row" id="na-row-${na.id}">
+          <div style="position:relative;">
+            <div class="na-pic-pill" style="background:${picColor}22;color:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
+              <span class="na-pic-dot" style="background:${picColor};"></span>
+              ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:8px;"></i>
+            </div>
+            ${canEdit?`<div class="na-pic-select-wrap" id="na-pic-menu-${na.id}">
+              ${allPics.map(u=>`<div class="na-pic-option" onclick="setNAPic('${inq.id}','${na.id}','${u}')">${u}</div>`).join('')}
+            </div>`:''}
           </div>
-          ${canEdit?`<button onclick="deleteInqNA('${inq.id}','${na.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 2px;flex-shrink:0;"><i class="ti ti-trash"></i></button>`:''}
+          <div class="na-action-wrap">
+            ${canEdit?`<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`:
+            `<div style="font-size:12px;color:var(--text);line-height:1.5;">${na.action||'—'}</div>`}
+            <div class="na-meta">
+              <span class="na-added-chip">Added ${fmtDate(na.dateAdded||today)}</span>
+              ${canEdit?`<div class="na-deadline-chip ${dlClass}">
+                <i class="ti ti-calendar" style="font-size:9px;"></i> ${dlLabel}
+                <input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">
+              </div>`:na.deadline?`<div class="na-deadline-chip ${dlClass}"><i class="ti ti-calendar" style="font-size:9px;"></i> ${dlLabel}</div>`:''}
+            </div>
+          </div>
+          ${canEdit?`<button class="na-delete-btn" onclick="deleteInqNA('${inq.id}','${na.id}')"><i class="ti ti-trash"></i></button>`:''}
         </div>`;
       });
     } else {
-      html += `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No next actions.${canEdit?' Click + Add to start.':''}</div>`;
+      html += `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No next actions.${canEdit?' Click + Add to start.':''}`;
     }
     html += `</div>`;
 
-    // Inquiry Progress (Tasks) — inline editable
+    // Inquiry Progress (Tasks) — styled rows
     const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
@@ -4524,20 +4609,24 @@ function _renderInqDetailInner() {
       </div>
       ${!tasks.length ? `<div style="font-size:11px;color:var(--text3);">No tasks yet.${canEdit?' Click + Add to start.':''}</div>` :
         tasks.map(t => {
-          const dlCls = t.done?'ok':(t.deadline||'')< today?'overdue':t.deadline===today?'today':'ok';
-          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
-            <div class="rap-chk ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')" style="cursor:pointer;flex-shrink:0;"><i class="ti ti-check"></i></div>
-            <div style="flex:1;min-width:0;">
-              ${canEdit?`<input type="text" value="${t.name||''}" onblur="saveInqTask('${inq.id}','${t.id}','name',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;${t.done?'text-decoration:line-through;opacity:.5;':''}">`:
-              `<div class="rap-name ${t.done?'done':''}">${t.name}</div>`}
-              <div style="display:flex;gap:6px;align-items:center;margin-top:3px;">
-                ${canEdit?`<select onchange="saveInqTask('${inq.id}','${t.id}','pic',this.value)" style="font-size:10px;padding:1px 4px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--accent);font-family:var(--fm);cursor:pointer;">${picDropdownHTML(t.pic||'Adam')}</select>`:
-                t.pic?`<span class="rap-pic-pill">${t.pic}</span>`:''}
-                ${canEdit?`<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:${dlCls==='overdue'?'var(--red)':'var(--text3)'};font-family:var(--fm);padding:1px;cursor:pointer;">`:
-                `<span class="rap-dl ${dlCls}">${t.deadline?fmtDate(t.deadline):'No deadline'}</span>`}
+          const isOvd = !t.done && t.deadline && t.deadline < today;
+          const pcMap = {'Adam':'#3a8ef5','Muti\'ah':'#a06aee','Sylvia':'#30c060','Juana':'#f5a623'};
+          const picColor = pcMap[t.pic]||'#64748b';
+          return `<div class="ip-row">
+            <div class="ip-check ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')"><i class="ti ti-check"></i></div>
+            <div class="ip-body">
+              ${canEdit?`<input type="text" class="ip-name ${t.done?'done':''}" value="${(t.name||'').replace(/\'>/g,'')}" onblur="saveInqTask('${inq.id}','${t.id}','name',this.value)" placeholder="Task name…">`:
+              `<div style="font-size:12px;color:var(--text);${t.done?'text-decoration:line-through;opacity:.5;':''}">${t.name}</div>`}
+              <div class="ip-meta">
+                ${t.pic?`<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:${picColor}22;color:${picColor};font-family:var(--fm);">${t.pic}</span>`:''}
+                <div class="na-deadline-chip ${!t.deadline?'empty':isOvd?'overdue':'set'}">
+                  <i class="ti ti-calendar" style="font-size:9px;"></i>
+                  ${t.deadline?fmtDate(t.deadline)+(isOvd?' ⚠':''):' + Deadline'}
+                  ${canEdit?`<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">`:'' }
+                </div>
               </div>
             </div>
-            ${canEdit?`<button onclick="deleteInqTask('${inq.id}','${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 2px;flex-shrink:0;"><i class="ti ti-trash"></i></button>`:''}
+            ${canEdit?`<button class="na-delete-btn" onclick="deleteInqTask('${inq.id}','${t.id}')"><i class="ti ti-trash"></i></button>`:''}
           </div>`;
         }).join('')}
     </div>`;
@@ -7156,6 +7245,36 @@ function deleteInqTask(inqId, taskId) {
   inq.tasks = (inq.tasks||[]).filter(t => t.id !== taskId);
   save(); renderInqDetail();
 }
+
+function toggleAutoTask(id) {
+  const card = document.getElementById('autotask-card-' + id);
+  const cb = document.getElementById('inq-' + id);
+  if (!card || !cb) return;
+  cb.checked = !cb.checked;
+  card.classList.toggle('checked', cb.checked);
+}
+
+function toggleNAPicMenu(naId) {
+  const menu = document.getElementById('na-pic-menu-' + naId);
+  if (!menu) return;
+  // Close all other menus first
+  document.querySelectorAll('.na-pic-select-wrap.open').forEach(m => { if (m !== menu) m.classList.remove('open'); });
+  menu.classList.toggle('open');
+}
+
+function setNAPic(inqId, naId, pic) {
+  saveInqNA(inqId, naId, 'pic', pic);
+  const menu = document.getElementById('na-pic-menu-' + naId);
+  if (menu) menu.classList.remove('open');
+  renderInqDetail();
+}
+
+// Close NA pic menus when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.na-pic-pill')) {
+    document.querySelectorAll('.na-pic-select-wrap.open').forEach(m => m.classList.remove('open'));
+  }
+});
 
 function saveDeliveryThresholds() {
   if (currentUserProfile?.role !== 'master') return;

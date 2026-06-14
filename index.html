@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V73</title>
+<title>NPD Tracker V75</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -979,26 +979,26 @@ html{scroll-behavior:smooth;}
 .cl-meta{font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .cl-user-pill{background:var(--surface2);padding:1px 6px;border-radius:10px;font-size:9px;}
 /* ── Next Action Rows (inline in expanded card) ── */
-.na-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);position:relative;}
-.na-row:last-child{border-bottom:none;}
-.na-pic-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fm);cursor:pointer;border:none;transition:opacity .15s;flex-shrink:0;position:relative;}
-.na-pic-pill:hover{opacity:.8;}
-.na-pic-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.na-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border);padding:9px 12px;margin-bottom:7px;transition:border-color .15s;}
+.na-card:last-child{margin-bottom:0;}
+.na-card:hover{border-color:var(--border2);}
+.na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
+.na-pic-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45);flex-shrink:0;}
 .na-pic-select-wrap{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none;min-width:140px;padding:5px;overflow:hidden;}
 .na-pic-select-wrap.open{display:block;}
-.na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);}
+.na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);color:var(--text);}
 .na-pic-option:hover{background:var(--surface2);}
-.na-action-wrap{flex:1;min-width:0;}
-.na-action-text{font-size:12px;color:var(--text);background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);padding:2px 0;outline:none;line-height:1.5;}
+.na-action-text{font-size:12px;color:var(--text);background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);padding:1px 0;outline:none;line-height:1.5;flex:1;}
 .na-action-text:focus{border-bottom-color:var(--accent);}
-.na-meta{display:flex;align-items:center;gap:8px;margin-top:5px;}
-.na-added-chip{font-size:9px;color:var(--text3);font-family:var(--fm);}
-.na-deadline-chip{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-family:var(--fm);padding:2px 8px;border-radius:20px;cursor:pointer;position:relative;}
-.na-deadline-chip.empty{background:var(--surface2);color:var(--text3);border:1px dashed var(--border);}
-.na-deadline-chip.set{background:var(--al);color:var(--accent);border:1px solid var(--accent);}
-.na-deadline-chip.overdue{background:var(--rebg);color:var(--red);border:1px solid var(--red);}
-.na-deadline-chip input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;border:none;}
-.na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;margin-top:1px;}
+.na-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.na-deadline-badge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;position:relative;}
+.na-deadline-badge.overdue{background:var(--rebg);color:var(--red);border:1px solid var(--red);}
+.na-deadline-badge.soon{background:var(--ambg);color:var(--amber);border:1px solid var(--amber);}
+.na-deadline-badge.ok{background:var(--surface);color:var(--text3);border:1px solid var(--border);}
+.na-deadline-badge.empty{background:var(--surface);color:var(--text3);border:1px dashed var(--border);font-weight:400;}
+.na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;border:none;}
+.na-added{font-size:10px;color:var(--text3);font-family:var(--fm);white-space:nowrap;}
+.na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .na-delete-btn:hover{color:var(--red);}
 /* ── Inquiry Progress Task Rows ── */
 .ip-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
@@ -1173,7 +1173,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V73</div>
+    <div class="login-logo">NPD Tracker V75</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1199,7 +1199,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V73</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V75</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1237,7 +1237,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V73</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V75</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -4557,9 +4557,9 @@ function _renderInqDetailInner() {
       `<div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark||'<span style="color:var(--text3);">No brief yet.</span>'}</div>`}
     </div>`;
 
-    // Next Actions — pill-style inline editable
+    // Next Actions — card layout, deadline prominent
     const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy-'+uid(), pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
-    const picColors = {Adam:'#3a8ef5','Muti\'ah':'#a06aee',Sylvia:'#30c060',Juana:'#f5a623',Other:'#f0445a'};
+    const picColors = {Adam:'#185FA5','Muti\'ah':'#7040c8',Sylvia:'#0F6E56',Juana:'#854F0B',Other:'#A32D2D'};
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddNextAction('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
@@ -4567,37 +4567,38 @@ function _renderInqDetailInner() {
     if (nas.length) {
       nas.forEach(na => {
         const isOverdue = na.deadline && na.deadline < today;
-        const picColor = picColors[na.pic] || '#64748b';
-        const dlClass = !na.deadline ? 'empty' : isOverdue ? 'overdue' : 'set';
-        const dlLabel = na.deadline ? fmtDate(na.deadline)+(isOverdue?' ⚠':'') : '+ Deadline';
-        const users = (data.users||[]).map(u=>u.name).filter(Boolean);
-        const allPics = [...new Set(['Adam','Muti\'ah','Sylvia','Juana',...users])];
-        html += `<div class="na-row" id="na-row-${na.id}">
-          <div style="position:relative;">
-            <div class="na-pic-pill" style="background:${picColor}22;color:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
-              <span class="na-pic-dot" style="background:${picColor};"></span>
-              ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:8px;"></i>
+        const isSoon    = !isOverdue && na.deadline && na.deadline <= addDays(today, 3);
+        const picColor  = picColors[na.pic] || '#64748b';
+        const dlClass   = !na.deadline ? 'empty' : isOverdue ? 'overdue' : isSoon ? 'soon' : 'ok';
+        const dlIcon    = isOverdue ? 'ti-alert-triangle' : 'ti-calendar';
+        const dlLabel   = na.deadline ? fmtDate(na.deadline) : '+ Set deadline';
+        const users     = (data.users||[]).map(u=>u.name).filter(Boolean);
+        const allPics   = [...new Set(['Adam',"Muti'ah",'Sylvia','Juana',...users])];
+        html += `<div class="na-card" id="na-row-${na.id}">
+          <div style="position:relative;flex-shrink:0;">
+            <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
+              <span class="na-pic-dot"></span>
+              ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>
             </div>
             ${canEdit?`<div class="na-pic-select-wrap" id="na-pic-menu-${na.id}">
               ${allPics.map(u=>`<div class="na-pic-option" onclick="setNAPic('${inq.id}','${na.id}','${u}')">${u}</div>`).join('')}
             </div>`:''}
           </div>
-          <div class="na-action-wrap">
-            ${canEdit?`<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`:
-            `<div style="font-size:12px;color:var(--text);line-height:1.5;">${na.action||'—'}</div>`}
-            <div class="na-meta">
-              <span class="na-added-chip">Added ${fmtDate(na.dateAdded||today)}</span>
-              ${canEdit?`<div class="na-deadline-chip ${dlClass}">
-                <i class="ti ti-calendar" style="font-size:9px;"></i> ${dlLabel}
-                <input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">
-              </div>`:na.deadline?`<div class="na-deadline-chip ${dlClass}"><i class="ti ti-calendar" style="font-size:9px;"></i> ${dlLabel}</div>`:''}
+          ${canEdit
+            ? `<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
+            : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
+          <div class="na-right">
+            <div class="na-deadline-badge ${dlClass}">
+              <i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}
+              ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">` : ''}
             </div>
+            <span class="na-added">Added ${fmtDate(na.dateAdded||today)}</span>
           </div>
           ${canEdit?`<button class="na-delete-btn" onclick="deleteInqNA('${inq.id}','${na.id}')"><i class="ti ti-trash"></i></button>`:''}
         </div>`;
       });
     } else {
-      html += `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No next actions.${canEdit?' Click + Add to start.':''}`;
+      html += `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No next actions.${canEdit?' Click + Add to start.':''}</div>`;
     }
     html += `</div>`;
 
@@ -6542,6 +6543,7 @@ function _renderPageHeaderForPage(name) {
         `<div style="display:flex;gap:6px;align-items:center;">
            <button class="filter-toggle-btn panel-open" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button class="icon-btn" id="inq-active-btn-h" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
+           <button class="icon-btn" onclick="openInqReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
            ${currentUserProfile?.role==='master'?`<button class="icon-btn" onclick="openDuplicatesModal()" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
          </div><div></div>`
       ); break;
@@ -8238,7 +8240,230 @@ function applyTheme(mode) {
 function toggleTheme() { applyTheme(localStorage.getItem('pm_theme')==='dark'?'light':'dark'); }
 
 // ══════════════════════════════════════════════════════
-//  DAILY AUTO-BACKUP CHECK
+//  INQUIRY REPORT
+// ══════════════════════════════════════════════════════
+function openInqReport() {
+  // Default date range: last 30 days to today
+  const to   = todayStr();
+  const from = new Date(Date.now() - 30*86400000).toISOString().split('T')[0];
+  document.getElementById('rpt-date-from').value = from;
+  document.getElementById('rpt-date-to').value   = to;
+  updateRptCount();
+  document.getElementById('modal-inq-report').classList.add('open');
+}
+
+function getRptInquiries() {
+  const from = document.getElementById('rpt-date-from').value;
+  const to   = document.getElementById('rpt-date-to').value;
+  return (data.inquiries||[]).filter(inq => {
+    if (!inq.date) return false;
+    if (from && inq.date < from) return false;
+    if (to   && inq.date > to)   return false;
+    return true;
+  }).sort((a,b) => (a.date||'').localeCompare(b.date||''));
+}
+
+function updateRptCount() {
+  const list = getRptInquiries();
+  const el = document.getElementById('rpt-match-count');
+  if (el) el.textContent = list.length + ' inquiries match this date range';
+}
+
+function getRptFields() {
+  return {
+    code:       document.getElementById('rpt-f-code')?.checked,
+    customer:   document.getElementById('rpt-f-customer')?.checked,
+    status:     document.getElementById('rpt-f-status')?.checked,
+    factory:    document.getElementById('rpt-f-factory')?.checked,
+    bd:         document.getElementById('rpt-f-bd')?.checked,
+    brief:      document.getElementById('rpt-f-brief')?.checked,
+    delivery:   document.getElementById('rpt-f-delivery')?.checked,
+    nextaction: document.getElementById('rpt-f-nextaction')?.checked,
+    products:   document.getElementById('rpt-f-products')?.checked,
+    pipeline:   document.getElementById('rpt-f-pipeline')?.checked,
+  };
+}
+
+function getDeliveryDays(inq) {
+  const d1 = inq.date;
+  const d2 = inq.pipeline?.priceSubmission?.date;
+  if (!d1||!d2) return null;
+  return Math.round((new Date(d2+'T00:00:00') - new Date(d1+'T00:00:00')) / 86400000);
+}
+
+function exportInqReportExcel() {
+  const list   = getRptInquiries();
+  const fields = getRptFields();
+  const from   = document.getElementById('rpt-date-from').value;
+  const to     = document.getElementById('rpt-date-to').value;
+
+  // Build header row
+  const headers = ['#', 'Name'];
+  if (fields.code)       headers.push('Code');
+  if (fields.customer)   headers.push('Customer');
+  if (fields.status)     headers.push('Status');
+  if (fields.factory)    headers.push('Factory');
+  if (fields.bd)         headers.push('BD Person');
+  if (fields.brief)      headers.push('Inquiry Brief');
+  if (fields.delivery)   headers.push('Delivery Days');
+  if (fields.pipeline)   headers.push('Mold Status', 'Costing Status', 'Price Status');
+  if (fields.nextaction) headers.push('Next Actions');
+  if (fields.products)   headers.push('Products', 'Est. Revenue (RM)');
+
+  const rows = [headers];
+  list.forEach((inq, i) => {
+    const row = [i+1, inq.name||''];
+    if (fields.code)       row.push(inq.code||'');
+    if (fields.customer)   row.push(inq.customer||'');
+    if (fields.status)     row.push(inq.status||'');
+    if (fields.factory)    row.push(inq.factory||'');
+    if (fields.bd)         row.push(inq.bdPerson||'');
+    if (fields.brief)      row.push(inq.remark||'');
+    if (fields.delivery)   row.push(getDeliveryDays(inq) ?? 'Pending');
+    if (fields.pipeline)   row.push(inq.pipeline?.moldInquiry?.status||'', inq.pipeline?.costing?.status||'', inq.pipeline?.priceSubmission?.status||'');
+    if (fields.nextaction) row.push((inq.nextActions||[]).map(n=>`[${n.pic}] ${n.action} (${n.deadline?fmtDate(n.deadline):'No deadline'})`).join(' | '));
+    if (fields.products) {
+      const prods = (inq.products||[]);
+      const rev   = prods.reduce((s,p) => s + (p.volume||0)*(p.cost||0), 0);
+      row.push(prods.map(p=>p.name).join(', '), rev > 0 ? rev.toFixed(2) : '');
+    }
+    rows.push(row);
+  });
+
+  const wb = XLSX.utils.book_new();
+  // Info sheet
+  const info = [['TPAC Packaging — Inquiry Summary Report'],['Date Range:', from + ' to ' + to],['Total Inquiries:', list.length],['Generated:', new Date().toLocaleString()]];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'Info');
+  // Data sheet
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  // Column widths
+  ws['!cols'] = headers.map((h,i) => ({ wch: i===0?4:i===1||h==='Inquiry Brief'||h==='Next Actions'?40:18 }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Inquiries');
+  XLSX.writeFile(wb, `TPAC_Inquiry_Report_${from}_to_${to}.xlsx`);
+  closeModal('inq-report');
+}
+
+function exportInqReportPDF() {
+  const list   = getRptInquiries();
+  const fields = getRptFields();
+  const from   = document.getElementById('rpt-date-from').value;
+  const to     = document.getElementById('rpt-date-to').value;
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  const prepared = currentUserProfile?.name || 'Adam';
+
+  const bg      = isDark ? '#111318' : '#ffffff';
+  const surface = isDark ? '#1a1d24' : '#f5f4f0';
+  const text     = isDark ? '#eef1f7' : '#1a1a2e';
+  const text2    = isDark ? '#9aa8be' : '#4a5568';
+  const border   = isDark ? '#2e3444' : '#e2ddd6';
+  const accent   = '#3a8ef5';
+
+  const cols = [];
+  if (fields.code)     cols.push({k:'code',    label:'Code',         w:'8%'});
+  if (fields.customer) cols.push({k:'customer', label:'Customer',     w:'12%'});
+  if (fields.status)   cols.push({k:'status',   label:'Status',       w:'8%'});
+  if (fields.factory)  cols.push({k:'factory',  label:'Factory',      w:'10%'});
+  if (fields.bd)       cols.push({k:'bd',        label:'BD Person',    w:'8%'});
+  if (fields.brief)    cols.push({k:'brief',     label:'Brief',        w:'auto'});
+  if (fields.delivery) cols.push({k:'delivery',  label:'Delivery',     w:'7%'});
+  if (fields.pipeline) cols.push({k:'pipeline',  label:'Pipeline',     w:'12%'});
+  if (fields.nextaction) cols.push({k:'nextaction', label:'Next Action', w:'auto'});
+  if (fields.products) cols.push({k:'products',  label:'Revenue',      w:'8%'});
+
+  const rows = list.map((inq,i) => {
+    const days = getDeliveryDays(inq);
+    const daysColor = days===null?text2:days>=30?'#f0445a':days>=14?'#f5a623':'#30c060';
+    const statColor = inq.status==='OPEN'?'#30c060':inq.status==='CLOSED'?text2:'#f5a623';
+    const rev = (inq.products||[]).reduce((s,p) => s+(p.volume||0)*(p.cost||0), 0);
+    const pipe = [inq.pipeline?.moldInquiry?.status, inq.pipeline?.costing?.status, inq.pipeline?.priceSubmission?.status].filter(Boolean).join(' / ') || '—';
+    const nas = (inq.nextActions||[]).map(n=>`• [${n.pic}] ${n.action}`).join('<br>') || '—';
+
+    const cells = cols.map(col => {
+      switch(col.k) {
+        case 'code':       return `<td>${inq.code||'—'}</td>`;
+        case 'customer':   return `<td>${inq.customer||'—'}</td>`;
+        case 'status':     return `<td><span style="color:${statColor};font-weight:600;">${inq.status||'—'}</span></td>`;
+        case 'factory':    return `<td>${inq.factory||'—'}</td>`;
+        case 'bd':         return `<td>${inq.bdPerson||'—'}</td>`;
+        case 'brief':      return `<td style="color:${text2};">${inq.remark||'—'}</td>`;
+        case 'delivery':   return `<td style="color:${daysColor};font-weight:700;">${days!==null?days+'d':'—'}</td>`;
+        case 'pipeline':   return `<td style="font-size:10px;">${pipe}</td>`;
+        case 'nextaction': return `<td style="font-size:10px;">${nas}</td>`;
+        case 'products':   return `<td style="color:${accent};font-weight:600;">${rev>0?'RM '+rev.toLocaleString('en-MY',{minimumFractionDigits:2}):'—'}</td>`;
+        default: return '<td>—</td>';
+      }
+    }).join('');
+
+    const rowBg = i%2===0 ? bg : surface;
+    return `<tr style="background:${rowBg};">
+      <td style="color:${text2};text-align:center;">${i+1}</td>
+      <td style="font-weight:600;">${inq.name||'—'}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  const colWidths = `<col style="width:3%;"><col style="width:18%;">${cols.map(c=>`<col style="width:${c.w};">`).join('')}`;
+  const thCells   = cols.map(c=>`<th>${c.label}</th>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>TPAC Inquiry Report</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Arial',sans-serif;background:${bg};color:${text};font-size:11px;padding:24px;}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid ${accent};}
+    .logo-area{display:flex;flex-direction:column;gap:3px;}
+    .logo-company{font-size:18px;font-weight:900;letter-spacing:.05em;}
+    .logo-tpac{color:#f0445a;}
+    .logo-pack{color:#3a8ef5;}
+    .logo-sub{font-size:9px;color:${text2};letter-spacing:.1em;text-transform:uppercase;}
+    .report-title{text-align:right;}
+    .report-title h1{font-size:22px;font-weight:900;letter-spacing:.08em;color:${text};}
+    .report-title p{font-size:9px;color:${text2};letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+    .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:20px;border:1px solid ${border};border-radius:6px;overflow:hidden;}
+    .meta-cell{padding:10px 14px;border-right:1px solid ${border};background:${surface};}
+    .meta-cell:last-child{border-right:none;}
+    .meta-label{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:${text2};margin-bottom:4px;}
+    .meta-value{font-size:13px;font-weight:700;color:${text};}
+    table{width:100%;border-collapse:collapse;font-size:10px;}
+    th{background:${isDark?'#0d0f14':'#1a1a2e'};color:#fff;padding:8px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.07em;}
+    td{padding:7px 10px;border-bottom:1px solid ${border};color:${text};vertical-align:top;line-height:1.4;}
+    .footer{margin-top:20px;padding-top:12px;border-top:1px solid ${border};display:flex;justify-content:space-between;font-size:9px;color:${text2};}
+    @media print{@page{size:A4 landscape;margin:10mm;}body{padding:0;}}
+  </style>
+  </head><body>
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-company"><span class="logo-tpac">TPAC</span> <span style="color:${text};">PACKAGING</span></div>
+      <div class="logo-sub">Your innovative packaging partner</div>
+    </div>
+    <div class="report-title">
+      <h1>INQUIRY REPORT</h1>
+      <p>Summary · ${fmtDate(from)} — ${fmtDate(to)}</p>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="meta-cell"><div class="meta-label">Date Range</div><div class="meta-value">${fmtDate(from)} — ${fmtDate(to)}</div></div>
+    <div class="meta-cell"><div class="meta-label">Total Inquiries</div><div class="meta-value">${list.length}</div></div>
+    <div class="meta-cell"><div class="meta-label">Prepared By</div><div class="meta-value">${prepared}</div></div>
+    <div class="meta-cell"><div class="meta-label">Generated</div><div class="meta-value">${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div>
+  </div>
+  <table>
+    <colgroup>${colWidths}</colgroup>
+    <thead><tr><th>#</th><th>Name</th>${thCells}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="footer">
+    <span>TPAC Packaging — Confidential</span>
+    <span>Generated by NPD Tracker · ${new Date().toLocaleString()}</span>
+  </div>
+  <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`;
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  closeModal('inq-report');
+}
 // ══════════════════════════════════════════════════════
 function checkDailyBackup() {
   const last = localStorage.getItem('last_backup');
@@ -8902,6 +9127,45 @@ waitForFirebaseAndInit();
 
 
 </script>
+
+<!-- INQUIRY REPORT MODAL -->
+<div class="overlay" id="modal-inq-report">
+  <div class="modal" style="max-width:560px;">
+    <div class="mtitle">
+      <div class="mtitle-left">
+        <div class="mtitle-icon"><i class="ti ti-file-analytics"></i></div>
+        <div><div class="mtitle-text">Inquiry Report</div><div class="mtitle-sub">Choose date range and fields to include</div></div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal('inq-report')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="mbody">
+      <div class="fsection"><i class="ti ti-calendar"></i> Date Range</div>
+      <div class="frow2">
+        <div class="fg"><label class="flabel">From</label><input class="finput" id="rpt-date-from" type="date" onchange="updateRptCount()"></div>
+        <div class="fg"><label class="flabel">To</label><input class="finput" id="rpt-date-to" type="date" onchange="updateRptCount()"></div>
+      </div>
+      <div id="rpt-match-count" style="font-size:11px;color:var(--accent);margin-bottom:4px;font-family:var(--fm);font-weight:600;"></div>
+      <div class="fsection"><i class="ti ti-table"></i> Fields to Include</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-code" checked style="accent-color:var(--accent);width:14px;height:14px;"> Code</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-customer" checked style="accent-color:var(--accent);width:14px;height:14px;"> Customer</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-status" checked style="accent-color:var(--accent);width:14px;height:14px;"> Status</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-factory" checked style="accent-color:var(--accent);width:14px;height:14px;"> Factory</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-bd" checked style="accent-color:var(--accent);width:14px;height:14px;"> BD Person</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-brief" checked style="accent-color:var(--accent);width:14px;height:14px;"> Inquiry Brief</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-delivery" checked style="accent-color:var(--accent);width:14px;height:14px;"> Delivery Days</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-nextaction" style="accent-color:var(--accent);width:14px;height:14px;"> Next Actions</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-products" style="accent-color:var(--accent);width:14px;height:14px;"> Products / Revenue</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);"><input type="checkbox" id="rpt-f-pipeline" style="accent-color:var(--accent);width:14px;height:14px;"> Pipeline Status</label>
+      </div>
+    </div>
+    <div class="mfooter">
+      <button class="modal-cancel-btn" onclick="closeModal('inq-report')">Cancel</button>
+      <button class="modal-cancel-btn" onclick="exportInqReportExcel()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="modal-submit-btn" onclick="exportInqReportPDF()" style="display:flex;align-items:center;gap:5px;width:auto;padding:10px 18px;"><i class="ti ti-file-type-pdf"></i> PDF</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

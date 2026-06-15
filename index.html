@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V75</title>
+<title>NPD Tracker V76</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1173,7 +1173,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V75</div>
+    <div class="login-logo">NPD Tracker V76</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1199,7 +1199,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V75</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V76</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1237,7 +1237,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V75</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V76</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -3389,6 +3389,8 @@ function setInqView(v) {
   ['card','list'].forEach(t => {
     const el = document.getElementById('inq-view-'+t);
     if (el) el.classList.toggle('active', t === v);
+    const elH = document.getElementById('inq-view-'+t+'-h');
+    if (elH) elH.classList.toggle('active', t === v);
   });
   // hide density bar in list view (it only affects card grid)
   showDensityBar(v === 'card');
@@ -6541,6 +6543,10 @@ function _renderPageHeaderForPage(name) {
       renderPageHeader('inquiries', 'Inquiries',
         `${(data.inquiries||[]).length} inquiries · ${today}`,
         `<div style="display:flex;gap:6px;align-items:center;">
+           <div class="view-toggle">
+             <button class="view-tbtn ${inqView==='card'?'active':''}" id="inq-view-card-h" onclick="setInqView('card')" title="Card view"><i class="ti ti-layout-cards"></i></button>
+             <button class="view-tbtn ${inqView==='list'?'active':''}" id="inq-view-list-h" onclick="setInqView('list')" title="List view"><i class="ti ti-list"></i></button>
+           </div>
            <button class="filter-toggle-btn panel-open" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button class="icon-btn" id="inq-active-btn-h" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
            <button class="icon-btn" onclick="openInqReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
@@ -8348,47 +8354,54 @@ function exportInqReportPDF() {
   const fields = getRptFields();
   const from   = document.getElementById('rpt-date-from').value;
   const to     = document.getElementById('rpt-date-to').value;
-  const isDark = document.documentElement.classList.contains('dark-mode');
   const prepared = currentUserProfile?.name || 'Adam';
 
-  const bg      = isDark ? '#111318' : '#ffffff';
-  const surface = isDark ? '#1a1d24' : '#f5f4f0';
-  const text     = isDark ? '#eef1f7' : '#1a1a2e';
-  const text2    = isDark ? '#9aa8be' : '#4a5568';
-  const border   = isDark ? '#2e3444' : '#e2ddd6';
-  const accent   = '#3a8ef5';
+  // Pull exact CSS variable values from the live app at export time
+  const cs = getComputedStyle(document.documentElement);
+  const bg      = cs.getPropertyValue('--bg').trim()       || '#111318';
+  const surface = cs.getPropertyValue('--surface').trim()  || '#1a1d24';
+  const text     = cs.getPropertyValue('--text').trim()    || '#eef1f7';
+  const text2    = cs.getPropertyValue('--text-sub').trim()|| '#9aa8be';
+  const border   = cs.getPropertyValue('--border').trim()  || '#2e3444';
+  const accent   = cs.getPropertyValue('--blue').trim()    || '#3a8ef5';
+  const isDark   = document.documentElement.classList.contains('dark-mode');
+  const appFont  = localStorage.getItem('appFont') || 'IBM Plex Sans';
+  const fontURL  = appFont === 'DM Sans'
+    ? 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap'
+    : 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap';
+  const headerBg = isDark ? '#0d1117' : '#0f172a';
 
   const cols = [];
-  if (fields.code)     cols.push({k:'code',    label:'Code',         w:'8%'});
-  if (fields.customer) cols.push({k:'customer', label:'Customer',     w:'12%'});
-  if (fields.status)   cols.push({k:'status',   label:'Status',       w:'8%'});
-  if (fields.factory)  cols.push({k:'factory',  label:'Factory',      w:'10%'});
-  if (fields.bd)       cols.push({k:'bd',        label:'BD Person',    w:'8%'});
-  if (fields.brief)    cols.push({k:'brief',     label:'Brief',        w:'auto'});
-  if (fields.delivery) cols.push({k:'delivery',  label:'Delivery',     w:'7%'});
-  if (fields.pipeline) cols.push({k:'pipeline',  label:'Pipeline',     w:'12%'});
+  if (fields.code)       cols.push({k:'code',       label:'Code',        w:'7%'});
+  if (fields.customer)   cols.push({k:'customer',   label:'Customer',    w:'10%'});
+  if (fields.status)     cols.push({k:'status',     label:'Status',      w:'7%'});
+  if (fields.factory)    cols.push({k:'factory',    label:'Factory',     w:'9%'});
+  if (fields.bd)         cols.push({k:'bd',         label:'BD Person',   w:'7%'});
+  if (fields.brief)      cols.push({k:'brief',      label:'Brief',       w:'auto'});
+  if (fields.delivery)   cols.push({k:'delivery',   label:'Delivery',    w:'6%'});
+  if (fields.pipeline)   cols.push({k:'pipeline',   label:'Pipeline',    w:'11%'});
   if (fields.nextaction) cols.push({k:'nextaction', label:'Next Action', w:'auto'});
-  if (fields.products) cols.push({k:'products',  label:'Revenue',      w:'8%'});
+  if (fields.products)   cols.push({k:'products',   label:'Revenue',     w:'8%'});
 
   const rows = list.map((inq,i) => {
     const days = getDeliveryDays(inq);
-    const daysColor = days===null?text2:days>=30?'#f0445a':days>=14?'#f5a623':'#30c060';
-    const statColor = inq.status==='OPEN'?'#30c060':inq.status==='CLOSED'?text2:'#f5a623';
+    const daysColor = days===null ? text2 : days>=30 ? '#f0445a' : days>=14 ? '#f5a623' : '#30c060';
+    const statColor = inq.status==='OPEN' ? '#30c060' : inq.status==='CLOSED' ? text2 : '#f5a623';
     const rev = (inq.products||[]).reduce((s,p) => s+(p.volume||0)*(p.cost||0), 0);
     const pipe = [inq.pipeline?.moldInquiry?.status, inq.pipeline?.costing?.status, inq.pipeline?.priceSubmission?.status].filter(Boolean).join(' / ') || '—';
-    const nas = (inq.nextActions||[]).map(n=>`• [${n.pic}] ${n.action}`).join('<br>') || '—';
+    const nas  = (inq.nextActions||[]).map(n=>`• [${n.pic||''}] ${n.action||''}`).join('<br>') || '—';
 
     const cells = cols.map(col => {
       switch(col.k) {
         case 'code':       return `<td>${inq.code||'—'}</td>`;
         case 'customer':   return `<td>${inq.customer||'—'}</td>`;
-        case 'status':     return `<td><span style="color:${statColor};font-weight:600;">${inq.status||'—'}</span></td>`;
+        case 'status':     return `<td><span style="color:${statColor};font-weight:700;">${inq.status||'—'}</span></td>`;
         case 'factory':    return `<td>${inq.factory||'—'}</td>`;
         case 'bd':         return `<td>${inq.bdPerson||'—'}</td>`;
         case 'brief':      return `<td style="color:${text2};">${inq.remark||'—'}</td>`;
         case 'delivery':   return `<td style="color:${daysColor};font-weight:700;">${days!==null?days+'d':'—'}</td>`;
-        case 'pipeline':   return `<td style="font-size:10px;">${pipe}</td>`;
-        case 'nextaction': return `<td style="font-size:10px;">${nas}</td>`;
+        case 'pipeline':   return `<td style="font-size:9px;">${pipe}</td>`;
+        case 'nextaction': return `<td style="font-size:9px;">${nas}</td>`;
         case 'products':   return `<td style="color:${accent};font-weight:600;">${rev>0?'RM '+rev.toLocaleString('en-MY',{minimumFractionDigits:2}):'—'}</td>`;
         default: return '<td>—</td>';
       }
@@ -8396,65 +8409,114 @@ function exportInqReportPDF() {
 
     const rowBg = i%2===0 ? bg : surface;
     return `<tr style="background:${rowBg};">
-      <td style="color:${text2};text-align:center;">${i+1}</td>
-      <td style="font-weight:600;">${inq.name||'—'}</td>
+      <td style="color:${text2};text-align:center;width:3%;">${i+1}</td>
+      <td style="font-weight:600;width:15%;">${inq.name||'—'}</td>
       ${cells}
     </tr>`;
   }).join('');
 
-  const colWidths = `<col style="width:3%;"><col style="width:18%;">${cols.map(c=>`<col style="width:${c.w};">`).join('')}`;
-  const thCells   = cols.map(c=>`<th>${c.label}</th>`).join('');
+  const thCells = cols.map(c=>`<th style="width:${c.w};">${c.label}</th>`).join('');
 
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>TPAC Inquiry Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="${fontURL}">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Arial',sans-serif;background:${bg};color:${text};font-size:11px;padding:24px;}
-    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid ${accent};}
-    .logo-area{display:flex;flex-direction:column;gap:3px;}
-    .logo-company{font-size:18px;font-weight:900;letter-spacing:.05em;}
+    body{
+      font-family:'${appFont}','IBM Plex Sans','DM Sans',sans-serif;
+      background:${bg};
+      color:${text};
+      font-size:10.5px;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
+    /* ── Full-width dark header band ── */
+    .rpt-header{
+      background:${headerBg};
+      padding:14px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .logo-company{font-size:16px;font-weight:800;letter-spacing:.04em;line-height:1.2;}
     .logo-tpac{color:#f0445a;}
-    .logo-pack{color:#3a8ef5;}
-    .logo-sub{font-size:9px;color:${text2};letter-spacing:.1em;text-transform:uppercase;}
-    .report-title{text-align:right;}
-    .report-title h1{font-size:22px;font-weight:900;letter-spacing:.08em;color:${text};}
-    .report-title p{font-size:9px;color:${text2};letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
-    .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:20px;border:1px solid ${border};border-radius:6px;overflow:hidden;}
-    .meta-cell{padding:10px 14px;border-right:1px solid ${border};background:${surface};}
+    .logo-pack{color:#ffffff;}
+    .logo-sub{font-size:8px;color:#8090a8;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
+    .report-title-block{text-align:right;}
+    .report-title-block h1{font-size:18px;font-weight:800;letter-spacing:.1em;color:#ffffff;line-height:1;}
+    .report-title-block p{font-size:8px;color:#8090a8;letter-spacing:.12em;text-transform:uppercase;margin-top:3px;}
+    /* ── Blue accent line under header ── */
+    .header-accent{height:2px;background:linear-gradient(90deg,${accent},#a855f7);}
+    /* ── Meta row ── */
+    .meta{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid ${border};margin:0;}
+    .meta-cell{padding:9px 16px;border-right:1px solid ${border};background:${surface};}
     .meta-cell:last-child{border-right:none;}
-    .meta-label{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:${text2};margin-bottom:4px;}
-    .meta-value{font-size:13px;font-weight:700;color:${text};}
+    .meta-label{font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;color:${text2};margin-bottom:3px;font-weight:600;}
+    .meta-value{font-size:12px;font-weight:700;color:${text};}
+    /* ── Table ── */
+    .table-wrap{padding:0;}
     table{width:100%;border-collapse:collapse;font-size:10px;}
-    th{background:${isDark?'#0d0f14':'#1a1a2e'};color:#fff;padding:8px 10px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.07em;}
-    td{padding:7px 10px;border-bottom:1px solid ${border};color:${text};vertical-align:top;line-height:1.4;}
-    .footer{margin-top:20px;padding-top:12px;border-top:1px solid ${border};display:flex;justify-content:space-between;font-size:9px;color:${text2};}
-    @media print{@page{size:A4 landscape;margin:10mm;}body{padding:0;}}
+    thead tr{background:${headerBg};}
+    th{
+      color:#c8d6e8;
+      padding:7px 10px;
+      text-align:left;
+      font-size:8px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      border-bottom:1px solid ${isDark?'#2a3347':'#334155'};
+    }
+    td{
+      padding:6px 10px;
+      border-bottom:1px solid ${border};
+      color:${text};
+      vertical-align:top;
+      line-height:1.45;
+    }
+    /* ── Footer ── */
+    .footer{
+      padding:9px 16px;
+      border-top:1px solid ${border};
+      display:flex;
+      justify-content:space-between;
+      font-size:8px;
+      color:${text2};
+      background:${surface};
+    }
+    @media print{
+      @page{size:A4 landscape;margin:0;}
+      body{padding:0;}
+    }
   </style>
   </head><body>
-  <div class="header">
-    <div class="logo-area">
-      <div class="logo-company"><span class="logo-tpac">TPAC</span> <span style="color:${text};">PACKAGING</span></div>
-      <div class="logo-sub">Your innovative packaging partner</div>
+  <div class="rpt-header">
+    <div>
+      <div class="logo-company"><span class="logo-tpac">TPAC</span> <span class="logo-pack">PACKAGING</span></div>
+      <div class="logo-sub">Your Innovative Packaging Partner</div>
     </div>
-    <div class="report-title">
+    <div class="report-title-block">
       <h1>INQUIRY REPORT</h1>
-      <p>Summary · ${fmtDate(from)} — ${fmtDate(to)}</p>
+      <p>Summary &middot; ${fmtDate(from)} &mdash; ${fmtDate(to)}</p>
     </div>
   </div>
+  <div class="header-accent"></div>
   <div class="meta">
-    <div class="meta-cell"><div class="meta-label">Date Range</div><div class="meta-value">${fmtDate(from)} — ${fmtDate(to)}</div></div>
+    <div class="meta-cell"><div class="meta-label">Date Range</div><div class="meta-value">${fmtDate(from)} &mdash; ${fmtDate(to)}</div></div>
     <div class="meta-cell"><div class="meta-label">Total Inquiries</div><div class="meta-value">${list.length}</div></div>
     <div class="meta-cell"><div class="meta-label">Prepared By</div><div class="meta-value">${prepared}</div></div>
     <div class="meta-cell"><div class="meta-label">Generated</div><div class="meta-value">${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div>
   </div>
-  <table>
-    <colgroup>${colWidths}</colgroup>
-    <thead><tr><th>#</th><th>Name</th>${thCells}</tr></thead>
-    <tbody>${rows}</tbody>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:3%;">#</th><th style="width:15%;">Name</th>${thCells}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
   <div class="footer">
-    <span>TPAC Packaging — Confidential</span>
-    <span>Generated by NPD Tracker · ${new Date().toLocaleString()}</span>
+    <span>TPAC Packaging &mdash; Confidential &mdash; Not for external distribution</span>
+    <span>Generated by NPD Tracker &middot; ${new Date().toLocaleString()}</span>
   </div>
   <script>window.onload=function(){window.print();}<\/script>
   </body></html>`;

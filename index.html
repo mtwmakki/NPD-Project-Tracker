@@ -287,12 +287,12 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .prog-fill{height:100%;background:linear-gradient(90deg,#3a8ef5,#30c060);border-radius:2px;transition:width .4s;}
 .card-body{display:none;border-top:1px solid var(--border);}
 .card.expanded .card-body{display:block;}
-.tsec{padding:9px 13px;}
+.tsec{padding:6px 13px;}
 .tsec-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
 .tsec-label i{font-size:11px;}
-.titem{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);}
-.titem:last-child{border-bottom:none;}
-.tchk{width:17px;height:17px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.titem{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:5px;}
+.titem:last-child{margin-bottom:0;}
+.tchk{width:17px;height:17px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .tchk.done{background:var(--accent);border-color:var(--accent);}
 .tchk.done i{color:#fff;font-size:11px;}
 .tchk i{font-size:11px;color:transparent;}
@@ -4047,14 +4047,10 @@ function renderTask(item, type, task) {
   const tasks = item.tasks||[];
   const idx = tasks.indexOf(task), today = todayStr();
   const isAwaiting = task.status === 'awaiting-reply';
-  const dlCls = task.done ? 'upcoming' : isAwaiting ? 'awaiting' : (task.deadline < today ? 'overdue' : task.deadline === today ? 'today' : 'upcoming');
-  const dlTxt = task.done ? fmtDate(task.deadline)
-    : isAwaiting ? '🕐 Awaiting reply' + (task.reminder ? ' · reminder ' + fmtDate(task.reminder) : '')
-    : (task.deadline < today ? '⚠ Overdue · '+fmtDate(task.deadline) : task.deadline === today ? '⏰ Due today · '+fmtDate(task.deadline) : fmtDate(task.deadline));
   const pic = task.pic || (type==='project' ? 'Adam' : '');
-  const picHTML = type==='project' ? `<span class="rap-pic-pill">${pic}</span>` : '';
   const awaitingClass = isAwaiting ? 'awaiting-reply' : '';
   const followupHTML = task.followupOf ? `<div class="followup-chain"><i class="ti ti-arrow-forward-up"></i> follow-up</div>` : '';
+
   // Linked sub-status tag
   let ssLinkHTML = '';
   if (type === 'project' && task.linkedSubStatus) {
@@ -4063,18 +4059,66 @@ function renderTask(item, type, task) {
     const ss = parentItem && (parentItem.subStatuses||[]).find(s => (s.id||'') === task.linkedSubStatus);
     if (ss) ssLinkHTML = `<span class="task-ss-link"><i class="ti ti-link" style="font-size:9px"></i> ${ss.title}</span>`;
   }
-  return `<div class="titem ${awaitingClass}">
-    <div class="tchk ${task.done?'done':''}" onclick="toggleTask('${type}','${item.id}',${idx})"><i class="ti ti-check"></i></div>
-    <div class="tinfo">
-      <div class="tname ${task.done?'done':''}">${task.name}</div>
-      ${followupHTML}
-      <div style="display:flex;gap:5px;align-items:center;margin-top:2px;flex-wrap:wrap;">${picHTML}<span class="tdl ${dlCls}">${dlTxt}</span>${ssLinkHTML}</div>
+
+  // PIC pill color
+  const rapUserColors = ['#185FA5','#7040c8','#0F6E56','#854F0B','#A32D2D','#1a7a6e','#7a4a1a'];
+  const rapPicMap = {}; cachedUserList.forEach((u,i)=>{ rapPicMap[u]=rapUserColors[i%rapUserColors.length]; });
+  const picColor = rapPicMap[pic] || '#64748b';
+
+  // Deadline badge
+  const isOvd  = !task.done && task.deadline && task.deadline < today;
+  const isSoon = !isOvd && !task.done && task.deadline && task.deadline <= addDays(today,3);
+  const isToday = !isOvd && !task.done && task.deadline === today;
+  const dlClass = !task.deadline ? 'empty' : task.done ? 'ok' : isAwaiting ? 'soon' : isOvd ? 'overdue' : isToday ? 'soon' : isSoon ? 'soon' : 'ok';
+  const dlIcon  = isAwaiting ? 'ti-clock' : isOvd ? 'ti-alert-triangle' : 'ti-calendar';
+  const dlLabel = !task.deadline ? '+ Deadline'
+    : isAwaiting ? 'Awaiting' + (task.reminder ? ' · ' + fmtDate(task.reminder) : '')
+    : fmtDate(task.deadline);
+
+  // Unique menu id
+  const menuId = 'rap-pic-menu-' + (task.id || idx);
+
+  return `<div class="ip-row${task.done?' done-row':''} ${awaitingClass}" id="titem-${task.id||idx}">
+    <div class="ip-check ${task.done?'done':''}" onclick="toggleTask('${type}','${item.id}',${idx})"><i class="ti ti-check"></i></div>
+    <div style="position:relative;flex-shrink:0;">
+      <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;cursor:pointer;" onclick="toggleRapPicMenu('${menuId}')" title="Change PIC">
+        <span class="na-pic-dot"></span>${pic||'—'} <i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>
+      </div>
+      <div class="na-pic-select-wrap" id="${menuId}">
+        ${cachedUserList.map(u=>`<div class="na-pic-option" onclick="setRapPic('${type}','${item.id}',${idx},this.textContent)">${u}</div>`).join('')}
+      </div>
     </div>
-    <div class="tacts">
+    <div class="ip-body">
+      <div class="${task.done?'ip-name done':'ip-name'}" style="font-size:12px;line-height:1.3;padding:2px 0;">${task.name}</div>
+      ${followupHTML}
+      ${ssLinkHTML ? `<div style="margin-top:2px;">${ssLinkHTML}</div>` : ''}
+    </div>
+    <div class="ip-right">
+      <div class="ip-deadline ${dlClass}">
+        <i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}
+      </div>
+    </div>
+    <div class="tacts" style="flex-shrink:0;">
       <button class="tact-btn" onclick="openEditDl('${type}','${item.id}',${idx})"><i class="ti ti-calendar-event"></i></button>
       <button class="tact-btn" onclick="startDelete('${type}','${item.id}',${idx})"><i class="ti ti-trash"></i></button>
     </div>
   </div>`;
+}
+
+function toggleRapPicMenu(menuId) {
+  document.querySelectorAll('.na-pic-select-wrap.open').forEach(m => {
+    if (m.id !== menuId) m.classList.remove('open');
+  });
+  const menu = document.getElementById(menuId);
+  if (menu) menu.classList.toggle('open');
+}
+
+function setRapPic(type, itemId, idx, pic) {
+  const arr = type === 'inquiry' ? data.inquiries : data.projects;
+  const item = arr.find(x => x.id === itemId);
+  if (!item || !item.tasks[idx]) return;
+  item.tasks[idx].pic = pic.trim();
+  save(); renderAll();
 }
 
 function toggleCard(id, type) {

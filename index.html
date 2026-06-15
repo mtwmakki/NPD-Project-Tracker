@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V76.1</title>
+<title>NPD Tracker V76.2</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1183,7 +1183,7 @@ html{scroll-behavior:smooth;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V76.1</div>
+    <div class="login-logo">NPD Tracker V76.2</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1209,7 +1209,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V76.1</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V76.2</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1247,7 +1247,7 @@ html{scroll-behavior:smooth;}
         <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V76.1</span></span>
+    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V76.2</span></span>
   </div>
   <div class="sidebar-inner">
     <div class="sidebar-nav">
@@ -7825,7 +7825,7 @@ function renderProjDetail() {
       </div>`;
 
     if (!tasks.length) {
-      html += `<div style="font-size:11px;color:var(--text3);padding:8px 0;">No actions yet.</div>`;
+      html += `<div style="font-size:11px;color:var(--text3);padding:8px 14px;">No actions yet.</div>`;
     } else {
       const active = tasks.filter(t => !t.done && t.deadline <= today);
       const future = tasks.filter(t => !t.done && t.deadline > today);
@@ -7885,9 +7885,11 @@ function renderProjDetail() {
         </div>`;
       };
 
+      html += `<div style="padding:0 14px;">`;
       if (active.length) html += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);font-family:var(--fm);margin:6px 0 3px;display:flex;align-items:center;gap:4px;"><i class="ti ti-flame"></i> Overdue / Active</div>` + active.map(t => renderInlineTask(t, tasks.indexOf(t))).join('');
       if (future.length) html += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);font-family:var(--fm);margin:8px 0 3px;display:flex;align-items:center;gap:4px;"><i class="ti ti-clock"></i> Upcoming</div>` + future.map(t => renderInlineTask(t, tasks.indexOf(t))).join('');
       if (done.length) html += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-family:var(--fm);margin:8px 0 3px;display:flex;align-items:center;gap:4px;"><i class="ti ti-check"></i> Completed</div>` + done.map(t => renderInlineTask(t, tasks.indexOf(t))).join('');
+      html += `</div>`
     }
     html += `</div>`;
   }

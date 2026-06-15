@@ -1001,17 +1001,27 @@ html{scroll-behavior:smooth;}
 .na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .na-delete-btn:hover{color:var(--red);}
 /* ── Inquiry Progress Task Rows ── */
-.ip-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
-.ip-row:last-child{border-bottom:none;}
-.ip-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.ip-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:5px;}
+.ip-row:last-child{margin-bottom:0;}
+.ip-row.done-row{opacity:.55;}
+.ip-check{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;}
 .ip-check.done{background:var(--accent);border-color:var(--accent);}
 .ip-check.done i{color:#fff;}
-.ip-check i{font-size:11px;color:transparent;}
+.ip-check i{font-size:10px;color:transparent;}
 .ip-body{flex:1;min-width:0;}
-.ip-name{font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);color:var(--text);padding:2px 0;outline:none;}
-.ip-name.done{text-decoration:line-through;opacity:.5;}
+.ip-name{font-size:12px;background:none;border:none;border-bottom:1px dashed transparent;width:100%;font-family:var(--f);color:var(--text);padding:2px 0;outline:none;}
+.ip-name.done{text-decoration:line-through;opacity:.6;}
 .ip-name:focus{border-bottom-color:var(--accent);}
-.ip-meta{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.ip-name:hover{border-bottom-color:var(--border);}
+.ip-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.ip-deadline{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fm);cursor:pointer;position:relative;white-space:nowrap;}
+.ip-deadline.empty{background:transparent;border:1px dashed var(--border);color:var(--text3);}
+.ip-deadline.overdue{background:var(--rebg);border:1px solid var(--red);color:var(--red);}
+.ip-deadline.soon{background:var(--ambg);border:1px solid var(--amber);color:var(--amber);}
+.ip-deadline.ok{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.ip-deadline input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.ip-added{font-size:9px;color:var(--text3);font-family:var(--fm);}
+.ip-meta{display:flex;align-items:center;gap:6px;margin-top:0;}
 /* ── Auto-task cards in modal ── */
 .autotask-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);margin-bottom:8px;cursor:pointer;transition:all .15s;user-select:none;}
 .autotask-card.checked{border-color:var(--accent);background:var(--al);}
@@ -1978,7 +1988,7 @@ html{scroll-behavior:smooth;}
       <div class="frow2">
         <div class="fg"><label class="flabel">Customer</label><input class="finput" id="inq-customer" type="text" placeholder="Customer name"></div>
         <div class="fg"><label class="flabel">BD Person</label>
-          <select class="finput" id="inq-bd"><option value="">— Select —</option><option>Sylvia</option><option>Juana</option><option>Reachpack</option><option>Adam</option><option>Muti'ah</option><option>Other</option></select>
+          <select class="finput" id="inq-bd"><option value="">— Select —</option></select>
         </div>
       </div>
       <div class="frow2">
@@ -4174,6 +4184,15 @@ function openModal(name) {
   const today = todayStr();
   if (name === 'inq') {
     document.getElementById('inq-date').value = today;
+    // Populate BD dropdown from live user list
+    const bdSel = document.getElementById('inq-bd');
+    if (bdSel) {
+      const curVal = bdSel.value;
+      bdSel.innerHTML = '<option value="">\u2014 Select \u2014</option>' +
+        cachedUserList.map(u => `<option value="${u}">${u}</option>`).join('') +
+        '<option value="Other">Other</option>';
+      if (curVal) bdSel.value = curVal;
+    }
     if (!editingInqId) {
       document.getElementById('inq-code').value = '';
       document.getElementById('inq-name').value = '';
@@ -4563,7 +4582,9 @@ function _renderInqDetailInner() {
 
     // Next Actions — card layout, deadline prominent
     const nas = inq.nextActions || (inq.nextAction ? [{id:'legacy-'+uid(), pic:'Adam', action:inq.nextAction, deadline:'', dateAdded:''}] : []);
-    const picColors = {Adam:'#185FA5','Muti\'ah':'#7040c8',Sylvia:'#0F6E56',Juana:'#854F0B',Other:'#A32D2D'};
+    const naUserColors = ['#185FA5','#7040c8','#0F6E56','#854F0B','#A32D2D','#1a7a6e','#7a4a1a','#4a1a7a'];
+    const naPicColorMap = {};
+    cachedUserList.forEach((u,i) => { naPicColorMap[u] = naUserColors[i % naUserColors.length]; });
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Next Actions <span style="font-weight:400;color:var(--text3)">(${nas.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddNextAction('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
@@ -4572,12 +4593,11 @@ function _renderInqDetailInner() {
       nas.forEach(na => {
         const isOverdue = na.deadline && na.deadline < today;
         const isSoon    = !isOverdue && na.deadline && na.deadline <= addDays(today, 3);
-        const picColor  = picColors[na.pic] || '#64748b';
+        const picColor  = naPicColorMap[na.pic] || '#64748b';
         const dlClass   = !na.deadline ? 'empty' : isOverdue ? 'overdue' : isSoon ? 'soon' : 'ok';
         const dlIcon    = isOverdue ? 'ti-alert-triangle' : 'ti-calendar';
         const dlLabel   = na.deadline ? fmtDate(na.deadline) : '+ Set deadline';
-        const users     = (data.users||[]).map(u=>u.name).filter(Boolean);
-        const allPics   = [...new Set(['Adam',"Muti'ah",'Sylvia','Juana',...users])];
+        const allPics   = cachedUserList;
         html += `<div class="na-card" id="na-row-${na.id}">
           <div style="position:relative;flex-shrink:0;">
             <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
@@ -4585,7 +4605,7 @@ function _renderInqDetailInner() {
               ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>
             </div>
             ${canEdit?`<div class="na-pic-select-wrap" id="na-pic-menu-${na.id}">
-              ${allPics.map(u=>`<div class="na-pic-option" onclick="setNAPic('${inq.id}','${na.id}','${u}')">${u}</div>`).join('')}
+              ${allPics.map(u=>`<div class="na-pic-option" onclick="setNAPic('${inq.id}','${na.id}',this.textContent)">${u}</div>`).join('')}
             </div>`:''}
           </div>
           ${canEdit
@@ -4606,35 +4626,42 @@ function _renderInqDetailInner() {
     }
     html += `</div>`;
 
-    // Inquiry Progress (Tasks) — styled rows
+    // Inquiry Progress (Tasks) — styled rows (NA card style)
     const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddTask('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
       </div>
-      ${!tasks.length ? `<div style="font-size:11px;color:var(--text3);">No tasks yet.${canEdit?' Click + Add to start.':''}</div>` :
+      ${!tasks.length ? `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No tasks yet.${canEdit?' Click + Add to start.':''}</div>` :
         tasks.map(t => {
-          const isOvd = !t.done && t.deadline && t.deadline < today;
-          const pcMap = {'Adam':'#3a8ef5','Muti\'ah':'#a06aee','Sylvia':'#30c060','Juana':'#f5a623'};
-          const picColor = pcMap[t.pic]||'#64748b';
-          return `<div class="ip-row">
+          const isOvd  = !t.done && t.deadline && t.deadline < today;
+          const isSoon = !isOvd && !t.done && t.deadline && t.deadline <= addDays(today,3);
+          const dlClass = !t.deadline ? 'empty' : isOvd ? 'overdue' : isSoon ? 'soon' : 'ok';
+          const dlIcon  = isOvd ? 'ti-alert-triangle' : 'ti-calendar';
+          const dlLabel = t.deadline ? fmtDate(t.deadline) : '+ Deadline';
+          const ipUserColors = ['#185FA5','#7040c8','#0F6E56','#854F0B','#A32D2D','#1a7a6e','#7a4a1a'];
+          const ipPicMap = {}; cachedUserList.forEach((u,i)=>{ ipPicMap[u]=ipUserColors[i%ipUserColors.length]; });
+          const picColor = ipPicMap[t.pic]||'#64748b';
+          return `<div class="ip-row${t.done?' done-row':''}">
             <div class="ip-check ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')"><i class="ti ti-check"></i></div>
+            ${t.pic ? `<div style="flex-shrink:0;">
+              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;">
+                <span class="na-pic-dot"></span>${t.pic}
+              </div>
+            </div>` : ''}
             <div class="ip-body">
-              ${canEdit?`<input type="text" class="ip-name ${t.done?'done':''}" value="${(t.name||'').replace(/\'>/g,'')}" onblur="saveInqTask('${inq.id}','${t.id}','name',this.value)" placeholder="Task name…">`:
-              `<div style="font-size:12px;color:var(--text);${t.done?'text-decoration:line-through;opacity:.5;':''}">${t.name}</div>`}
-              <div class="ip-meta">
-                ${t.pic?`<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:${picColor}22;color:${picColor};font-family:var(--fm);">${t.pic}</span>`:''}
-                <div class="na-deadline-chip ${!t.deadline?'empty':isOvd?'overdue':'set'}">
-                  <i class="ti ti-calendar" style="font-size:9px;"></i>
-                  ${t.deadline?fmtDate(t.deadline)+(isOvd?' ⚠':''):' + Deadline'}
-                  ${canEdit?`<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">`:'' }
-                </div>
+              ${canEdit
+                ? `<input type="text" class="ip-name${t.done?' done':''}" value="${(t.name||'').replace(/"/g,'&quot;')}" onblur="saveInqTask('${inq.id}','${t.id}','name',this.value)" placeholder="Task name…">`
+                : `<div style="font-size:12px;color:var(--text);${t.done?'text-decoration:line-through;opacity:.55;':''}">${t.name||'—'}</div>`}
+            </div>
+            <div class="ip-right">
+              <div class="ip-deadline ${dlClass}">
+                <i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}
+                ${canEdit ? `<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">` : ''}
               </div>
             </div>
-            ${canEdit?`<button class="na-delete-btn" onclick="deleteInqTask('${inq.id}','${t.id}')"><i class="ti ti-trash"></i></button>`:''}
-          </div>`;
-        }).join('')}
-    </div>`;
+            ${canEdit?`<button class="na-delete-btn" onclick="deleteInqTask('${inq.id}','${t.id}')"><i class="ti ti-trash"></i></button>`:''}          </div>`;
+        }).join('')}    </div>`;
   }
 
   if (currentInqDTab === 'pipeline') {

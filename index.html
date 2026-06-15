@@ -4644,11 +4644,14 @@ function _renderInqDetailInner() {
           const picColor = ipPicMap[t.pic]||'#64748b';
           return `<div class="ip-row${t.done?' done-row':''}">
             <div class="ip-check ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')"><i class="ti ti-check"></i></div>
-            ${t.pic ? `<div style="flex-shrink:0;">
-              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;">
-                <span class="na-pic-dot"></span>${t.pic}
+            <div style="position:relative;flex-shrink:0;">
+              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;cursor:${canEdit?'pointer':'default'};" onclick="${canEdit?`toggleInqTaskPicMenu('${t.id}')`:''}" title="${canEdit?'Change PIC':''}">
+                <span class="na-pic-dot"></span>${t.pic||'—'} ${canEdit?'<i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>':''}
               </div>
-            </div>` : ''}
+              ${canEdit?`<div class="na-pic-select-wrap" id="ip-pic-menu-${t.id}">
+                ${cachedUserList.map(u=>`<div class="na-pic-option" onclick="setInqTaskPic('${inq.id}','${t.id}',this.textContent)">${u}</div>`).join('')}
+              </div>`:''}
+            </div>
             <div class="ip-body">
               ${canEdit
                 ? `<input type="text" class="ip-name${t.done?' done':''}" value="${(t.name||'').replace(/"/g,'&quot;')}" onblur="saveInqTask('${inq.id}','${t.id}','name',this.value)" placeholder="Task name…">`
@@ -7281,6 +7284,26 @@ function deleteInqTask(inqId, taskId) {
   if (!inq) return;
   inq.tasks = (inq.tasks||[]).filter(t => t.id !== taskId);
   save(); renderInqDetail();
+}
+
+function toggleInqTaskPicMenu(taskId) {
+  // Close all other open menus first
+  document.querySelectorAll('.na-pic-select-wrap.open').forEach(m => {
+    if (m.id !== 'ip-pic-menu-' + taskId) m.classList.remove('open');
+  });
+  const menu = document.getElementById('ip-pic-menu-' + taskId);
+  if (menu) menu.classList.toggle('open');
+}
+
+function setInqTaskPic(inqId, taskId, pic) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq) return;
+  const task = (inq.tasks||[]).find(t => t.id === taskId);
+  if (!task) return;
+  task.pic = pic;
+  save(); renderInqDetail();
+  const menu = document.getElementById('ip-pic-menu-' + taskId);
+  if (menu) menu.classList.remove('open');
 }
 
 function toggleAutoTask(id) {

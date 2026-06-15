@@ -3447,11 +3447,13 @@ function renderInquiriesListView(el, list) {
     return;
   }
   const groups = groupByYearMonth(list);
-  const years = Object.keys(groups).sort().reverse();
   let html = '';
-  years.forEach(year => {
-    const months = Object.keys(groups[year]).sort().reverse();
-    const totalCount = months.reduce((s,m) => s + groups[year][m].length, 0);
+  // groups is a Map(year -> Map(month -> items[]))
+  const sortedYears = [...groups.keys()].sort().reverse();
+  sortedYears.forEach(year => {
+    const monthMap = groups.get(year);
+    const months = [...monthMap.keys()].sort().reverse();
+    const totalCount = months.reduce((s,m) => s + monthMap.get(m).length, 0);
     const isCollapsed = collapsedYears['inq_' + year] ? 'collapsed' : '';
     html += `<div class="inq-list-year-group year-group ${isCollapsed}" id="ygroup-inq-${year}">
       <div class="inq-list-year-header year-header" onclick="toggleYearGroup('inq','${year}')">
@@ -3462,7 +3464,7 @@ function renderInquiriesListView(el, list) {
       </div>
       <div class="year-cards">`;
     months.forEach(month => {
-      const items = groups[year][month];
+      const items = monthMap.get(month);
       if (months.length > 1) html += `<div class="inq-list-month-header">${monthLabel(month)}</div>`;
       html += `<div class="inq-list-wrap">${items.map(i=>renderInquiryListRow(i)).join('')}</div>`;
     });

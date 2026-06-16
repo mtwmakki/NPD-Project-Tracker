@@ -1160,32 +1160,30 @@ function renderGantt(){
     s+='<text x="'+(wx+WW/2)+'" y="'+(y+HH-4)+'" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle" font-family="DM Mono,monospace">'+(w2+1)+'</text>';
   }
 
-  /* Calendar week row (ISO) */
+  /* Calendar week row (ISO) — sits between month row and project-week row */
   if(colVis.calweek&&calWeeks.length){
-    var cwY=y+YH+28-CWH-2;
-    var lastCWLabel='';
+    // cwY: just below the month text, above the project-week numbers
+    // Header layout: [YH][month band 28px][CWH][project-week band ending at HH]
+    var cwY=y+YH+28;
+    var lastWk=-1;
     for(var ci=0;ci<calWeeks.length;ci++){
       var cw=calWeeks[ci];
-      var cwLabel='W'+cw.wk;
       var cwX=PL+LEFT+ci*WW;
-      // Draw divider at start of each new week label or every 2 cols
-      if(cwLabel!==lastCWLabel){
-        s+='<line x1="'+cwX+'" y1="'+cwY+'" x2="'+cwX+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.2)" stroke-width="0.7"/>';
-        lastCWLabel=cwLabel;
-      }
-      // Only print label if enough space (every 2 weeks minimum)
-      if(ci===0||(calWeeks[ci].wk!==calWeeks[ci-1].wk)){
-        // Check if remaining cols before next change give enough space
-        var remaining=1;
-        for(var ri=ci+1;ri<calWeeks.length&&calWeeks[ri].wk===cw.wk;ri++) remaining++;
-        var labelX=cwX+remaining*WW/2;
-        if(remaining*WW>=WW*1.5){
-          s+='<text x="'+labelX+'" y="'+(cwY+CWH-2)+'" font-size="7" fill="rgba(255,255,255,0.65)" text-anchor="middle" font-family="DM Mono,monospace">'+cwLabel+'</text>';
-        }
+      // Divider at every ISO week boundary
+      if(cw.wk!==lastWk){
+        s+='<line x1="'+cwX+'" y1="'+cwY+'" x2="'+cwX+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+        // Count how many cols share this ISO week number
+        var span=1;
+        for(var ri=ci+1;ri<calWeeks.length&&calWeeks[ri].wk===cw.wk;ri++) span++;
+        // Always print label — center it over the span, clip to 1 col minimum
+        var labelX=cwX+span*WW/2;
+        s+='<text x="'+labelX+'" y="'+(cwY+CWH-3)+'" font-size="7.5" fill="rgba(255,255,255,0.75)" text-anchor="middle" font-family="DM Mono,monospace" font-weight="500">W'+cw.wk+'</text>';
+        lastWk=cw.wk;
       }
     }
-    // Bottom border for cal week row
-    s+='<line x1="'+(PL+LEFT)+'" y1="'+(cwY+CWH)+'" x2="'+W+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>';
+    // Bounding lines for the row
+    s+='<line x1="'+(PL+LEFT)+'" y1="'+cwY+'" x2="'+W+'" y2="'+cwY+'" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>';
+    s+='<line x1="'+(PL+LEFT)+'" y1="'+(cwY+CWH)+'" x2="'+W+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>';
   }
 
   y+=HH;

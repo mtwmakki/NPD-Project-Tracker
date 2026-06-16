@@ -146,13 +146,15 @@ body.dark .col-tog.active{background:#1E4678;border-color:#2a5a9a}
 .sb-tab-panel{display:none;flex-direction:column;overflow-y:auto;flex:1}
 .sb-tab-panel.active{display:flex;flex-direction:column}
 /* Drawer mode */
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:200}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200}
 .drawer-overlay.open{display:block}
-.drawer-panel{position:fixed;top:0;right:0;height:100vh;width:340px;background:var(--bg-sb);box-shadow:-4px 0 24px rgba(0,0,0,0.18);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
-.drawer-panel.open{transform:translateX(0)}
-.drawer-handle{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:202;background:var(--blue);color:#fff;border:none;border-radius:8px 0 0 8px;padding:12px 6px;cursor:pointer;font-size:14px;writing-mode:vertical-lr;display:none;font-family:'DM Sans',sans-serif}
+/* In drawer mode the sidebar itself becomes the drawer */
+.sb.drawer-mode{position:fixed;top:0;right:0;height:100vh;z-index:201;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 32px rgba(0,0,0,0.22)}
+.sb.drawer-mode.open{transform:translateX(0)}
+.drawer-handle{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:199;background:var(--blue);color:#fff;border:none;border-radius:8px 0 0 8px;padding:10px 5px;cursor:pointer;font-size:11px;font-weight:700;writing-mode:vertical-rl;display:none;letter-spacing:1px;font-family:'DM Sans',sans-serif;box-shadow:-2px 0 8px rgba(0,0,0,0.15)}
 .drawer-handle.visible{display:flex}
-.drawer-close{padding:8px 14px;font-size:11px;font-weight:600;color:var(--text-hint);cursor:pointer;text-align:right;flex-shrink:0;border-bottom:1px solid var(--border)}
+.drawer-close-btn{padding:7px 12px;font-size:11px;font-weight:600;color:var(--text-hint);cursor:pointer;text-align:right;flex-shrink:0;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;width:100%;font-family:'DM Sans',sans-serif;display:none}
+.sb.drawer-mode .drawer-close-btn{display:block}
 .actrow{display:flex;gap:6px;padding:11px 15px;background:var(--bg-sb);border-top:1px solid var(--border);position:sticky;bottom:0;z-index:10}
 .btne{flex:1;padding:8px 6px;font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;color:#fff;background:#34A853;border:none;border-radius:var(--rsm);cursor:pointer;transition:background .14s}
 .btne:hover{background:#2D9247}
@@ -222,9 +224,10 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
   </div>
 </header>
 
-<!-- Drawer overlay (drawer mode only) -->
+<!-- Drawer overlay (shown in drawer mode when sidebar is open) -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<button class="drawer-handle" id="drawerHandle" onclick="openDrawer()">&#9776; Tasks</button>
+<!-- Floating tab to open drawer -->
+<button class="drawer-handle" id="drawerHandle" onclick="openDrawer()">MENU</button>
 
 <div class="ws">
   <aside class="sb" id="mainSb">
@@ -233,6 +236,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
       <span style="font-size:10px;font-weight:700;color:var(--text-hint);letter-spacing:.8px;margin-right:4px">LAYOUT</span>
       <button class="sb-mode-btn active" id="btnModeTab" onclick="setSbMode('tab')">&#9776; Tabs</button>
       <button class="sb-mode-btn" id="btnModeDrawer" onclick="setSbMode('drawer')">&#9654; Drawer</button>
+      <button class="drawer-close-btn" onclick="closeDrawer()">✕ Close</button>
     </div>
     <!-- Tab pills -->
     <div class="sb-tab-pills" id="sbTabPills">
@@ -362,11 +366,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
       <span id="ganttSaveStatus" style="font-size:11px;color:#999;margin-left:4px;"></span>
     </div>
   </aside>
-  <!-- Drawer panel (hidden, populated via JS in drawer mode) -->
-  <div class="drawer-panel" id="drawerPanel">
-    <div class="drawer-close" onclick="closeDrawer()">✕ Close</div>
-    <div id="drawerContent" style="overflow-y:auto;flex:1"></div>
-  </div>
+
 
   <main class="parea">
     <div class="ptbar">
@@ -648,14 +648,15 @@ function getById(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return
 function getIdx(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return i; return -1;}
 function sortTasks(){tasks.sort(function(a,b){return PORDER.indexOf(a.phase)-PORDER.indexOf(b.phase);});}
 
-var sbMode='tab'; // 'tab' or 'drawer'
+var sbMode='tab';
 var activeTab='info';
 
 function switchTab(name){
   activeTab=name;
   ['info','phases','display','tasks'].forEach(function(t){
-    var panel=document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
-    var tab=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    var T=t.charAt(0).toUpperCase()+t.slice(1);
+    var panel=document.getElementById('panel'+T);
+    var tab=document.getElementById('tab'+T);
     if(panel) panel.classList.toggle('active',t===name);
     if(tab) tab.classList.toggle('active',t===name);
   });
@@ -664,37 +665,36 @@ function switchTab(name){
 function setSbMode(mode){
   sbMode=mode;
   var sb=document.getElementById('mainSb');
-  var overlay=document.getElementById('drawerOverlay');
-  var drawer=document.getElementById('drawerPanel');
   var handle=document.getElementById('drawerHandle');
-  var pills=document.getElementById('sbTabPills');
+  var ws=document.querySelector('.ws');
   document.getElementById('btnModeTab').classList.toggle('active',mode==='tab');
   document.getElementById('btnModeDrawer').classList.toggle('active',mode==='drawer');
   if(mode==='drawer'){
-    sb.style.display='none';
+    // Turn sidebar into a drawer — slide it off-screen, show handle tab
+    sb.classList.add('drawer-mode');
+    sb.classList.remove('open');
     handle.classList.add('visible');
+    // Give the main content full width
+    if(ws) ws.style.gridTemplateColumns='1fr';
   } else {
-    sb.style.display='';
+    // Restore sidebar to normal inline position
+    sb.classList.remove('drawer-mode','open');
     handle.classList.remove('visible');
-    overlay.classList.remove('open');
-    drawer.classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+    if(ws) ws.style.gridTemplateColumns='';
   }
 }
 
 function openDrawer(){
-  // Copy sidebar content into drawer
-  var drawerContent=document.getElementById('drawerContent');
-  var mainSb=document.getElementById('mainSb');
-  // In drawer mode the tabs still work — we just show the sidebar inside the drawer
-  drawerContent.innerHTML='';
-  document.getElementById('drawerPanel').appendChild(mainSb.querySelector('.sb-tab-pills').cloneNode(true));
+  var sb=document.getElementById('mainSb');
+  sb.classList.add('open');
   document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('drawerPanel').classList.add('open');
 }
 
 function closeDrawer(){
+  var sb=document.getElementById('mainSb');
+  sb.classList.remove('open');
   document.getElementById('drawerOverlay').classList.remove('open');
-  document.getElementById('drawerPanel').classList.remove('open');
 }
 
 function toggleCol(el){
@@ -808,7 +808,7 @@ function renderPanel(){
     var t=tasks[i];
     if(t.phase!==lastPh){
       var pc=PC[t.phase];
-      html+='<div class="phdr"><span style="color:'+pc.text+'">'+PLABEL[t.phase].toUpperCase()+' PHASE</span><div class="phdr-line"></div></div>';
+      html+='<div class="phdr"><span style="color:'+pc.text+'">'+PLABEL[t.phase].toUpperCase()+' PHASE</span><div class="phdr-line"></div><button onclick="addTaskToPhase(\''+t.phase+'\')" style="flex-shrink:0;padding:2px 8px;font-size:10px;font-weight:600;color:'+pc.text+';background:'+pc.light+';border:1px solid '+pc.bar+';border-radius:4px;cursor:pointer;font-family:\'DM Sans\',sans-serif;transition:all .12s" onmouseover="this.style.background=\''+pc.bar+'\';this.style.color=\'#fff\'" onmouseout="this.style.background=\''+pc.light+'\';this.style.color=\''+pc.text+'\'">+ Task</button><button onclick="addTaskToPhase(\''+t.phase+'\',true)" style="flex-shrink:0;padding:2px 7px;font-size:10px;font-weight:600;color:#7C3AED;background:#EDE9FE;border:1px solid #c4b5fd;border-radius:4px;cursor:pointer;font-family:\'DM Sans\',sans-serif;transition:all .12s" onmouseover="this.style.background=\'#7C3AED\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'#EDE9FE\';this.style.color=\'#7C3AED\'">◆</button></div>';
       lastPh=t.phase;
     }
     var sw=starts[t.id]||1;
@@ -952,6 +952,11 @@ function updSegField(el){
   } else {
     upd(id,'seg',val);
   }
+}
+function addTaskToPhase(phase, asMilestone){
+  var mn=asMilestone?'New Milestone':'New Task';
+  tasks.push({id:tid++,name:mn,phase:phase,seg:'Mold',dur:asMilestone?0:1,pred:'prev',lag:0,actStart:0,actDur:0,milestone:!!asMilestone});
+  sortTasks(); renderPanel(); renderGantt(); ganttAutoSave();
 }
 function addTask(asMilestone){
   var ph=PORDER[0]; PORDER.forEach(function(p){if(activePhases[p]) ph=p;});

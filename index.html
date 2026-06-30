@@ -7895,7 +7895,10 @@ function renderProjDetail() {
             <div class="rap-meta">
               <span class="rap-pic-pill">${pic}</span>
               ${t.classification&&t.classification!=='General'?`<span class="ms-category">${t.classification}</span>`:''}
-              <span class="rap-dl ${dlCls}" style="position:relative;cursor:${can('actions','edit')?'pointer':'default'};" ${can('actions','edit')?`onclick="this.querySelector('input').showPicker?this.querySelector('input').showPicker():this.querySelector('input').focus()"`:''}>${dlTxt}${can('actions','edit')?`<input type="date" value="${t.deadline||''}" onchange="quickSetTaskDeadline('${p.id}',${idx},this.value)" onclick="event.stopPropagation()" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">`:''}</span>
+              ${can('actions','edit') ? `<span class="rap-dl ${dlCls}" style="position:relative;display:inline-flex;align-items:center;">
+                <span style="pointer-events:none;">${dlTxt}</span>
+                <input type="date" value="${t.deadline||''}" onchange="quickSetTaskDeadline('${p.id}',${idx},this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;">
+              </span>` : `<span class="rap-dl ${dlCls}">${dlTxt}</span>`}
               ${ssLink ? `<span class="task-ss-link"><i class="ti ti-link" style="font-size:9px"></i> ${ssLink.title}</span>` : ''}
             </div>
           </div>

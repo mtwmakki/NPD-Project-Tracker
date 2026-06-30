@@ -1179,6 +1179,7 @@ html{scroll-behavior:smooth;}
 .gantt-add-row{display:flex;gap:6px;padding:8px 0;align-items:center;flex-wrap:wrap;}
 .gantt-add-row input,.gantt-add-row select{font-size:11px;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);}
 .gantt-actual-inputs{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text3);}
+@keyframes ti-spin-kf{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ti-spin{animation:ti-spin-kf .7s linear infinite;display:inline-block;}
 </style>
 </head>
 <body>
@@ -1316,6 +1317,7 @@ html{scroll-behavior:smooth;}
       <button class="filter-toggle-btn panel-open" id="inq-filter-toggle" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span id="inq-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="inq-dupes-btn" onclick="openDuplicatesModal()"><i class="ti ti-copy"></i> Duplicates</button>
       <button class="icon-btn" id="inq-active-btn" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
+      <button class="icon-btn" id="inq-refresh-btn" onclick="forceRefreshFromCloud()" title="Refresh data from cloud"><i class="ti ti-refresh"></i></button>
       <button class="add-btn" id="inq-add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
@@ -1368,6 +1370,7 @@ html{scroll-behavior:smooth;}
       <button class="icon-btn" onclick="expandCollapseAllProjects(true)" title="Expand all"><i class="ti ti-fold-up"></i></button>
       <button class="filter-toggle-btn panel-open" id="proj-filter-toggle" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span id="proj-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="proj-active-btn" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
+      <button class="icon-btn" id="proj-refresh-btn" onclick="forceRefreshFromCloud()" title="Refresh data from cloud"><i class="ti ti-refresh"></i></button>
       <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
@@ -2705,6 +2708,39 @@ async function loadFromOneDrive() { return false; }
 async function saveToOneDrive() { return false; }
 
 // ── Save (debounced 800ms) ──
+function forceRefreshFromCloud() {
+  const btn = document.activeElement;
+  const icon = btn && btn.querySelector ? btn.querySelector('i') : null;
+  if (icon) icon.classList.add('ti-spin');
+  if (!FIREBASE_READY || !fbDb) {
+    if (icon) icon.classList.remove('ti-spin');
+    alert('Not connected to cloud — showing local data only.');
+    return;
+  }
+  const col = 'npd_tracker', doc = 'main';
+  fbDb.collection(col).doc(doc).get({source:'server'}).then(snap => {
+    if (icon) icon.classList.remove('ti-spin');
+    if (!snap.exists) return;
+    const remote = snap.data();
+    if (remote && remote._data) {
+      try {
+        const parsed = JSON.parse(remote._data);
+        data = parsed;
+        data.bin = data.bin||[]; data.mtasks = data.mtasks||[];
+        migrateStatusNoteToSubStatus();
+        saveLocal();
+        localStorage.setItem('npd_last_saved', remote._updatedAt || '');
+        renderAll(); renderBin();
+        setSyncStatus('ok', 'Refreshed ✓');
+      } catch(e) { console.error('Refresh parse error', e); }
+    }
+  }).catch(e => {
+    if (icon) icon.classList.remove('ti-spin');
+    console.error('Refresh failed', e);
+    alert('Refresh failed — check connection.');
+  });
+}
+
 function save() {
   saveLocal(); // always keep local fallback fresh
   if (!FIREBASE_READY || !fbDb) { setSyncStatus('error', 'Not synced'); return; }
@@ -7859,7 +7895,7 @@ function renderProjDetail() {
             <div class="rap-meta">
               <span class="rap-pic-pill">${pic}</span>
               ${t.classification&&t.classification!=='General'?`<span class="ms-category">${t.classification}</span>`:''}
-              <span class="rap-dl ${dlCls}">${dlTxt}</span>
+              <span class="rap-dl ${dlCls}" style="position:relative;cursor:${can('actions','edit')?'pointer':'default'};" ${can('actions','edit')?`onclick="this.querySelector('input').showPicker?this.querySelector('input').showPicker():this.querySelector('input').focus()"`:''}>${dlTxt}${can('actions','edit')?`<input type="date" value="${t.deadline||''}" onchange="quickSetTaskDeadline('${p.id}',${idx},this.value)" onclick="event.stopPropagation()" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">`:''}</span>
               ${ssLink ? `<span class="task-ss-link"><i class="ti ti-link" style="font-size:9px"></i> ${ssLink.title}</span>` : ''}
             </div>
           </div>
@@ -8114,6 +8150,13 @@ function inlineDeleteMilestone(projId, idx) {
   const title = p.milestones[idx]?.title || '';
   p.milestones.splice(idx, 1);
   logActivity(projId, 'delete', 'trash', `Removed milestone: <strong>${title}</strong>`);
+  save(); renderProjects(); renderProjDetail();
+}
+
+function quickSetTaskDeadline(projId, idx, val) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !p.tasks[idx]) return;
+  p.tasks[idx].deadline = val;
   save(); renderProjects(); renderProjDetail();
 }
 

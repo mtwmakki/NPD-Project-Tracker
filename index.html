@@ -369,6 +369,12 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .inline-form-footer{display:flex;gap:6px;justify-content:flex-end;margin-top:10px;}
 .inline-form select.finput{cursor:pointer;}
 /* Activity log */
+.activity-entry{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--rs);margin-bottom:8px;border-left:3px solid var(--blue);}
+.activity-entry.done{border-left-color:var(--accent);opacity:0.7;}
+.activity-entry-body{flex:1;min-width:0;}
+.activity-entry-title{font-size:12px;font-weight:600;color:var(--text);}
+.activity-entry-meta{font-size:10px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.activity-entry-note{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;}
 .act-log-entry{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
 .act-log-entry:last-child{border-bottom:none;}
 .act-log-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}
@@ -999,7 +1005,7 @@ html{scroll-behavior:smooth;}
 .na-deadline-badge.soon{background:var(--ambg);color:var(--amber);border:1px solid var(--amber);}
 .na-deadline-badge.ok{background:var(--surface);color:var(--text3);border:1px solid var(--border);}
 .na-deadline-badge.empty{background:var(--surface);color:var(--text3);border:1px dashed var(--border);font-weight:400;}
-.na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;border:none;}
+.na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;margin:0;}
 .na-added{font-size:10px;color:var(--text3);font-family:var(--fm);white-space:nowrap;}
 .na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .na-delete-btn:hover{color:var(--red);}
@@ -1022,7 +1028,7 @@ html{scroll-behavior:smooth;}
 .ip-deadline.overdue{background:var(--rebg);border:1px solid var(--red);color:var(--red);}
 .ip-deadline.soon{background:var(--ambg);border:1px solid var(--amber);color:var(--amber);}
 .ip-deadline.ok{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
-.ip-deadline input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.ip-deadline input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;margin:0;}
 .ip-added{font-size:9px;color:var(--text3);font-family:var(--fm);}
 .ip-meta{display:flex;align-items:center;gap:6px;margin-top:0;}
 /* ── Auto-task cards in modal ── */
@@ -1213,7 +1219,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V78</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V80</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1844,6 +1850,7 @@ html{scroll-behavior:smooth;}
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="pd-clip-btn" onclick="toggleClipWindow('proj')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
         <button onclick="openGanttForProject(currentProjDetailId)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Open Gantt Chart"><i class="ti ti-chart-gantt"></i> Gantt</button>
+        <button onclick="forceRefreshFromCloud()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Refresh from cloud"><i class="ti ti-refresh"></i></button>
         <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open');resetWindowPosition('proj')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -1869,6 +1876,7 @@ html{scroll-behavior:smooth;}
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="inq-clip-btn" onclick="toggleClipWindow('inq')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
+        <button onclick="forceRefreshFromCloud()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Refresh from cloud"><i class="ti ti-refresh"></i></button>
         <button class="proj-detail-close" onclick="document.getElementById('inq-detail-overlay').classList.remove('open');resetWindowPosition('inq')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -4684,7 +4692,7 @@ function _renderInqDetailInner() {
             : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
           <div class="na-right">
             <div class="na-deadline-badge ${dlClass}">
-              <i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}
+              <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}</span>
               ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">` : ''}
             </div>
             <span class="na-added">Added ${fmtDate(na.dateAdded||today)}</span>
@@ -4730,7 +4738,7 @@ function _renderInqDetailInner() {
             </div>
             <div class="ip-right">
               <div class="ip-deadline ${dlClass}">
-                <i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}
+                <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}</span>
                 ${canEdit ? `<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">` : ''}
               </div>
             </div>
@@ -7603,7 +7611,7 @@ function inlineEditTask(projId, idx) {
   if (!name) { alert('Please enter an action name.'); return; }
   const status = document.getElementById(`il-te-status-${idx}`).value;
   const old = p.tasks[idx];
-  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'' };
+  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'', dependsOn: document.getElementById(`il-te-dep-${idx}`)?.value||'' };
   logActivity(projId, 'edit', 'pencil', `Updated action: <strong>${name}</strong>`);
   save(); renderProjects(); renderProjDetail(); showNotifications();
 }
@@ -7743,7 +7751,7 @@ function renderProjDetail() {
         </div>
       </div>
       ${subs.length ? subs.map((ss,i) => `
-        <div class="substatus-item ${i===0?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
+        <div class="substatus-item ${(ss.status!=='completed'&&ss.status!=='cancelled')?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
           <div class="substatus-dot ss-${ss.status}"></div>
           <div class="substatus-info">
             <div class="substatus-title">${ss.title}</div>
@@ -7751,7 +7759,7 @@ function renderProjDetail() {
               <span class="substatus-sbadge ss-${ss.status}">${ss.status.charAt(0).toUpperCase()+ss.status.slice(1)}</span>
               ${ss.classification?`<span class="ms-category">${ss.classification}</span>`:''}
               ${ss.date?`<span class="substatus-date">${fmtDate(ss.date)}</span>`:''}
-              ${ss.note&&i===0?`<span style="font-size:10px;color:var(--text2)">${ss.note}</span>`:''}
+              ${(ss.status!=='completed'&&ss.status!=='cancelled')&&ss.note?`<div style="font-size:10px;color:var(--text2);margin-top:4px;">${ss.note}</div>`:''}
             </div>
           </div>
           <div class="substatus-acts">
@@ -7900,6 +7908,7 @@ function renderProjDetail() {
                 <input type="date" value="${t.deadline||''}" onchange="quickSetTaskDeadline('${p.id}',${idx},this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;">
               </span>` : `<span class="rap-dl ${dlCls}">${dlTxt}</span>`}
               ${ssLink ? `<span class="task-ss-link"><i class="ti ti-link" style="font-size:9px"></i> ${ssLink.title}</span>` : ''}
+              ${(() => { const dep = t.dependsOn ? tasks.find(tx => (tx.id||tx.name) === t.dependsOn) : null; return dep ? `<span class="task-ss-link" style="color:${dep.done?'var(--accent)':'var(--amber)'}"><i class="ti ti-arrow-right" style="font-size:9px"></i> ${dep.name.slice(0,20)}${dep.name.length>20?'…':''} ${dep.done?'✓':'⏳'}</span>` : ''; })()}
             </div>
           </div>
           <div class="rap-acts">
@@ -7929,6 +7938,12 @@ function renderProjDetail() {
                 <select class="finput" id="il-te-ss-${idx}">
                   <option value="">— None —</option>
                   ${(p.subStatuses||[]).map((ss,si) => `<option value="${ss.id||si}" ${t.linkedSubStatus===(ss.id||String(si))?'selected':''}>${ss.title}</option>`).join('')}
+                </select>
+              </div>
+              <div class="fg"><label class="flabel">Depends On (Task)</label>
+                <select class="finput" id="il-te-dep-${idx}">
+                  <option value="">— None —</option>
+                  ${tasks.filter((_,ti) => ti !== idx).map((tx,_) => `<option value="${tx.id||tx.name}" ${t.dependsOn===(tx.id||tx.name)?'selected':''}>${tx.name}</option>`).join('')}
                 </select>
               </div>
             </div>
@@ -8084,10 +8099,59 @@ function renderProjDetail() {
   }
 
   if (tab === 'activity') {
+    const activities = (p.activities||[]);
     const log = (p.activityLog||[]).slice().reverse();
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Activity Log <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
-      ${log.length ? log.map(e => `
+      <div class="proj-detail-slabel">Current Activities
+        <span style="font-weight:400;color:var(--text3)">(${activities.length})</span>
+        ${can('projects','edit') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('act-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>` : ''}
+      </div>
+      <div id="act-add-form-${p.id}" style="display:none;margin-bottom:10px;">
+        <div class="inline-form">
+          <div class="fg"><label class="flabel">Activity</label><input class="finput" id="il-act-title" type="text" placeholder="What are you doing now?"></div>
+          <div class="frow2">
+            <div class="fg"><label class="flabel">Category</label>
+              <select class="finput" id="il-act-cat">
+                <option value="In Progress">In Progress</option>
+                <option value="Waiting">Waiting</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Follow Up">Follow Up</option>
+                <option value="Meeting">Meeting</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="fg"><label class="flabel">Date</label><input class="finput" id="il-act-date" type="date" value="${today}"></div>
+          </div>
+          <div class="fg"><label class="flabel">Note</label><textarea class="finput" id="il-act-note" rows="2" placeholder="Optional details…" style="resize:vertical;width:100%;box-sizing:border-box;"></textarea></div>
+          <div class="inline-form-footer">
+            <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="toggleInlineForm('act-add-form-${p.id}')">Cancel</button>
+            <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="addActivity('${p.id}')">Add Activity</button>
+          </div>
+        </div>
+      </div>
+      ${activities.length ? activities.map((act, ai) => `
+        <div class="activity-entry ${act.done?'done':''}">
+          <div style="width:32px;height:32px;border-radius:50%;background:${act.done?'var(--al)':'var(--blbg)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-${act.done?'check':'activity'}" style="font-size:14px;color:${act.done?'var(--accent)':'var(--blue)'}"></i>
+          </div>
+          <div class="activity-entry-body">
+            <div class="activity-entry-title">${act.title}</div>
+            <div class="activity-entry-meta">
+              <span class="substatus-sbadge ss-${act.done?'completed':'ongoing'}" style="font-size:9px;">${act.done?'Done':act.category||'In Progress'}</span>
+              <span>${fmtDate(act.date||'')}</span>
+            </div>
+            ${act.note?`<div class="activity-entry-note">${act.note}</div>`:''}
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            ${!act.done && can('projects','edit') ? `<button class="tact-btn" onclick="markActivityDone('${p.id}',${ai})" title="Mark done"><i class="ti ti-check"></i></button>` : ''}
+            ${can('projects','edit') ? `<button class="tact-btn" onclick="deleteActivity('${p.id}',${ai})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
+          </div>
+        </div>`).join('')
+      : `<div style="font-size:11px;color:var(--text3);padding:6px 0;">No activities added yet.</div>`}
+    </div>
+    <div class="proj-detail-section" style="margin-top:8px;">
+      <div class="proj-detail-slabel">Change Log <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
+      ${log.length ? log.slice(0,15).map(e => `
         <div class="act-log-entry">
           <div class="act-log-icon ${e.type}"><i class="ti ti-${e.icon||'activity'}"></i></div>
           <div class="act-log-body">
@@ -8156,6 +8220,36 @@ function inlineDeleteMilestone(projId, idx) {
   save(); renderProjects(); renderProjDetail();
 }
 
+function addActivity(projId) {
+  const p = data.projects.find(x => x.id === projId); if (!p) return;
+  const title = (document.getElementById('il-act-title').value||'').trim();
+  if (!title) { alert('Please enter an activity.'); return; }
+  if (!p.activities) p.activities = [];
+  p.activities.unshift({
+    id: uid(), title,
+    category: document.getElementById('il-act-cat').value||'In Progress',
+    date: document.getElementById('il-act-date').value||todayStr(),
+    note: (document.getElementById('il-act-note').value||'').trim(),
+    done: false, createdAt: todayStr()
+  });
+  logActivity(projId, 'add', 'activity', `Added activity: <strong>${title}</strong>`);
+  save(); renderProjects(); renderProjDetail();
+}
+function markActivityDone(projId, idx) {
+  const p = data.projects.find(x => x.id === projId); if (!p) return;
+  if (!p.activities || !p.activities[idx]) return;
+  p.activities[idx].done = true;
+  p.activities[idx].doneAt = todayStr();
+  logActivity(projId, 'done', 'circle-check', `Completed activity: <strong>${p.activities[idx].title}</strong>`);
+  save(); renderProjects(); renderProjDetail();
+}
+function deleteActivity(projId, idx) {
+  const p = data.projects.find(x => x.id === projId); if (!p) return;
+  if (!p.activities || !p.activities[idx]) return;
+  logActivity(projId, 'delete', 'trash', `Removed activity: <strong>${p.activities[idx].title}</strong>`);
+  p.activities.splice(idx, 1);
+  save(); renderProjects(); renderProjDetail();
+}
 function quickSetTaskDeadline(projId, idx, val) {
   const p = data.projects.find(x => x.id === projId);
   if (!p || !p.tasks[idx]) return;
@@ -8167,6 +8261,14 @@ function toggleTaskInDetail(projId, idx) {
   const p = data.projects.find(x => x.id === projId);
   const task = p.tasks[idx];
   const wasDone = task.done;
+  // Check dependency — block if linked task not completed
+  if (!wasDone && task.dependsOn) {
+    const depTask = p.tasks.find(t => (t.id||t.name) === task.dependsOn);
+    if (depTask && !depTask.done) {
+      alert(`Cannot complete "${task.name}" — it depends on "${depTask.name}" which is not done yet.`);
+      return;
+    }
+  }
   task.done = !task.done;
   if (task.status !== 'done') task.status = task.done ? 'done' : 'todo';
   if (task.done && !wasDone) logActivity(projId, 'done', 'circle-check', `Completed action: <strong>${task.name}</strong>`);

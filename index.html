@@ -790,6 +790,17 @@ html{scroll-behavior:smooth;}
 .pic-name{font-size:12px;font-weight:500;}
 .pic-role{font-size:10px;color:var(--text3);margin-top:1px;}
 .pic-acts{display:flex;gap:3px;flex-shrink:0;}
+/* Customer & Sales info tiles */
+.cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.cs-tile{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;transition:border-color .15s,background .15s,box-shadow .15s;}
+.cs-tile:focus-within{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--al);}
+.cs-tile-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.cs-tile-body{flex:1;min-width:0;}
+.cs-tile-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;}
+.cs-tile-input{border:none;background:none;outline:none;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--f);padding:0;cursor:text;}
+.cs-tile-input::placeholder{color:var(--text3);font-weight:400;}
+.cs-tile-input[type=date]{cursor:pointer;}
+.cs-tile-static{font-size:13px;font-weight:500;color:var(--text);}
 /* Rolling Action Plan */
 .rap-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
 .rap-item:last-child{border-bottom:none;}
@@ -1219,7 +1230,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V80</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V81</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1858,7 +1869,8 @@ html{scroll-behavior:smooth;}
       <button class="pd-tab active" data-tab="overview" onclick="switchPDTab('overview')"><i class="ti ti-layout-list"></i> Overview</button>
       <button class="pd-tab" data-tab="actions" onclick="switchPDTab('actions')"><i class="ti ti-checkbox"></i> Actions</button>
       <button class="pd-tab" data-tab="milestones" onclick="switchPDTab('milestones')"><i class="ti ti-flag"></i> Milestones</button>
-      <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-history"></i> Activity</button>
+      <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-activity"></i> Activity</button>
+      <button class="pd-tab" data-tab="changelog" onclick="switchPDTab('changelog')"><i class="ti ti-history"></i> Changelog</button>
     </div>
     <div class="proj-detail-body" id="pd-body"></div>
   </div>
@@ -7599,7 +7611,7 @@ function inlineAddTask(projId) {
   if (!p) return;
   if (!p.tasks) p.tasks = [];
   const status = document.getElementById('il-task-status').value;
-  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'' });
+  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'', dependsOn: document.getElementById('il-task-dep')?.value||'' });
   logActivity(projId, 'add', 'circle-check', `Added action: <strong>${name}</strong>`);
   appendChangelog({ type:'create', icon:'circle-check', text:`Added action to <strong>${p.name||p.code}</strong>: ${name}`, section:'actions' });
   save(); renderProjects(); renderProjDetail(); showNotifications();
@@ -7715,6 +7727,37 @@ function renderProjDetail() {
       <div class="proj-detail-prog"><div class="proj-detail-prog-fill" style="width:${rate}%"></div></div>
       ${canEdit ? `<textarea onblur="saveProjField('${p.id}','brief',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:52px;line-height:1.6;margin-top:8px;" placeholder="Project brief…">${p.brief||''}</textarea>` :
       p.brief ? `<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;">${p.brief}</div>` : ''}
+    </div>`;
+
+    // Customer & Sales — inline editable, modern tile layout
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Customer & Sales</div>
+      <div class="cs-grid">
+        <div class="cs-tile">
+          <div class="cs-tile-icon" style="background:var(--blbg);color:var(--blue);"><i class="ti ti-building-store"></i></div>
+          <div class="cs-tile-body">
+            <div class="cs-tile-label">Customer</div>
+            ${canEdit?`<input class="cs-tile-input" type="text" value="${p.customer||''}" onblur="saveProjField('${p.id}','customer',this.value)" placeholder="Customer name">`:
+            `<div class="cs-tile-static">${p.customer||'—'}</div>`}
+          </div>
+        </div>
+        <div class="cs-tile">
+          <div class="cs-tile-icon" style="background:var(--gbg);color:var(--green);"><i class="ti ti-user-dollar"></i></div>
+          <div class="cs-tile-body">
+            <div class="cs-tile-label">Sales Person</div>
+            ${canEdit?`<input class="cs-tile-input" type="text" value="${p.salesPerson||''}" onblur="saveProjField('${p.id}','salesPerson',this.value)" placeholder="Sales person">`:
+            `<div class="cs-tile-static">${p.salesPerson||'—'}</div>`}
+          </div>
+        </div>
+        <div class="cs-tile">
+          <div class="cs-tile-icon" style="background:var(--ambg);color:var(--amber);"><i class="ti ti-calendar-due"></i></div>
+          <div class="cs-tile-body">
+            <div class="cs-tile-label">Delivery Date</div>
+            ${canEdit?`<input class="cs-tile-input" type="date" value="${p.deliveryDate||''}" onchange="saveProjField('${p.id}','deliveryDate',this.value)">`:
+            `<div class="cs-tile-static">${p.deliveryDate?fmtDate(p.deliveryDate):'—'}</div>`}
+          </div>
+        </div>
+      </div>
     </div>`;
 
     // Sub-Statuses with inline add/edit
@@ -7876,6 +7919,12 @@ function renderProjDetail() {
                 ${(p.subStatuses||[]).map((ss,i) => `<option value="${ss.id||i}">${ss.title}</option>`).join('')}
               </select>
             </div>
+          </div>
+          <div class="fg"><label class="flabel">Depends On (Task)</label>
+            <select class="finput" id="il-task-dep">
+              <option value="">— None —</option>
+              ${(p.tasks||[]).map(tx => `<option value="${tx.id||tx.name}">${tx.name}</option>`).join('')}
+            </select>
           </div>
           <div class="inline-form-footer">
             <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="toggleInlineForm('task-add-form-${p.id}')">Cancel</button>
@@ -8149,9 +8198,15 @@ function renderProjDetail() {
         </div>`).join('')
       : `<div style="font-size:11px;color:var(--text3);padding:6px 0;">No activities added yet.</div>`}
     </div>
-    <div class="proj-detail-section" style="margin-top:8px;">
-      <div class="proj-detail-slabel">Change Log <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
-      ${log.length ? log.slice(0,15).map(e => `
+    </div>`;
+  }
+
+  if (tab === 'changelog') {
+    const log = (p.activityLog||[]).slice().reverse();
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Project Changelog <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:10px;">Auto-generated record of all changes made to this project.</p>
+      ${log.length ? log.map(e => `
         <div class="act-log-entry">
           <div class="act-log-icon ${e.type}"><i class="ti ti-${e.icon||'activity'}"></i></div>
           <div class="act-log-body">
@@ -8159,7 +8214,7 @@ function renderProjDetail() {
             <div class="act-log-meta">${e.by||'Adam'} · ${fmtDate(e.date)} ${e.time||''}</div>
           </div>
         </div>`).join('')
-      : `<div class="act-log-empty"><i class="ti ti-history"></i>No activity recorded yet.</div>`}
+      : `<div class="act-log-empty"><i class="ti ti-history"></i>No changes recorded yet.</div>`}
     </div>`;
   }
 
@@ -8569,6 +8624,7 @@ function exportProjReportPDF() {
 
   const rows = list.map((p, i) => {
     const latestSS = (p.subStatuses||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    const latestActivity = (p.activityLog||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.time||'').localeCompare(a.time||''))[0];
 
     // On-time / delayed logic
     const todayISO = new Date().toISOString().slice(0,10);
@@ -8606,6 +8662,9 @@ function exportProjReportPDF() {
         </span>
       </td>
       <td style="font-size:9.5px;color:${text2};">
+        ${latestActivity ? `<div>${latestActivity.text||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestActivity.date)}</div>` : '—'}
+      </td>
+      <td style="font-size:9.5px;color:${text2};">
         ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
       </td>
       <td style="font-size:9px;">${nextActions}</td>
@@ -8621,12 +8680,11 @@ function exportProjReportPDF() {
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'${appFont}','IBM Plex Sans','DM Sans',sans-serif;background:${bg};color:${text};font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .rpt-header{background:${headerBg};padding:14px 20px;border-bottom:3px solid ${accent};}
-    .rpt-header-inner{display:flex;justify-content:space-between;align-items:center;}
-    .rpt-brand{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
-    .rpt-brand span{color:${accent};}
-    .rpt-title{font-size:13px;font-weight:700;color:#fff;text-align:right;}
-    .rpt-meta{font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:3px;text-align:right;}
+    .rpt-header{padding:0 0 10px;border-bottom:1px solid ${border};}
+    .rpt-header-inner{display:flex;justify-content:space-between;align-items:baseline;}
+    .rpt-brand{font-size:16px;font-weight:700;color:${text};letter-spacing:-0.2px;}
+    .rpt-title{font-size:11px;font-weight:600;color:${text};text-align:right;}
+    .rpt-meta{font-size:9.5px;color:${text2};margin-top:3px;text-align:right;}
     .rpt-body{padding:14px 20px;}
     .rpt-stats{display:flex;gap:10px;margin-bottom:16px;}
     .rpt-stat{background:${surface};border:1px solid ${border};border-radius:6px;padding:8px 14px;flex:1;text-align:center;}
@@ -8638,13 +8696,13 @@ function exportProjReportPDF() {
     .rpt-footer{text-align:center;font-size:8.5px;color:${text2};padding:12px 0;border-top:1px solid ${border};margin-top:16px;}
     @media print{@page{size:A4 landscape;margin:8mm;}body{font-size:9px;}}
   </style></head><body>
+  <div class="rpt-body">
   <div class="rpt-header">
     <div class="rpt-header-inner">
-      <div><div class="rpt-brand">TP<span>AC</span></div><div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:2px;">NPD Project Tracker</div></div>
+      <div class="rpt-brand">TPAC</div>
       <div><div class="rpt-title">Project Status Report</div><div class="rpt-meta">Prepared by ${prepared} &nbsp;·&nbsp; ${today}</div></div>
     </div>
   </div>
-  <div class="rpt-body">
     <div class="rpt-stats">
       <div class="rpt-stat"><div class="rpt-stat-val">${list.length}</div><div class="rpt-stat-label">Total</div></div>
       <div class="rpt-stat"><div class="rpt-stat-val" style="color:#3a8ef5;">${list.filter(p=>p.status==='in-progress').length}</div><div class="rpt-stat-label">In Progress</div></div>
@@ -8655,15 +8713,16 @@ function exportProjReportPDF() {
     <table>
       <thead><tr>
         <th style="width:3%">#</th>
-        <th style="width:18%">Project</th>
-        <th style="width:10%">Customer</th>
-        <th style="width:8%">Sales</th>
-        <th style="width:8%">Factory</th>
-        <th style="width:9%">Status</th>
-        <th style="width:18%">Current Activity</th>
-        <th style="width:14%">Next Actions</th>
-        <th style="width:8%">Timeline</th>
-        <th style="width:8%">Est. Delivery</th>
+        <th style="width:14%">Project</th>
+        <th style="width:9%">Customer</th>
+        <th style="width:7%">Sales</th>
+        <th style="width:7%">Factory</th>
+        <th style="width:8%">Status</th>
+        <th style="width:14%">Current Activity</th>
+        <th style="width:14%">Latest Status</th>
+        <th style="width:12%">Next Actions</th>
+        <th style="width:6%">Timeline</th>
+        <th style="width:6%">Est. Delivery</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>

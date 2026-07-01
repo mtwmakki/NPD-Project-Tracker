@@ -8624,9 +8624,12 @@ function exportProjReportPDF() {
 
   const rows = list.map((p, i) => {
     const latestSS = (p.subStatuses||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-    const latestActivity = (p.activityLog||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.time||'').localeCompare(a.time||''))[0];
+    // "Current Activity" = latest entry from the project's own Activity tab (p.activities),
+    // NOT the auto-generated changelog (p.activityLog) — those are two different things.
+    const latestActivity = (p.activities||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
 
-    // On-time / delayed logic
+    // On-time / delayed logic — a project counts as OVERDUE when it has a delivery date,
+    // isn't marked completed, and that delivery date has already passed (before today).
     const todayISO = new Date().toISOString().slice(0,10);
     let timeliness = '—', timeColor = text2;
     if (p.deliveryDate) {
@@ -8641,8 +8644,9 @@ function exportProjReportPDF() {
       }
     }
 
-    // Next actions from tasks
-    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3).map(t=>`• ${t.name||''}`).join('<br>') || '—';
+    // Next actions from tasks — now with deadline shown beside each one
+    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3)
+      .map(t=>`• ${t.name||''}${t.deadline?` <span style="color:${text2};">(${fmtDate(t.deadline)})</span>`:''}`).join('<br>') || '—';
 
     const rowBg = i%2===0 ? bg : surface;
     return `<tr style="background:${rowBg};">
@@ -8658,17 +8662,17 @@ function exportProjReportPDF() {
       <td>
         <span style="display:inline-flex;align-items:center;gap:5px;">
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusColor(p.status)};"></span>
-          <span style="color:${statusColor(p.status)};font-weight:700;">${statusLabel2(p.status)}</span>
+          <span style="color:${statusColor(p.status)};font-weight:700;text-transform:uppercase;">${statusLabel2(p.status)}</span>
         </span>
       </td>
       <td style="font-size:9.5px;color:${text2};">
-        ${latestActivity ? `<div>${latestActivity.text||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestActivity.date)}</div>` : '—'}
+        ${latestActivity ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestActivity.title||''}</div><div>${latestActivity.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;text-transform:uppercase;">${latestActivity.category||''}${latestActivity.category?' · ':''}${fmtDate(latestActivity.date)}</div>` : '—'}
       </td>
       <td style="font-size:9.5px;color:${text2};">
-        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
+        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;text-transform:uppercase;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
       </td>
       <td style="font-size:9px;">${nextActions}</td>
-      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;">${timeliness}</td>
+      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;text-transform:uppercase;">${timeliness}</td>
       <td style="font-size:10px;white-space:nowrap;color:${text2};">${fmtDate(p.deliveryDate)}</td>
     </tr>`;
   }).join('');
@@ -8713,16 +8717,16 @@ function exportProjReportPDF() {
     <table>
       <thead><tr>
         <th style="width:3%">#</th>
-        <th style="width:14%">Project</th>
-        <th style="width:9%">Customer</th>
-        <th style="width:7%">Sales</th>
-        <th style="width:7%">Factory</th>
-        <th style="width:8%">Status</th>
-        <th style="width:14%">Current Activity</th>
-        <th style="width:14%">Latest Status</th>
-        <th style="width:12%">Next Actions</th>
-        <th style="width:6%">Timeline</th>
-        <th style="width:6%">Est. Delivery</th>
+        <th style="width:11%">Project</th>
+        <th style="width:7%">Customer</th>
+        <th style="width:6%">Sales</th>
+        <th style="width:6%">Factory</th>
+        <th style="width:6%">Status</th>
+        <th style="width:20%">Current Activity</th>
+        <th style="width:20%">Latest Status</th>
+        <th style="width:13%">Next Actions</th>
+        <th style="width:4%">Timeline</th>
+        <th style="width:4%">Est. Delivery</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>

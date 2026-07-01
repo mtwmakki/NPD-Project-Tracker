@@ -574,7 +574,7 @@ window.onload = function(){
 
 function loadDefaults(){
   tasks=[]; tid=1;
-  PORDER.forEach(function(p){if(!activePhases[p]) return; DEFS[p].forEach(function(t){tasks.push({id:tid++,name:t.name,phase:p,seg:t.seg||'Mold',dur:t.dur,pred:t.pred,lag:t.lag||0,actStart:0,actDur:0});});});
+  PORDER.forEach(function(p){if(!activePhases[p]) return; DEFS[p].forEach(function(t){var tp=t.pred?[t.pred]:[]; tasks.push({id:tid++,name:t.name,phase:p,seg:t.seg||'Mold',dur:t.dur,preds:tp,lag:t.lag||0,actStart:0,actDur:0});});});
 }
 
 /* ---- Critical Path Algorithm ---- */
@@ -607,22 +607,65 @@ function computeCriticalPath(starts){
 }
 
 /* ---- Dependency engine ---- */
+function migratePreds(t){
+  // backward-compat: if old 'pred' field exists, convert to preds array
+  if(!t.preds){
+    if(t.pred&&t.pred!=='null'&&t.pred!==null) t.preds=[t.pred];
+    else t.preds=[];
+    delete t.pred;
+  }
+}
+function resolvePredsForTask(t,idx){
+  // Returns array of predecessor IDs (resolved)
+  migratePreds(t);
+  var preds=t.preds||[];
+  if(!preds.length){
+    // Auto-link first task in phase to last task of previous phase
+    var myPI=PORDER.indexOf(t.phase);
+    var isFirst=true;
+    for(var fi=0;fi<idx;fi++){if(tasks[fi].phase===t.phase){isFirst=false;break;}}
+    if(isFirst&&myPI>0){
+      for(var pi2=myPI-1;pi2>=0;pi2--){
+        var pp2=PORDER[pi2]; if(!activePhases[pp2]) continue;
+        var lastId=null;
+        for(var li=0;li<tasks.length;li++){if(tasks[li].phase===pp2) lastId=tasks[li].id;}
+        if(lastId!==null) return [lastId];
+      }
+    }
+    return [];
+  }
+  var resolved=[];
+  preds.forEach(function(p){
+    if(p==='prev'){
+      for(var i=idx-1;i>=0;i--) if(tasks[i].phase===t.phase){resolved.push(tasks[i].id);break;}
+    } else if(p&&p!=='null'&&typeof p==='number'){
+      resolved.push(p);
+    } else if(p&&p!=='null'&&!isNaN(+p)){
+      resolved.push(+p);
+    }
+  });
+  return resolved;
+}
 function computeStarts(){
   var starts={};
   for(var i=0;i<tasks.length;i++){
-    var t=tasks[i]; var s=1;
+    var t=tasks[i]; migratePreds(t); var s=1;
     var myPI=PORDER.indexOf(t.phase);
     for(var pi=0;pi<myPI;pi++){
       var pp=PORDER[pi]; if(!activePhases[pp]) continue;
       for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+(tasks[j].dur||0));
     }
-    var pid=resolvePred(t,i);
-    if(pid!==null&&starts[pid]!==undefined){var p2=getById(pid);if(p2) s=Math.max(s,(starts[p2.id]||1)+(p2.dur||0)+(t.lag||0));}
+    var pids=resolvePredsForTask(t,i);
+    pids.forEach(function(pid){
+      if(starts[pid]!==undefined){var p2=getById(pid);if(p2) s=Math.max(s,(starts[p2.id]||1)+(p2.dur||0)+(t.lag||0));}
+    });
     starts[t.id]=s;
   }
   return starts;
 }
 function resolvePred(t,idx){
+  // legacy shim — returns first pred only
+  var ids=resolvePredsForTask(t,idx); return ids.length?ids[0]:null;
   if(t.pred==='prev'){for(var i=idx-1;i>=0;i--) if(tasks[i].phase===t.phase) return tasks[i].id; return null;}
   if(t.pred&&t.pred!=='null'&&typeof t.pred==='number') return t.pred;
   // Auto-connect: if this is the FIRST task in its phase and has no explicit pred,
@@ -741,11 +784,11 @@ function togglePhase(el){
     activePhases[ph]=false; el.classList.remove('active');
     var gone=[]; tasks.forEach(function(t){if(t.phase===ph) gone.push(t.id);});
     tasks=tasks.filter(function(t){return t.phase!==ph;});
-    tasks.forEach(function(t){if(gone.indexOf(t.pred)>=0) t.pred=null;});
+    tasks.forEach(function(t){t.preds=(t.preds||[]).filter(function(p){return gone.indexOf(p)<0;});});
   } else {
     activePhases[ph]=true; el.classList.add('active');
     var has=false; tasks.forEach(function(t){if(t.phase===ph) has=true;});
-    if(!has) DEFS[ph].forEach(function(t){tasks.push({id:tid++,name:t.name,phase:ph,seg:t.seg||'Mold',dur:t.dur,pred:t.pred,lag:t.lag||0,actStart:0,actDur:0});});
+    if(!has) DEFS[ph].forEach(function(t){var tp=t.pred?[t.pred]:[]; tasks.push({id:tid++,name:t.name,phase:ph,seg:t.seg||'Mold',dur:t.dur,preds:tp,lag:t.lag||0,actStart:0,actDur:0});});
   }
   sortTasks(); renderPanel(); renderGantt();
 }
@@ -791,7 +834,7 @@ function onDrop(e,targetId){
   tasks.forEach(function(t){
     if(t.pred&&t.pred!=='prev'&&typeof t.pred==='number'){
       var pp=getById(t.pred);
-      if(pp&&PORDER.indexOf(pp.phase)>PORDER.indexOf(t.phase)) t.pred=null;
+      if(pp&&PORDER.indexOf(pp.phase)>PORDER.indexOf(t.phase)) t.preds=(t.preds||[]).filter(function(pr){return pr!==t.phase;});
     }
   });
   dragSrcId=null; renderPanel(); renderGantt();
@@ -852,21 +895,26 @@ function renderPanel(){
     html+='<div class="tf"><label>Dur (wks)</label><input type="number" value="'+t.dur+'" min="0" max="99" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)"></div>';
     html+='<div class="tf"><label>Lag (neg=overlap)</label><input type="number" value="'+(t.lag||0)+'" min="-52" max="52" data-id="'+t.id+'" data-field="lag" data-num="1" onchange="updField(this)"></div>';
     html+='</div>';
-    html+='<div class="tf"><label>Predecessor</label><select onchange="setPred('+t.id+',this.value)">';
-    html+='<option value="null"'+((!t.pred||t.pred==='null')?' selected':'')+'>None</option>';
-    var prevSame=null; for(var j=i-1;j>=0;j--){if(tasks[j].phase===t.phase){prevSame=tasks[j];break;}}
-    if(prevSame) html+='<option value="prev"'+(t.pred==='prev'?' selected':'')+'>Previous in phase (auto)</option>';
+    migratePreds(t);
+    var currentPreds=t.preds||[];
+    html+='<div class="tf"><label>Predecessors <span style="font-weight:400;font-size:10px;opacity:.6">(check all that apply)</span></label>';
+    html+='<div style="border:1px solid var(--border);border-radius:6px;padding:6px 8px;max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;background:var(--surface);">';
+    var hasNone=currentPreds.length===0;
+    html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;"><input type="checkbox" value="none"'+(hasNone?' checked':'')+' onchange="togglePred('+t.id+',\'none\',this.checked)"> None</label>';
+    var prevSame2=null; for(var j2=i-1;j2>=0;j2--){if(tasks[j2].phase===t.phase){prevSame2=tasks[j2];break;}}
+    if(prevSame2){ var hasPrev=currentPreds.indexOf('prev')>=0; html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;"><input type="checkbox" value="prev"'+(hasPrev?' checked':'')+' onchange="togglePred('+t.id+',\'prev\',this.checked)"> Previous in phase (auto)</label>'; }
     for(var k=0;k<tasks.length;k++){
       var tx=tasks[k]; if(tx.id===t.id||PORDER.indexOf(tx.phase)>PORDER.indexOf(t.phase)) continue;
       if(tx.phase===t.phase&&k>i) continue;
       var txs=starts[tx.id]||1;
-      html+='<option value="'+tx.id+'"'+(t.pred===tx.id?' selected':'')+'>'+eh('#'+(k+1)+' '+tx.name.slice(0,20)+(tx.name.length>20?'..':'')+' (ends W'+(txs+(tx.dur||0))+')')+'</option>';
+      var chk=currentPreds.indexOf(tx.id)>=0||currentPreds.indexOf(String(tx.id))>=0;
+      html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;"><input type="checkbox" value="'+tx.id+'"'+(chk?' checked':'')+' onchange="togglePred('+t.id+','+tx.id+',this.checked)"> '+eh('#'+(k+1)+' '+tx.name.slice(0,24)+(tx.name.length>24?'…':''))+' (W'+(txs+(tx.dur||0))+')</label>';
     }
-    html+='</select></div>';
+    html+='</div></div>';
     var depDesc='';
-    if(predT){var ps=starts[predT.id]||1; depDesc='After #'+(predIdx+1)+' ends W'+(ps+(predT.dur||0))+(t.lag?' +'+t.lag+'w lag':'');}
-    else if(t.pred==='prev') depDesc='Linked to previous '+PLABEL[t.phase]+' task';
-    else depDesc='Starts at phase offset W'+sw;
+    if(currentPreds.length===0) depDesc='No dependency — starts at phase beginning.';
+    else if(currentPreds.indexOf('prev')>=0) depDesc='Starts after previous '+PLABEL[t.phase]+' task ends.';
+    else{var dnames=[]; currentPreds.forEach(function(p){var px=getById(+p);if(px){var pxs=starts[px.id]||1;dnames.push('#'+(getIdx(px.id)+1)+' ends W'+(pxs+(px.dur||0)));}}); depDesc=dnames.length?'Starts after: '+dnames.join(', '):'';}
     html+='<p class="depdesc">'+depDesc+'</p>';
     html+='<div class="tf" style="display:flex;align-items:center;gap:7px;margin-top:4px"><label style="margin:0;flex-shrink:0">Milestone</label><input type="checkbox"'+(t.milestone?' checked':'')+' onchange="updMilestone('+t.id+',this.checked)" style="width:auto"><span style="font-size:10.5px;color:var(--text-hint)">◆ Shows as diamond on chart</span></div>';
 
@@ -921,8 +969,21 @@ function toggleExp(id){expanded[id]=!expanded[id];renderPanel();}
 function upd(id,f,v){var t=getById(id);if(!t) return;t[f]=v;renderPanel();renderGantt();ganttAutoSave();}
 function updField(el){var id=+el.getAttribute('data-id');var f=el.getAttribute('data-field');var isNum=el.getAttribute('data-num')==='1';var v=isNum?+el.value:el.value;upd(id,f,v);}
 function updPhase(id,v){var t=getById(id);if(!t) return;t.phase=v;t.pred=null;sortTasks();renderPanel();renderGantt();ganttAutoSave();}
-function setPred(id,val){var t=getById(id);if(!t) return;if(val==='null') t.pred=null;else if(val==='prev') t.pred='prev';else t.pred=+val;renderPanel();renderGantt();}
-function delTask(id){tasks=tasks.filter(function(t){return t.id!==id;});tasks.forEach(function(t){if(t.pred===id) t.pred=null;});renderPanel();renderGantt();ganttAutoSave();}
+function togglePred(id,val,checked){
+  var t=getById(id); if(!t) return; migratePreds(t);
+  if(val==='none'){t.preds=[];renderPanel();renderGantt();ganttAutoSave();return;}
+  var pidx=t.preds.indexOf(val); if(pidx<0) pidx=t.preds.indexOf(+val);
+  if(checked){
+    // Remove 'none' placeholder if present and add this pred
+    t.preds=t.preds.filter(function(p){return p!=='none';});
+    if(pidx<0) t.preds.push(val==='prev'?'prev':+val);
+  } else {
+    if(pidx>=0) t.preds.splice(pidx,1);
+  }
+  renderPanel();renderGantt();ganttAutoSave();
+}
+function setPred(id,val){var t=getById(id);if(!t) return;migratePreds(t);if(val==='null') t.preds=[];else if(val==='prev') t.preds=['prev'];else t.preds=[+val];renderPanel();renderGantt();}
+function delTask(id){tasks=tasks.filter(function(t){return t.id!==id;});tasks.forEach(function(t){t.preds=(t.preds||[]).filter(function(p){return p!==id;});});renderPanel();renderGantt();ganttAutoSave();}
 function updMilestone(id,val){
   var t=getById(id);if(!t) return;
   t.milestone=!!val;
@@ -955,13 +1016,13 @@ function updSegField(el){
 }
 function addTaskToPhase(phase, asMilestone){
   var mn=asMilestone?'New Milestone':'New Task';
-  tasks.push({id:tid++,name:mn,phase:phase,seg:'Mold',dur:asMilestone?0:1,pred:'prev',lag:0,actStart:0,actDur:0,milestone:!!asMilestone});
+  tasks.push({id:tid++,name:mn,phase:phase,seg:'Mold',dur:asMilestone?0:1,preds:['prev'],lag:0,actStart:0,actDur:0,milestone:!!asMilestone});
   sortTasks(); renderPanel(); renderGantt(); ganttAutoSave();
 }
 function addTask(asMilestone){
   var ph=PORDER[0]; PORDER.forEach(function(p){if(activePhases[p]) ph=p;});
   var mn=asMilestone?'New Milestone':'New Task';
-  tasks.push({id:tid++,name:mn,phase:ph,seg:'Mold',dur:0,pred:'prev',lag:0,actStart:0,actDur:0,milestone:!!asMilestone});
+  tasks.push({id:tid++,name:mn,phase:ph,seg:'Mold',dur:0,preds:['prev'],lag:0,actStart:0,actDur:0,milestone:!!asMilestone});
   sortTasks(); renderPanel(); renderGantt(); ganttAutoSave();
 }
 function eh(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1160,30 +1221,31 @@ function renderGantt(){
     s+='<text x="'+(wx+WW/2)+'" y="'+(y+HH-4)+'" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle" font-family="DM Mono,monospace">'+(w2+1)+'</text>';
   }
 
-  /* Calendar week row (ISO) — sits between month row and project-week row */
+  /* Calendar week row (ISO) — between month row and project-week row */
   if(colVis.calweek&&calWeeks.length){
-    // cwY: just below the month text, above the project-week numbers
-    // Header layout: [YH][month band 28px][CWH][project-week band ending at HH]
-    var cwY=y+YH+28;
-    var lastWk=-1;
+    // Layout: y + YH(year) + 28(month) + CWH(calweek) + 14(proj-week) = y+HH
+    // So calweek band: top=wy-CWH, bottom=wy
+    var cwTop=wy-CWH;
+    var cwBot=wy;
+    var lastWk2=-1;
     for(var ci=0;ci<calWeeks.length;ci++){
       var cw=calWeeks[ci];
       var cwX=PL+LEFT+ci*WW;
-      // Divider at every ISO week boundary
-      if(cw.wk!==lastWk){
-        s+='<line x1="'+cwX+'" y1="'+cwY+'" x2="'+cwX+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
-        // Count how many cols share this ISO week number
+      if(cw.wk!==lastWk2){
+        // Divider line at ISO week boundary
+        s+='<line x1="'+cwX+'" y1="'+cwTop+'" x2="'+cwX+'" y2="'+cwBot+'" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>';
+        // Span = how many cols this ISO week covers
         var span=1;
         for(var ri=ci+1;ri<calWeeks.length&&calWeeks[ri].wk===cw.wk;ri++) span++;
-        // Always print label — center it over the span, clip to 1 col minimum
+        // Label: centred over the span, same font/size/colour as project-week numbers
         var labelX=cwX+span*WW/2;
-        s+='<text x="'+labelX+'" y="'+(cwY+CWH-3)+'" font-size="7.5" fill="rgba(255,255,255,0.75)" text-anchor="middle" font-family="DM Mono,monospace" font-weight="500">W'+cw.wk+'</text>';
-        lastWk=cw.wk;
+        s+='<text x="'+labelX+'" y="'+(cwBot-3)+'" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle" font-family="DM Mono,monospace">W'+cw.wk+'</text>';
+        lastWk2=cw.wk;
       }
     }
-    // Bounding lines for the row
-    s+='<line x1="'+(PL+LEFT)+'" y1="'+cwY+'" x2="'+W+'" y2="'+cwY+'" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>';
-    s+='<line x1="'+(PL+LEFT)+'" y1="'+(cwY+CWH)+'" x2="'+W+'" y2="'+(cwY+CWH)+'" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>';
+    // Thin separator lines above and below the cal-week band
+    s+='<line x1="'+(PL+LEFT)+'" y1="'+cwTop+'" x2="'+W+'" y2="'+cwTop+'" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
+    s+='<line x1="'+(PL+LEFT)+'" y1="'+cwBot+'" x2="'+W+'" y2="'+cwBot+'" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
   }
 
   y+=HH;
@@ -1375,9 +1437,10 @@ function renderGantt(){
   /* ---- Dependency arrows ---- */
   if(colVis.arrows){
     for(var ai=0;ai<tasks.length;ai++){
-      var at=tasks[ai]; var apid=resolvePred(at,ai);
-      if(apid===null) continue;
-      var afrom=bpos[apid],ato=bpos[at.id]; if(!afrom||!ato) continue;
+      var at=tasks[ai];
+      var apids=resolvePredsForTask(at,ai);
+      apids.forEach(function(apid){
+      var afrom=bpos[apid],ato=bpos[at.id]; if(!afrom||!ato) return;
       var apredT=getById(apid); var crossPh=apredT&&apredT.phase!==at.phase;
       var isBothCrit=colVis.crit&&critMap[apid]&&critMap[at.id];
       var acol=isBothCrit?critClr:(crossPh?svgTextHint:PCr[at.phase].bar);
@@ -1388,6 +1451,7 @@ function renderGantt(){
       var mx3=x1+(x2-x1)*0.5;
       if(Math.abs(y2-y1)<3) s+='<line x1="'+x1+'" y1="'+y1+'" x2="'+(x2-5)+'" y2="'+y2+'" stroke="'+acol+'" stroke-width="'+awidth+'" stroke-dasharray="'+adash+'" opacity="0.7" marker-end="url(#'+amid+')"/>';
       else s+='<path d="M '+x1+' '+y1+' L '+mx3+' '+y1+' L '+mx3+' '+y2+' L '+(x2-5)+' '+y2+'" fill="none" stroke="'+acol+'" stroke-width="'+awidth+'" stroke-dasharray="'+adash+'" opacity="0.7" marker-end="url(#'+amid+')" stroke-linejoin="round"/>';
+      }); // end forEach apid
     }
   }
 
@@ -1492,7 +1556,7 @@ function exportXLSX(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(projData),'ProjectInfo');
   var starts=computeStarts();
   var taskHdr=[['ID','Name','Phase','Segment','Duration','Predecessor','Lag','ComputedStart','ActualStart','ActualDur']];
-  var taskRows=tasks.map(function(t){var ps=t.pred==='prev'?'prev':(t.pred?String(t.pred):'');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0];});
+  var taskRows=tasks.map(function(t){migratePreds(t); var ps=(t.preds||[]).join(';');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(taskHdr.concat(taskRows)),'Tasks');
   var noteRows=notes.map(function(n,i){return [i+1,n];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['#','Note']].concat(noteRows)),'Notes');
@@ -1534,7 +1598,7 @@ function importXLSX(input){
         for(var i=1;i<trows.length;i++){
           var r=trows[i]; if(!r||!r[1]) continue;
           var predVal=r[5]===''||r[5]===undefined?null:(r[5]==='prev'?'prev':+r[5]);
-          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,pred:predVal,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0};
+          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,preds:predVal,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0};
           tasks.push(tk); if(tk.id>maxId) maxId=tk.id;
         }
         tid=maxId+1; sortTasks();

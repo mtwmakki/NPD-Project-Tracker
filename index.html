@@ -3142,105 +3142,348 @@ function isBD(row, idx) {
 // ══════════════════════════════════════════════════════
 function exportToExcel() {
   const wb = XLSX.utils.book_new();
+  const today = todayStr();
 
-  // ── Sheet 1: Inquiries ──
-  const inqRows = [['NPD Code','Customer','Product/Project Name','BD Person','BD #','Inquiry Date','Type','Status','Priority','Material','Remark','Next Action','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total']];
+  // ── Color palette ──
+  const CLR = {
+    // Inquiry theme - teal
+    inqHdr:   { fgColor: { rgb: '0F4C75' } },
+    inqBand:  { fgColor: { rgb: 'E8F4FD' } },
+    // Project theme - indigo
+    projHdr:  { fgColor: { rgb: '1B3A6B' } },
+    projBand: { fgColor: { rgb: 'EEF2FA' } },
+    // Task theme - green
+    taskHdr:  { fgColor: { rgb: '14532D' } },
+    taskBand: { fgColor: { rgb: 'F0FDF4' } },
+    // Summary theme - charcoal
+    sumHdr:   { fgColor: { rgb: '1E293B' } },
+    sumBand:  { fgColor: { rgb: 'F8FAFC' } },
+    white:    { fgColor: { rgb: 'FFFFFF' } },
+    hdrText:  { fgColor: { rgb: 'FFFFFF' } },
+    darkText: { fgColor: { rgb: '1E293B' } },
+    mutedText:{ fgColor: { rgb: '64748B' } },
+    green:    { fgColor: { rgb: '16A34A' } },
+    red:      { fgColor: { rgb: 'DC2626' } },
+    amber:    { fgColor: { rgb: 'D97706' } },
+    blue:     { fgColor: { rgb: '2563EB' } },
+  };
+
+  const font = (bold, color, sz) => ({ bold: !!bold, color: color||CLR.darkText, sz: sz||10, name: 'Calibri' });
+  const border = () => ({
+    top:    { style: 'thin', color: { rgb: 'CBD5E1' } },
+    bottom: { style: 'thin', color: { rgb: 'CBD5E1' } },
+    left:   { style: 'thin', color: { rgb: 'CBD5E1' } },
+    right:  { style: 'thin', color: { rgb: 'CBD5E1' } },
+  });
+  const hdrStyle = (bg) => ({ font: font(true, CLR.hdrText, 10), fill: bg, alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border: border() });
+  const cellStyle = (bg, bold, color, align) => ({ font: font(bold, color||CLR.darkText), fill: bg||CLR.white, alignment: { horizontal: align||'left', vertical: 'center', wrapText: true }, border: border() });
+
+  function applyStyles(ws, data, hdrBg, bandBg, colWidths) {
+    const range = XLSX.utils.decode_range(ws['!ref']||'A1');
+    for (let R = range.s.r; R <= range.e.r; R++) {
+      for (let C = range.s.c; C <= range.e.c; C++) {
+        const addr = XLSX.utils.encode_cell({ r: R, c: C });
+        if (!ws[addr]) ws[addr] = { v: '', t: 's' };
+        const isHdr = R === 0;
+        const isBand = !isHdr && R % 2 === 0;
+        ws[addr].s = isHdr
+          ? hdrStyle(hdrBg)
+          : cellStyle(isBand ? bandBg : CLR.white);
+      }
+    }
+    // Row heights
+    ws['!rows'] = [];
+    for (let R = 0; R <= range.e.r; R++) ws['!rows'][R] = { hpt: R === 0 ? 22 : 16 };
+    // Col widths
+    if (colWidths) ws['!cols'] = colWidths.map(w => ({ wch: w }));
+    // Freeze header row
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+    return ws;
+  }
+
+  function addTitleBlock(ws, title, subtitle, cols) {
+    // Already handled by header row — just set sheet tab name
+  }
+
+  // ═══════════════════════════════════════════════
+  // SHEET 0: SUMMARY DASHBOARD
+  // ═══════════════════════════════════════════════
+  const sumData = [
+    ['NPD TRACKER — EXPORT SUMMARY', '', '', ''],
+    ['Generated', today, '', ''],
+    ['', '', '', ''],
+    ['METRIC', 'COUNT', 'DETAIL', ''],
+    ['Total Inquiries', data.inquiries.length, '', ''],
+    ['  Active Inquiries', data.inquiries.filter(i=>i.status==='active').length, '', ''],
+    ['  Converted to Project', data.inquiries.filter(i=>i.status==='converted').length, '', ''],
+    ['  Closed / Lost', data.inquiries.filter(i=>i.status==='closed'||i.status==='lost').length, '', ''],
+    ['', '', '', ''],
+    ['Total Projects', data.projects.length, '', ''],
+    ['  In Progress', data.projects.filter(p=>p.status==='in-progress').length, '', ''],
+    ['  Completed', data.projects.filter(p=>p.status==='completed').length, '', ''],
+    ['  On Hold', data.projects.filter(p=>p.status==='on-hold').length, '', ''],
+    ['  Not Started', data.projects.filter(p=>p.status==='not-started').length, '', ''],
+    ['', '', '', ''],
+    ['Total Project Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).length,0), '', ''],
+    ['  Completed Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).filter(t=>t.done).length,0), '', ''],
+    ['  Pending Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).filter(t=>!t.done).length,0), '', ''],
+    ['', '', '', ''],
+    ['Total Sub-Statuses', data.projects.reduce((s,p)=>s+(p.subStatuses||[]).length,0), '', ''],
+    ['Total Activities', data.projects.reduce((s,p)=>s+(p.activities||[]).length,0), '', ''],
+    ['Total Milestones', data.projects.reduce((s,p)=>s+(p.milestones||[]).length,0), '', ''],
+    ['Total Standalone Tasks', (data.mtasks||[]).length, '', ''],
+    ['', '', '', ''],
+    ['SHEETS INCLUDED', '', '', ''],
+    ['1. Summary', 'This sheet', '', ''],
+    ['2. Inquiries', data.inquiries.length + ' records', '', ''],
+    ['3. Inquiry Next Actions', data.inquiries.reduce((s,i)=>s+(i.nextActions||[]).length,0) + ' records', '', ''],
+    ['4. Inquiry Tasks', data.inquiries.reduce((s,i)=>s+(i.tasks||[]).length,0) + ' records', '', ''],
+    ['5. Projects', data.projects.length + ' records', '', ''],
+    ['6. Project Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).length,0) + ' records', '', ''],
+    ['7. Sub-Statuses', data.projects.reduce((s,p)=>s+(p.subStatuses||[]).length,0) + ' records', '', ''],
+    ['8. Milestones', data.projects.reduce((s,p)=>s+(p.milestones||[]).length,0) + ' records', '', ''],
+    ['9. Activities', data.projects.reduce((s,p)=>s+(p.activities||[]).length,0) + ' records', '', ''],
+    ['10. PICs', data.projects.reduce((s,p)=>s+(p.pics||[]).length,0) + ' records', '', ''],
+    ['11. Standalone Tasks', (data.mtasks||[]).length + ' records', '', ''],
+  ];
+  const sumWs = XLSX.utils.aoa_to_sheet(sumData);
+  // Style summary
+  const sumRange = XLSX.utils.decode_range(sumWs['!ref']);
+  for (let R = sumRange.s.r; R <= sumRange.e.r; R++) {
+    for (let C = sumRange.s.c; C <= sumRange.e.c; C++) {
+      const addr = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!sumWs[addr]) sumWs[addr] = { v: '', t: 's' };
+      const v = sumWs[addr].v;
+      if (R === 0) sumWs[addr].s = { font: font(true, CLR.hdrText, 14), fill: CLR.sumHdr, alignment: { horizontal: 'left', vertical: 'center' } };
+      else if (R === 3) sumWs[addr].s = hdrStyle(CLR.sumHdr);
+      else if (v === '') sumWs[addr].s = { font: font(false, CLR.darkText), fill: CLR.white };
+      else if (String(v).startsWith('  ')) sumWs[addr].s = { font: font(false, CLR.mutedText), fill: R%2===0?CLR.sumBand:CLR.white, alignment: { indent: 1 }, border: border() };
+      else if (C === 0 && R > 3) sumWs[addr].s = { font: font(true, CLR.darkText), fill: R%2===0?CLR.sumBand:CLR.white, border: border() };
+      else sumWs[addr].s = { font: font(false, C===1?CLR.blue:CLR.darkText), fill: R%2===0?CLR.sumBand:CLR.white, border: border() };
+    }
+  }
+  sumWs['!cols'] = [{wch:30},{wch:18},{wch:30},{wch:10}];
+  sumWs['!rows'] = sumData.map((_,i)=>({hpt: i===0?28:i===3?18:15}));
+  sumWs['!merges'] = [{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:0}}];
+  XLSX.utils.book_append_sheet(wb, sumWs, '📊 Summary');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 1: INQUIRIES
+  // ═══════════════════════════════════════════════
+  const inqHdrs = ['NPD Code','Customer','Product / Project Name','BD Person','BD Contact','Inquiry Date','Type','Status','Priority','Material','Remark','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total','% Complete'];
+  const inqData = [inqHdrs];
   data.inquiries.forEach(i => {
-    const p = i.pipeline||{};
-    const mi = p.moldInquiry||{};
-    const co = p.costing||{};
-    const pr = p.priceSubmission||{};
-    inqRows.push([
+    const pip = i.pipeline||{};
+    const mi = pip.moldInquiry||{};
+    const co = pip.costing||{};
+    const pr = pip.priceSubmission||{};
+    const done = (i.tasks||[]).filter(t=>t.done).length;
+    const total = (i.tasks||[]).length;
+    inqData.push([
       i.code||'', i.customer||'', i.name||'', i.bdPerson||'', i.bdNum||'',
       i.date||'', i.type||'', i.status||'', i.priority||'', i.material||'',
-      i.remark||'', i.nextAction||'', i.revisionDate||'',
+      i.remark||'', i.revisionDate||'',
       mi.status||'', mi.remark||'',
       co.status||'', co.remark||'', co.date||'',
       pr.status||'', pr.remark||'', pr.date||'',
-      (i.tasks||[]).filter(t=>t.done).length, (i.tasks||[]).length
+      done, total, total>0 ? Math.round(done/total*100)+'%' : '—'
     ]);
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(inqRows), 'Inquiries');
+  const inqWs = XLSX.utils.aoa_to_sheet(inqData);
+  applyStyles(inqWs, inqData, CLR.inqHdr, CLR.inqBand, [12,18,30,14,14,12,14,12,10,14,30,12,18,30,14,30,12,14,30,12,10,10,10]);
+  XLSX.utils.book_append_sheet(wb, inqWs, '📋 Inquiries');
 
-  // ── Sheet 2: Inquiry Tasks ──
-  const inqTaskRows = [['NPD Code','Customer','Product/Project Name','Task Name','Deadline','Status','Done','Follow-up Of']];
+  // ═══════════════════════════════════════════════
+  // SHEET 2: INQUIRY NEXT ACTIONS
+  // ═══════════════════════════════════════════════
+  const naHdrs = ['NPD Code','Customer','Project Name','PIC','Action / Description','Deadline','Status','Overdue?','Date Added'];
+  const naData = [naHdrs];
+  data.inquiries.forEach(i => {
+    const nas = i.nextActions || (i.nextAction ? [{id:'l',pic:'Adam',action:i.nextAction,deadline:'',dateAdded:''}] : []);
+    nas.forEach(na => {
+      const isOverdue = na.deadline && na.deadline < today && na.status !== 'done';
+      naData.push([
+        i.code||'', i.customer||'', i.name||'',
+        na.pic||'', na.action||na.description||'',
+        na.deadline||'', na.status||'',
+        isOverdue ? 'YES' : '',
+        na.dateAdded||''
+      ]);
+    });
+  });
+  const naWs = XLSX.utils.aoa_to_sheet(naData);
+  applyStyles(naWs, naData, CLR.inqHdr, CLR.inqBand, [12,18,30,12,40,12,12,10,12]);
+  // Color overdue cells red
+  naData.forEach((row, R) => {
+    if (R === 0) return;
+    const addr = XLSX.utils.encode_cell({r:R, c:7});
+    if (naWs[addr] && naWs[addr].v === 'YES') {
+      naWs[addr].s = { ...naWs[addr].s, font: font(true, CLR.red), fill: { fgColor: { rgb: 'FEF2F2' } } };
+    }
+  });
+  XLSX.utils.book_append_sheet(wb, naWs, '⚡ Inq. Next Actions');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 3: INQUIRY TASKS (Progress Tasks)
+  // ═══════════════════════════════════════════════
+  const itHdrs = ['NPD Code','Customer','Project Name','Task Name','Deadline','PIC','Status','Done','Overdue?'];
+  const itData = [itHdrs];
   data.inquiries.forEach(i => {
     (i.tasks||[]).forEach(t => {
-      inqTaskRows.push([
+      const isOverdue = t.deadline && t.deadline < today && !t.done;
+      itData.push([
         i.code||'', i.customer||'', i.name||'',
-        t.name||'', t.deadline||'',
-        t.status||'', t.done?'Yes':'No',
-        t.followupOf ? 'Yes' : ''
+        t.name||'', t.deadline||'', t.pic||'',
+        t.status||'', t.done?'✓ Done':'Pending',
+        isOverdue ? 'YES' : ''
       ]);
     });
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(inqTaskRows), 'Inquiry Tasks');
+  const itWs = XLSX.utils.aoa_to_sheet(itData);
+  applyStyles(itWs, itData, CLR.inqHdr, CLR.inqBand, [12,18,30,30,12,12,12,10,10]);
+  XLSX.utils.book_append_sheet(wb, itWs, '✅ Inq. Tasks');
 
-  // ── Sheet 3: Projects ──
-  const projRows = [['Code','Project Name','Date Started','Classification','Factory','Status','Brief','Tasks Done','Tasks Total','PICs','Latest Sub-Status']];
+  // ═══════════════════════════════════════════════
+  // SHEET 4: PROJECTS
+  // ═══════════════════════════════════════════════
+  const pHdrs = ['Code','Project Name','Customer','Sales Person','Date Started','Target Delivery','Classification','Factory','Status','Timeline','Brief','Actions Done','Actions Total','% Complete','PICs','Latest Sub-Status','Latest Sub-Status Date'];
+  const pData = [pHdrs];
+  const todayISO = new Date().toISOString().slice(0,10);
   data.projects.forEach(p => {
-    const pics = (p.pics||[]).map(x => `${x.name}${x.role?' ('+x.role+')':''}`).join(', ');
-    const subs = (p.subStatuses||[]);
-    const latestSS = subs.length ? [...subs].sort((a,b) => (b.date||'') > (a.date||'') ? 1 : -1)[0] : null;
-    projRows.push([
-      p.code||'', p.name||'', p.date||'', classLabel(p.classification)||p.classification||'',
+    const pics = (p.pics||[]).map(x=>`${x.name}${x.role?' ('+x.role+')':''}`).join(', ');
+    const subs = [...(p.subStatuses||[])].sort((a,b)=>(b.date||'')>(a.date||'')?1:-1);
+    const latestSS = subs[0]||null;
+    const done = (p.tasks||[]).filter(t=>t.done).length;
+    const total = (p.tasks||[]).length;
+    let timeline = '—';
+    if (p.deliveryDate) {
+      if (p.status==='completed') timeline = 'Completed';
+      else if (p.deliveryDate < todayISO) {
+        const d = Math.round((new Date(todayISO)-new Date(p.deliveryDate))/86400000);
+        timeline = d + ' days overdue';
+      } else {
+        const d = Math.round((new Date(p.deliveryDate)-new Date(todayISO))/86400000);
+        timeline = d + ' days left';
+      }
+    }
+    pData.push([
+      p.code||'', p.name||'', p.customer||'', p.salesPerson||'',
+      p.date||'', p.deliveryDate||'',
+      classLabel(p.classification)||p.classification||'',
       p.factory||'', statusLabel(p.status)||p.status||'',
-      p.brief||'',
-      (p.tasks||[]).filter(t=>t.done).length, (p.tasks||[]).length,
+      timeline, p.brief||'',
+      done, total, total>0 ? Math.round(done/total*100)+'%' : '—',
       pics,
-      latestSS ? `${latestSS.title} (${latestSS.status}${latestSS.date?' · '+latestSS.date:''})` : ''
+      latestSS ? `${latestSS.title} [${latestSS.status}]` : '',
+      latestSS ? latestSS.date||'' : ''
     ]);
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(projRows), 'Projects');
+  const pWs = XLSX.utils.aoa_to_sheet(pData);
+  applyStyles(pWs, pData, CLR.projHdr, CLR.projBand, [12,30,20,16,13,14,16,14,13,16,35,12,12,10,25,35,13]);
+  // Color timeline cells
+  pData.forEach((row, R) => {
+    if (R === 0) return;
+    const addr = XLSX.utils.encode_cell({r:R, c:9});
+    if (!pWs[addr]) return;
+    const v = pWs[addr].v||'';
+    if (v.includes('overdue')) pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.red) };
+    else if (v.includes('days left') && parseInt(v) < 14) pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.amber) };
+    else if (v === 'Completed') pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.green) };
+  });
+  XLSX.utils.book_append_sheet(wb, pWs, '📁 Projects');
 
-  // ── Sheet 4: Project Actions ──
-  const projTaskRows = [['Project Code','Project Name','Factory','Action/Task','Deadline','PIC','Status','Done','Follow-up Of']];
+  // ═══════════════════════════════════════════════
+  // SHEET 5: PROJECT ACTIONS
+  // ═══════════════════════════════════════════════
+  const paHdrs = ['Project Code','Project Name','Factory','Action / Task','Deadline','PIC','Status','Done','Overdue?','Depends On'];
+  const paData = [paHdrs];
   data.projects.forEach(p => {
     (p.tasks||[]).forEach(t => {
-      projTaskRows.push([
+      const isOverdue = t.deadline && t.deadline < today && !t.done;
+      const depTask = t.dependsOn ? (p.tasks||[]).find(x=>(x.id||x.name)===t.dependsOn) : null;
+      paData.push([
         p.code||'', p.name||'', p.factory||'',
-        t.name||'', t.deadline||'', t.pic||'Adam',
-        t.status||'', t.done?'Yes':'No',
-        t.followupOf ? 'Yes' : ''
+        t.name||'', t.deadline||'', t.pic||'',
+        t.status||'', t.done?'✓ Done':'Pending',
+        isOverdue ? 'YES' : '',
+        depTask ? depTask.name : ''
       ]);
     });
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(projTaskRows), 'Project Actions');
+  const paWs = XLSX.utils.aoa_to_sheet(paData);
+  applyStyles(paWs, paData, CLR.projHdr, CLR.projBand, [12,30,14,35,12,12,12,10,10,25]);
+  XLSX.utils.book_append_sheet(wb, paWs, '🔧 Project Actions');
 
-  // ── Sheet 5: Sub-Statuses ──
-  const ssRows = [['Project Code','Project Name','Sub-Status Title','Status','Date','Date Logged','Note']];
+  // ═══════════════════════════════════════════════
+  // SHEET 6: SUB-STATUSES
+  // ═══════════════════════════════════════════════
+  const ssHdrs = ['Project Code','Project Name','Factory','Sub-Status Title','Status','Date','Note','Date Logged'];
+  const ssData = [ssHdrs];
   data.projects.forEach(p => {
-    (p.subStatuses||[]).forEach(ss => {
-      ssRows.push([
-        p.code||'', p.name||'',
-        ss.title||'', ss.status||'', ss.date||'', ss.createdAt||'', ss.note||''
-      ]);
+    [...(p.subStatuses||[])].sort((a,b)=>(b.date||'')>(a.date||'')?1:-1).forEach(ss => {
+      ssData.push([p.code||'', p.name||'', p.factory||'', ss.title||'', ss.status||'', ss.date||'', ss.note||'', ss.createdAt||'']);
     });
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ssRows), 'Sub-Statuses');
+  const ssWs = XLSX.utils.aoa_to_sheet(ssData);
+  applyStyles(ssWs, ssData, CLR.projHdr, CLR.projBand, [12,30,14,30,14,12,40,12]);
+  XLSX.utils.book_append_sheet(wb, ssWs, '🔖 Sub-Statuses');
 
-  // ── Sheet 6: PICs ──
-  const picRows = [['Project Code','Project Name','PIC Name','Role']];
+  // ═══════════════════════════════════════════════
+  // SHEET 7: MILESTONES
+  // ═══════════════════════════════════════════════
+  const msHdrs = ['Project Code','Project Name','Factory','Milestone','Category','Status','Date','Note'];
+  const msData = [msHdrs];
+  data.projects.forEach(p => {
+    (p.milestones||[]).forEach(m => {
+      msData.push([p.code||'', p.name||'', p.factory||'', m.title||'', m.category||'', m.status||'', m.date||'', m.note||'']);
+    });
+  });
+  const msWs = XLSX.utils.aoa_to_sheet(msData);
+  applyStyles(msWs, msData, CLR.projHdr, CLR.projBand, [12,30,14,30,14,14,12,40]);
+  XLSX.utils.book_append_sheet(wb, msWs, '🚩 Milestones');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 8: ACTIVITIES
+  // ═══════════════════════════════════════════════
+  const acHdrs = ['Project Code','Project Name','Factory','Activity','Category','Date','Note','Done?','Done Date'];
+  const acData = [acHdrs];
+  data.projects.forEach(p => {
+    (p.activities||[]).forEach(a => {
+      acData.push([p.code||'', p.name||'', p.factory||'', a.title||'', a.category||'', a.date||'', a.note||'', a.done?'✓ Done':'Active', a.doneAt||'']);
+    });
+  });
+  const acWs = XLSX.utils.aoa_to_sheet(acData);
+  applyStyles(acWs, acData, CLR.projHdr, CLR.projBand, [12,30,14,35,14,12,40,10,12]);
+  XLSX.utils.book_append_sheet(wb, acWs, '📌 Activities');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 9: PICs
+  // ═══════════════════════════════════════════════
+  const picHdrs = ['Project Code','Project Name','Factory','PIC Name','Role'];
+  const picData = [picHdrs];
   data.projects.forEach(p => {
     (p.pics||[]).forEach(pic => {
-      picRows.push([p.code||'', p.name||'', pic.name||'', pic.role||'']);
+      picData.push([p.code||'', p.name||'', p.factory||'', pic.name||'', pic.role||'']);
     });
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(picRows), 'PICs');
+  const picWs = XLSX.utils.aoa_to_sheet(picData);
+  applyStyles(picWs, picData, CLR.projHdr, CLR.projBand, [12,30,14,20,20]);
+  XLSX.utils.book_append_sheet(wb, picWs, '👥 PICs');
 
-  // ── Sheet 7: Standalone Tasks ──
-  const taskRows = [['Title','Category','Priority','Status','Due Date','Reminder Date','Description','Follow-up Of']];
+  // ═══════════════════════════════════════════════
+  // SHEET 10: STANDALONE TASKS
+  // ═══════════════════════════════════════════════
+  const stHdrs = ['Title','Category','Priority','Status','Due Date','Reminder Date','Description'];
+  const stData = [stHdrs];
   (data.mtasks||[]).forEach(t => {
-    taskRows.push([
-      t.title||'', t.category||'', t.priority||'', t.status||'',
-      t.deadline||'', t.reminder||'', t.description||'',
-      t.followupOf ? 'Yes' : ''
-    ]);
+    stData.push([t.title||'', t.category||'', t.priority||'', t.status||'', t.deadline||'', t.reminder||'', t.description||'']);
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(taskRows), 'Tasks');
+  const stWs = XLSX.utils.aoa_to_sheet(stData);
+  applyStyles(stWs, stData, CLR.taskHdr, CLR.taskBand, [30,16,12,14,12,14,45]);
+  XLSX.utils.book_append_sheet(wb, stWs, '📝 Tasks');
 
-  XLSX.writeFile(wb, `NPD_Tracker_Export_${todayStr()}.xlsx`);
-  alert(`✓ Exported ${data.inquiries.length} inquiries, ${data.projects.length} projects, ${(data.mtasks||[]).length} tasks across 7 sheets.`);
+  XLSX.writeFile(wb, `NPD_Tracker_Export_${today}.xlsx`);
+  alert(`✓ Exported ${data.inquiries.length} inquiries · ${data.projects.length} projects · ${(data.mtasks||[]).length} standalone tasks across 11 sheets.`);
 }
 
 // ══════════════════════════════════════════════════════

@@ -327,6 +327,11 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
           <span class="col-tog active" data-col="grid_4week" onclick="toggleCol(this)">Grid: 4-Week</span>
           <span class="col-tog active" data-col="grid_month" onclick="toggleCol(this)">Grid: Month</span>
         </div>
+        <div style="margin-top:10px;">
+          <div style="font-size:9.5px;font-weight:700;color:var(--text-hint);letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px;">Custom Segments</div>
+          <div id="custom-seg-list"></div>
+          <div id="no-custom-segs" style="font-size:10px;color:var(--text-hint);font-style:italic;">None added yet — use "+ Custom…" in any task.</div>
+        </div>
       </div>
     </div>
 
@@ -715,14 +720,7 @@ function onDrop(e,targetId){
   var grouped={}; PORDER.forEach(function(p){grouped[p]=[];});
   tasks.forEach(function(t){if(grouped[t.phase]) grouped[t.phase].push(t);});
   tasks=[]; PORDER.forEach(function(p){grouped[p].forEach(function(t){tasks.push(t);});});
-  tasks.forEach(function(t){
-    migratePreds(t);
-    t.preds=t.preds.filter(function(p){
-      if(p==='prev') return true;
-      var pp=getById(+p);
-      return !(pp&&PORDER.indexOf(pp.phase)>PORDER.indexOf(t.phase));
-    });
-  });
+  tasks.forEach(function(t){ migratePreds(t); }); // keep all preds as-is
   dragSrcId=null; renderPanel(); renderGantt();
 }
 
@@ -773,9 +771,14 @@ function renderPanel(){
     html+='<div class="tf"><label>Phase</label><select onchange="updPhase('+t.id+',this.value)">';
     PORDER.forEach(function(p){if(!activePhases[p]) return; html+='<option value="'+p+'"'+(t.phase===p?' selected':'')+'>'+PLABEL[p]+'</option>';});
     html+='</select></div>';
-    html+='<div class="tf"><label>Segment</label><select data-id="'+t.id+'" data-field="seg" onchange="updField(this)">';
+    var isCustomSeg=t.seg&&SEGMENTS.indexOf(t.seg)<0;
+    html+='<div class="tf"><label>Segment</label>';
+    html+='<select data-id="'+t.id+'" data-field="seg" id="seg-sel-'+t.id+'" onchange="updSegField(this)">';
     SEGMENTS.forEach(function(sg){html+='<option value="'+sg+'"'+(t.seg===sg?' selected':'')+'>'+sg+'</option>';});
-    html+='</select></div>';
+    if(isCustomSeg) html+='<option value="'+t.seg+'" selected>'+t.seg+' (custom)</option>';
+    html+='<option value="__custom__">+ Custom…</option>';
+    html+='</select>';
+    html+='</div>';
     html+='<div class="tf"><label>Dur (wks)</label><input type="number" value="'+t.dur+'" min="0" max="99" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)"></div>';
     html+='<div class="tf"><label>Lag (neg=overlap)</label><input type="number" value="'+(t.lag||0)+'" min="-52" max="52" data-id="'+t.id+'" data-field="lag" data-num="1" onchange="updField(this)"></div>';
     html+='</div>';
@@ -817,6 +820,24 @@ function renderPanel(){
     html+='</div></div>';
   }
   c.innerHTML=html;
+  renderCustomSegList();
+}
+
+function renderCustomSegList(){
+  var list=document.getElementById('custom-seg-list');
+  var none=document.getElementById('no-custom-segs');
+  if(!list) return;
+  var base=['Mold','Label','Machine','Assembly','Packaging','Logistics'];
+  var customs=SEGMENTS.filter(function(sg){return base.indexOf(sg)<0;});
+  if(!customs.length){list.innerHTML='';if(none) none.style.display='';return;}
+  if(none) none.style.display='none';
+  list.innerHTML=customs.map(function(sg){
+    var sc=SC[sg]||{bg:'#eee',text:'#333'};
+    return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'
+      +'<span style="background:'+sc.bg+';color:'+sc.text+';padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;">'+sg+'</span>'
+      +'<button onclick="deleteCustomSegment(&quot;'+sg+'&quot;)" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0 4px;line-height:1;" title="Delete">×</button>'
+      +'</div>';
+  }).join('');
 }
 
 function renderNotes(){
@@ -844,6 +865,44 @@ function updPhase(id,v){var t=getById(id);if(!t) return;t.phase=v;t.pred=null;so
 function togglePred(id,val,checked){var t=getById(id);if(!t) return;migratePreds(t);if(val==='none'){t.preds=[];updatePredLabel(id);renderGantt();ganttAutoSave();return;}var v=isNaN(+val)?val:+val;var idx2=t.preds.indexOf(v);if(checked){t.preds=t.preds.filter(function(p){return p!=='none';});if(idx2<0) t.preds.push(v);}else{if(idx2>=0) t.preds.splice(idx2,1);}updatePredLabel(id);renderGantt();ganttAutoSave();}
 function updatePredLabel(id){var t=getById(id);if(!t) return;migratePreds(t);var el=document.getElementById('pred-dd-trigger-'+id);if(!el) return;var lbl=el.querySelector('.pred-dd-label');if(!lbl) return;var preds=t.preds||[];if(!preds.length){lbl.textContent='None';lbl.className='pred-dd-label placeholder';return;}var pts=[];preds.forEach(function(p){if(p==='prev'){pts.push('Prev');}else{var px=getById(+p);if(px) pts.push('#'+(getIdx(px.id)+1)+' '+px.name.slice(0,12)+(px.name.length>12?'…':''));}});lbl.textContent=pts.join(', ');lbl.className='pred-dd-label';}
 function addTaskToPhase(phase,asMilestone){tasks.push({id:tid++,name:asMilestone?'New Milestone':'New Task',phase:phase,seg:'Mold',dur:asMilestone?0:1,preds:['prev'],lag:0,actStart:0,actDur:0,milestone:!!asMilestone});sortTasks();renderPanel();renderGantt();ganttAutoSave();}
+function updSegField(el){
+  var id=+el.getAttribute('data-id');
+  if(el.value==='__custom__'){
+    var name=(prompt('Enter custom segment name:','')||'').trim();
+    if(!name){var t2=getById(id);if(t2) el.value=t2.seg||SEGMENTS[0];return;}
+    addCustomSegment(name);
+    upd(id,'seg',name);
+    renderPanel(); renderGantt(); ganttAutoSave();
+  } else {
+    upd(id,'seg',el.value);
+  }
+}
+function addCustomSegment(name){
+  if(!name||SEGMENTS.indexOf(name)>=0) return;
+  SEGMENTS.push(name);
+  var palettes=[
+    {bg:'#FEF0E6',text:'#92400E',bar:'#D97706'},
+    {bg:'#FDF0FF',text:'#7E22CE',bar:'#9333EA'},
+    {bg:'#E0F2FE',text:'#075985',bar:'#0284C7'},
+    {bg:'#FDE8D8',text:'#7C2D12',bar:'#EA580C'},
+    {bg:'#F0FDF4',text:'#14532D',bar:'#16A34A'}
+  ];
+  SC[name]=palettes[(SEGMENTS.length-1)%palettes.length];
+  var style=document.getElementById('dynamic-seg-styles')||document.createElement('style');
+  style.id='dynamic-seg-styles';
+  style.textContent+='.seg-tag.'+name+'{background:'+SC[name].bg+';color:'+SC[name].text+'} ';
+  if(!document.getElementById('dynamic-seg-styles')) document.head.appendChild(style);
+}
+function deleteCustomSegment(name){
+  var idx=SEGMENTS.indexOf(name);
+  if(idx<0) return;
+  // Check if any task still uses it
+  var inUse=tasks.some(function(t){return t.seg===name;});
+  if(inUse){alert('Cannot delete "'+name+'" — it is still used by one or more tasks. Reassign those tasks first.');return;}
+  SEGMENTS.splice(idx,1);
+  delete SC[name];
+  renderPanel(); renderGantt(); ganttAutoSave();
+}
 function updMilestone(id,val){var t=getById(id);if(!t) return;t.milestone=!!val;if(val) t.dur=0;renderPanel();renderGantt();ganttAutoSave();}
 function setPred(id,val){var t=getById(id);if(!t) return;migratePreds(t);if(val==='null') t.preds=[];else if(val==='prev') t.preds=['prev'];else t.preds=[+val];renderPanel();renderGantt();}
 function delTask(id){tasks=tasks.filter(function(t){return t.id!==id;});tasks.forEach(function(t){if(t.pred===id) t.pred=null;});renderPanel();renderGantt();ganttAutoSave();}
@@ -1452,11 +1511,17 @@ function openPredDD(e,tid){
   h+='<div class="pred-dd-sep"></div>';
   var prevT=null;for(var j=tidx-1;j>=0;j--){if(tasks[j].phase===t.phase){prevT=tasks[j];break;}}
   if(prevT){var hp=cp.indexOf('prev')>=0;h+='<div class="pred-dd-item"><input type="checkbox" value="prev"'+(hp?' checked':'')+' onchange="togglePred('+tid+',\'prev\',this.checked)"><span>Previous in phase</span><span class="pred-dd-week">auto</span></div><div class="pred-dd-sep"></div>';}
+  var lastPhase2=null;
   for(var k=0;k<tasks.length;k++){
     var tx=tasks[k];
-    if(tx.id===tid||PORDER.indexOf(tx.phase)>PORDER.indexOf(t.phase)) continue;
-    if(tx.phase===t.phase&&k>tidx) continue;
+    if(tx.id===tid) continue;
+    // Phase header separator
+    if(tx.phase!==lastPhase2){
+      h+='<div style="padding:4px 11px 2px;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;background:var(--surface2)">'+PLABEL[tx.phase]+'</div>';
+      lastPhase2=tx.phase;
+    }
     var txs=starts2[tx.id]||1,chk=cp.indexOf(tx.id)>=0||cp.indexOf(String(tx.id))>=0;
+    var isSelf=(tx.id===tid);
     h+='<div class="pred-dd-item"><input type="checkbox" value="'+tx.id+'"'+(chk?' checked':'')+' onchange="togglePred('+tid+','+tx.id+',this.checked)"><span>#'+(k+1)+' '+tx.name.slice(0,26)+(tx.name.length>26?'…':'')+'</span><span class="pred-dd-week">W'+(txs+(tx.dur||0))+'</span></div>';
   }
   menu.innerHTML=h;

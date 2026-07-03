@@ -1426,7 +1426,7 @@ function importXLSX(input){
         notes=[];
         for(var j=1;j<nrows.length;j++){if(nrows[j]&&nrows[j][1]) notes.push(String(nrows[j][1]));}
       }
-      renderPanel(); renderNotes(); setMode(scheduleMode);
+      renderPanel(); renderNotes(); setMode(scheduleMode); renderGantt();
       ganttSaveToFirebase();
       alert('Loaded successfully!');
     }catch(err){alert('Error loading file: '+err.message);}

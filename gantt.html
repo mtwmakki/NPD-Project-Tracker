@@ -931,7 +931,8 @@ function renderGantt(){
   var GS_PC={
     study:     {bar:'#999999', light:'#F0F0F0', text:'#444444'},
     pilot:     {bar:'#555555', light:'#E4E4E4', text:'#1A1A1A'},
-    commercial:{bar:'#BBBBBB', light:'#F7F7F7', text:'#555555'}
+    commercial:{bar:'#BBBBBB', light:'#F7F7F7', text:'#555555'},
+    production:{bar:'#333333', light:'#E8E8E8', text:'#111111'}
   };
   var GS_SC={
     Mold:    {bg:'#E0E0E0', text:'#1A1A1A', bar:'#444444'},
@@ -941,10 +942,11 @@ function renderGantt(){
 
   var lcBar='#4B6EA8', lcLight=thDark?'#0F1E35':'#EBF4FF', lcText=thDark?'#7AAAE8':'#1A4A8A';
   var PCr = thGS ? GS_PC : (thLC
-    ? {study:{bar:lcBar,light:lcLight,text:lcText},pilot:{bar:lcBar,light:lcLight,text:lcText},commercial:{bar:lcBar,light:lcLight,text:lcText}}
+    ? {study:{bar:lcBar,light:lcLight,text:lcText},pilot:{bar:lcBar,light:lcLight,text:lcText},commercial:{bar:lcBar,light:lcLight,text:lcText},production:{bar:lcBar,light:lcLight,text:lcText}}
     : {study:{bar:thDark?'#00C4B6':'#00A99D',light:thDark?'#052E2B':'#E0F5F4',text:thDark?'#00C4B6':'#007A74'},
        pilot:{bar:thDark?'#F5A623':'#D98C00',light:thDark?'#2D1F00':'#FEF3DC',text:thDark?'#F5A623':'#8A5E00'},
-       commercial:{bar:thDark?'#3B9EE8':'#0077CC',light:thDark?'#0F2A45':'#EBF4FF',text:thDark?'#3B9EE8':'#1161A3'}});
+       commercial:{bar:thDark?'#3B9EE8':'#0077CC',light:thDark?'#0F2A45':'#EBF4FF',text:thDark?'#3B9EE8':'#1161A3'},
+       production:{bar:thDark?'#F472B6':'#D63A8A',light:thDark?'#2D0A1A':'#FCE8F3',text:thDark?'#F472B6':'#9C1A6A'}});
   var SCr = thGS ? GS_SC : (thLC
     ? {Mold:{bg:lcLight,text:lcText,bar:lcBar},Label:{bg:lcLight,text:lcText,bar:lcBar},Machine:{bg:lcLight,text:lcText,bar:lcBar}}
     : {Mold:{bg:thDark?'#1A1335':'#EDE9FE',text:thDark?'#A78BFA':'#6D28D9',bar:thDark?'#7C3AED':'#7C3AED'},

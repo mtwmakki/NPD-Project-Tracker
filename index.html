@@ -2819,19 +2819,34 @@ function sheetToObjects(wb, sheetName) {
   return XLSX.utils.sheet_to_json(ws, {defval:''});
 }
 
-// ── Import from NPD Tracker's own export format (7-sheet file) ──
+// ── Import from NPD Tracker's own export format ──
 function importFromTrackerExport(wb, sheetNames) {
-  const find = (candidates) => candidates.find(n => sheetNames.includes(n));
+  // Normalize sheet name lookup — strips emojis and trims
+  const norm = n => n.replace(/[^ -~]/g,'').trim();
+  const normNames = sheetNames.map(norm);
+  const find = (candidates) => {
+    for (const c of candidates) {
+      const idx = normNames.findIndex(n => n === c || n.includes(c));
+      if (idx >= 0) return sheetNames[idx];
+    }
+    return null;
+  };
 
   const inqSheet      = find(['Inquiries']);
-  const inqTaskSheet  = find(['Inquiry Tasks']);
+  const naSheet       = find(['Inq. Next Actions','Inquiry Next Actions']);
+  const ipSheet       = find(['Inq. Products','Inquiry Products']);
+  const inqTaskSheet  = find(['Inq. Tasks','Inquiry Tasks']);
   const projSheet     = find(['Projects']);
   const projTaskSheet = find(['Project Actions']);
   const ssSheet       = find(['Sub-Statuses']);
+  const msSheet       = find(['Milestones']);
+  const actSheet      = find(['Activities']);
   const picSheet      = find(['PICs']);
   const taskSheet     = find(['Tasks']);
+  const plSheet       = find(['Pipeline']);
+  const binSheet      = find(['Bin']);
 
-  let inqAdded=0, inqUpdated=0, projAdded=0, projUpdated=0, taskAdded=0, taskUpdated=0;
+  let counts = { inqAdded:0, inqUpdated:0, projAdded:0, projUpdated:0, taskAdded:0, plAdded:0 };
 
   // ── 1. Inquiries ──
   if (inqSheet) {
@@ -2842,37 +2857,74 @@ function importFromTrackerExport(wb, sheetNames) {
       const inqData = {
         code,
         customer:    String(r['Customer']||'').trim(),
-        name:        String(r['Product/Project Name']||'').trim(),
+        name:        String(r['Product / Project Name']||r['Product/Project Name']||'').trim(),
         bdPerson:    String(r['BD Person']||'').trim(),
-        bdNum:       String(r['BD #']||'').trim(),
+        bdNum:       String(r['BD Contact']||r['BD #']||'').trim(),
         date:        String(r['Inquiry Date']||'').trim(),
         type:        String(r['Type']||'CUST').trim(),
         status:      String(r['Status']||'OPEN').trim(),
         priority:    String(r['Priority']||'2').trim(),
         material:    String(r['Material']||'').trim(),
+        factory:     String(r['Factory']||'').trim(),
         remark:      String(r['Remark']||'').trim(),
-        nextAction:  String(r['Next Action']||'').trim(),
+        remarkDate:  String(r['Remark Date']||'').trim(),
         revisionDate:String(r['Revision Date']||'').trim(),
         pipeline: {
-          moldInquiry:     { status: String(r['Mold Inquiry Status']||'').trim(), remark: String(r['Mold Inquiry Remark']||'').trim() },
+          moldInquiry:     { status: String(r['Mold Inquiry Status']||'').trim(), remark: String(r['Mold Inquiry Remark']||'').trim(), date: String(r['Mold Date']||'').trim() },
           costing:         { status: String(r['Costing Status']||'').trim(),      remark: String(r['Costing Remark']||'').trim(),      date: String(r['Costing Date']||'').trim() },
           priceSubmission: { status: String(r['Price Status']||'').trim(),        remark: String(r['Price Remark']||'').trim(),        date: String(r['Price Date']||'').trim() }
         }
       };
       const existing = data.inquiries.find(x => x.code === code);
       if (existing) {
-        const savedId = existing.id, savedTasks = existing.tasks||[], savedExpanded = existing.expanded;
+        const savedId=existing.id, savedTasks=existing.tasks||[], savedProducts=existing.products||[], savedNAs=existing.nextActions||[], savedLog=existing.activityLog||[], savedExpanded=existing.expanded;
         Object.assign(existing, inqData);
-        existing.id = savedId; existing.tasks = savedTasks; existing.expanded = savedExpanded;
-        inqUpdated++;
+        existing.id=savedId; existing.tasks=savedTasks; existing.products=savedProducts; existing.nextActions=savedNAs; existing.activityLog=savedLog; existing.expanded=savedExpanded;
+        counts.inqUpdated++;
       } else {
-        data.inquiries.unshift({id:uid(), tasks:[], expanded:false, ...inqData});
-        inqAdded++;
+        data.inquiries.unshift({id:uid(), tasks:[], products:[], nextActions:[], activityLog:[], expanded:false, ...inqData});
+        counts.inqAdded++;
       }
     });
   }
 
-  // ── 2. Inquiry Tasks ──
+  // ── 2. Inquiry Next Actions ──
+  if (naSheet) {
+    const rows = sheetToObjects(wb, naSheet);
+    rows.forEach(r => {
+      const code = String(r['NPD Code']||'').trim();
+      if (!code) return;
+      const inq = data.inquiries.find(x => x.code === code);
+      if (!inq) return;
+      if (!inq.nextActions) inq.nextActions = [];
+      const action = String(r['Action / Description']||r['Action']||'').trim();
+      if (!action) return;
+      const existing = inq.nextActions.find(na => (na.action||na.description||'') === action);
+      if (!existing) {
+        inq.nextActions.push({ id:uid(), pic:String(r['PIC']||'').trim(), action, deadline:String(r['Deadline']||'').trim(), status:String(r['Status']||'').trim(), dateAdded:String(r['Date Added']||'').trim() });
+      }
+    });
+  }
+
+  // ── 3. Inquiry Products ──
+  if (ipSheet) {
+    const rows = sheetToObjects(wb, ipSheet);
+    rows.forEach(r => {
+      const code = String(r['NPD Code']||'').trim();
+      if (!code) return;
+      const inq = data.inquiries.find(x => x.code === code);
+      if (!inq) return;
+      if (!inq.products) inq.products = [];
+      const name = String(r['Product Name']||'').trim();
+      if (!name) return;
+      const existing = inq.products.find(p => p.name === name);
+      if (!existing) {
+        inq.products.push({ id:uid(), name, volume:Number(r['Volume / Qty']||0), cost:Number(r['Unit Cost']||0) });
+      }
+    });
+  }
+
+  // ── 4. Inquiry Tasks ──
   if (inqTaskSheet) {
     const rows = sheetToObjects(wb, inqTaskSheet);
     rows.forEach(r => {
@@ -2880,68 +2932,47 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const inq = data.inquiries.find(x => x.code === code);
       if (!inq) return;
+      if (!inq.tasks) inq.tasks = [];
       const taskName = String(r['Task Name']||'').trim();
       if (!taskName) return;
       const existing = inq.tasks.find(t => t.name === taskName);
       if (!existing) {
-        inq.tasks.push({
-          id: uid(),
-          name:       taskName,
-          deadline:   String(r['Deadline']||'').trim(),
-          status:     String(r['Status']||'').trim(),
-          done:       String(r['Done']||'').trim().toLowerCase() === 'yes',
-          followupOf: String(r['Follow-up Of']||'').trim().toLowerCase() === 'yes' ? true : undefined
-        });
+        inq.tasks.push({ id:uid(), name:taskName, deadline:String(r['Deadline']||'').trim(), pic:String(r['PIC']||'').trim(), status:String(r['Status']||'').trim(), done:String(r['Done']||'').toLowerCase().includes('done') });
       }
     });
   }
 
-  // ── 3. Projects ──
+  // ── 5. Projects ──
   if (projSheet) {
     const rows = sheetToObjects(wb, projSheet);
     rows.forEach(r => {
       const code = String(r['Code']||'').trim();
       if (!code) return;
-
-      // Reverse-map classification label → key
-      const classMap = {'New Mold':'new-mold','Improvement':'improvement','Masterbatch':'masterbatch','New IML':'new-iml'};
-      const statusMap = {'Not Started':'not-started','In Progress':'in-progress','Completed':'completed','On Hold':'on-hold'};
-      const classRaw = String(r['Classification']||'').trim();
-      const statusRaw = String(r['Status']||'').trim();
-
       const projData = {
-        code,
-        name:           String(r['Project Name']||'').trim(),
-        date:           String(r['Date Started']||'').trim(),
-        classification: classMap[classRaw] || classRaw,
-        factory:        String(r['Factory']||'').trim(),
-        status:         statusMap[statusRaw] || statusRaw,
-        brief:          String(r['Brief']||'').trim(),
+        code, name:String(r['Project Name']||'').trim(),
+        customer:    String(r['Customer']||'').trim(),
+        salesPerson: String(r['Sales Person']||'').trim(),
+        date:        String(r['Date Started']||'').trim(),
+        deliveryDate:String(r['Target Delivery']||'').trim(),
+        classification: String(r['Classification']||'').trim(),
+        factory:     String(r['Factory']||'').trim(),
+        status:      String(r['Status']||'not-started').toLowerCase().replace(' ','-').trim(),
+        brief:       String(r['Brief']||'').trim(),
       };
-      // Legacy: if old export had Status Note, convert to sub-status on import
-      const legacyNote = String(r['Status Note']||'').trim();
-      const legacyDate = String(r['Status Date']||'').trim();
       const existing = data.projects.find(x => x.code === code);
       if (existing) {
-        const savedId = existing.id, savedTasks = existing.tasks||[], savedExpanded = existing.expanded,
-              savedSS = existing.subStatuses||[], savedPics = existing.pics||[];
+        const savedId=existing.id, savedTasks=existing.tasks||[], savedSS=existing.subStatuses||[], savedPics=existing.pics||[], savedMs=existing.milestones||[], savedActs=existing.activities||[], savedLog=existing.activityLog||[];
         Object.assign(existing, projData);
-        existing.id = savedId; existing.tasks = savedTasks; existing.expanded = savedExpanded;
-        existing.subStatuses = savedSS; existing.pics = savedPics;
-        if (legacyNote && !savedSS.some(s => s.title === legacyNote)) {
-          existing.subStatuses.unshift({id:uid(), title:legacyNote, status:'ongoing', date:legacyDate||projData.date||todayStr(), createdAt:todayStr(), note:''});
-        }
-        projUpdated++;
+        existing.id=savedId; existing.tasks=savedTasks; existing.subStatuses=savedSS; existing.pics=savedPics; existing.milestones=savedMs; existing.activities=savedActs; existing.activityLog=savedLog;
+        counts.projUpdated++;
       } else {
-        const newProj = {id:uid(), tasks:[], subStatuses:[], pics:[], milestones:[], expanded:false, ...projData};
-        if (legacyNote) newProj.subStatuses.push({id:uid(), title:legacyNote, status:'ongoing', date:legacyDate||projData.date||todayStr(), createdAt:todayStr(), note:''});
-        data.projects.unshift(newProj);
-        projAdded++;
+        data.projects.unshift({id:uid(), tasks:[], subStatuses:[], pics:[], milestones:[], activities:[], activityLog:[], ...projData});
+        counts.projAdded++;
       }
     });
   }
 
-  // ── 4. Project Actions ──
+  // ── 6. Project Actions ──
   if (projTaskSheet) {
     const rows = sheetToObjects(wb, projTaskSheet);
     rows.forEach(r => {
@@ -2949,24 +2980,17 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const proj = data.projects.find(x => x.code === code);
       if (!proj) return;
-      const taskName = String(r['Action/Task']||'').trim();
-      if (!taskName) return;
-      const existing = proj.tasks.find(t => t.name === taskName);
+      if (!proj.tasks) proj.tasks = [];
+      const name = String(r['Action / Task']||r['Action']||'').trim();
+      if (!name) return;
+      const existing = proj.tasks.find(t => t.name === name);
       if (!existing) {
-        proj.tasks.push({
-          id:         uid(),
-          name:       taskName,
-          deadline:   String(r['Deadline']||'').trim(),
-          pic:        String(r['PIC']||'').trim(),
-          status:     String(r['Status']||'').trim(),
-          done:       String(r['Done']||'').trim().toLowerCase() === 'yes',
-          followupOf: String(r['Follow-up Of']||'').trim().toLowerCase() === 'yes' ? true : undefined
-        });
+        proj.tasks.push({ id:uid(), name, deadline:String(r['Deadline']||'').trim(), pic:String(r['PIC']||'').trim(), status:String(r['Status']||'todo').trim(), done:String(r['Done']||'').toLowerCase().includes('done'), dependsOn:String(r['Depends On']||'').trim()||undefined });
       }
     });
   }
 
-  // ── 5. Sub-Statuses ──
+  // ── 7. Sub-Statuses ──
   if (ssSheet) {
     const rows = sheetToObjects(wb, ssSheet);
     rows.forEach(r => {
@@ -2974,24 +2998,53 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const proj = data.projects.find(x => x.code === code);
       if (!proj) return;
+      if (!proj.subStatuses) proj.subStatuses = [];
       const title = String(r['Sub-Status Title']||'').trim();
       if (!title) return;
-      if (!proj.subStatuses) proj.subStatuses = [];
       const existing = proj.subStatuses.find(ss => ss.title === title && ss.date === String(r['Date']||'').trim());
       if (!existing) {
-        proj.subStatuses.push({
-          id:        uid(),
-          title,
-          status:    String(r['Status']||'').trim(),
-          date:      String(r['Date']||'').trim(),
-          createdAt: String(r['Date Logged']||'').trim(),
-          note:      String(r['Note']||'').trim()
-        });
+        proj.subStatuses.push({ id:uid(), title, status:String(r['Status']||'').trim(), date:String(r['Date']||'').trim(), createdAt:String(r['Date Logged']||'').trim(), note:String(r['Note']||'').trim() });
       }
     });
   }
 
-  // ── 6. PICs ──
+  // ── 8. Milestones ──
+  if (msSheet) {
+    const rows = sheetToObjects(wb, msSheet);
+    rows.forEach(r => {
+      const code = String(r['Project Code']||'').trim();
+      if (!code) return;
+      const proj = data.projects.find(x => x.code === code);
+      if (!proj) return;
+      if (!proj.milestones) proj.milestones = [];
+      const title = String(r['Milestone']||'').trim();
+      if (!title) return;
+      const existing = proj.milestones.find(m => m.title === title);
+      if (!existing) {
+        proj.milestones.push({ id:uid(), title, category:String(r['Category']||'').trim(), status:String(r['Status']||'upcoming').trim(), date:String(r['Date']||'').trim(), note:String(r['Note']||'').trim() });
+      }
+    });
+  }
+
+  // ── 9. Activities ──
+  if (actSheet) {
+    const rows = sheetToObjects(wb, actSheet);
+    rows.forEach(r => {
+      const code = String(r['Project Code']||'').trim();
+      if (!code) return;
+      const proj = data.projects.find(x => x.code === code);
+      if (!proj) return;
+      if (!proj.activities) proj.activities = [];
+      const title = String(r['Activity']||'').trim();
+      if (!title) return;
+      const existing = proj.activities.find(a => a.title === title && a.date === String(r['Date']||'').trim());
+      if (!existing) {
+        proj.activities.push({ id:uid(), title, category:String(r['Category']||'').trim(), date:String(r['Date']||'').trim(), note:String(r['Note']||'').trim(), done:String(r['Done?']||'').toLowerCase().includes('done'), doneAt:String(r['Done Date']||'').trim() });
+      }
+    });
+  }
+
+  // ── 10. PICs ──
   if (picSheet) {
     const rows = sheetToObjects(wb, picSheet);
     rows.forEach(r => {
@@ -3003,13 +3056,11 @@ function importFromTrackerExport(wb, sheetNames) {
       const name = String(r['PIC Name']||'').trim();
       if (!name) return;
       const existing = proj.pics.find(p => p.name === name);
-      if (!existing) {
-        proj.pics.push({ name, role: String(r['Role']||'').trim() });
-      }
+      if (!existing) proj.pics.push({ name, role:String(r['Role']||'').trim() });
     });
   }
 
-  // ── 7. Standalone Tasks ──
+  // ── 11. Standalone Tasks ──
   if (taskSheet) {
     const rows = sheetToObjects(wb, taskSheet);
     if (!data.mtasks) data.mtasks = [];
@@ -3017,33 +3068,55 @@ function importFromTrackerExport(wb, sheetNames) {
       const title = String(r['Title']||'').trim();
       if (!title) return;
       const existing = data.mtasks.find(t => t.title === title);
-      if (existing) {
-        taskUpdated++;
-      } else {
-        data.mtasks.unshift({
-          id:          uid(),
-          title,
-          category:    String(r['Category']||'general').trim(),
-          priority:    String(r['Priority']||'medium').trim(),
-          status:      String(r['Status']||'todo').trim(),
-          deadline:    String(r['Due Date']||'').trim(),
-          reminder:    String(r['Reminder Date']||'').trim(),
-          description: String(r['Description']||'').trim()
-        });
-        taskAdded++;
+      if (!existing) {
+        data.mtasks.unshift({ id:uid(), title, category:String(r['Category']||'general').trim(), priority:String(r['Priority']||'medium').trim(), status:String(r['Status']||'todo').trim(), deadline:String(r['Due Date']||'').trim(), reminder:String(r['Reminder Date']||'').trim(), description:String(r['Description']||'').trim() });
+        counts.taskAdded++;
+      }
+    });
+  }
+
+  // ── 12. Pipeline ──
+  if (plSheet) {
+    const rows = sheetToObjects(wb, plSheet);
+    if (!data.pipeline) data.pipeline = [];
+    rows.forEach(r => {
+      const name = String(r['Name']||'').trim();
+      if (!name) return;
+      const existing = data.pipeline.find(x => x.name === name && x.stage === String(r['Stage']||'').trim());
+      if (!existing) {
+        const linked = String(r['Linked To']||'').trim();
+        const [linkedType, linkedId] = linked.includes(' · ') ? linked.split(' · ') : ['',''];
+        data.pipeline.push({ id:uid(), name, stage:String(r['Stage']||'').trim(), factory:String(r['Factory']||'').trim(), targetDate:String(r['Target Date']||'').trim(), pic:String(r['PIC']||'').trim(), revenue:String(r['Est. Revenue']||'').trim(), notes:String(r['Notes']||'').trim(), linkedType:linkedType||'', linkedId:linkedId||'', createdAt:String(r['Created']||'').trim() });
+        counts.plAdded++;
+      }
+    });
+  }
+
+  // ── 13. Bin ──
+  if (binSheet) {
+    const rows = sheetToObjects(wb, binSheet);
+    if (!data.bin) data.bin = [];
+    rows.forEach(r => {
+      const kind = String(r['Type']||'').trim();
+      const code = String(r['Code']||'').trim();
+      const name = String(r['Name']||'').trim();
+      if (!code && !name) return;
+      const existing = data.bin.find(b => (b.code||b.parentCode||'') === code && b.kind === kind);
+      if (!existing) {
+        data.bin.push({ id:uid(), kind, code, name, deletedAt:String(r['Deleted On']||'').trim() });
       }
     });
   }
 
   save(); renderAll();
   alert(
-    `✓ Import complete.\n\n` +
-    `Inquiries:  ${inqAdded} added, ${inqUpdated} updated\n` +
-    `Projects:   ${projAdded} added, ${projUpdated} updated\n` +
-    `Tasks:      ${taskAdded} added, ${taskUpdated} skipped (already exists)`
+    `✓ Import complete — merged with existing data.\n\n` +
+    `Inquiries:  ${counts.inqAdded} added, ${counts.inqUpdated} updated\n` +
+    `Projects:   ${counts.projAdded} added, ${counts.projUpdated} updated\n` +
+    `Standalone Tasks: ${counts.taskAdded} added\n` +
+    `Pipeline:   ${counts.plAdded} added`
   );
 }
-
 // ── Import from legacy NPD Follow-Up Excel (Overview sheet only) ──
 function importFromLegacyOverview(wb, sheetNames) {
   const sheetName = sheetNames.find(n => n.includes('Overview R')) || sheetNames.find(n => n.includes('Overview')) || sheetNames[0];
@@ -3245,6 +3318,15 @@ function exportToExcel() {
     ['9. Activities', data.projects.reduce((s,p)=>s+(p.activities||[]).length,0) + ' records', '', ''],
     ['10. PICs', data.projects.reduce((s,p)=>s+(p.pics||[]).length,0) + ' records', '', ''],
     ['11. Standalone Tasks', (data.mtasks||[]).length + ' records', '', ''],
+    ['12. Inq. Products', data.inquiries.reduce((s,i)=>s+(i.products||[]).length,0) + ' records', '', ''],
+    ['13. Pipeline', (data.pipeline||[]).length + ' records', '', ''],
+    ['14. Inq. Activity Log', data.inquiries.reduce((s,i)=>s+(i.activityLog||[]).length,0) + ' records', '', ''],
+    ['15. Proj. Changelog', data.projects.reduce((s,p)=>s+(p.activityLog||[]).length,0) + ' records', '', ''],
+    ['16. Bin (Deleted)', (data.bin||[]).length + ' records', '', ''],
+    ['13. Pipeline', (data.pipeline||[]).length + ' records', '', ''],
+    ['14. Inq. Activity Log', data.inquiries.reduce((s,i)=>s+(i.activityLog||[]).length,0) + ' records', '', ''],
+    ['15. Proj. Changelog', data.projects.reduce((s,p)=>s+(p.activityLog||[]).length,0) + ' records', '', ''],
+    ['16. Bin (Deleted)', (data.bin||[]).length + ' records', '', ''],
   ];
   const sumWs = XLSX.utils.aoa_to_sheet(sumData);
   // Style summary
@@ -3270,7 +3352,7 @@ function exportToExcel() {
   // ═══════════════════════════════════════════════
   // SHEET 1: INQUIRIES
   // ═══════════════════════════════════════════════
-  const inqHdrs = ['NPD Code','Customer','Product / Project Name','BD Person','BD Contact','Inquiry Date','Type','Status','Priority','Material','Remark','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total','% Complete'];
+  const inqHdrs = ['NPD Code','Customer','Product / Project Name','BD Person','BD Contact','Inquiry Date','Type','Status','Priority','Material','Factory','Remark','Remark Date','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Mold Date','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total','% Complete'];
   const inqData = [inqHdrs];
   data.inquiries.forEach(i => {
     const pip = i.pipeline||{};
@@ -3282,8 +3364,8 @@ function exportToExcel() {
     inqData.push([
       i.code||'', i.customer||'', i.name||'', i.bdPerson||'', i.bdNum||'',
       i.date||'', i.type||'', i.status||'', i.priority||'', i.material||'',
-      i.remark||'', i.revisionDate||'',
-      mi.status||'', mi.remark||'',
+      i.factory||'', i.remark||'', i.remarkDate||'', i.revisionDate||'',
+      mi.status||'', mi.remark||'', mi.date||'',
       co.status||'', co.remark||'', co.date||'',
       pr.status||'', pr.remark||'', pr.date||'',
       done, total, total>0 ? Math.round(done/total*100)+'%' : '—'
@@ -3322,6 +3404,18 @@ function exportToExcel() {
     }
   });
   XLSX.utils.book_append_sheet(wb, naWs, '⚡ Inq. Next Actions');
+
+  // ── Inquiry Products ──
+  const ipHdrs = ['NPD Code','Customer','Project Name','Product Name','Volume / Qty','Unit Cost','Est. Revenue'];
+  const ipData = [ipHdrs];
+  data.inquiries.forEach(i => {
+    (i.products||[]).forEach(pr => {
+      ipData.push([i.code||'', i.customer||'', i.name||'', pr.name||'', pr.volume||0, pr.cost||0, (pr.volume||0)*(pr.cost||0)]);
+    });
+  });
+  const ipWs = XLSX.utils.aoa_to_sheet(ipData);
+  applyStyles(ipWs, ipData, CLR.inqHdr, CLR.inqBand, [12,18,30,25,12,12,14]);
+  XLSX.utils.book_append_sheet(wb, ipWs, '📦 Inq. Products');
 
   // ═══════════════════════════════════════════════
   // SHEET 3: INQUIRY TASKS (Progress Tasks)
@@ -3482,8 +3576,62 @@ function exportToExcel() {
   applyStyles(stWs, stData, CLR.taskHdr, CLR.taskBand, [30,16,12,14,12,14,45]);
   XLSX.utils.book_append_sheet(wb, stWs, '📝 Tasks');
 
+  // ═══════════════════════════════════════════════
+  // SHEET 11: PIPELINE
+  // ═══════════════════════════════════════════════
+  const plHdrs = ['Name','Stage','Factory','Target Date','PIC','Est. Revenue','Notes','Linked To','Created'];
+  const plData = [plHdrs];
+  (data.pipeline||[]).forEach(pl => {
+    const linked = pl.linkedId ? `${pl.linkedType||''} · ${pl.linkedId}` : '';
+    plData.push([pl.name||'', pl.stage||'', pl.factory||'', pl.targetDate||'', pl.pic||'', pl.revenue||'', pl.notes||'', linked, pl.createdAt||'']);
+  });
+  const plWs = XLSX.utils.aoa_to_sheet(plData);
+  applyStyles(plWs, plData, { fgColor: { rgb: '6D28D9' } }, { fgColor: { rgb: 'F5F3FF' } }, [30,16,14,13,14,14,35,20,12]);
+  XLSX.utils.book_append_sheet(wb, plWs, '🔮 Pipeline');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 12: INQUIRY ACTIVITY LOG
+  // ═══════════════════════════════════════════════
+  const ialHdrs = ['NPD Code','Customer','Project Name','Action','By','Date','Time'];
+  const ialData = [ialHdrs];
+  data.inquiries.forEach(i => {
+    (i.activityLog||[]).forEach(e => {
+      ialData.push([i.code||'', i.customer||'', i.name||'', (e.text||'').replace(/<[^>]+>/g,''), e.by||'', e.date||'', e.time||'']);
+    });
+  });
+  const ialWs = XLSX.utils.aoa_to_sheet(ialData);
+  applyStyles(ialWs, ialData, CLR.inqHdr, CLR.inqBand, [12,18,30,45,14,12,8]);
+  XLSX.utils.book_append_sheet(wb, ialWs, '📜 Inq. Activity Log');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 13: PROJECT CHANGELOG
+  // ═══════════════════════════════════════════════
+  const pclHdrs = ['Project Code','Project Name','Action','By','Date','Time'];
+  const pclData = [pclHdrs];
+  data.projects.forEach(p => {
+    (p.activityLog||[]).forEach(e => {
+      pclData.push([p.code||'', p.name||'', (e.text||'').replace(/<[^>]+>/g,''), e.by||'', e.date||'', e.time||'']);
+    });
+  });
+  const pclWs = XLSX.utils.aoa_to_sheet(pclData);
+  applyStyles(pclWs, pclData, CLR.projHdr, CLR.projBand, [12,30,45,14,12,8]);
+  XLSX.utils.book_append_sheet(wb, pclWs, '📜 Proj. Changelog');
+
+  // ═══════════════════════════════════════════════
+  // SHEET 14: BIN (DELETED ITEMS)
+  // ═══════════════════════════════════════════════
+  const binHdrs = ['Type','Code','Name','Deleted On'];
+  const binData = [binHdrs];
+  (data.bin||[]).forEach(b => {
+    binData.push([b.kind||'', b.code||b.parentCode||'', b.name||b.parentName||'', b.deletedAt||'']);
+  });
+  const binWs = XLSX.utils.aoa_to_sheet(binData);
+  applyStyles(binWs, binData, { fgColor: { rgb: '64748B' } }, { fgColor: { rgb: 'F8FAFC' } }, [12,14,35,12]);
+  XLSX.utils.book_append_sheet(wb, binWs, '🗑️ Bin');
+
+  const totalSheets = 16;
   XLSX.writeFile(wb, `NPD_Tracker_Export_${today}.xlsx`);
-  alert(`✓ Exported ${data.inquiries.length} inquiries · ${data.projects.length} projects · ${(data.mtasks||[]).length} standalone tasks across 11 sheets.`);
+  alert(`✓ Exported ${data.inquiries.length} inquiries · ${data.projects.length} projects · ${(data.pipeline||[]).length} pipeline items · ${(data.mtasks||[]).length} tasks · ${(data.bin||[]).length} bin items — across ${totalSheets} sheets.`);
 }
 
 // ══════════════════════════════════════════════════════

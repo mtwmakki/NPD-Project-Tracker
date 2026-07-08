@@ -375,6 +375,29 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .activity-entry-title{font-size:12px;font-weight:600;color:var(--text);}
 .activity-entry-meta{font-size:10px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .activity-entry-note{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;}
+.sch-toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-wrap:wrap;}
+.sch-week-nav{display:flex;align-items:center;gap:6px;}
+.sch-week-label{font-size:13px;font-weight:700;color:var(--text);min-width:180px;text-align:center;}
+.sch-week-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;}
+.sch-week-btn:hover{background:var(--blbg);color:var(--blue);}
+.sch-body{padding:12px 16px;overflow-y:auto;flex:1;}
+.sch-day-group{margin-bottom:12px;}
+.sch-day-header{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:2px solid var(--border);margin-bottom:6px;}
+.sch-day-label{font-size:12px;font-weight:800;color:var(--text);letter-spacing:.3px;min-width:90px;}
+.sch-day-label.today{color:var(--blue);}
+.sch-day-add{background:none;border:1px dashed var(--border);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--text3);cursor:pointer;font-family:var(--f);}
+.sch-day-add:hover{border-color:var(--blue);color:var(--blue);}
+.sch-entry{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-bottom:4px;border:1px solid var(--border);background:var(--surface);position:relative;transition:background .1s;}
+.sch-entry:hover{background:var(--surface2);}
+.sch-entry.linked{border-left:3px solid var(--accent);background:var(--al);}
+.sch-entry-code{font-size:9.5px;font-weight:700;color:var(--blue);font-family:var(--fm);min-width:80px;flex-shrink:0;padding-top:1px;}
+.sch-entry-name{font-size:12px;font-weight:600;color:var(--text);flex:1;}
+.sch-entry-customer{font-size:10px;color:var(--text3);min-width:80px;flex-shrink:0;}
+.sch-entry-summary{font-size:11px;color:var(--text2);flex:2;}
+.sch-entry-dur{font-size:10px;font-weight:600;color:var(--text2);min-width:50px;text-align:right;flex-shrink:0;}
+.sch-entry-acts{display:flex;gap:3px;flex-shrink:0;}
+.sch-empty-day{font-size:11px;color:var(--text3);font-style:italic;padding:4px 0;}
+.sch-add-form{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;}
 .act-log-entry{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
 .act-log-entry:last-child{border-bottom:none;}
 .act-log-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}
@@ -790,17 +813,6 @@ html{scroll-behavior:smooth;}
 .pic-name{font-size:12px;font-weight:500;}
 .pic-role{font-size:10px;color:var(--text3);margin-top:1px;}
 .pic-acts{display:flex;gap:3px;flex-shrink:0;}
-/* Customer & Sales info tiles */
-.cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
-.cs-tile{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;transition:border-color .15s,background .15s,box-shadow .15s;}
-.cs-tile:focus-within{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--al);}
-.cs-tile-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.cs-tile-body{flex:1;min-width:0;}
-.cs-tile-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;}
-.cs-tile-input{border:none;background:none;outline:none;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--f);padding:0;cursor:text;}
-.cs-tile-input::placeholder{color:var(--text3);font-weight:400;}
-.cs-tile-input[type=date]{cursor:pointer;}
-.cs-tile-static{font-size:13px;font-weight:500;color:var(--text);}
 /* Rolling Action Plan */
 .rap-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
 .rap-item:last-child{border-bottom:none;}
@@ -1230,7 +1242,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V81</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V82</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1292,6 +1304,7 @@ html{scroll-behavior:smooth;}
       <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="nav-item-label">Dashboard</span></button>
       <button class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')"><i class="ti ti-git-branch"></i><span class="nav-item-label">NPD Pipeline</span></button>
       <button class="nav-item" id="nav-calendar" onclick="showPage('calendar')"><i class="ti ti-calendar"></i><span class="nav-item-label">Calendar</span></button>
+      <button class="nav-item" id="nav-scheduler" onclick="showPage('scheduler')"><i class="ti ti-clock-record"></i><span class="nav-item-label">Scheduler</span></button>
       <button class="nav-item" id="nav-changelog" onclick="showPage('changelog')"><i class="ti ti-history"></i><span class="nav-item-label">Changelog</span></button>
       <button class="nav-item" id="nav-users" style="display:none;" onclick="showPage('users')"><i class="ti ti-users"></i><span class="nav-item-label">Users</span></button>
     </div>
@@ -1557,6 +1570,26 @@ html{scroll-behavior:smooth;}
 </div>
 
 <!-- CALENDAR PAGE -->
+<div class="page" id="page-scheduler">
+  <div class="page-header" id="scheduler-header">
+    <div class="page-header-left">
+      <div class="page-title"><i class="ti ti-clock-record"></i> Scheduler</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="icon-btn" onclick="exportSchedulerExcel()" title="Export weekly report"><i class="ti ti-table-export"></i> Export</button>
+    </div>
+  </div>
+  <div class="sch-toolbar">
+    <div class="sch-week-nav">
+      <button class="sch-week-btn" onclick="schNavWeek(-1)"><i class="ti ti-chevron-left"></i></button>
+      <span class="sch-week-label" id="sch-week-label">—</span>
+      <button class="sch-week-btn" onclick="schNavWeek(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+    <button class="icon-btn" onclick="schGoToday()">Today</button>
+  </div>
+  <div class="sch-body" id="sch-body"></div>
+</div>
+
 <div class="page" id="page-calendar">
   <div class="cal-size-bar">
     <button class="cal-size-chip" id="calsz-xs" onclick="setCalSize('xs')">XS</button>
@@ -2465,7 +2498,8 @@ function updateStorageIndicator(byteLen) {
   `;
 }
 function loadLocal() {
-  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[]; data.mtasks = data.mtasks||[]; data.pipeline = data.pipeline||[]; data.pipelineStages = data.pipelineStages||JSON.parse(JSON.stringify(DEFAULT_PIPELINE_STAGES)); data.pipelineTargets = data.pipelineTargets||{}; } } catch(e) {}
+  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[];
+  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[]; data.pipeline = data.pipeline||[]; data.pipelineStages = data.pipelineStages||JSON.parse(JSON.stringify(DEFAULT_PIPELINE_STAGES)); data.pipelineTargets = data.pipelineTargets||{}; } } catch(e) {}
   migrateStatusNoteToSubStatus();
 }
 
@@ -2590,7 +2624,8 @@ function startFirebaseListener() {
         const localTs  = localStorage.getItem('npd_last_saved') || '';
         if (remoteTs >= localTs || !localTs) {
           data = parsed;
-          data.bin = data.bin||[]; data.mtasks = data.mtasks||[];
+          data.bin = data.bin||[];
+  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
           migrateStatusNoteToSubStatus();
           saveLocal();
           localStorage.setItem('npd_last_saved', remoteTs);
@@ -2746,7 +2781,8 @@ function forceRefreshFromCloud() {
       try {
         const parsed = JSON.parse(remote._data);
         data = parsed;
-        data.bin = data.bin||[]; data.mtasks = data.mtasks||[];
+        data.bin = data.bin||[];
+  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
         migrateStatusNoteToSubStatus();
         saveLocal();
         localStorage.setItem('npd_last_saved', remote._updatedAt || '');
@@ -2819,34 +2855,19 @@ function sheetToObjects(wb, sheetName) {
   return XLSX.utils.sheet_to_json(ws, {defval:''});
 }
 
-// ── Import from NPD Tracker's own export format ──
+// ── Import from NPD Tracker's own export format (7-sheet file) ──
 function importFromTrackerExport(wb, sheetNames) {
-  // Normalize sheet name lookup — strips emojis and trims
-  const norm = n => n.replace(/[^ -~]/g,'').trim();
-  const normNames = sheetNames.map(norm);
-  const find = (candidates) => {
-    for (const c of candidates) {
-      const idx = normNames.findIndex(n => n === c || n.includes(c));
-      if (idx >= 0) return sheetNames[idx];
-    }
-    return null;
-  };
+  const find = (candidates) => candidates.find(n => sheetNames.includes(n));
 
   const inqSheet      = find(['Inquiries']);
-  const naSheet       = find(['Inq. Next Actions','Inquiry Next Actions']);
-  const ipSheet       = find(['Inq. Products','Inquiry Products']);
-  const inqTaskSheet  = find(['Inq. Tasks','Inquiry Tasks']);
+  const inqTaskSheet  = find(['Inquiry Tasks']);
   const projSheet     = find(['Projects']);
   const projTaskSheet = find(['Project Actions']);
   const ssSheet       = find(['Sub-Statuses']);
-  const msSheet       = find(['Milestones']);
-  const actSheet      = find(['Activities']);
   const picSheet      = find(['PICs']);
   const taskSheet     = find(['Tasks']);
-  const plSheet       = find(['Pipeline']);
-  const binSheet      = find(['Bin']);
 
-  let counts = { inqAdded:0, inqUpdated:0, projAdded:0, projUpdated:0, taskAdded:0, plAdded:0 };
+  let inqAdded=0, inqUpdated=0, projAdded=0, projUpdated=0, taskAdded=0, taskUpdated=0;
 
   // ── 1. Inquiries ──
   if (inqSheet) {
@@ -2857,74 +2878,37 @@ function importFromTrackerExport(wb, sheetNames) {
       const inqData = {
         code,
         customer:    String(r['Customer']||'').trim(),
-        name:        String(r['Product / Project Name']||r['Product/Project Name']||'').trim(),
+        name:        String(r['Product/Project Name']||'').trim(),
         bdPerson:    String(r['BD Person']||'').trim(),
-        bdNum:       String(r['BD Contact']||r['BD #']||'').trim(),
+        bdNum:       String(r['BD #']||'').trim(),
         date:        String(r['Inquiry Date']||'').trim(),
         type:        String(r['Type']||'CUST').trim(),
         status:      String(r['Status']||'OPEN').trim(),
         priority:    String(r['Priority']||'2').trim(),
         material:    String(r['Material']||'').trim(),
-        factory:     String(r['Factory']||'').trim(),
         remark:      String(r['Remark']||'').trim(),
-        remarkDate:  String(r['Remark Date']||'').trim(),
+        nextAction:  String(r['Next Action']||'').trim(),
         revisionDate:String(r['Revision Date']||'').trim(),
         pipeline: {
-          moldInquiry:     { status: String(r['Mold Inquiry Status']||'').trim(), remark: String(r['Mold Inquiry Remark']||'').trim(), date: String(r['Mold Date']||'').trim() },
+          moldInquiry:     { status: String(r['Mold Inquiry Status']||'').trim(), remark: String(r['Mold Inquiry Remark']||'').trim() },
           costing:         { status: String(r['Costing Status']||'').trim(),      remark: String(r['Costing Remark']||'').trim(),      date: String(r['Costing Date']||'').trim() },
           priceSubmission: { status: String(r['Price Status']||'').trim(),        remark: String(r['Price Remark']||'').trim(),        date: String(r['Price Date']||'').trim() }
         }
       };
       const existing = data.inquiries.find(x => x.code === code);
       if (existing) {
-        const savedId=existing.id, savedTasks=existing.tasks||[], savedProducts=existing.products||[], savedNAs=existing.nextActions||[], savedLog=existing.activityLog||[], savedExpanded=existing.expanded;
+        const savedId = existing.id, savedTasks = existing.tasks||[], savedExpanded = existing.expanded;
         Object.assign(existing, inqData);
-        existing.id=savedId; existing.tasks=savedTasks; existing.products=savedProducts; existing.nextActions=savedNAs; existing.activityLog=savedLog; existing.expanded=savedExpanded;
-        counts.inqUpdated++;
+        existing.id = savedId; existing.tasks = savedTasks; existing.expanded = savedExpanded;
+        inqUpdated++;
       } else {
-        data.inquiries.unshift({id:uid(), tasks:[], products:[], nextActions:[], activityLog:[], expanded:false, ...inqData});
-        counts.inqAdded++;
+        data.inquiries.unshift({id:uid(), tasks:[], expanded:false, ...inqData});
+        inqAdded++;
       }
     });
   }
 
-  // ── 2. Inquiry Next Actions ──
-  if (naSheet) {
-    const rows = sheetToObjects(wb, naSheet);
-    rows.forEach(r => {
-      const code = String(r['NPD Code']||'').trim();
-      if (!code) return;
-      const inq = data.inquiries.find(x => x.code === code);
-      if (!inq) return;
-      if (!inq.nextActions) inq.nextActions = [];
-      const action = String(r['Action / Description']||r['Action']||'').trim();
-      if (!action) return;
-      const existing = inq.nextActions.find(na => (na.action||na.description||'') === action);
-      if (!existing) {
-        inq.nextActions.push({ id:uid(), pic:String(r['PIC']||'').trim(), action, deadline:String(r['Deadline']||'').trim(), status:String(r['Status']||'').trim(), dateAdded:String(r['Date Added']||'').trim() });
-      }
-    });
-  }
-
-  // ── 3. Inquiry Products ──
-  if (ipSheet) {
-    const rows = sheetToObjects(wb, ipSheet);
-    rows.forEach(r => {
-      const code = String(r['NPD Code']||'').trim();
-      if (!code) return;
-      const inq = data.inquiries.find(x => x.code === code);
-      if (!inq) return;
-      if (!inq.products) inq.products = [];
-      const name = String(r['Product Name']||'').trim();
-      if (!name) return;
-      const existing = inq.products.find(p => p.name === name);
-      if (!existing) {
-        inq.products.push({ id:uid(), name, volume:Number(r['Volume / Qty']||0), cost:Number(r['Unit Cost']||0) });
-      }
-    });
-  }
-
-  // ── 4. Inquiry Tasks ──
+  // ── 2. Inquiry Tasks ──
   if (inqTaskSheet) {
     const rows = sheetToObjects(wb, inqTaskSheet);
     rows.forEach(r => {
@@ -2932,47 +2916,68 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const inq = data.inquiries.find(x => x.code === code);
       if (!inq) return;
-      if (!inq.tasks) inq.tasks = [];
       const taskName = String(r['Task Name']||'').trim();
       if (!taskName) return;
       const existing = inq.tasks.find(t => t.name === taskName);
       if (!existing) {
-        inq.tasks.push({ id:uid(), name:taskName, deadline:String(r['Deadline']||'').trim(), pic:String(r['PIC']||'').trim(), status:String(r['Status']||'').trim(), done:String(r['Done']||'').toLowerCase().includes('done') });
+        inq.tasks.push({
+          id: uid(),
+          name:       taskName,
+          deadline:   String(r['Deadline']||'').trim(),
+          status:     String(r['Status']||'').trim(),
+          done:       String(r['Done']||'').trim().toLowerCase() === 'yes',
+          followupOf: String(r['Follow-up Of']||'').trim().toLowerCase() === 'yes' ? true : undefined
+        });
       }
     });
   }
 
-  // ── 5. Projects ──
+  // ── 3. Projects ──
   if (projSheet) {
     const rows = sheetToObjects(wb, projSheet);
     rows.forEach(r => {
       const code = String(r['Code']||'').trim();
       if (!code) return;
+
+      // Reverse-map classification label → key
+      const classMap = {'New Mold':'new-mold','Improvement':'improvement','Masterbatch':'masterbatch','New IML':'new-iml'};
+      const statusMap = {'Not Started':'not-started','In Progress':'in-progress','Completed':'completed','On Hold':'on-hold'};
+      const classRaw = String(r['Classification']||'').trim();
+      const statusRaw = String(r['Status']||'').trim();
+
       const projData = {
-        code, name:String(r['Project Name']||'').trim(),
-        customer:    String(r['Customer']||'').trim(),
-        salesPerson: String(r['Sales Person']||'').trim(),
-        date:        String(r['Date Started']||'').trim(),
-        deliveryDate:String(r['Target Delivery']||'').trim(),
-        classification: String(r['Classification']||'').trim(),
-        factory:     String(r['Factory']||'').trim(),
-        status:      String(r['Status']||'not-started').toLowerCase().replace(' ','-').trim(),
-        brief:       String(r['Brief']||'').trim(),
+        code,
+        name:           String(r['Project Name']||'').trim(),
+        date:           String(r['Date Started']||'').trim(),
+        classification: classMap[classRaw] || classRaw,
+        factory:        String(r['Factory']||'').trim(),
+        status:         statusMap[statusRaw] || statusRaw,
+        brief:          String(r['Brief']||'').trim(),
       };
+      // Legacy: if old export had Status Note, convert to sub-status on import
+      const legacyNote = String(r['Status Note']||'').trim();
+      const legacyDate = String(r['Status Date']||'').trim();
       const existing = data.projects.find(x => x.code === code);
       if (existing) {
-        const savedId=existing.id, savedTasks=existing.tasks||[], savedSS=existing.subStatuses||[], savedPics=existing.pics||[], savedMs=existing.milestones||[], savedActs=existing.activities||[], savedLog=existing.activityLog||[];
+        const savedId = existing.id, savedTasks = existing.tasks||[], savedExpanded = existing.expanded,
+              savedSS = existing.subStatuses||[], savedPics = existing.pics||[];
         Object.assign(existing, projData);
-        existing.id=savedId; existing.tasks=savedTasks; existing.subStatuses=savedSS; existing.pics=savedPics; existing.milestones=savedMs; existing.activities=savedActs; existing.activityLog=savedLog;
-        counts.projUpdated++;
+        existing.id = savedId; existing.tasks = savedTasks; existing.expanded = savedExpanded;
+        existing.subStatuses = savedSS; existing.pics = savedPics;
+        if (legacyNote && !savedSS.some(s => s.title === legacyNote)) {
+          existing.subStatuses.unshift({id:uid(), title:legacyNote, status:'ongoing', date:legacyDate||projData.date||todayStr(), createdAt:todayStr(), note:''});
+        }
+        projUpdated++;
       } else {
-        data.projects.unshift({id:uid(), tasks:[], subStatuses:[], pics:[], milestones:[], activities:[], activityLog:[], ...projData});
-        counts.projAdded++;
+        const newProj = {id:uid(), tasks:[], subStatuses:[], pics:[], milestones:[], expanded:false, ...projData};
+        if (legacyNote) newProj.subStatuses.push({id:uid(), title:legacyNote, status:'ongoing', date:legacyDate||projData.date||todayStr(), createdAt:todayStr(), note:''});
+        data.projects.unshift(newProj);
+        projAdded++;
       }
     });
   }
 
-  // ── 6. Project Actions ──
+  // ── 4. Project Actions ──
   if (projTaskSheet) {
     const rows = sheetToObjects(wb, projTaskSheet);
     rows.forEach(r => {
@@ -2980,17 +2985,24 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const proj = data.projects.find(x => x.code === code);
       if (!proj) return;
-      if (!proj.tasks) proj.tasks = [];
-      const name = String(r['Action / Task']||r['Action']||'').trim();
-      if (!name) return;
-      const existing = proj.tasks.find(t => t.name === name);
+      const taskName = String(r['Action/Task']||'').trim();
+      if (!taskName) return;
+      const existing = proj.tasks.find(t => t.name === taskName);
       if (!existing) {
-        proj.tasks.push({ id:uid(), name, deadline:String(r['Deadline']||'').trim(), pic:String(r['PIC']||'').trim(), status:String(r['Status']||'todo').trim(), done:String(r['Done']||'').toLowerCase().includes('done'), dependsOn:String(r['Depends On']||'').trim()||undefined });
+        proj.tasks.push({
+          id:         uid(),
+          name:       taskName,
+          deadline:   String(r['Deadline']||'').trim(),
+          pic:        String(r['PIC']||'').trim(),
+          status:     String(r['Status']||'').trim(),
+          done:       String(r['Done']||'').trim().toLowerCase() === 'yes',
+          followupOf: String(r['Follow-up Of']||'').trim().toLowerCase() === 'yes' ? true : undefined
+        });
       }
     });
   }
 
-  // ── 7. Sub-Statuses ──
+  // ── 5. Sub-Statuses ──
   if (ssSheet) {
     const rows = sheetToObjects(wb, ssSheet);
     rows.forEach(r => {
@@ -2998,53 +3010,24 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
       const proj = data.projects.find(x => x.code === code);
       if (!proj) return;
-      if (!proj.subStatuses) proj.subStatuses = [];
       const title = String(r['Sub-Status Title']||'').trim();
       if (!title) return;
+      if (!proj.subStatuses) proj.subStatuses = [];
       const existing = proj.subStatuses.find(ss => ss.title === title && ss.date === String(r['Date']||'').trim());
       if (!existing) {
-        proj.subStatuses.push({ id:uid(), title, status:String(r['Status']||'').trim(), date:String(r['Date']||'').trim(), createdAt:String(r['Date Logged']||'').trim(), note:String(r['Note']||'').trim() });
+        proj.subStatuses.push({
+          id:        uid(),
+          title,
+          status:    String(r['Status']||'').trim(),
+          date:      String(r['Date']||'').trim(),
+          createdAt: String(r['Date Logged']||'').trim(),
+          note:      String(r['Note']||'').trim()
+        });
       }
     });
   }
 
-  // ── 8. Milestones ──
-  if (msSheet) {
-    const rows = sheetToObjects(wb, msSheet);
-    rows.forEach(r => {
-      const code = String(r['Project Code']||'').trim();
-      if (!code) return;
-      const proj = data.projects.find(x => x.code === code);
-      if (!proj) return;
-      if (!proj.milestones) proj.milestones = [];
-      const title = String(r['Milestone']||'').trim();
-      if (!title) return;
-      const existing = proj.milestones.find(m => m.title === title);
-      if (!existing) {
-        proj.milestones.push({ id:uid(), title, category:String(r['Category']||'').trim(), status:String(r['Status']||'upcoming').trim(), date:String(r['Date']||'').trim(), note:String(r['Note']||'').trim() });
-      }
-    });
-  }
-
-  // ── 9. Activities ──
-  if (actSheet) {
-    const rows = sheetToObjects(wb, actSheet);
-    rows.forEach(r => {
-      const code = String(r['Project Code']||'').trim();
-      if (!code) return;
-      const proj = data.projects.find(x => x.code === code);
-      if (!proj) return;
-      if (!proj.activities) proj.activities = [];
-      const title = String(r['Activity']||'').trim();
-      if (!title) return;
-      const existing = proj.activities.find(a => a.title === title && a.date === String(r['Date']||'').trim());
-      if (!existing) {
-        proj.activities.push({ id:uid(), title, category:String(r['Category']||'').trim(), date:String(r['Date']||'').trim(), note:String(r['Note']||'').trim(), done:String(r['Done?']||'').toLowerCase().includes('done'), doneAt:String(r['Done Date']||'').trim() });
-      }
-    });
-  }
-
-  // ── 10. PICs ──
+  // ── 6. PICs ──
   if (picSheet) {
     const rows = sheetToObjects(wb, picSheet);
     rows.forEach(r => {
@@ -3056,11 +3039,13 @@ function importFromTrackerExport(wb, sheetNames) {
       const name = String(r['PIC Name']||'').trim();
       if (!name) return;
       const existing = proj.pics.find(p => p.name === name);
-      if (!existing) proj.pics.push({ name, role:String(r['Role']||'').trim() });
+      if (!existing) {
+        proj.pics.push({ name, role: String(r['Role']||'').trim() });
+      }
     });
   }
 
-  // ── 11. Standalone Tasks ──
+  // ── 7. Standalone Tasks ──
   if (taskSheet) {
     const rows = sheetToObjects(wb, taskSheet);
     if (!data.mtasks) data.mtasks = [];
@@ -3068,55 +3053,33 @@ function importFromTrackerExport(wb, sheetNames) {
       const title = String(r['Title']||'').trim();
       if (!title) return;
       const existing = data.mtasks.find(t => t.title === title);
-      if (!existing) {
-        data.mtasks.unshift({ id:uid(), title, category:String(r['Category']||'general').trim(), priority:String(r['Priority']||'medium').trim(), status:String(r['Status']||'todo').trim(), deadline:String(r['Due Date']||'').trim(), reminder:String(r['Reminder Date']||'').trim(), description:String(r['Description']||'').trim() });
-        counts.taskAdded++;
-      }
-    });
-  }
-
-  // ── 12. Pipeline ──
-  if (plSheet) {
-    const rows = sheetToObjects(wb, plSheet);
-    if (!data.pipeline) data.pipeline = [];
-    rows.forEach(r => {
-      const name = String(r['Name']||'').trim();
-      if (!name) return;
-      const existing = data.pipeline.find(x => x.name === name && x.stage === String(r['Stage']||'').trim());
-      if (!existing) {
-        const linked = String(r['Linked To']||'').trim();
-        const [linkedType, linkedId] = linked.includes(' · ') ? linked.split(' · ') : ['',''];
-        data.pipeline.push({ id:uid(), name, stage:String(r['Stage']||'').trim(), factory:String(r['Factory']||'').trim(), targetDate:String(r['Target Date']||'').trim(), pic:String(r['PIC']||'').trim(), revenue:String(r['Est. Revenue']||'').trim(), notes:String(r['Notes']||'').trim(), linkedType:linkedType||'', linkedId:linkedId||'', createdAt:String(r['Created']||'').trim() });
-        counts.plAdded++;
-      }
-    });
-  }
-
-  // ── 13. Bin ──
-  if (binSheet) {
-    const rows = sheetToObjects(wb, binSheet);
-    if (!data.bin) data.bin = [];
-    rows.forEach(r => {
-      const kind = String(r['Type']||'').trim();
-      const code = String(r['Code']||'').trim();
-      const name = String(r['Name']||'').trim();
-      if (!code && !name) return;
-      const existing = data.bin.find(b => (b.code||b.parentCode||'') === code && b.kind === kind);
-      if (!existing) {
-        data.bin.push({ id:uid(), kind, code, name, deletedAt:String(r['Deleted On']||'').trim() });
+      if (existing) {
+        taskUpdated++;
+      } else {
+        data.mtasks.unshift({
+          id:          uid(),
+          title,
+          category:    String(r['Category']||'general').trim(),
+          priority:    String(r['Priority']||'medium').trim(),
+          status:      String(r['Status']||'todo').trim(),
+          deadline:    String(r['Due Date']||'').trim(),
+          reminder:    String(r['Reminder Date']||'').trim(),
+          description: String(r['Description']||'').trim()
+        });
+        taskAdded++;
       }
     });
   }
 
   save(); renderAll();
   alert(
-    `✓ Import complete — merged with existing data.\n\n` +
-    `Inquiries:  ${counts.inqAdded} added, ${counts.inqUpdated} updated\n` +
-    `Projects:   ${counts.projAdded} added, ${counts.projUpdated} updated\n` +
-    `Standalone Tasks: ${counts.taskAdded} added\n` +
-    `Pipeline:   ${counts.plAdded} added`
+    `✓ Import complete.\n\n` +
+    `Inquiries:  ${inqAdded} added, ${inqUpdated} updated\n` +
+    `Projects:   ${projAdded} added, ${projUpdated} updated\n` +
+    `Tasks:      ${taskAdded} added, ${taskUpdated} skipped (already exists)`
   );
 }
+
 // ── Import from legacy NPD Follow-Up Excel (Overview sheet only) ──
 function importFromLegacyOverview(wb, sheetNames) {
   const sheetName = sheetNames.find(n => n.includes('Overview R')) || sheetNames.find(n => n.includes('Overview')) || sheetNames[0];
@@ -3215,423 +3178,105 @@ function isBD(row, idx) {
 // ══════════════════════════════════════════════════════
 function exportToExcel() {
   const wb = XLSX.utils.book_new();
-  const today = todayStr();
 
-  // ── Color palette ──
-  const CLR = {
-    // Inquiry theme - teal
-    inqHdr:   { fgColor: { rgb: '0F4C75' } },
-    inqBand:  { fgColor: { rgb: 'E8F4FD' } },
-    // Project theme - indigo
-    projHdr:  { fgColor: { rgb: '1B3A6B' } },
-    projBand: { fgColor: { rgb: 'EEF2FA' } },
-    // Task theme - green
-    taskHdr:  { fgColor: { rgb: '14532D' } },
-    taskBand: { fgColor: { rgb: 'F0FDF4' } },
-    // Summary theme - charcoal
-    sumHdr:   { fgColor: { rgb: '1E293B' } },
-    sumBand:  { fgColor: { rgb: 'F8FAFC' } },
-    white:    { fgColor: { rgb: 'FFFFFF' } },
-    hdrText:  { fgColor: { rgb: 'FFFFFF' } },
-    darkText: { fgColor: { rgb: '1E293B' } },
-    mutedText:{ fgColor: { rgb: '64748B' } },
-    green:    { fgColor: { rgb: '16A34A' } },
-    red:      { fgColor: { rgb: 'DC2626' } },
-    amber:    { fgColor: { rgb: 'D97706' } },
-    blue:     { fgColor: { rgb: '2563EB' } },
-  };
-
-  const font = (bold, color, sz) => ({ bold: !!bold, color: color||CLR.darkText, sz: sz||10, name: 'Calibri' });
-  const border = () => ({
-    top:    { style: 'thin', color: { rgb: 'CBD5E1' } },
-    bottom: { style: 'thin', color: { rgb: 'CBD5E1' } },
-    left:   { style: 'thin', color: { rgb: 'CBD5E1' } },
-    right:  { style: 'thin', color: { rgb: 'CBD5E1' } },
-  });
-  const hdrStyle = (bg) => ({ font: font(true, CLR.hdrText, 10), fill: bg, alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border: border() });
-  const cellStyle = (bg, bold, color, align) => ({ font: font(bold, color||CLR.darkText), fill: bg||CLR.white, alignment: { horizontal: align||'left', vertical: 'center', wrapText: true }, border: border() });
-
-  function applyStyles(ws, data, hdrBg, bandBg, colWidths) {
-    const range = XLSX.utils.decode_range(ws['!ref']||'A1');
-    for (let R = range.s.r; R <= range.e.r; R++) {
-      for (let C = range.s.c; C <= range.e.c; C++) {
-        const addr = XLSX.utils.encode_cell({ r: R, c: C });
-        if (!ws[addr]) ws[addr] = { v: '', t: 's' };
-        const isHdr = R === 0;
-        const isBand = !isHdr && R % 2 === 0;
-        ws[addr].s = isHdr
-          ? hdrStyle(hdrBg)
-          : cellStyle(isBand ? bandBg : CLR.white);
-      }
-    }
-    // Row heights
-    ws['!rows'] = [];
-    for (let R = 0; R <= range.e.r; R++) ws['!rows'][R] = { hpt: R === 0 ? 22 : 16 };
-    // Col widths
-    if (colWidths) ws['!cols'] = colWidths.map(w => ({ wch: w }));
-    // Freeze header row
-    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
-    return ws;
-  }
-
-  function addTitleBlock(ws, title, subtitle, cols) {
-    // Already handled by header row — just set sheet tab name
-  }
-
-  // ═══════════════════════════════════════════════
-  // SHEET 0: SUMMARY DASHBOARD
-  // ═══════════════════════════════════════════════
-  const sumData = [
-    ['NPD TRACKER — EXPORT SUMMARY', '', '', ''],
-    ['Generated', today, '', ''],
-    ['', '', '', ''],
-    ['METRIC', 'COUNT', 'DETAIL', ''],
-    ['Total Inquiries', data.inquiries.length, '', ''],
-    ['  Active Inquiries', data.inquiries.filter(i=>i.status==='active').length, '', ''],
-    ['  Converted to Project', data.inquiries.filter(i=>i.status==='converted').length, '', ''],
-    ['  Closed / Lost', data.inquiries.filter(i=>i.status==='closed'||i.status==='lost').length, '', ''],
-    ['', '', '', ''],
-    ['Total Projects', data.projects.length, '', ''],
-    ['  In Progress', data.projects.filter(p=>p.status==='in-progress').length, '', ''],
-    ['  Completed', data.projects.filter(p=>p.status==='completed').length, '', ''],
-    ['  On Hold', data.projects.filter(p=>p.status==='on-hold').length, '', ''],
-    ['  Not Started', data.projects.filter(p=>p.status==='not-started').length, '', ''],
-    ['', '', '', ''],
-    ['Total Project Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).length,0), '', ''],
-    ['  Completed Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).filter(t=>t.done).length,0), '', ''],
-    ['  Pending Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).filter(t=>!t.done).length,0), '', ''],
-    ['', '', '', ''],
-    ['Total Sub-Statuses', data.projects.reduce((s,p)=>s+(p.subStatuses||[]).length,0), '', ''],
-    ['Total Activities', data.projects.reduce((s,p)=>s+(p.activities||[]).length,0), '', ''],
-    ['Total Milestones', data.projects.reduce((s,p)=>s+(p.milestones||[]).length,0), '', ''],
-    ['Total Standalone Tasks', (data.mtasks||[]).length, '', ''],
-    ['', '', '', ''],
-    ['SHEETS INCLUDED', '', '', ''],
-    ['1. Summary', 'This sheet', '', ''],
-    ['2. Inquiries', data.inquiries.length + ' records', '', ''],
-    ['3. Inquiry Next Actions', data.inquiries.reduce((s,i)=>s+(i.nextActions||[]).length,0) + ' records', '', ''],
-    ['4. Inquiry Tasks', data.inquiries.reduce((s,i)=>s+(i.tasks||[]).length,0) + ' records', '', ''],
-    ['5. Projects', data.projects.length + ' records', '', ''],
-    ['6. Project Actions', data.projects.reduce((s,p)=>s+(p.tasks||[]).length,0) + ' records', '', ''],
-    ['7. Sub-Statuses', data.projects.reduce((s,p)=>s+(p.subStatuses||[]).length,0) + ' records', '', ''],
-    ['8. Milestones', data.projects.reduce((s,p)=>s+(p.milestones||[]).length,0) + ' records', '', ''],
-    ['9. Activities', data.projects.reduce((s,p)=>s+(p.activities||[]).length,0) + ' records', '', ''],
-    ['10. PICs', data.projects.reduce((s,p)=>s+(p.pics||[]).length,0) + ' records', '', ''],
-    ['11. Standalone Tasks', (data.mtasks||[]).length + ' records', '', ''],
-    ['12. Inq. Products', data.inquiries.reduce((s,i)=>s+(i.products||[]).length,0) + ' records', '', ''],
-    ['13. Pipeline', (data.pipeline||[]).length + ' records', '', ''],
-    ['14. Inq. Activity Log', data.inquiries.reduce((s,i)=>s+(i.activityLog||[]).length,0) + ' records', '', ''],
-    ['15. Proj. Changelog', data.projects.reduce((s,p)=>s+(p.activityLog||[]).length,0) + ' records', '', ''],
-    ['16. Bin (Deleted)', (data.bin||[]).length + ' records', '', ''],
-    ['13. Pipeline', (data.pipeline||[]).length + ' records', '', ''],
-    ['14. Inq. Activity Log', data.inquiries.reduce((s,i)=>s+(i.activityLog||[]).length,0) + ' records', '', ''],
-    ['15. Proj. Changelog', data.projects.reduce((s,p)=>s+(p.activityLog||[]).length,0) + ' records', '', ''],
-    ['16. Bin (Deleted)', (data.bin||[]).length + ' records', '', ''],
-  ];
-  const sumWs = XLSX.utils.aoa_to_sheet(sumData);
-  // Style summary
-  const sumRange = XLSX.utils.decode_range(sumWs['!ref']);
-  for (let R = sumRange.s.r; R <= sumRange.e.r; R++) {
-    for (let C = sumRange.s.c; C <= sumRange.e.c; C++) {
-      const addr = XLSX.utils.encode_cell({ r: R, c: C });
-      if (!sumWs[addr]) sumWs[addr] = { v: '', t: 's' };
-      const v = sumWs[addr].v;
-      if (R === 0) sumWs[addr].s = { font: font(true, CLR.hdrText, 14), fill: CLR.sumHdr, alignment: { horizontal: 'left', vertical: 'center' } };
-      else if (R === 3) sumWs[addr].s = hdrStyle(CLR.sumHdr);
-      else if (v === '') sumWs[addr].s = { font: font(false, CLR.darkText), fill: CLR.white };
-      else if (String(v).startsWith('  ')) sumWs[addr].s = { font: font(false, CLR.mutedText), fill: R%2===0?CLR.sumBand:CLR.white, alignment: { indent: 1 }, border: border() };
-      else if (C === 0 && R > 3) sumWs[addr].s = { font: font(true, CLR.darkText), fill: R%2===0?CLR.sumBand:CLR.white, border: border() };
-      else sumWs[addr].s = { font: font(false, C===1?CLR.blue:CLR.darkText), fill: R%2===0?CLR.sumBand:CLR.white, border: border() };
-    }
-  }
-  sumWs['!cols'] = [{wch:30},{wch:18},{wch:30},{wch:10}];
-  sumWs['!rows'] = sumData.map((_,i)=>({hpt: i===0?28:i===3?18:15}));
-  sumWs['!merges'] = [{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:1,c:0},e:{r:1,c:0}}];
-  XLSX.utils.book_append_sheet(wb, sumWs, '📊 Summary');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 1: INQUIRIES
-  // ═══════════════════════════════════════════════
-  const inqHdrs = ['NPD Code','Customer','Product / Project Name','BD Person','BD Contact','Inquiry Date','Type','Status','Priority','Material','Factory','Remark','Remark Date','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Mold Date','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total','% Complete'];
-  const inqData = [inqHdrs];
+  // ── Sheet 1: Inquiries ──
+  const inqRows = [['NPD Code','Customer','Product/Project Name','BD Person','BD #','Inquiry Date','Type','Status','Priority','Material','Remark','Next Action','Revision Date','Mold Inquiry Status','Mold Inquiry Remark','Costing Status','Costing Remark','Costing Date','Price Status','Price Remark','Price Date','Tasks Done','Tasks Total']];
   data.inquiries.forEach(i => {
-    const pip = i.pipeline||{};
-    const mi = pip.moldInquiry||{};
-    const co = pip.costing||{};
-    const pr = pip.priceSubmission||{};
-    const done = (i.tasks||[]).filter(t=>t.done).length;
-    const total = (i.tasks||[]).length;
-    inqData.push([
+    const p = i.pipeline||{};
+    const mi = p.moldInquiry||{};
+    const co = p.costing||{};
+    const pr = p.priceSubmission||{};
+    inqRows.push([
       i.code||'', i.customer||'', i.name||'', i.bdPerson||'', i.bdNum||'',
       i.date||'', i.type||'', i.status||'', i.priority||'', i.material||'',
-      i.factory||'', i.remark||'', i.remarkDate||'', i.revisionDate||'',
-      mi.status||'', mi.remark||'', mi.date||'',
+      i.remark||'', i.nextAction||'', i.revisionDate||'',
+      mi.status||'', mi.remark||'',
       co.status||'', co.remark||'', co.date||'',
       pr.status||'', pr.remark||'', pr.date||'',
-      done, total, total>0 ? Math.round(done/total*100)+'%' : '—'
+      (i.tasks||[]).filter(t=>t.done).length, (i.tasks||[]).length
     ]);
   });
-  const inqWs = XLSX.utils.aoa_to_sheet(inqData);
-  applyStyles(inqWs, inqData, CLR.inqHdr, CLR.inqBand, [12,18,30,14,14,12,14,12,10,14,30,12,18,30,14,30,12,14,30,12,10,10,10]);
-  XLSX.utils.book_append_sheet(wb, inqWs, '📋 Inquiries');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(inqRows), 'Inquiries');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 2: INQUIRY NEXT ACTIONS
-  // ═══════════════════════════════════════════════
-  const naHdrs = ['NPD Code','Customer','Project Name','PIC','Action / Description','Deadline','Status','Overdue?','Date Added'];
-  const naData = [naHdrs];
-  data.inquiries.forEach(i => {
-    const nas = i.nextActions || (i.nextAction ? [{id:'l',pic:'Adam',action:i.nextAction,deadline:'',dateAdded:''}] : []);
-    nas.forEach(na => {
-      const isOverdue = na.deadline && na.deadline < today && na.status !== 'done';
-      naData.push([
-        i.code||'', i.customer||'', i.name||'',
-        na.pic||'', na.action||na.description||'',
-        na.deadline||'', na.status||'',
-        isOverdue ? 'YES' : '',
-        na.dateAdded||''
-      ]);
-    });
-  });
-  const naWs = XLSX.utils.aoa_to_sheet(naData);
-  applyStyles(naWs, naData, CLR.inqHdr, CLR.inqBand, [12,18,30,12,40,12,12,10,12]);
-  // Color overdue cells red
-  naData.forEach((row, R) => {
-    if (R === 0) return;
-    const addr = XLSX.utils.encode_cell({r:R, c:7});
-    if (naWs[addr] && naWs[addr].v === 'YES') {
-      naWs[addr].s = { ...naWs[addr].s, font: font(true, CLR.red), fill: { fgColor: { rgb: 'FEF2F2' } } };
-    }
-  });
-  XLSX.utils.book_append_sheet(wb, naWs, '⚡ Inq. Next Actions');
-
-  // ── Inquiry Products ──
-  const ipHdrs = ['NPD Code','Customer','Project Name','Product Name','Volume / Qty','Unit Cost','Est. Revenue'];
-  const ipData = [ipHdrs];
-  data.inquiries.forEach(i => {
-    (i.products||[]).forEach(pr => {
-      ipData.push([i.code||'', i.customer||'', i.name||'', pr.name||'', pr.volume||0, pr.cost||0, (pr.volume||0)*(pr.cost||0)]);
-    });
-  });
-  const ipWs = XLSX.utils.aoa_to_sheet(ipData);
-  applyStyles(ipWs, ipData, CLR.inqHdr, CLR.inqBand, [12,18,30,25,12,12,14]);
-  XLSX.utils.book_append_sheet(wb, ipWs, '📦 Inq. Products');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 3: INQUIRY TASKS (Progress Tasks)
-  // ═══════════════════════════════════════════════
-  const itHdrs = ['NPD Code','Customer','Project Name','Task Name','Deadline','PIC','Status','Done','Overdue?'];
-  const itData = [itHdrs];
+  // ── Sheet 2: Inquiry Tasks ──
+  const inqTaskRows = [['NPD Code','Customer','Product/Project Name','Task Name','Deadline','Status','Done','Follow-up Of']];
   data.inquiries.forEach(i => {
     (i.tasks||[]).forEach(t => {
-      const isOverdue = t.deadline && t.deadline < today && !t.done;
-      itData.push([
+      inqTaskRows.push([
         i.code||'', i.customer||'', i.name||'',
-        t.name||'', t.deadline||'', t.pic||'',
-        t.status||'', t.done?'✓ Done':'Pending',
-        isOverdue ? 'YES' : ''
+        t.name||'', t.deadline||'',
+        t.status||'', t.done?'Yes':'No',
+        t.followupOf ? 'Yes' : ''
       ]);
     });
   });
-  const itWs = XLSX.utils.aoa_to_sheet(itData);
-  applyStyles(itWs, itData, CLR.inqHdr, CLR.inqBand, [12,18,30,30,12,12,12,10,10]);
-  XLSX.utils.book_append_sheet(wb, itWs, '✅ Inq. Tasks');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(inqTaskRows), 'Inquiry Tasks');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 4: PROJECTS
-  // ═══════════════════════════════════════════════
-  const pHdrs = ['Code','Project Name','Customer','Sales Person','Date Started','Target Delivery','Classification','Factory','Status','Timeline','Brief','Actions Done','Actions Total','% Complete','PICs','Latest Sub-Status','Latest Sub-Status Date'];
-  const pData = [pHdrs];
-  const todayISO = new Date().toISOString().slice(0,10);
+  // ── Sheet 3: Projects ──
+  const projRows = [['Code','Project Name','Date Started','Classification','Factory','Status','Brief','Tasks Done','Tasks Total','PICs','Latest Sub-Status']];
   data.projects.forEach(p => {
-    const pics = (p.pics||[]).map(x=>`${x.name}${x.role?' ('+x.role+')':''}`).join(', ');
-    const subs = [...(p.subStatuses||[])].sort((a,b)=>(b.date||'')>(a.date||'')?1:-1);
-    const latestSS = subs[0]||null;
-    const done = (p.tasks||[]).filter(t=>t.done).length;
-    const total = (p.tasks||[]).length;
-    let timeline = '—';
-    if (p.deliveryDate) {
-      if (p.status==='completed') timeline = 'Completed';
-      else if (p.deliveryDate < todayISO) {
-        const d = Math.round((new Date(todayISO)-new Date(p.deliveryDate))/86400000);
-        timeline = d + ' days overdue';
-      } else {
-        const d = Math.round((new Date(p.deliveryDate)-new Date(todayISO))/86400000);
-        timeline = d + ' days left';
-      }
-    }
-    pData.push([
-      p.code||'', p.name||'', p.customer||'', p.salesPerson||'',
-      p.date||'', p.deliveryDate||'',
-      classLabel(p.classification)||p.classification||'',
+    const pics = (p.pics||[]).map(x => `${x.name}${x.role?' ('+x.role+')':''}`).join(', ');
+    const subs = (p.subStatuses||[]);
+    const latestSS = subs.length ? [...subs].sort((a,b) => (b.date||'') > (a.date||'') ? 1 : -1)[0] : null;
+    projRows.push([
+      p.code||'', p.name||'', p.date||'', classLabel(p.classification)||p.classification||'',
       p.factory||'', statusLabel(p.status)||p.status||'',
-      timeline, p.brief||'',
-      done, total, total>0 ? Math.round(done/total*100)+'%' : '—',
+      p.brief||'',
+      (p.tasks||[]).filter(t=>t.done).length, (p.tasks||[]).length,
       pics,
-      latestSS ? `${latestSS.title} [${latestSS.status}]` : '',
-      latestSS ? latestSS.date||'' : ''
+      latestSS ? `${latestSS.title} (${latestSS.status}${latestSS.date?' · '+latestSS.date:''})` : ''
     ]);
   });
-  const pWs = XLSX.utils.aoa_to_sheet(pData);
-  applyStyles(pWs, pData, CLR.projHdr, CLR.projBand, [12,30,20,16,13,14,16,14,13,16,35,12,12,10,25,35,13]);
-  // Color timeline cells
-  pData.forEach((row, R) => {
-    if (R === 0) return;
-    const addr = XLSX.utils.encode_cell({r:R, c:9});
-    if (!pWs[addr]) return;
-    const v = pWs[addr].v||'';
-    if (v.includes('overdue')) pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.red) };
-    else if (v.includes('days left') && parseInt(v) < 14) pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.amber) };
-    else if (v === 'Completed') pWs[addr].s = { ...pWs[addr].s, font: font(true, CLR.green) };
-  });
-  XLSX.utils.book_append_sheet(wb, pWs, '📁 Projects');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(projRows), 'Projects');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 5: PROJECT ACTIONS
-  // ═══════════════════════════════════════════════
-  const paHdrs = ['Project Code','Project Name','Factory','Action / Task','Deadline','PIC','Status','Done','Overdue?','Depends On'];
-  const paData = [paHdrs];
+  // ── Sheet 4: Project Actions ──
+  const projTaskRows = [['Project Code','Project Name','Factory','Action/Task','Deadline','PIC','Status','Done','Follow-up Of']];
   data.projects.forEach(p => {
     (p.tasks||[]).forEach(t => {
-      const isOverdue = t.deadline && t.deadline < today && !t.done;
-      const depTask = t.dependsOn ? (p.tasks||[]).find(x=>(x.id||x.name)===t.dependsOn) : null;
-      paData.push([
+      projTaskRows.push([
         p.code||'', p.name||'', p.factory||'',
-        t.name||'', t.deadline||'', t.pic||'',
-        t.status||'', t.done?'✓ Done':'Pending',
-        isOverdue ? 'YES' : '',
-        depTask ? depTask.name : ''
+        t.name||'', t.deadline||'', t.pic||'Adam',
+        t.status||'', t.done?'Yes':'No',
+        t.followupOf ? 'Yes' : ''
       ]);
     });
   });
-  const paWs = XLSX.utils.aoa_to_sheet(paData);
-  applyStyles(paWs, paData, CLR.projHdr, CLR.projBand, [12,30,14,35,12,12,12,10,10,25]);
-  XLSX.utils.book_append_sheet(wb, paWs, '🔧 Project Actions');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(projTaskRows), 'Project Actions');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 6: SUB-STATUSES
-  // ═══════════════════════════════════════════════
-  const ssHdrs = ['Project Code','Project Name','Factory','Sub-Status Title','Status','Date','Note','Date Logged'];
-  const ssData = [ssHdrs];
+  // ── Sheet 5: Sub-Statuses ──
+  const ssRows = [['Project Code','Project Name','Sub-Status Title','Status','Date','Date Logged','Note']];
   data.projects.forEach(p => {
-    [...(p.subStatuses||[])].sort((a,b)=>(b.date||'')>(a.date||'')?1:-1).forEach(ss => {
-      ssData.push([p.code||'', p.name||'', p.factory||'', ss.title||'', ss.status||'', ss.date||'', ss.note||'', ss.createdAt||'']);
+    (p.subStatuses||[]).forEach(ss => {
+      ssRows.push([
+        p.code||'', p.name||'',
+        ss.title||'', ss.status||'', ss.date||'', ss.createdAt||'', ss.note||''
+      ]);
     });
   });
-  const ssWs = XLSX.utils.aoa_to_sheet(ssData);
-  applyStyles(ssWs, ssData, CLR.projHdr, CLR.projBand, [12,30,14,30,14,12,40,12]);
-  XLSX.utils.book_append_sheet(wb, ssWs, '🔖 Sub-Statuses');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ssRows), 'Sub-Statuses');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 7: MILESTONES
-  // ═══════════════════════════════════════════════
-  const msHdrs = ['Project Code','Project Name','Factory','Milestone','Category','Status','Date','Note'];
-  const msData = [msHdrs];
-  data.projects.forEach(p => {
-    (p.milestones||[]).forEach(m => {
-      msData.push([p.code||'', p.name||'', p.factory||'', m.title||'', m.category||'', m.status||'', m.date||'', m.note||'']);
-    });
-  });
-  const msWs = XLSX.utils.aoa_to_sheet(msData);
-  applyStyles(msWs, msData, CLR.projHdr, CLR.projBand, [12,30,14,30,14,14,12,40]);
-  XLSX.utils.book_append_sheet(wb, msWs, '🚩 Milestones');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 8: ACTIVITIES
-  // ═══════════════════════════════════════════════
-  const acHdrs = ['Project Code','Project Name','Factory','Activity','Category','Date','Note','Done?','Done Date'];
-  const acData = [acHdrs];
-  data.projects.forEach(p => {
-    (p.activities||[]).forEach(a => {
-      acData.push([p.code||'', p.name||'', p.factory||'', a.title||'', a.category||'', a.date||'', a.note||'', a.done?'✓ Done':'Active', a.doneAt||'']);
-    });
-  });
-  const acWs = XLSX.utils.aoa_to_sheet(acData);
-  applyStyles(acWs, acData, CLR.projHdr, CLR.projBand, [12,30,14,35,14,12,40,10,12]);
-  XLSX.utils.book_append_sheet(wb, acWs, '📌 Activities');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 9: PICs
-  // ═══════════════════════════════════════════════
-  const picHdrs = ['Project Code','Project Name','Factory','PIC Name','Role'];
-  const picData = [picHdrs];
+  // ── Sheet 6: PICs ──
+  const picRows = [['Project Code','Project Name','PIC Name','Role']];
   data.projects.forEach(p => {
     (p.pics||[]).forEach(pic => {
-      picData.push([p.code||'', p.name||'', p.factory||'', pic.name||'', pic.role||'']);
+      picRows.push([p.code||'', p.name||'', pic.name||'', pic.role||'']);
     });
   });
-  const picWs = XLSX.utils.aoa_to_sheet(picData);
-  applyStyles(picWs, picData, CLR.projHdr, CLR.projBand, [12,30,14,20,20]);
-  XLSX.utils.book_append_sheet(wb, picWs, '👥 PICs');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(picRows), 'PICs');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 10: STANDALONE TASKS
-  // ═══════════════════════════════════════════════
-  const stHdrs = ['Title','Category','Priority','Status','Due Date','Reminder Date','Description'];
-  const stData = [stHdrs];
+  // ── Sheet 7: Standalone Tasks ──
+  const taskRows = [['Title','Category','Priority','Status','Due Date','Reminder Date','Description','Follow-up Of']];
   (data.mtasks||[]).forEach(t => {
-    stData.push([t.title||'', t.category||'', t.priority||'', t.status||'', t.deadline||'', t.reminder||'', t.description||'']);
+    taskRows.push([
+      t.title||'', t.category||'', t.priority||'', t.status||'',
+      t.deadline||'', t.reminder||'', t.description||'',
+      t.followupOf ? 'Yes' : ''
+    ]);
   });
-  const stWs = XLSX.utils.aoa_to_sheet(stData);
-  applyStyles(stWs, stData, CLR.taskHdr, CLR.taskBand, [30,16,12,14,12,14,45]);
-  XLSX.utils.book_append_sheet(wb, stWs, '📝 Tasks');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(taskRows), 'Tasks');
 
-  // ═══════════════════════════════════════════════
-  // SHEET 11: PIPELINE
-  // ═══════════════════════════════════════════════
-  const plHdrs = ['Name','Stage','Factory','Target Date','PIC','Est. Revenue','Notes','Linked To','Created'];
-  const plData = [plHdrs];
-  (data.pipeline||[]).forEach(pl => {
-    const linked = pl.linkedId ? `${pl.linkedType||''} · ${pl.linkedId}` : '';
-    plData.push([pl.name||'', pl.stage||'', pl.factory||'', pl.targetDate||'', pl.pic||'', pl.revenue||'', pl.notes||'', linked, pl.createdAt||'']);
-  });
-  const plWs = XLSX.utils.aoa_to_sheet(plData);
-  applyStyles(plWs, plData, { fgColor: { rgb: '6D28D9' } }, { fgColor: { rgb: 'F5F3FF' } }, [30,16,14,13,14,14,35,20,12]);
-  XLSX.utils.book_append_sheet(wb, plWs, '🔮 Pipeline');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 12: INQUIRY ACTIVITY LOG
-  // ═══════════════════════════════════════════════
-  const ialHdrs = ['NPD Code','Customer','Project Name','Action','By','Date','Time'];
-  const ialData = [ialHdrs];
-  data.inquiries.forEach(i => {
-    (i.activityLog||[]).forEach(e => {
-      ialData.push([i.code||'', i.customer||'', i.name||'', (e.text||'').replace(/<[^>]+>/g,''), e.by||'', e.date||'', e.time||'']);
-    });
-  });
-  const ialWs = XLSX.utils.aoa_to_sheet(ialData);
-  applyStyles(ialWs, ialData, CLR.inqHdr, CLR.inqBand, [12,18,30,45,14,12,8]);
-  XLSX.utils.book_append_sheet(wb, ialWs, '📜 Inq. Activity Log');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 13: PROJECT CHANGELOG
-  // ═══════════════════════════════════════════════
-  const pclHdrs = ['Project Code','Project Name','Action','By','Date','Time'];
-  const pclData = [pclHdrs];
-  data.projects.forEach(p => {
-    (p.activityLog||[]).forEach(e => {
-      pclData.push([p.code||'', p.name||'', (e.text||'').replace(/<[^>]+>/g,''), e.by||'', e.date||'', e.time||'']);
-    });
-  });
-  const pclWs = XLSX.utils.aoa_to_sheet(pclData);
-  applyStyles(pclWs, pclData, CLR.projHdr, CLR.projBand, [12,30,45,14,12,8]);
-  XLSX.utils.book_append_sheet(wb, pclWs, '📜 Proj. Changelog');
-
-  // ═══════════════════════════════════════════════
-  // SHEET 14: BIN (DELETED ITEMS)
-  // ═══════════════════════════════════════════════
-  const binHdrs = ['Type','Code','Name','Deleted On'];
-  const binData = [binHdrs];
-  (data.bin||[]).forEach(b => {
-    binData.push([b.kind||'', b.code||b.parentCode||'', b.name||b.parentName||'', b.deletedAt||'']);
-  });
-  const binWs = XLSX.utils.aoa_to_sheet(binData);
-  applyStyles(binWs, binData, { fgColor: { rgb: '64748B' } }, { fgColor: { rgb: 'F8FAFC' } }, [12,14,35,12]);
-  XLSX.utils.book_append_sheet(wb, binWs, '🗑️ Bin');
-
-  const totalSheets = 16;
-  XLSX.writeFile(wb, `NPD_Tracker_Export_${today}.xlsx`);
-  alert(`✓ Exported ${data.inquiries.length} inquiries · ${data.projects.length} projects · ${(data.pipeline||[]).length} pipeline items · ${(data.mtasks||[]).length} tasks · ${(data.bin||[]).length} bin items — across ${totalSheets} sheets.`);
+  XLSX.writeFile(wb, `NPD_Tracker_Export_${todayStr()}.xlsx`);
+  alert(`✓ Exported ${data.inquiries.length} inquiries, ${data.projects.length} projects, ${(data.mtasks||[]).length} tasks across 7 sheets.`);
 }
 
 // ══════════════════════════════════════════════════════
@@ -8120,37 +7765,6 @@ function renderProjDetail() {
       p.brief ? `<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;">${p.brief}</div>` : ''}
     </div>`;
 
-    // Customer & Sales — inline editable, modern tile layout
-    html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Customer & Sales</div>
-      <div class="cs-grid">
-        <div class="cs-tile">
-          <div class="cs-tile-icon" style="background:var(--blbg);color:var(--blue);"><i class="ti ti-building-store"></i></div>
-          <div class="cs-tile-body">
-            <div class="cs-tile-label">Customer</div>
-            ${canEdit?`<input class="cs-tile-input" type="text" value="${p.customer||''}" onblur="saveProjField('${p.id}','customer',this.value)" placeholder="Customer name">`:
-            `<div class="cs-tile-static">${p.customer||'—'}</div>`}
-          </div>
-        </div>
-        <div class="cs-tile">
-          <div class="cs-tile-icon" style="background:var(--gbg);color:var(--green);"><i class="ti ti-user-dollar"></i></div>
-          <div class="cs-tile-body">
-            <div class="cs-tile-label">Sales Person</div>
-            ${canEdit?`<input class="cs-tile-input" type="text" value="${p.salesPerson||''}" onblur="saveProjField('${p.id}','salesPerson',this.value)" placeholder="Sales person">`:
-            `<div class="cs-tile-static">${p.salesPerson||'—'}</div>`}
-          </div>
-        </div>
-        <div class="cs-tile">
-          <div class="cs-tile-icon" style="background:var(--ambg);color:var(--amber);"><i class="ti ti-calendar-due"></i></div>
-          <div class="cs-tile-body">
-            <div class="cs-tile-label">Delivery Date</div>
-            ${canEdit?`<input class="cs-tile-input" type="date" value="${p.deliveryDate||''}" onchange="saveProjField('${p.id}','deliveryDate',this.value)">`:
-            `<div class="cs-tile-static">${p.deliveryDate?fmtDate(p.deliveryDate):'—'}</div>`}
-          </div>
-        </div>
-      </div>
-    </div>`;
-
     // Sub-Statuses with inline add/edit
     const subs = p.subStatuses||[];
     html += `<div class="proj-detail-section">
@@ -8847,6 +8461,268 @@ function submitSubStatusAndRefresh() {
 // ══════════════════════════════════════════════════════
 //  NAV & THEME
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════
+// SCHEDULER
+// ══════════════════════════════════════
+var schWeekOffset = 0; // 0 = current week
+
+function schGetWeekDates(offset) {
+  const now = new Date();
+  const day = now.getDay() || 7; // Mon=1
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - day + 1 + offset * 7);
+  return Array.from({length: 5}, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d.toISOString().slice(0, 10);
+  });
+}
+
+function schNavWeek(dir) { schWeekOffset += dir; renderScheduler(); }
+function schGoToday()    { schWeekOffset = 0;   renderScheduler(); }
+
+function renderScheduler() {
+  const days = schGetWeekDates(schWeekOffset);
+  const todayISO = new Date().toISOString().slice(0, 10);
+
+  // Week label
+  const fmt = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'2-digit',month:'short'});
+  document.getElementById('sch-week-label').textContent = fmt(days[0]) + ' – ' + fmt(days[4]);
+
+  const body = document.getElementById('sch-body');
+  if (!body) return;
+  if (!data.schedule) data.schedule = {};
+
+  const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  let html = '';
+
+  days.forEach((iso, di) => {
+    const entries = (data.schedule[iso] || []);
+    const isToday = iso === todayISO;
+    const dateLabel = new Date(iso+'T00:00:00').toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    html += `<div class="sch-day-group" id="sch-day-${iso}">
+      <div class="sch-day-header">
+        <span class="sch-day-label${isToday?' today':''}">${dateLabel}${isToday?' <span style="font-size:9px;background:var(--blue);color:#fff;padding:1px 5px;border-radius:8px;margin-left:4px;">TODAY</span>':''}</span>
+        <button class="sch-day-add" onclick="schOpenAddForm('${iso}')">+ Add Entry</button>
+      </div>
+      <div id="sch-entries-${iso}">`;
+
+    if (!entries.length) {
+      html += `<div class="sch-empty-day">No entries</div>`;
+    } else {
+      entries.forEach((e, ei) => {
+        const isLinked = !!(e.code && e.code !== 'N/A');
+        html += `<div class="sch-entry${isLinked?' linked':''}">
+          <span class="sch-entry-code">${e.code||'N/A'}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="sch-entry-name">${e.name||'—'}</div>
+            ${e.customer?`<div style="font-size:10px;color:var(--text3);">${e.customer}</div>`:''}
+            ${e.summary?`<div class="sch-entry-summary" style="margin-top:2px;">${e.summary}</div>`:''}
+          </div>
+          <span class="sch-entry-dur">${e.duration||''}</span>
+          <div class="sch-entry-acts">
+            <button class="tact-btn" onclick="schEditEntry('${iso}',${ei})" title="Edit"><i class="ti ti-pencil"></i></button>
+            <button class="tact-btn" onclick="schDeleteEntry('${iso}',${ei})" style="color:var(--red)" title="Delete"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+
+    // Inline add form (hidden)
+    html += `<div id="sch-form-${iso}" style="display:none;">
+      <div class="sch-add-form">
+        <div class="frow2" style="gap:8px;margin-bottom:8px;">
+          <div class="fg">
+            <label class="flabel">Study/Project Code</label>
+            <input class="finput" id="sch-f-code-${iso}" type="text" placeholder="e.g. PTSU-2605-01 or N/A" list="sch-codes-${iso}">
+            <datalist id="sch-codes-${iso}">
+              ${[...data.inquiries.map(i=>i.code), ...data.projects.map(p=>p.code)].filter(Boolean).map(c=>`<option value="${c}">`).join('')}
+              <option value="N/A">
+            </datalist>
+          </div>
+          <div class="fg">
+            <label class="flabel">Name / Activity</label>
+            <input class="finput" id="sch-f-name-${iso}" type="text" placeholder="e.g. Lotus 400g Jar Project Review">
+          </div>
+        </div>
+        <div class="frow2" style="gap:8px;margin-bottom:8px;">
+          <div class="fg">
+            <label class="flabel">Customer</label>
+            <input class="finput" id="sch-f-customer-${iso}" type="text" placeholder="Customer name or leave blank">
+          </div>
+          <div class="fg">
+            <label class="flabel">Duration</label>
+            <input class="finput" id="sch-f-duration-${iso}" type="text" placeholder="e.g. 1h, 30mins, 2h30">
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:8px;">
+          <label class="flabel">Summary of Task</label>
+          <input class="finput" id="sch-f-summary-${iso}" type="text" placeholder="Brief description of what was done">
+        </div>
+        <div style="display:flex;gap:6px;justify-content:flex-end;">
+          <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="schCloseForm('${iso}')">Cancel</button>
+          <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="schSaveEntry('${iso}')">Add</button>
+        </div>
+      </div>
+    </div>`;
+
+    html += `</div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+function schOpenAddForm(iso) {
+  document.getElementById('sch-form-'+iso).style.display = 'block';
+  setTimeout(() => document.getElementById('sch-f-code-'+iso)?.focus(), 50);
+}
+function schCloseForm(iso) {
+  document.getElementById('sch-form-'+iso).style.display = 'none';
+}
+
+function schSaveEntry(iso, editIdx) {
+  if (!data.schedule) data.schedule = {};
+  if (!data.schedule[iso]) data.schedule[iso] = [];
+  const code     = (document.getElementById('sch-f-code-'+iso)?.value||'').trim();
+  const name     = (document.getElementById('sch-f-name-'+iso)?.value||'').trim();
+  const customer = (document.getElementById('sch-f-customer-'+iso)?.value||'').trim();
+  const duration = (document.getElementById('sch-f-duration-'+iso)?.value||'').trim();
+  const summary  = (document.getElementById('sch-f-summary-'+iso)?.value||'').trim();
+  if (!name) { alert('Please enter an activity name.'); return; }
+
+  // Auto-fill customer from linked inquiry/project if blank
+  let autoCustomer = customer;
+  if (!autoCustomer && code && code !== 'N/A') {
+    const inq = data.inquiries.find(i => i.code === code);
+    const proj = data.projects.find(p => p.code === code);
+    autoCustomer = inq?.customer || proj?.customer || '';
+  }
+
+  const entry = { id: uid(), code: code||'N/A', name, customer: autoCustomer, duration, summary };
+  if (editIdx !== undefined) {
+    data.schedule[iso][editIdx] = entry;
+  } else {
+    data.schedule[iso].push(entry);
+  }
+  save(); renderScheduler();
+}
+
+function schEditEntry(iso, idx) {
+  if (!data.schedule?.[iso]?.[idx]) return;
+  const e = data.schedule[iso][idx];
+  schOpenAddForm(iso);
+  setTimeout(() => {
+    document.getElementById('sch-f-code-'+iso).value     = e.code||'';
+    document.getElementById('sch-f-name-'+iso).value     = e.name||'';
+    document.getElementById('sch-f-customer-'+iso).value = e.customer||'';
+    document.getElementById('sch-f-duration-'+iso).value = e.duration||'';
+    document.getElementById('sch-f-summary-'+iso).value  = e.summary||'';
+    // Change save button to update
+    const btn = document.querySelector(`#sch-form-${iso} .btn-primary`);
+    if (btn) { btn.textContent = 'Update'; btn.onclick = () => schSaveEntry(iso, idx); }
+  }, 60);
+}
+
+function schDeleteEntry(iso, idx) {
+  if (!data.schedule?.[iso]) return;
+  data.schedule[iso].splice(idx, 1);
+  save(); renderScheduler();
+}
+
+function exportSchedulerExcel() {
+  if (!window.XLSX) { alert('Excel library not loaded.'); return; }
+  const days = schGetWeekDates(schWeekOffset);
+  const fmt = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'numeric',month:'numeric',year:'numeric'});
+  const fmtDay = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  const hdrStyle = (bg) => ({
+    font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 10, name: 'Calibri' },
+    fill: { fgColor: { rgb: bg } },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    border: { top:{style:'thin',color:{rgb:'CCCCCC'}}, bottom:{style:'thin',color:{rgb:'CCCCCC'}}, left:{style:'thin',color:{rgb:'CCCCCC'}}, right:{style:'thin',color:{rgb:'CCCCCC'}} }
+  });
+  const cellStyle = (bg, bold, color) => ({
+    font: { bold: !!bold, color: { rgb: color||'1E293B' }, sz: 10, name: 'Calibri' },
+    fill: { fgColor: { rgb: bg||'FFFFFF' } },
+    alignment: { horizontal: 'left', vertical: 'center', wrapText: true },
+    border: { top:{style:'thin',color:{rgb:'CCCCCC'}}, bottom:{style:'thin',color:{rgb:'CCCCCC'}}, left:{style:'thin',color:{rgb:'CCCCCC'}}, right:{style:'thin',color:{rgb:'CCCCCC'}} }
+  });
+
+  const wb = XLSX.utils.book_new();
+  const headers = ['Date','Study/Project','Name','Customer','Summary of the task','Duration'];
+  const rows = [headers];
+
+  days.forEach(iso => {
+    const entries = (data.schedule?.[iso] || []);
+    const dateStr = fmt(iso);
+    if (!entries.length) {
+      rows.push([dateStr, '', '', '', '', '']);
+    } else {
+      entries.forEach((e, ei) => {
+        rows.push([ei === 0 ? dateStr : '', e.code||'N/A', e.name||'', e.customer||'', e.summary||'', e.duration||'']);
+      });
+    }
+    rows.push(['','','','','','']); // separator
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // Style header
+  ['A1','B1','C1','D1','E1','F1'].forEach((addr, ci) => {
+    if (ws[addr]) ws[addr].s = hdrStyle('1B3A6B');
+  });
+
+  // Style data rows
+  const merges = [];
+  let excelR = 1; // 0-indexed, row 0 = header
+  let dayStart = 1;
+  let dayCount = 0;
+
+  days.forEach(iso => {
+    const entries = (data.schedule?.[iso] || []);
+    const count = Math.max(entries.length, 1);
+    dayStart = excelR;
+
+    for (let i = 0; i < count; i++) {
+      excelR++;
+      const r = excelR;
+      const isLinked = entries[i]?.code && entries[i]?.code !== 'N/A';
+      const rowBg = isLinked ? 'E8F5E9' : (r % 2 === 0 ? 'F8FAFC' : 'FFFFFF');
+      ['A','B','C','D','E','F'].forEach((col, ci) => {
+        const addr = col + r;
+        if (!ws[addr]) ws[addr] = { v: '', t: 's' };
+        ws[addr].s = cellStyle(rowBg, ci === 2 && isLinked, isLinked && ci === 2 ? '166534' : '1E293B');
+      });
+      // Bold the date cell
+      const dateAddr = 'A' + r;
+      if (ws[dateAddr]) ws[dateAddr].s = cellStyle(rowBg, true, '1E293B');
+    }
+
+    // Merge date cells if multiple entries
+    if (count > 1) {
+      merges.push({ s: { r: dayStart, c: 0 }, e: { r: dayStart + count - 1, c: 0 } });
+    }
+
+    // Separator row
+    excelR++;
+    ['A','B','C','D','E','F'].forEach(col => {
+      const addr = col + excelR;
+      if (!ws[addr]) ws[addr] = { v: '', t: 's' };
+      ws[addr].s = { fill: { fgColor: { rgb: 'F1F5F9' } } };
+    });
+  });
+
+  ws['!merges'] = merges;
+  ws['!cols'] = [{wch:12},{wch:14},{wch:28},{wch:14},{wch:45},{wch:10}];
+  ws['!rows'] = rows.map((_,i) => ({ hpt: i===0 ? 20 : 18 }));
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+  const weekLabel = fmt(days[0]).replace(/\//g,'-') + ' to ' + fmt(days[4]).replace(/\//g,'-');
+  XLSX.utils.book_append_sheet(wb, ws, 'Weekly Schedule');
+  XLSX.writeFile(wb, `Schedule_${weekLabel}.xlsx`);
+}
+
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -8860,6 +8736,7 @@ function showPage(name) {
   // Show density bar only on list pages
   showDensityBar(['inquiries','projects','tasks'].includes(name));
   if(name==='calendar')renderCalendar();
+  if(name==='scheduler'){if(!data.schedule) data.schedule={};renderScheduler();}
   if(name==='dashboard')renderDashboard();
   if(name==='bin')renderBin();
   if(name==='tasks'){renderMTasks(); applyDensity();}
@@ -9015,12 +8892,8 @@ function exportProjReportPDF() {
 
   const rows = list.map((p, i) => {
     const latestSS = (p.subStatuses||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-    // "Current Activity" = latest entry from the project's own Activity tab (p.activities),
-    // NOT the auto-generated changelog (p.activityLog) — those are two different things.
-    const latestActivity = (p.activities||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
 
-    // On-time / delayed logic — a project counts as OVERDUE when it has a delivery date,
-    // isn't marked completed, and that delivery date has already passed (before today).
+    // On-time / delayed logic
     const todayISO = new Date().toISOString().slice(0,10);
     let timeliness = '—', timeColor = text2;
     if (p.deliveryDate) {
@@ -9035,9 +8908,8 @@ function exportProjReportPDF() {
       }
     }
 
-    // Next actions from tasks — now with deadline shown beside each one
-    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3)
-      .map(t=>`• ${t.name||''}${t.deadline?` <span style="color:${text2};">(${fmtDate(t.deadline)})</span>`:''}`).join('<br>') || '—';
+    // Next actions from tasks
+    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3).map(t=>`• ${t.name||''}`).join('<br>') || '—';
 
     const rowBg = i%2===0 ? bg : surface;
     return `<tr style="background:${rowBg};">
@@ -9053,17 +8925,14 @@ function exportProjReportPDF() {
       <td>
         <span style="display:inline-flex;align-items:center;gap:5px;">
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusColor(p.status)};"></span>
-          <span style="color:${statusColor(p.status)};font-weight:700;text-transform:uppercase;">${statusLabel2(p.status)}</span>
+          <span style="color:${statusColor(p.status)};font-weight:700;">${statusLabel2(p.status)}</span>
         </span>
       </td>
       <td style="font-size:9.5px;color:${text2};">
-        ${latestActivity ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestActivity.title||''}</div><div>${latestActivity.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;text-transform:uppercase;">${latestActivity.category||''}${latestActivity.category?' · ':''}${fmtDate(latestActivity.date)}</div>` : '—'}
-      </td>
-      <td style="font-size:9.5px;color:${text2};">
-        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;text-transform:uppercase;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
+        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
       </td>
       <td style="font-size:9px;">${nextActions}</td>
-      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;text-transform:uppercase;">${timeliness}</td>
+      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;">${timeliness}</td>
       <td style="font-size:10px;white-space:nowrap;color:${text2};">${fmtDate(p.deliveryDate)}</td>
     </tr>`;
   }).join('');
@@ -9075,11 +8944,12 @@ function exportProjReportPDF() {
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'${appFont}','IBM Plex Sans','DM Sans',sans-serif;background:${bg};color:${text};font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .rpt-header{padding:0 0 10px;border-bottom:1px solid ${border};}
-    .rpt-header-inner{display:flex;justify-content:space-between;align-items:baseline;}
-    .rpt-brand-logo{height:34px;width:auto;display:block;}
-    .rpt-title{font-size:11px;font-weight:600;color:${text};text-align:right;}
-    .rpt-meta{font-size:9.5px;color:${text2};margin-top:3px;text-align:right;}
+    .rpt-header{background:${headerBg};padding:14px 20px;border-bottom:3px solid ${accent};}
+    .rpt-header-inner{display:flex;justify-content:space-between;align-items:center;}
+    .rpt-brand{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
+    .rpt-brand span{color:${accent};}
+    .rpt-title{font-size:13px;font-weight:700;color:#fff;text-align:right;}
+    .rpt-meta{font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:3px;text-align:right;}
     .rpt-body{padding:14px 20px;}
     .rpt-stats{display:flex;gap:10px;margin-bottom:16px;}
     .rpt-stat{background:${surface};border:1px solid ${border};border-radius:6px;padding:8px 14px;flex:1;text-align:center;}
@@ -9091,13 +8961,13 @@ function exportProjReportPDF() {
     .rpt-footer{text-align:center;font-size:8.5px;color:${text2};padding:12px 0;border-top:1px solid ${border};margin-top:16px;}
     @media print{@page{size:A4 landscape;margin:8mm;}body{font-size:9px;}}
   </style></head><body>
-  <div class="rpt-body">
   <div class="rpt-header">
     <div class="rpt-header-inner">
-      <img class="rpt-brand-logo" src="data:image/png;base64,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" alt="TPAC">
+      <div><div class="rpt-brand">TP<span>AC</span></div><div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:2px;">NPD Project Tracker</div></div>
       <div><div class="rpt-title">Project Status Report</div><div class="rpt-meta">Prepared by ${prepared} &nbsp;·&nbsp; ${today}</div></div>
     </div>
   </div>
+  <div class="rpt-body">
     <div class="rpt-stats">
       <div class="rpt-stat"><div class="rpt-stat-val">${list.length}</div><div class="rpt-stat-label">Total</div></div>
       <div class="rpt-stat"><div class="rpt-stat-val" style="color:#3a8ef5;">${list.filter(p=>p.status==='in-progress').length}</div><div class="rpt-stat-label">In Progress</div></div>
@@ -9108,16 +8978,15 @@ function exportProjReportPDF() {
     <table>
       <thead><tr>
         <th style="width:3%">#</th>
-        <th style="width:11%">Project</th>
-        <th style="width:7%">Customer</th>
-        <th style="width:6%">Sales</th>
-        <th style="width:6%">Factory</th>
-        <th style="width:6%">Status</th>
-        <th style="width:20%">Current Activity</th>
-        <th style="width:20%">Latest Status</th>
-        <th style="width:13%">Next Actions</th>
-        <th style="width:4%">Timeline</th>
-        <th style="width:4%">Est. Delivery</th>
+        <th style="width:18%">Project</th>
+        <th style="width:10%">Customer</th>
+        <th style="width:8%">Sales</th>
+        <th style="width:8%">Factory</th>
+        <th style="width:9%">Status</th>
+        <th style="width:18%">Current Activity</th>
+        <th style="width:14%">Next Actions</th>
+        <th style="width:8%">Timeline</th>
+        <th style="width:8%">Est. Delivery</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>

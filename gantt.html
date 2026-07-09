@@ -1479,8 +1479,16 @@ function exportPDF(){
     '<script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};}<\/script>' +
     '</body></html>';
 
+  // Same filename as Excel export
+  var today2=new Date();
+  var dd2=String(today2.getFullYear())+String(today2.getMonth()+1).padStart(2,'0')+String(today2.getDate()).padStart(2,'0');
+  var proj2=(document.getElementById('iProj').value||'GanttChart').trim();
+  var pdfName=dd2+' - Timeline - '+proj2;
+
   var win = window.open('','_blank','width='+dispW+',height='+dispH);
   if (!win) { alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
+  // Inject suggested filename via title so browser uses it when saving PDF
+  html = html.replace('<title>Gantt Chart</title>', '<title>'+pdfName+'</title>');
   win.document.write(html);
   win.document.close();
 }

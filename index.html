@@ -369,35 +369,6 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .inline-form-footer{display:flex;gap:6px;justify-content:flex-end;margin-top:10px;}
 .inline-form select.finput{cursor:pointer;}
 /* Activity log */
-.activity-entry{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--rs);margin-bottom:8px;border-left:3px solid var(--blue);}
-.activity-entry.done{border-left-color:var(--accent);opacity:0.7;}
-.activity-entry-body{flex:1;min-width:0;}
-.activity-entry-title{font-size:12px;font-weight:600;color:var(--text);}
-.activity-entry-meta{font-size:10px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.activity-entry-note{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5;}
-.sch-toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-wrap:wrap;}
-.sch-week-nav{display:flex;align-items:center;gap:6px;}
-.sch-week-label{font-size:13px;font-weight:700;color:var(--text);min-width:180px;text-align:center;}
-.sch-week-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;}
-.sch-week-btn:hover{background:var(--blbg);color:var(--blue);}
-.sch-body{padding:12px 16px;overflow-y:auto;flex:1;}
-.sch-day-group{margin-bottom:12px;}
-.sch-day-header{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:2px solid var(--border);margin-bottom:6px;}
-.sch-day-label{font-size:12px;font-weight:800;color:var(--text);letter-spacing:.3px;min-width:90px;}
-.sch-day-label.today{color:var(--blue);}
-.sch-day-add{background:none;border:1px dashed var(--border);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--text3);cursor:pointer;font-family:var(--f);}
-.sch-day-add:hover{border-color:var(--blue);color:var(--blue);}
-.sch-entry{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-bottom:4px;border:1px solid var(--border);background:var(--surface);position:relative;transition:background .1s;}
-.sch-entry:hover{background:var(--surface2);}
-.sch-entry.linked{border-left:3px solid var(--accent);background:var(--al);}
-.sch-entry-code{font-size:9.5px;font-weight:700;color:var(--blue);font-family:var(--fm);min-width:80px;flex-shrink:0;padding-top:1px;}
-.sch-entry-name{font-size:12px;font-weight:600;color:var(--text);flex:1;}
-.sch-entry-customer{font-size:10px;color:var(--text3);min-width:80px;flex-shrink:0;}
-.sch-entry-summary{font-size:11px;color:var(--text2);flex:2;}
-.sch-entry-dur{font-size:10px;font-weight:600;color:var(--text2);min-width:50px;text-align:right;flex-shrink:0;}
-.sch-entry-acts{display:flex;gap:3px;flex-shrink:0;}
-.sch-empty-day{font-size:11px;color:var(--text3);font-style:italic;padding:4px 0;}
-.sch-add-form{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;}
 .act-log-entry{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
 .act-log-entry:last-child{border-bottom:none;}
 .act-log-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}
@@ -591,6 +562,13 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .inq-list-acts{display:flex;gap:3px;flex-shrink:0;opacity:0;transition:opacity .15s;}
 .inq-list-row:hover .inq-list-acts{opacity:1;}
 .inq-list-acts .cact-btn{padding:3px 7px;font-size:10px;}
+.inq-list-wrap .card{margin-bottom:0;}
+.inq-list-item{cursor:default;}
+.inq-list-head{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background .12s;}
+.inq-list-head:hover{background:var(--surface2);}
+.inq-list-item.has-overdue .inq-list-head{border-left:0;}
+.inq-list-item .inq-list-acts{opacity:0;transition:opacity .15s;}
+.inq-list-head:hover .inq-list-acts{opacity:1;}
 /* year/month grouping in list mode */
 .inq-list-year-group{margin-bottom:8px;}
 .inq-list-year-header{display:flex;align-items:center;gap:8px;padding:8px 2px 5px;cursor:pointer;user-select:none;}
@@ -1028,7 +1006,7 @@ html{scroll-behavior:smooth;}
 .na-deadline-badge.soon{background:var(--ambg);color:var(--amber);border:1px solid var(--amber);}
 .na-deadline-badge.ok{background:var(--surface);color:var(--text3);border:1px solid var(--border);}
 .na-deadline-badge.empty{background:var(--surface);color:var(--text3);border:1px dashed var(--border);font-weight:400;}
-.na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;margin:0;}
+.na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;border:none;}
 .na-added{font-size:10px;color:var(--text3);font-family:var(--fm);white-space:nowrap;}
 .na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .na-delete-btn:hover{color:var(--red);}
@@ -1051,7 +1029,7 @@ html{scroll-behavior:smooth;}
 .ip-deadline.overdue{background:var(--rebg);border:1px solid var(--red);color:var(--red);}
 .ip-deadline.soon{background:var(--ambg);border:1px solid var(--amber);color:var(--amber);}
 .ip-deadline.ok{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
-.ip-deadline input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;margin:0;}
+.ip-deadline input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
 .ip-added{font-size:9px;color:var(--text3);font-family:var(--fm);}
 .ip-meta{display:flex;align-items:center;gap:6px;margin-top:0;}
 /* ── Auto-task cards in modal ── */
@@ -1208,7 +1186,6 @@ html{scroll-behavior:smooth;}
 .gantt-add-row{display:flex;gap:6px;padding:8px 0;align-items:center;flex-wrap:wrap;}
 .gantt-add-row input,.gantt-add-row select{font-size:11px;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);}
 .gantt-actual-inputs{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text3);}
-@keyframes ti-spin-kf{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ti-spin{animation:ti-spin-kf .7s linear infinite;display:inline-block;}
 </style>
 </head>
 <body>
@@ -1242,7 +1219,7 @@ html{scroll-behavior:smooth;}
 
 <div class="topbar">
   <div>
-    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V82</span></div>
+    <div class="topbar-title">NPD Tracker <span style="font-size:9px;font-family:var(--fm);color:var(--text3);font-weight:400;">V76.2</span></div>
     <div class="topbar-sub" id="today-label"></div>
   </div>
   <div class="topbar-actions">
@@ -1304,7 +1281,6 @@ html{scroll-behavior:smooth;}
       <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="nav-item-label">Dashboard</span></button>
       <button class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')"><i class="ti ti-git-branch"></i><span class="nav-item-label">NPD Pipeline</span></button>
       <button class="nav-item" id="nav-calendar" onclick="showPage('calendar')"><i class="ti ti-calendar"></i><span class="nav-item-label">Calendar</span></button>
-      <button class="nav-item" id="nav-scheduler" onclick="showPage('scheduler')"><i class="ti ti-clock-record"></i><span class="nav-item-label">Scheduler</span></button>
       <button class="nav-item" id="nav-changelog" onclick="showPage('changelog')"><i class="ti ti-history"></i><span class="nav-item-label">Changelog</span></button>
       <button class="nav-item" id="nav-users" style="display:none;" onclick="showPage('users')"><i class="ti ti-users"></i><span class="nav-item-label">Users</span></button>
     </div>
@@ -1347,7 +1323,6 @@ html{scroll-behavior:smooth;}
       <button class="filter-toggle-btn panel-open" id="inq-filter-toggle" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span id="inq-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="inq-dupes-btn" onclick="openDuplicatesModal()"><i class="ti ti-copy"></i> Duplicates</button>
       <button class="icon-btn" id="inq-active-btn" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
-      <button class="icon-btn" id="inq-refresh-btn" onclick="forceRefreshFromCloud()" title="Refresh data from cloud"><i class="ti ti-refresh"></i></button>
       <button class="add-btn" id="inq-add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
@@ -1400,7 +1375,6 @@ html{scroll-behavior:smooth;}
       <button class="icon-btn" onclick="expandCollapseAllProjects(true)" title="Expand all"><i class="ti ti-fold-up"></i></button>
       <button class="filter-toggle-btn panel-open" id="proj-filter-toggle" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span id="proj-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="proj-active-btn" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
-      <button class="icon-btn" id="proj-refresh-btn" onclick="forceRefreshFromCloud()" title="Refresh data from cloud"><i class="ti ti-refresh"></i></button>
       <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
@@ -1570,26 +1544,6 @@ html{scroll-behavior:smooth;}
 </div>
 
 <!-- CALENDAR PAGE -->
-<div class="page" id="page-scheduler">
-  <div class="page-header" id="scheduler-header">
-    <div class="page-header-left">
-      <div class="page-title"><i class="ti ti-clock-record"></i> Scheduler</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="icon-btn" onclick="exportSchedulerExcel()" title="Export weekly report"><i class="ti ti-table-export"></i> Export</button>
-    </div>
-  </div>
-  <div class="sch-toolbar">
-    <div class="sch-week-nav">
-      <button class="sch-week-btn" onclick="schNavWeek(-1)"><i class="ti ti-chevron-left"></i></button>
-      <span class="sch-week-label" id="sch-week-label">—</span>
-      <button class="sch-week-btn" onclick="schNavWeek(1)"><i class="ti ti-chevron-right"></i></button>
-    </div>
-    <button class="icon-btn" onclick="schGoToday()">Today</button>
-  </div>
-  <div class="sch-body" id="sch-body"></div>
-</div>
-
 <div class="page" id="page-calendar">
   <div class="cal-size-bar">
     <button class="cal-size-chip" id="calsz-xs" onclick="setCalSize('xs')">XS</button>
@@ -1894,7 +1848,6 @@ html{scroll-behavior:smooth;}
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="pd-clip-btn" onclick="toggleClipWindow('proj')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
         <button onclick="openGanttForProject(currentProjDetailId)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Open Gantt Chart"><i class="ti ti-chart-gantt"></i> Gantt</button>
-        <button onclick="forceRefreshFromCloud()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Refresh from cloud"><i class="ti ti-refresh"></i></button>
         <button class="proj-detail-close" onclick="document.getElementById('proj-detail-overlay').classList.remove('open');resetWindowPosition('proj')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -1902,8 +1855,7 @@ html{scroll-behavior:smooth;}
       <button class="pd-tab active" data-tab="overview" onclick="switchPDTab('overview')"><i class="ti ti-layout-list"></i> Overview</button>
       <button class="pd-tab" data-tab="actions" onclick="switchPDTab('actions')"><i class="ti ti-checkbox"></i> Actions</button>
       <button class="pd-tab" data-tab="milestones" onclick="switchPDTab('milestones')"><i class="ti ti-flag"></i> Milestones</button>
-      <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-activity"></i> Activity</button>
-      <button class="pd-tab" data-tab="changelog" onclick="switchPDTab('changelog')"><i class="ti ti-history"></i> Changelog</button>
+      <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-history"></i> Activity</button>
     </div>
     <div class="proj-detail-body" id="pd-body"></div>
   </div>
@@ -1921,7 +1873,6 @@ html{scroll-behavior:smooth;}
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
         <button class="proj-clip-btn" id="inq-clip-btn" onclick="toggleClipWindow('inq')" title="Clip/unclip window position"><i class="ti ti-pin"></i> Clip</button>
-        <button onclick="forceRefreshFromCloud()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--text3);font-size:11px;font-family:var(--f);display:flex;align-items:center;gap:4px;" title="Refresh from cloud"><i class="ti ti-refresh"></i></button>
         <button class="proj-detail-close" onclick="document.getElementById('inq-detail-overlay').classList.remove('open');resetWindowPosition('inq')"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -2174,12 +2125,6 @@ html{scroll-behavior:smooth;}
           </select>
         </div>
       </div>
-      <div class="fsection"><i class="ti ti-building-store"></i> Customer & Sales</div>
-      <div class="frow2">
-        <div class="fg"><label class="flabel">Customer Name</label><input class="finput" id="proj-customer" type="text" placeholder="e.g. Nestlé Malaysia"></div>
-        <div class="fg"><label class="flabel">Sales Person</label><input class="finput" id="proj-salesperson" type="text" placeholder="e.g. Adam"></div>
-      </div>
-      <div class="fg"><label class="flabel">Target Delivery Date</label><input class="finput" id="proj-delivery" type="date"></div>
       <div class="fsection">Status</div>
       <div class="fg"><label class="flabel">Overall Status</label>
         <select class="finput" id="proj-status"><option value="not-started">Not Started</option><option value="in-progress">In Progress</option><option value="completed">Completed</option><option value="on-hold">On Hold</option></select>
@@ -2498,8 +2443,7 @@ function updateStorageIndicator(byteLen) {
   `;
 }
 function loadLocal() {
-  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[];
-  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[]; data.pipeline = data.pipeline||[]; data.pipelineStages = data.pipelineStages||JSON.parse(JSON.stringify(DEFAULT_PIPELINE_STAGES)); data.pipelineTargets = data.pipelineTargets||{}; } } catch(e) {}
+  try { const d = localStorage.getItem(SK); if (d) { data = JSON.parse(d); data.bin = data.bin||[]; data.mtasks = data.mtasks||[]; data.pipeline = data.pipeline||[]; data.pipelineStages = data.pipelineStages||JSON.parse(JSON.stringify(DEFAULT_PIPELINE_STAGES)); data.pipelineTargets = data.pipelineTargets||{}; } } catch(e) {}
   migrateStatusNoteToSubStatus();
 }
 
@@ -2624,8 +2568,7 @@ function startFirebaseListener() {
         const localTs  = localStorage.getItem('npd_last_saved') || '';
         if (remoteTs >= localTs || !localTs) {
           data = parsed;
-          data.bin = data.bin||[];
-  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
+          data.bin = data.bin||[]; data.mtasks = data.mtasks||[];
           migrateStatusNoteToSubStatus();
           saveLocal();
           localStorage.setItem('npd_last_saved', remoteTs);
@@ -2763,40 +2706,6 @@ async function loadFromOneDrive() { return false; }
 async function saveToOneDrive() { return false; }
 
 // ── Save (debounced 800ms) ──
-function forceRefreshFromCloud() {
-  const btn = document.activeElement;
-  const icon = btn && btn.querySelector ? btn.querySelector('i') : null;
-  if (icon) icon.classList.add('ti-spin');
-  if (!FIREBASE_READY || !fbDb) {
-    if (icon) icon.classList.remove('ti-spin');
-    alert('Not connected to cloud — showing local data only.');
-    return;
-  }
-  const col = 'npd_tracker', doc = 'main';
-  fbDb.collection(col).doc(doc).get({source:'server'}).then(snap => {
-    if (icon) icon.classList.remove('ti-spin');
-    if (!snap.exists) return;
-    const remote = snap.data();
-    if (remote && remote._data) {
-      try {
-        const parsed = JSON.parse(remote._data);
-        data = parsed;
-        data.bin = data.bin||[];
-  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
-        migrateStatusNoteToSubStatus();
-        saveLocal();
-        localStorage.setItem('npd_last_saved', remote._updatedAt || '');
-        renderAll(); renderBin();
-        setSyncStatus('ok', 'Refreshed ✓');
-      } catch(e) { console.error('Refresh parse error', e); }
-    }
-  }).catch(e => {
-    if (icon) icon.classList.remove('ti-spin');
-    console.error('Refresh failed', e);
-    alert('Refresh failed — check connection.');
-  });
-}
-
 function save() {
   saveLocal(); // always keep local fallback fresh
   if (!FIREBASE_READY || !fbDb) { setSyncStatus('error', 'Not synced'); return; }
@@ -3516,6 +3425,7 @@ function renderInquiryListRow(item) {
   const doneCount = tasks.filter(t => t.done).length;
   const totalCount = tasks.length;
   const overdueClass = overdueCount ? 'has-overdue' : '';
+  const exp = item.expanded ? 'expanded' : '';
 
   const statusKey = String(item.status||'').toLowerCase().replace(/[\s\/]+/g,'-');
   const priorityColors = {'3':'var(--red)','2':'var(--amber)','1':'var(--text3)'};
@@ -3526,23 +3436,30 @@ function renderInquiryListRow(item) {
   const overdueBadge = overdueCount ? `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--rebg);color:var(--red);font-family:var(--fm);">⚠ ${overdueCount}</span>` : '';
   const taskFrac = totalCount ? `<span style="font-size:9px;color:var(--text3);font-family:var(--fm);">${doneCount}/${totalCount}</span>` : '';
 
-  return `<div class="inq-list-row ${overdueClass}" id="card-${item.id}" onclick="goToItem('inquiries','${item.id}')">
-    <div class="inq-list-main">
-      <span class="inq-list-code">${item.code||''}</span>
-      <span class="inq-list-name">${item.name}</span>
-      ${item.customer ? `<span class="inq-list-customer">${item.customer}</span>` : ''}
-    </div>
-    <div class="inq-list-meta">
-      ${taskFrac}
-      ${overdueBadge}
-      ${priPill}
-      <span class="sbadge ${statusKey}" style="font-size:9px;padding:1px 6px;">${statusLabel(item.status)}</span>
-      <div class="inq-list-acts">
-        <button class="cact-btn" onclick="event.stopPropagation();openAddTask('inquiry','${item.id}')"><i class="ti ti-plus"></i></button>
-        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditInquiry('${item.id}')"><i class="ti ti-pencil"></i></button>` : ''}
-        ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditSt('inquiry','${item.id}')"><i class="ti ti-refresh"></i></button>` : ''}
-        ${can('inquiries','delete') ? `<button class="cact-btn danger" onclick="event.stopPropagation();startDelete('inquiry','${item.id}',null)"><i class="ti ti-trash"></i></button>` : ''}
+  return `<div class="card inq-list-item ${exp} ${overdueClass}" id="card-${item.id}">
+    <div class="inq-list-head" onclick="toggleCard('${item.id}','inquiry')">
+      <div class="inq-list-main">
+        <span class="inq-list-code">${item.code||''}</span>
+        <span class="inq-list-name" onclick="event.stopPropagation();openInqDetail('${item.id}')" style="cursor:pointer;" title="Open full view">${item.name}</span>
+        ${item.customer ? `<span class="inq-list-customer">${item.customer}</span>` : ''}
       </div>
+      <div class="inq-list-meta">
+        ${taskFrac}
+        ${overdueBadge}
+        ${priPill}
+        <span class="sbadge ${statusKey}" style="font-size:9px;padding:1px 6px;">${statusLabel(item.status)}</span>
+        <div class="inq-list-acts">
+          <button class="cact-btn" onclick="event.stopPropagation();openAddTask('inquiry','${item.id}')" title="Add Task"><i class="ti ti-plus"></i></button>
+          ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditInquiry('${item.id}')" title="Edit"><i class="ti ti-pencil"></i></button>` : ''}
+          ${can('inquiries','edit') ? `<button class="cact-btn" onclick="event.stopPropagation();openEditSt('inquiry','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>` : ''}
+          ${can('inquiries','delete') ? `<button class="cact-btn danger" onclick="event.stopPropagation();startDelete('inquiry','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>` : ''}
+          <button class="cact-btn" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Full View"><i class="ti ti-layout-sidebar-right"></i></button>
+        </div>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+    </div>
+    <div class="card-body">
+      ${buildInqBodyHTML(item)}
     </div>
   </div>`;
 }
@@ -3927,27 +3844,16 @@ function renderInquiries() {
   applyDensity();
 }
 
-function renderInquiryCard(item) {
-  const rate = completion(item.tasks||[]);
+function buildInqBodyHTML(item) {
   const today = todayStr();
   const tasks = item.tasks||[];
   const active = tasks.filter(t => !t.done && t.deadline <= today);
   const future = tasks.filter(t => !t.done && t.deadline > today);
   const done   = tasks.filter(t => t.done);
-  const exp = item.expanded ? 'expanded' : '';
   const p = item.pipeline||{};
   const mi = p.moldInquiry||{};
   const co = p.costing||{};
   const pr = p.priceSubmission||{};
-
-  const statusKey = String(item.status||'').toLowerCase().replace(/[\s\/]+/g,'-');
-  const priorityColors = {'3':'var(--red)','2':'var(--amber)','1':'var(--text3)'};
-  const priorityLabels = {'3':'High','2':'Med','1':'Low'};
-  const priColor = priorityColors[item.priority] || 'var(--text3)';
-  const priLabel = priorityLabels[item.priority] || item.priority || '';
-
-  const bdPill = item.bdPerson ? `<span class="bd-pill">${item.bdPerson}</span>` : '';
-  const priPill = priLabel ? `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--ambg);color:${priColor};font-family:var(--fm);">P${item.priority} ${priLabel}</span>` : '';
 
   const aHTML = active.length ? `<div class="tsec"><div class="tsec-label"><i class="ti ti-flame" style="color:var(--red)"></i> Active / Overdue</div>${active.map(t=>renderTask(item,'inquiry',t)).join('')}</div>` : '';
   const fHTML = future.length ? `<div class="tsec" style="border-top:1px solid var(--border)"><div class="tsec-label"><i class="ti ti-clock" style="color:var(--blue)"></i> Upcoming</div>${future.map(t=>renderTask(item,'inquiry',t)).join('')}</div>` : '';
@@ -3982,6 +3888,42 @@ function renderInquiryCard(item) {
       ${item.remark ? `<div class="rmk-label">Inquiry Brief ${item.remarkDate?`<span style="font-weight:400;color:var(--text3);font-size:9px;">· ${fmtDate(item.remarkDate)}</span>`:''}</div><div class="rmk-text">${item.remark}</div>` : ''}
       ${nas.length ? `<div class="rmk-label" style="margin-top:7px">Next Actions</div>` + nas.map(na => `<div class="rmk-next">${na.pic?`<strong>${na.pic}</strong> · `:''}${na.action}${na.deadline?` · <span style="color:var(--text3);font-size:10px;">${fmtDate(na.deadline)}</span>`:''}</div>`).join('') : ''}
     </div>` : '';
+
+  const actsHTML = `<div class="card-acts-row">
+        ${can('inquiries','add') ? `<button class="cact-icon" onclick="openAddTask('inquiry','${item.id}')" title="Add Task"><i class="ti ti-plus"></i></button>` : ''}
+        <button class="cact-icon" onclick="openInqDetail('${item.id}')" title="Full View"><i class="ti ti-layout-sidebar-right"></i></button>
+        ${can('inquiries','edit') ? `<button class="cact-icon status-btn" onclick="openEditSt('inquiry','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>` : ''}
+        ${can('inquiries','add') ? `<button class="cact-icon" onclick="duplicateItem('inquiry','${item.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>` : ''}
+        ${can('inquiries','delete') ? `<button class="cact-icon danger" onclick="startDelete('inquiry','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>` : ''}
+      </div>`;
+
+  return `${pipelineHTML}
+      ${remarkHTML}
+      ${!tasks.length ? '<div style="padding:11px 13px;font-size:12px;color:var(--text3);">No tasks yet.</div>' : (aHTML+fHTML+dHTML)}
+      ${actsHTML}`;
+}
+
+function renderInquiryCard(item) {
+  const rate = completion(item.tasks||[]);
+  const today = todayStr();
+  const tasks = item.tasks||[];
+  const active = tasks.filter(t => !t.done && t.deadline <= today);
+  const future = tasks.filter(t => !t.done && t.deadline > today);
+  const done   = tasks.filter(t => t.done);
+  const exp = item.expanded ? 'expanded' : '';
+  const p = item.pipeline||{};
+  const mi = p.moldInquiry||{};
+  const co = p.costing||{};
+  const pr = p.priceSubmission||{};
+
+  const statusKey = String(item.status||'').toLowerCase().replace(/[\s\/]+/g,'-');
+  const priorityColors = {'3':'var(--red)','2':'var(--amber)','1':'var(--text3)'};
+  const priorityLabels = {'3':'High','2':'Med','1':'Low'};
+  const priColor = priorityColors[item.priority] || 'var(--text3)';
+  const priLabel = priorityLabels[item.priority] || item.priority || '';
+
+  const bdPill = item.bdPerson ? `<span class="bd-pill">${item.bdPerson}</span>` : '';
+  const priPill = priLabel ? `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--ambg);color:${priColor};font-family:var(--fm);">P${item.priority} ${priLabel}</span>` : '';
 
   const overdueClass = active.length ? 'has-overdue' : '';
   const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '';
@@ -4021,16 +3963,7 @@ function renderInquiryCard(item) {
     </div>
     <div class="prog-wrap"><div class="prog-bg"><div class="prog-fill" style="width:${rate}%"></div></div></div>
     <div class="card-body">
-      ${pipelineHTML}
-      ${remarkHTML}
-      ${!tasks.length ? '<div style="padding:11px 13px;font-size:12px;color:var(--text3);">No tasks yet.</div>' : (aHTML+fHTML+dHTML)}
-      <div class="card-acts-row">
-        ${can('inquiries','add') ? `<button class="cact-icon" onclick="openAddTask('inquiry','${item.id}')" title="Add Task"><i class="ti ti-plus"></i></button>` : ''}
-        <button class="cact-icon" onclick="openInqDetail('${item.id}')" title="Full View"><i class="ti ti-layout-sidebar-right"></i></button>
-        ${can('inquiries','edit') ? `<button class="cact-icon status-btn" onclick="openEditSt('inquiry','${item.id}')" title="Change Status"><i class="ti ti-refresh"></i></button>` : ''}
-        ${can('inquiries','add') ? `<button class="cact-icon" onclick="duplicateItem('inquiry','${item.id}')" title="Duplicate"><i class="ti ti-copy"></i></button>` : ''}
-        ${can('inquiries','delete') ? `<button class="cact-icon danger" onclick="startDelete('inquiry','${item.id}',null)" title="Delete"><i class="ti ti-trash"></i></button>` : ''}
-      </div>
+      ${buildInqBodyHTML(item)}
     </div>
   </div>`;
 }
@@ -4740,7 +4673,7 @@ function _renderInqDetailInner() {
             : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
           <div class="na-right">
             <div class="na-deadline-badge ${dlClass}">
-              <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}</span>
+              <i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}
               ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">` : ''}
             </div>
             <span class="na-added">Added ${fmtDate(na.dateAdded||today)}</span>
@@ -4786,7 +4719,7 @@ function _renderInqDetailInner() {
             </div>
             <div class="ip-right">
               <div class="ip-deadline ${dlClass}">
-                <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}</span>
+                <i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}
                 ${canEdit ? `<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">` : ''}
               </div>
             </div>
@@ -4929,9 +4862,6 @@ function submitProject() {
   const classification = document.getElementById('proj-class').value;
   const brief = document.getElementById('proj-brief').value.trim();
   const factory = document.getElementById('proj-factory').value;
-  const customer = document.getElementById('proj-customer').value.trim();
-  const salesPerson = document.getElementById('proj-salesperson').value.trim();
-  const deliveryDate = document.getElementById('proj-delivery').value;
   if (!code||!name||!date) {
     const missing = [];
     if (!code) missing.push('Code');
@@ -4948,13 +4878,13 @@ function submitProject() {
     const idx = data.projects.findIndex(x => x.id === editingProjId);
     if (idx >= 0) {
       const p = data.projects[idx];
-      data.projects[idx] = {...p, code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate};
+      data.projects[idx] = {...p, code, name, date, status, classification, brief, factory};
     }
     editingProjId = null;
     document.getElementById('proj-modal-title').textContent = 'New Project';
     document.getElementById('proj-submit-btn').textContent = 'Create';
   } else {
-    data.projects.unshift({id:uid(), code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate, subStatuses:[], tasks:[], milestones:[], pics:[], expanded:true});
+    data.projects.unshift({id:uid(), code, name, date, status, classification, brief, factory, subStatuses:[], tasks:[], milestones:[], pics:[], expanded:true});
   }
   appendChangelog({ type: isEditProj ? 'update' : 'create', icon: isEditProj ? 'pencil' : 'circle-plus', text: `${isEditProj ? 'Updated' : 'Created'} project: <strong>${name}</strong>`, section: 'projects' });
   save(); closeModal('proj'); renderAll();
@@ -4973,9 +4903,6 @@ function openEditProject(id) {
   document.getElementById('proj-factory').value = p.factory||'';
   document.getElementById('proj-class').value = p.classification||'new-mold';
   document.getElementById('proj-status').value = p.status||'not-started';
-  document.getElementById('proj-customer').value = p.customer||'';
-  document.getElementById('proj-salesperson').value = p.salesPerson||'';
-  document.getElementById('proj-delivery').value = p.deliveryDate||'';
   document.getElementById('modal-proj').classList.add('open');
 }
 
@@ -6725,7 +6652,6 @@ function _renderPageHeaderForPage(name) {
            <button class="filter-toggle-btn panel-open" id="proj-filter-toggle-h" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button class="icon-btn" onclick="expandCollapseAllProjects(false)"><i class="ti ti-fold"></i></button>
            <button class="icon-btn" id="proj-active-btn-h" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
-           <button class="icon-btn" onclick="openProjReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
          </div><div></div>`
       ); break;
     case 'tasks':
@@ -7647,7 +7573,7 @@ function inlineAddTask(projId) {
   if (!p) return;
   if (!p.tasks) p.tasks = [];
   const status = document.getElementById('il-task-status').value;
-  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'', dependsOn: document.getElementById('il-task-dep')?.value||'' });
+  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'' });
   logActivity(projId, 'add', 'circle-check', `Added action: <strong>${name}</strong>`);
   appendChangelog({ type:'create', icon:'circle-check', text:`Added action to <strong>${p.name||p.code}</strong>: ${name}`, section:'actions' });
   save(); renderProjects(); renderProjDetail(); showNotifications();
@@ -7659,7 +7585,7 @@ function inlineEditTask(projId, idx) {
   if (!name) { alert('Please enter an action name.'); return; }
   const status = document.getElementById(`il-te-status-${idx}`).value;
   const old = p.tasks[idx];
-  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'', dependsOn: document.getElementById(`il-te-dep-${idx}`)?.value||'' };
+  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'' };
   logActivity(projId, 'edit', 'pencil', `Updated action: <strong>${name}</strong>`);
   save(); renderProjects(); renderProjDetail(); showNotifications();
 }
@@ -7799,7 +7725,7 @@ function renderProjDetail() {
         </div>
       </div>
       ${subs.length ? subs.map((ss,i) => `
-        <div class="substatus-item ${(ss.status!=='completed'&&ss.status!=='cancelled')?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
+        <div class="substatus-item ${i===0?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
           <div class="substatus-dot ss-${ss.status}"></div>
           <div class="substatus-info">
             <div class="substatus-title">${ss.title}</div>
@@ -7807,7 +7733,7 @@ function renderProjDetail() {
               <span class="substatus-sbadge ss-${ss.status}">${ss.status.charAt(0).toUpperCase()+ss.status.slice(1)}</span>
               ${ss.classification?`<span class="ms-category">${ss.classification}</span>`:''}
               ${ss.date?`<span class="substatus-date">${fmtDate(ss.date)}</span>`:''}
-              ${(ss.status!=='completed'&&ss.status!=='cancelled')&&ss.note?`<div style="font-size:10px;color:var(--text2);margin-top:4px;">${ss.note}</div>`:''}
+              ${ss.note&&i===0?`<span style="font-size:10px;color:var(--text2)">${ss.note}</span>`:''}
             </div>
           </div>
           <div class="substatus-acts">
@@ -7925,12 +7851,6 @@ function renderProjDetail() {
               </select>
             </div>
           </div>
-          <div class="fg"><label class="flabel">Depends On (Task)</label>
-            <select class="finput" id="il-task-dep">
-              <option value="">— None —</option>
-              ${(p.tasks||[]).map(tx => `<option value="${tx.id||tx.name}">${tx.name}</option>`).join('')}
-            </select>
-          </div>
           <div class="inline-form-footer">
             <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="toggleInlineForm('task-add-form-${p.id}')">Cancel</button>
             <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="inlineAddTask('${p.id}')">Add Action</button>
@@ -7957,12 +7877,8 @@ function renderProjDetail() {
             <div class="rap-meta">
               <span class="rap-pic-pill">${pic}</span>
               ${t.classification&&t.classification!=='General'?`<span class="ms-category">${t.classification}</span>`:''}
-              ${can('actions','edit') ? `<span class="rap-dl ${dlCls}" style="position:relative;display:inline-flex;align-items:center;">
-                <span style="pointer-events:none;">${dlTxt}</span>
-                <input type="date" value="${t.deadline||''}" onchange="quickSetTaskDeadline('${p.id}',${idx},this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;">
-              </span>` : `<span class="rap-dl ${dlCls}">${dlTxt}</span>`}
+              <span class="rap-dl ${dlCls}">${dlTxt}</span>
               ${ssLink ? `<span class="task-ss-link"><i class="ti ti-link" style="font-size:9px"></i> ${ssLink.title}</span>` : ''}
-              ${(() => { const dep = t.dependsOn ? tasks.find(tx => (tx.id||tx.name) === t.dependsOn) : null; return dep ? `<span class="task-ss-link" style="color:${dep.done?'var(--accent)':'var(--amber)'}"><i class="ti ti-arrow-right" style="font-size:9px"></i> ${dep.name.slice(0,20)}${dep.name.length>20?'…':''} ${dep.done?'✓':'⏳'}</span>` : ''; })()}
             </div>
           </div>
           <div class="rap-acts">
@@ -7992,12 +7908,6 @@ function renderProjDetail() {
                 <select class="finput" id="il-te-ss-${idx}">
                   <option value="">— None —</option>
                   ${(p.subStatuses||[]).map((ss,si) => `<option value="${ss.id||si}" ${t.linkedSubStatus===(ss.id||String(si))?'selected':''}>${ss.title}</option>`).join('')}
-                </select>
-              </div>
-              <div class="fg"><label class="flabel">Depends On (Task)</label>
-                <select class="finput" id="il-te-dep-${idx}">
-                  <option value="">— None —</option>
-                  ${tasks.filter((_,ti) => ti !== idx).map((tx,_) => `<option value="${tx.id||tx.name}" ${t.dependsOn===(tx.id||tx.name)?'selected':''}>${tx.name}</option>`).join('')}
                 </select>
               </div>
             </div>
@@ -8153,64 +8063,9 @@ function renderProjDetail() {
   }
 
   if (tab === 'activity') {
-    const activities = (p.activities||[]);
     const log = (p.activityLog||[]).slice().reverse();
     html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Current Activities
-        <span style="font-weight:400;color:var(--text3)">(${activities.length})</span>
-        ${can('projects','edit') ? `<button class="proj-detail-slabel-add" onclick="toggleInlineForm('act-add-form-${p.id}')"><i class="ti ti-plus" style="font-size:11px"></i> Add</button>` : ''}
-      </div>
-      <div id="act-add-form-${p.id}" style="display:none;margin-bottom:10px;">
-        <div class="inline-form">
-          <div class="fg"><label class="flabel">Activity</label><input class="finput" id="il-act-title" type="text" placeholder="What are you doing now?"></div>
-          <div class="frow2">
-            <div class="fg"><label class="flabel">Category</label>
-              <select class="finput" id="il-act-cat">
-                <option value="In Progress">In Progress</option>
-                <option value="Waiting">Waiting</option>
-                <option value="On Hold">On Hold</option>
-                <option value="Follow Up">Follow Up</option>
-                <option value="Meeting">Meeting</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="fg"><label class="flabel">Date</label><input class="finput" id="il-act-date" type="date" value="${today}"></div>
-          </div>
-          <div class="fg"><label class="flabel">Note</label><textarea class="finput" id="il-act-note" rows="2" placeholder="Optional details…" style="resize:vertical;width:100%;box-sizing:border-box;"></textarea></div>
-          <div class="inline-form-footer">
-            <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="toggleInlineForm('act-add-form-${p.id}')">Cancel</button>
-            <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="addActivity('${p.id}')">Add Activity</button>
-          </div>
-        </div>
-      </div>
-      ${activities.length ? activities.map((act, ai) => `
-        <div class="activity-entry ${act.done?'done':''}">
-          <div style="width:32px;height:32px;border-radius:50%;background:${act.done?'var(--al)':'var(--blbg)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-${act.done?'check':'activity'}" style="font-size:14px;color:${act.done?'var(--accent)':'var(--blue)'}"></i>
-          </div>
-          <div class="activity-entry-body">
-            <div class="activity-entry-title">${act.title}</div>
-            <div class="activity-entry-meta">
-              <span class="substatus-sbadge ss-${act.done?'completed':'ongoing'}" style="font-size:9px;">${act.done?'Done':act.category||'In Progress'}</span>
-              <span>${fmtDate(act.date||'')}</span>
-            </div>
-            ${act.note?`<div class="activity-entry-note">${act.note}</div>`:''}
-          </div>
-          <div style="display:flex;gap:4px;flex-shrink:0;">
-            ${!act.done && can('projects','edit') ? `<button class="tact-btn" onclick="markActivityDone('${p.id}',${ai})" title="Mark done"><i class="ti ti-check"></i></button>` : ''}
-            ${can('projects','edit') ? `<button class="tact-btn" onclick="deleteActivity('${p.id}',${ai})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
-          </div>
-        </div>`).join('')
-      : `<div style="font-size:11px;color:var(--text3);padding:6px 0;">No activities added yet.</div>`}
-    </div>
-    </div>`;
-  }
-
-  if (tab === 'changelog') {
-    const log = (p.activityLog||[]).slice().reverse();
-    html += `<div class="proj-detail-section">
-      <div class="proj-detail-slabel">Project Changelog <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
-      <p style="font-size:11px;color:var(--text3);margin-bottom:10px;">Auto-generated record of all changes made to this project.</p>
+      <div class="proj-detail-slabel">Activity Log <span style="font-weight:400;color:var(--text3)">(${log.length})</span></div>
       ${log.length ? log.map(e => `
         <div class="act-log-entry">
           <div class="act-log-icon ${e.type}"><i class="ti ti-${e.icon||'activity'}"></i></div>
@@ -8219,7 +8074,7 @@ function renderProjDetail() {
             <div class="act-log-meta">${e.by||'Adam'} · ${fmtDate(e.date)} ${e.time||''}</div>
           </div>
         </div>`).join('')
-      : `<div class="act-log-empty"><i class="ti ti-history"></i>No changes recorded yet.</div>`}
+      : `<div class="act-log-empty"><i class="ti ti-history"></i>No activity recorded yet.</div>`}
     </div>`;
   }
 
@@ -8280,55 +8135,10 @@ function inlineDeleteMilestone(projId, idx) {
   save(); renderProjects(); renderProjDetail();
 }
 
-function addActivity(projId) {
-  const p = data.projects.find(x => x.id === projId); if (!p) return;
-  const title = (document.getElementById('il-act-title').value||'').trim();
-  if (!title) { alert('Please enter an activity.'); return; }
-  if (!p.activities) p.activities = [];
-  p.activities.unshift({
-    id: uid(), title,
-    category: document.getElementById('il-act-cat').value||'In Progress',
-    date: document.getElementById('il-act-date').value||todayStr(),
-    note: (document.getElementById('il-act-note').value||'').trim(),
-    done: false, createdAt: todayStr()
-  });
-  logActivity(projId, 'add', 'activity', `Added activity: <strong>${title}</strong>`);
-  save(); renderProjects(); renderProjDetail();
-}
-function markActivityDone(projId, idx) {
-  const p = data.projects.find(x => x.id === projId); if (!p) return;
-  if (!p.activities || !p.activities[idx]) return;
-  p.activities[idx].done = true;
-  p.activities[idx].doneAt = todayStr();
-  logActivity(projId, 'done', 'circle-check', `Completed activity: <strong>${p.activities[idx].title}</strong>`);
-  save(); renderProjects(); renderProjDetail();
-}
-function deleteActivity(projId, idx) {
-  const p = data.projects.find(x => x.id === projId); if (!p) return;
-  if (!p.activities || !p.activities[idx]) return;
-  logActivity(projId, 'delete', 'trash', `Removed activity: <strong>${p.activities[idx].title}</strong>`);
-  p.activities.splice(idx, 1);
-  save(); renderProjects(); renderProjDetail();
-}
-function quickSetTaskDeadline(projId, idx, val) {
-  const p = data.projects.find(x => x.id === projId);
-  if (!p || !p.tasks[idx]) return;
-  p.tasks[idx].deadline = val;
-  save(); renderProjects(); renderProjDetail();
-}
-
 function toggleTaskInDetail(projId, idx) {
   const p = data.projects.find(x => x.id === projId);
   const task = p.tasks[idx];
   const wasDone = task.done;
-  // Check dependency — block if linked task not completed
-  if (!wasDone && task.dependsOn) {
-    const depTask = p.tasks.find(t => (t.id||t.name) === task.dependsOn);
-    if (depTask && !depTask.done) {
-      alert(`Cannot complete "${task.name}" — it depends on "${depTask.name}" which is not done yet.`);
-      return;
-    }
-  }
   task.done = !task.done;
   if (task.status !== 'done') task.status = task.done ? 'done' : 'todo';
   if (task.done && !wasDone) logActivity(projId, 'done', 'circle-check', `Completed action: <strong>${task.name}</strong>`);
@@ -8461,268 +8271,6 @@ function submitSubStatusAndRefresh() {
 // ══════════════════════════════════════════════════════
 //  NAV & THEME
 // ══════════════════════════════════════════════════════
-// ══════════════════════════════════════
-// SCHEDULER
-// ══════════════════════════════════════
-var schWeekOffset = 0; // 0 = current week
-
-function schGetWeekDates(offset) {
-  const now = new Date();
-  const day = now.getDay() || 7; // Mon=1
-  const mon = new Date(now);
-  mon.setDate(now.getDate() - day + 1 + offset * 7);
-  return Array.from({length: 5}, (_, i) => {
-    const d = new Date(mon);
-    d.setDate(mon.getDate() + i);
-    return d.toISOString().slice(0, 10);
-  });
-}
-
-function schNavWeek(dir) { schWeekOffset += dir; renderScheduler(); }
-function schGoToday()    { schWeekOffset = 0;   renderScheduler(); }
-
-function renderScheduler() {
-  const days = schGetWeekDates(schWeekOffset);
-  const todayISO = new Date().toISOString().slice(0, 10);
-
-  // Week label
-  const fmt = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'2-digit',month:'short'});
-  document.getElementById('sch-week-label').textContent = fmt(days[0]) + ' – ' + fmt(days[4]);
-
-  const body = document.getElementById('sch-body');
-  if (!body) return;
-  if (!data.schedule) data.schedule = {};
-
-  const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
-  let html = '';
-
-  days.forEach((iso, di) => {
-    const entries = (data.schedule[iso] || []);
-    const isToday = iso === todayISO;
-    const dateLabel = new Date(iso+'T00:00:00').toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    html += `<div class="sch-day-group" id="sch-day-${iso}">
-      <div class="sch-day-header">
-        <span class="sch-day-label${isToday?' today':''}">${dateLabel}${isToday?' <span style="font-size:9px;background:var(--blue);color:#fff;padding:1px 5px;border-radius:8px;margin-left:4px;">TODAY</span>':''}</span>
-        <button class="sch-day-add" onclick="schOpenAddForm('${iso}')">+ Add Entry</button>
-      </div>
-      <div id="sch-entries-${iso}">`;
-
-    if (!entries.length) {
-      html += `<div class="sch-empty-day">No entries</div>`;
-    } else {
-      entries.forEach((e, ei) => {
-        const isLinked = !!(e.code && e.code !== 'N/A');
-        html += `<div class="sch-entry${isLinked?' linked':''}">
-          <span class="sch-entry-code">${e.code||'N/A'}</span>
-          <div style="flex:1;min-width:0;">
-            <div class="sch-entry-name">${e.name||'—'}</div>
-            ${e.customer?`<div style="font-size:10px;color:var(--text3);">${e.customer}</div>`:''}
-            ${e.summary?`<div class="sch-entry-summary" style="margin-top:2px;">${e.summary}</div>`:''}
-          </div>
-          <span class="sch-entry-dur">${e.duration||''}</span>
-          <div class="sch-entry-acts">
-            <button class="tact-btn" onclick="schEditEntry('${iso}',${ei})" title="Edit"><i class="ti ti-pencil"></i></button>
-            <button class="tact-btn" onclick="schDeleteEntry('${iso}',${ei})" style="color:var(--red)" title="Delete"><i class="ti ti-trash"></i></button>
-          </div>
-        </div>`;
-      });
-    }
-    html += `</div>`;
-
-    // Inline add form (hidden)
-    html += `<div id="sch-form-${iso}" style="display:none;">
-      <div class="sch-add-form">
-        <div class="frow2" style="gap:8px;margin-bottom:8px;">
-          <div class="fg">
-            <label class="flabel">Study/Project Code</label>
-            <input class="finput" id="sch-f-code-${iso}" type="text" placeholder="e.g. PTSU-2605-01 or N/A" list="sch-codes-${iso}">
-            <datalist id="sch-codes-${iso}">
-              ${[...data.inquiries.map(i=>i.code), ...data.projects.map(p=>p.code)].filter(Boolean).map(c=>`<option value="${c}">`).join('')}
-              <option value="N/A">
-            </datalist>
-          </div>
-          <div class="fg">
-            <label class="flabel">Name / Activity</label>
-            <input class="finput" id="sch-f-name-${iso}" type="text" placeholder="e.g. Lotus 400g Jar Project Review">
-          </div>
-        </div>
-        <div class="frow2" style="gap:8px;margin-bottom:8px;">
-          <div class="fg">
-            <label class="flabel">Customer</label>
-            <input class="finput" id="sch-f-customer-${iso}" type="text" placeholder="Customer name or leave blank">
-          </div>
-          <div class="fg">
-            <label class="flabel">Duration</label>
-            <input class="finput" id="sch-f-duration-${iso}" type="text" placeholder="e.g. 1h, 30mins, 2h30">
-          </div>
-        </div>
-        <div class="fg" style="margin-bottom:8px;">
-          <label class="flabel">Summary of Task</label>
-          <input class="finput" id="sch-f-summary-${iso}" type="text" placeholder="Brief description of what was done">
-        </div>
-        <div style="display:flex;gap:6px;justify-content:flex-end;">
-          <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="schCloseForm('${iso}')">Cancel</button>
-          <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="schSaveEntry('${iso}')">Add</button>
-        </div>
-      </div>
-    </div>`;
-
-    html += `</div>`;
-  });
-
-  body.innerHTML = html;
-}
-
-function schOpenAddForm(iso) {
-  document.getElementById('sch-form-'+iso).style.display = 'block';
-  setTimeout(() => document.getElementById('sch-f-code-'+iso)?.focus(), 50);
-}
-function schCloseForm(iso) {
-  document.getElementById('sch-form-'+iso).style.display = 'none';
-}
-
-function schSaveEntry(iso, editIdx) {
-  if (!data.schedule) data.schedule = {};
-  if (!data.schedule[iso]) data.schedule[iso] = [];
-  const code     = (document.getElementById('sch-f-code-'+iso)?.value||'').trim();
-  const name     = (document.getElementById('sch-f-name-'+iso)?.value||'').trim();
-  const customer = (document.getElementById('sch-f-customer-'+iso)?.value||'').trim();
-  const duration = (document.getElementById('sch-f-duration-'+iso)?.value||'').trim();
-  const summary  = (document.getElementById('sch-f-summary-'+iso)?.value||'').trim();
-  if (!name) { alert('Please enter an activity name.'); return; }
-
-  // Auto-fill customer from linked inquiry/project if blank
-  let autoCustomer = customer;
-  if (!autoCustomer && code && code !== 'N/A') {
-    const inq = data.inquiries.find(i => i.code === code);
-    const proj = data.projects.find(p => p.code === code);
-    autoCustomer = inq?.customer || proj?.customer || '';
-  }
-
-  const entry = { id: uid(), code: code||'N/A', name, customer: autoCustomer, duration, summary };
-  if (editIdx !== undefined) {
-    data.schedule[iso][editIdx] = entry;
-  } else {
-    data.schedule[iso].push(entry);
-  }
-  save(); renderScheduler();
-}
-
-function schEditEntry(iso, idx) {
-  if (!data.schedule?.[iso]?.[idx]) return;
-  const e = data.schedule[iso][idx];
-  schOpenAddForm(iso);
-  setTimeout(() => {
-    document.getElementById('sch-f-code-'+iso).value     = e.code||'';
-    document.getElementById('sch-f-name-'+iso).value     = e.name||'';
-    document.getElementById('sch-f-customer-'+iso).value = e.customer||'';
-    document.getElementById('sch-f-duration-'+iso).value = e.duration||'';
-    document.getElementById('sch-f-summary-'+iso).value  = e.summary||'';
-    // Change save button to update
-    const btn = document.querySelector(`#sch-form-${iso} .btn-primary`);
-    if (btn) { btn.textContent = 'Update'; btn.onclick = () => schSaveEntry(iso, idx); }
-  }, 60);
-}
-
-function schDeleteEntry(iso, idx) {
-  if (!data.schedule?.[iso]) return;
-  data.schedule[iso].splice(idx, 1);
-  save(); renderScheduler();
-}
-
-function exportSchedulerExcel() {
-  if (!window.XLSX) { alert('Excel library not loaded.'); return; }
-  const days = schGetWeekDates(schWeekOffset);
-  const fmt = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'numeric',month:'numeric',year:'numeric'});
-  const fmtDay = d => new Date(d+'T00:00:00').toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  const hdrStyle = (bg) => ({
-    font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 10, name: 'Calibri' },
-    fill: { fgColor: { rgb: bg } },
-    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-    border: { top:{style:'thin',color:{rgb:'CCCCCC'}}, bottom:{style:'thin',color:{rgb:'CCCCCC'}}, left:{style:'thin',color:{rgb:'CCCCCC'}}, right:{style:'thin',color:{rgb:'CCCCCC'}} }
-  });
-  const cellStyle = (bg, bold, color) => ({
-    font: { bold: !!bold, color: { rgb: color||'1E293B' }, sz: 10, name: 'Calibri' },
-    fill: { fgColor: { rgb: bg||'FFFFFF' } },
-    alignment: { horizontal: 'left', vertical: 'center', wrapText: true },
-    border: { top:{style:'thin',color:{rgb:'CCCCCC'}}, bottom:{style:'thin',color:{rgb:'CCCCCC'}}, left:{style:'thin',color:{rgb:'CCCCCC'}}, right:{style:'thin',color:{rgb:'CCCCCC'}} }
-  });
-
-  const wb = XLSX.utils.book_new();
-  const headers = ['Date','Study/Project','Name','Customer','Summary of the task','Duration'];
-  const rows = [headers];
-
-  days.forEach(iso => {
-    const entries = (data.schedule?.[iso] || []);
-    const dateStr = fmt(iso);
-    if (!entries.length) {
-      rows.push([dateStr, '', '', '', '', '']);
-    } else {
-      entries.forEach((e, ei) => {
-        rows.push([ei === 0 ? dateStr : '', e.code||'N/A', e.name||'', e.customer||'', e.summary||'', e.duration||'']);
-      });
-    }
-    rows.push(['','','','','','']); // separator
-  });
-
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-
-  // Style header
-  ['A1','B1','C1','D1','E1','F1'].forEach((addr, ci) => {
-    if (ws[addr]) ws[addr].s = hdrStyle('1B3A6B');
-  });
-
-  // Style data rows
-  const merges = [];
-  let excelR = 1; // 0-indexed, row 0 = header
-  let dayStart = 1;
-  let dayCount = 0;
-
-  days.forEach(iso => {
-    const entries = (data.schedule?.[iso] || []);
-    const count = Math.max(entries.length, 1);
-    dayStart = excelR;
-
-    for (let i = 0; i < count; i++) {
-      excelR++;
-      const r = excelR;
-      const isLinked = entries[i]?.code && entries[i]?.code !== 'N/A';
-      const rowBg = isLinked ? 'E8F5E9' : (r % 2 === 0 ? 'F8FAFC' : 'FFFFFF');
-      ['A','B','C','D','E','F'].forEach((col, ci) => {
-        const addr = col + r;
-        if (!ws[addr]) ws[addr] = { v: '', t: 's' };
-        ws[addr].s = cellStyle(rowBg, ci === 2 && isLinked, isLinked && ci === 2 ? '166534' : '1E293B');
-      });
-      // Bold the date cell
-      const dateAddr = 'A' + r;
-      if (ws[dateAddr]) ws[dateAddr].s = cellStyle(rowBg, true, '1E293B');
-    }
-
-    // Merge date cells if multiple entries
-    if (count > 1) {
-      merges.push({ s: { r: dayStart, c: 0 }, e: { r: dayStart + count - 1, c: 0 } });
-    }
-
-    // Separator row
-    excelR++;
-    ['A','B','C','D','E','F'].forEach(col => {
-      const addr = col + excelR;
-      if (!ws[addr]) ws[addr] = { v: '', t: 's' };
-      ws[addr].s = { fill: { fgColor: { rgb: 'F1F5F9' } } };
-    });
-  });
-
-  ws['!merges'] = merges;
-  ws['!cols'] = [{wch:12},{wch:14},{wch:28},{wch:14},{wch:45},{wch:10}];
-  ws['!rows'] = rows.map((_,i) => ({ hpt: i===0 ? 20 : 18 }));
-  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
-
-  const weekLabel = fmt(days[0]).replace(/\//g,'-') + ' to ' + fmt(days[4]).replace(/\//g,'-');
-  XLSX.utils.book_append_sheet(wb, ws, 'Weekly Schedule');
-  XLSX.writeFile(wb, `Schedule_${weekLabel}.xlsx`);
-}
-
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -8736,7 +8284,6 @@ function showPage(name) {
   // Show density bar only on list pages
   showDensityBar(['inquiries','projects','tasks'].includes(name));
   if(name==='calendar')renderCalendar();
-  if(name==='scheduler'){if(!data.schedule) data.schedule={};renderScheduler();}
   if(name==='dashboard')renderDashboard();
   if(name==='bin')renderBin();
   if(name==='tasks'){renderMTasks(); applyDensity();}
@@ -8815,192 +8362,6 @@ function toggleTheme() { applyTheme(localStorage.getItem('pm_theme')==='dark'?'l
 // ══════════════════════════════════════════════════════
 //  INQUIRY REPORT
 // ══════════════════════════════════════════════════════
-function openProjReport() {
-  updateProjRptList();
-  document.getElementById('modal-proj-report').classList.add('open');
-}
-
-function getProjRptFiltered() {
-  const factory = document.getElementById('proj-rpt-factory').value;
-  const status  = document.getElementById('proj-rpt-status').value;
-  return (data.projects||[]).filter(p => {
-    if (factory !== 'all' && p.factory !== factory) return false;
-    if (status  !== 'all' && p.status  !== status)  return false;
-    return true;
-  }).sort((a,b) => (a.date||'').localeCompare(b.date||''));
-}
-
-function updateProjRptList() {
-  const list = getProjRptFiltered();
-  const box  = document.getElementById('proj-rpt-checklist');
-  const cnt  = document.getElementById('proj-rpt-count');
-  if (!box) return;
-  box.innerHTML = list.length === 0
-    ? '<span style="color:var(--text3);font-size:12px;">No projects match the filter.</span>'
-    : list.map(p => {
-        const dotCol = p.status==='in-progress'?'#3a8ef5':p.status==='completed'?'#30c060':p.status==='on-hold'?'#f5a623':'#9aa8be';
-        return `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:3px 0;">
-          <input type="checkbox" class="proj-rpt-chk" data-id="${p.id}" checked style="accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;" onchange="updateProjRptCount()">
-          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${dotCol};flex-shrink:0;"></span>
-          <span style="font-weight:600;color:var(--text);">${p.code||''}</span>
-          <span style="color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name||''}</span>
-          <span style="font-size:10px;color:var(--text3);flex-shrink:0;">${p.factory||''}</span>
-        </label>`;
-      }).join('');
-  updateProjRptCount();
-}
-
-function projRptSelectAll(val) {
-  document.querySelectorAll('.proj-rpt-chk').forEach(cb => cb.checked = val);
-  updateProjRptCount();
-}
-
-function updateProjRptCount() {
-  const checked = document.querySelectorAll('.proj-rpt-chk:checked').length;
-  const el = document.getElementById('proj-rpt-count');
-  if (el) el.textContent = checked + ' project' + (checked!==1?'s':'') + ' will be included in report';
-}
-
-function getSelectedProjRptProjects() {
-  const ids = [...document.querySelectorAll('.proj-rpt-chk:checked')].map(cb => cb.getAttribute('data-id'));
-  return (data.projects||[]).filter(p => ids.includes(p.id));
-}
-
-function exportProjReportPDF() {
-  const list = getSelectedProjRptProjects();
-  if (!list.length) { alert('No projects selected.'); return; }
-  const prepared = currentUserProfile?.name || 'Admin';
-  const today = new Date().toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'});
-
-  const cs = getComputedStyle(document.documentElement);
-  const bg      = cs.getPropertyValue('--bg').trim()       || '#111318';
-  const surface = cs.getPropertyValue('--surface').trim()  || '#1a1d24';
-  const text     = cs.getPropertyValue('--text').trim()    || '#eef1f7';
-  const text2    = cs.getPropertyValue('--text-sub').trim()|| '#9aa8be';
-  const border   = cs.getPropertyValue('--border').trim()  || '#2e3444';
-  const accent   = cs.getPropertyValue('--blue').trim()    || '#3a8ef5';
-  const isDark   = document.documentElement.classList.contains('dark-mode');
-  const appFont  = localStorage.getItem('appFont') || 'IBM Plex Sans';
-  const fontURL  = appFont === 'DM Sans'
-    ? 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap'
-    : 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap';
-  const headerBg = isDark ? '#0d1117' : '#0f172a';
-
-  const statusColor = s => s==='in-progress'?'#3a8ef5':s==='completed'?'#30c060':s==='on-hold'?'#f5a623':'#9aa8be';
-  const statusLabel2 = s => ({'not-started':'Not Started','in-progress':'In Progress','completed':'Completed','on-hold':'On Hold'})[s]||s||'—';
-  const fmtDate = d => d ? new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'}) : '—';
-
-  const rows = list.map((p, i) => {
-    const latestSS = (p.subStatuses||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-
-    // On-time / delayed logic
-    const todayISO = new Date().toISOString().slice(0,10);
-    let timeliness = '—', timeColor = text2;
-    if (p.deliveryDate) {
-      if (p.status === 'completed') {
-        timeliness = 'Completed'; timeColor = '#30c060';
-      } else if (p.deliveryDate < todayISO) {
-        const daysLate = Math.round((new Date(todayISO) - new Date(p.deliveryDate)) / 86400000);
-        timeliness = daysLate + 'd overdue'; timeColor = '#f0445a';
-      } else {
-        const daysLeft = Math.round((new Date(p.deliveryDate) - new Date(todayISO)) / 86400000);
-        timeliness = daysLeft + 'd remaining'; timeColor = daysLeft < 14 ? '#f5a623' : '#30c060';
-      }
-    }
-
-    // Next actions from tasks
-    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3).map(t=>`• ${t.name||''}`).join('<br>') || '—';
-
-    const rowBg = i%2===0 ? bg : surface;
-    return `<tr style="background:${rowBg};">
-      <td style="color:${text2};text-align:center;font-size:9px;">${i+1}</td>
-      <td>
-        <div style="font-weight:700;color:${text};margin-bottom:2px;">${p.name||'—'}</div>
-        <div style="font-size:9px;color:${accent};font-family:monospace;">${p.code||''}</div>
-        <div style="font-size:9px;color:${text2};margin-top:2px;">${classLabel(p.classification)||''}</div>
-      </td>
-      <td>${p.customer||'—'}</td>
-      <td style="font-size:10px;">${p.salesPerson||'—'}</td>
-      <td>${p.factory||'—'}</td>
-      <td>
-        <span style="display:inline-flex;align-items:center;gap:5px;">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusColor(p.status)};"></span>
-          <span style="color:${statusColor(p.status)};font-weight:700;">${statusLabel2(p.status)}</span>
-        </span>
-      </td>
-      <td style="font-size:9.5px;color:${text2};">
-        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
-      </td>
-      <td style="font-size:9px;">${nextActions}</td>
-      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;">${timeliness}</td>
-      <td style="font-size:10px;white-space:nowrap;color:${text2};">${fmtDate(p.deliveryDate)}</td>
-    </tr>`;
-  }).join('');
-
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>TPAC Project Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="${fontURL}">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'${appFont}','IBM Plex Sans','DM Sans',sans-serif;background:${bg};color:${text};font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .rpt-header{background:${headerBg};padding:14px 20px;border-bottom:3px solid ${accent};}
-    .rpt-header-inner{display:flex;justify-content:space-between;align-items:center;}
-    .rpt-brand{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
-    .rpt-brand span{color:${accent};}
-    .rpt-title{font-size:13px;font-weight:700;color:#fff;text-align:right;}
-    .rpt-meta{font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:3px;text-align:right;}
-    .rpt-body{padding:14px 20px;}
-    .rpt-stats{display:flex;gap:10px;margin-bottom:16px;}
-    .rpt-stat{background:${surface};border:1px solid ${border};border-radius:6px;padding:8px 14px;flex:1;text-align:center;}
-    .rpt-stat-val{font-size:20px;font-weight:800;color:${accent};}
-    .rpt-stat-label{font-size:8.5px;color:${text2};text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
-    table{width:100%;border-collapse:collapse;}
-    th{background:${surface};color:${text2};font-weight:700;padding:7px 9px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid ${accent};white-space:nowrap;}
-    td{padding:8px 9px;border-bottom:1px solid ${border};vertical-align:top;font-size:10px;}
-    .rpt-footer{text-align:center;font-size:8.5px;color:${text2};padding:12px 0;border-top:1px solid ${border};margin-top:16px;}
-    @media print{@page{size:A4 landscape;margin:8mm;}body{font-size:9px;}}
-  </style></head><body>
-  <div class="rpt-header">
-    <div class="rpt-header-inner">
-      <div><div class="rpt-brand">TP<span>AC</span></div><div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:2px;">NPD Project Tracker</div></div>
-      <div><div class="rpt-title">Project Status Report</div><div class="rpt-meta">Prepared by ${prepared} &nbsp;·&nbsp; ${today}</div></div>
-    </div>
-  </div>
-  <div class="rpt-body">
-    <div class="rpt-stats">
-      <div class="rpt-stat"><div class="rpt-stat-val">${list.length}</div><div class="rpt-stat-label">Total</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#3a8ef5;">${list.filter(p=>p.status==='in-progress').length}</div><div class="rpt-stat-label">In Progress</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#30c060;">${list.filter(p=>p.status==='completed').length}</div><div class="rpt-stat-label">Completed</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#f5a623;">${list.filter(p=>p.status==='on-hold').length}</div><div class="rpt-stat-label">On Hold</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#f0445a;">${list.filter(p=>p.deliveryDate&&p.status!=='completed'&&p.deliveryDate<new Date().toISOString().slice(0,10)).length}</div><div class="rpt-stat-label">Overdue</div></div>
-    </div>
-    <table>
-      <thead><tr>
-        <th style="width:3%">#</th>
-        <th style="width:18%">Project</th>
-        <th style="width:10%">Customer</th>
-        <th style="width:8%">Sales</th>
-        <th style="width:8%">Factory</th>
-        <th style="width:9%">Status</th>
-        <th style="width:18%">Current Activity</th>
-        <th style="width:14%">Next Actions</th>
-        <th style="width:8%">Timeline</th>
-        <th style="width:8%">Est. Delivery</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <div class="rpt-footer">TPAC NPD Project Report &mdash; ${today} &mdash; Confidential &mdash; For Internal Use Only</div>
-  </div>
-  <script>window.onload=function(){window.print();}<\/script>
-  </body></html>`;
-
-  const printWin = window.open('', '_blank');
-  printWin.document.write(html);
-  printWin.document.close();
-  closeModal('proj-report');
-}
-
 function openInqReport() {
   // Default date range: last 30 days to today
   const to   = todayStr();
@@ -9941,55 +9302,6 @@ waitForFirebaseAndInit();
 </script>
 
 <!-- INQUIRY REPORT MODAL -->
-<div class="overlay" id="modal-proj-report">
-  <div class="modal" style="max-width:560px;">
-    <div class="mtitle">
-      <div class="mtitle-left">
-        <div class="mtitle-icon"><i class="ti ti-file-analytics"></i></div>
-        <div><div class="mtitle-text">Project Report</div><div class="mtitle-sub">Management summary — select projects to include</div></div>
-      </div>
-      <button class="modal-close-btn" onclick="closeModal('proj-report')"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="mbody">
-      <div class="fsection"><i class="ti ti-filter"></i> Filter Projects</div>
-      <div class="frow2">
-        <div class="fg">
-          <label class="flabel">Factory</label>
-          <select class="finput" id="proj-rpt-factory" onchange="updateProjRptList()">
-            <option value="all">All Factories</option>
-            <option value="Combi-Pack">Combi-Pack</option>
-            <option value="Super Uniart">Super Uniart</option>
-            <option value="Reachpac">Reachpac</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="flabel">Status</label>
-          <select class="finput" id="proj-rpt-status" onchange="updateProjRptList()">
-            <option value="all">All Statuses</option>
-            <option value="not-started">Not Started</option>
-            <option value="in-progress">In Progress</option>
-            <option value="on-hold">On Hold</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-      </div>
-      <div class="fsection" style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;">
-        <span><i class="ti ti-checklist"></i> Select Projects to Include</span>
-        <div style="display:flex;gap:8px;">
-          <span style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;" onclick="projRptSelectAll(true)">All</span>
-          <span style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="projRptSelectAll(false)">None</span>
-        </div>
-      </div>
-      <div id="proj-rpt-checklist" style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:6px 10px;background:var(--surface2);display:flex;flex-direction:column;gap:6px;font-size:12px;"></div>
-      <div id="proj-rpt-count" style="font-size:11px;color:var(--accent);margin-top:8px;font-family:var(--fm);font-weight:600;"></div>
-    </div>
-    <div class="mfooter">
-      <button class="modal-cancel-btn" onclick="closeModal('proj-report')">Cancel</button>
-      <button class="modal-submit-btn" onclick="exportProjReportPDF()"><i class="ti ti-file-type-pdf"></i> Generate PDF</button>
-    </div>
-  </div>
-</div>
-
 <div class="overlay" id="modal-inq-report">
   <div class="modal" style="max-width:560px;">
     <div class="mtitle">

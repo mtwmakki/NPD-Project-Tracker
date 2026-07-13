@@ -868,6 +868,10 @@ html{scroll-behavior:smooth;}
 .followup-btn.no{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
 /* Awaiting section in notifications */
 .notif-section-head.awaiting{color:var(--amber);}
+.notif-type-head{font-size:12px;font-weight:800;font-family:var(--f);padding:14px 0 8px;display:flex;align-items:center;gap:7px;color:var(--text);border-bottom:2px solid var(--border);margin-bottom:6px;}
+.notif-type-head:first-child{padding-top:0;}
+.notif-type-head i{font-size:14px;color:var(--accent);}
+.notif-type-head .notif-type-count{font-weight:500;color:var(--text3);font-family:var(--fm);font-size:10px;}
 /* Misc Tasks */
 .mtask-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:visible;transition:border-color .15s;position:relative;}
 .mtask-card:hover{border-color:var(--accent);}
@@ -4672,7 +4676,7 @@ function _renderInqDetailInner() {
             ? `<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
             : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
           <div class="na-right">
-            <div class="na-deadline-badge ${dlClass}">
+            <div class="na-deadline-badge ${dlClass}" ${canEdit?`onclick="var el=this.querySelector('input[type=date]'); if(el){ if(el.showPicker){try{el.showPicker();}catch(e){el.focus();} } else { el.focus(); } }"`:''}>
               <i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}
               ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">` : ''}
             </div>
@@ -4718,7 +4722,7 @@ function _renderInqDetailInner() {
                 : `<div style="font-size:12px;color:var(--text);${t.done?'text-decoration:line-through;opacity:.55;':''}">${t.name||'—'}</div>`}
             </div>
             <div class="ip-right">
-              <div class="ip-deadline ${dlClass}">
+              <div class="ip-deadline ${dlClass}" ${canEdit?`onclick="var el=this.querySelector('input[type=date]'); if(el){ if(el.showPicker){try{el.showPicker();}catch(e){el.focus();} } else { el.focus(); } }"`:''}>
                 <i class="ti ${dlIcon}" style="font-size:10px;"></i> ${dlLabel}
                 ${canEdit ? `<input type="date" value="${t.deadline||''}" onchange="saveInqTask('${inq.id}','${t.id}','deadline',this.value)">` : ''}
               </div>
@@ -5263,6 +5267,21 @@ function renderNotificationsPage() {
   }
 }
 
+// ── Group notifications by type (Inquiries / Projects / Tasks) ──
+function groupNotifByType(missed, upcoming, awaiting) {
+  const types = [
+    {key:'inquiry', label:'Inquiries', icon:'ti-file-search'},
+    {key:'project',  label:'Projects',  icon:'ti-folder'},
+    {key:'mtask',    label:'Tasks',     icon:'ti-checkbox'}
+  ];
+  return types.map(t => ({
+    ...t,
+    missed:   missed.filter(n => n.type === t.key),
+    upcoming: upcoming.filter(n => n.type === t.key),
+    awaiting: awaiting.filter(n => n.type === t.key),
+  })).filter(g => g.missed.length || g.upcoming.length || g.awaiting.length);
+}
+
 // ── COMPACT ROW VIEW ──
 function renderNotifCompact(missed, upcoming, awaiting, completed) {
   let html = '';
@@ -5288,18 +5307,24 @@ function renderNotifCompact(missed, upcoming, awaiting, completed) {
     </div>`;
   };
 
-  if (missed.length) {
-    html += `<div class="notif-sh missed" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--red);"><i class="ti ti-alert-circle"></i>Missed (${missed.length})</div>`;
-    missed.forEach(n => { html += row(n,'missed'); });
-  }
-  if (awaiting.length) {
-    html += `<div class="notif-sh" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--blue);"><i class="ti ti-arrow-forward-up"></i>Awaiting Reply (${awaiting.length})</div>`;
-    awaiting.forEach(n => { html += row(n,'awaiting'); });
-  }
-  if (upcoming.length) {
-    html += `<div class="notif-sh" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--amber);"><i class="ti ti-clock"></i>Upcoming (${upcoming.length})</div>`;
-    upcoming.forEach(n => { html += row(n,'upcoming'); });
-  }
+  const groups = groupNotifByType(missed, upcoming, awaiting);
+  groups.forEach(g => {
+    const groupTotal = g.missed.length + g.upcoming.length + g.awaiting.length;
+    html += `<div class="notif-type-head"><i class="ti ${g.icon}"></i>${g.label} <span class="notif-type-count">(${groupTotal})</span></div>`;
+    if (g.missed.length) {
+      html += `<div class="notif-sh missed" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--red);"><i class="ti ti-alert-circle"></i>Missed (${g.missed.length})</div>`;
+      g.missed.forEach(n => { html += row(n,'missed'); });
+    }
+    if (g.awaiting.length) {
+      html += `<div class="notif-sh" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--blue);"><i class="ti ti-arrow-forward-up"></i>Awaiting Reply (${g.awaiting.length})</div>`;
+      g.awaiting.forEach(n => { html += row(n,'awaiting'); });
+    }
+    if (g.upcoming.length) {
+      html += `<div class="notif-sh" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--fm);padding:8px 0 5px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);margin-bottom:4px;color:var(--amber);"><i class="ti ti-clock"></i>Upcoming (${g.upcoming.length})</div>`;
+      g.upcoming.forEach(n => { html += row(n,'upcoming'); });
+    }
+  });
+
   if (completed.length) {
     html += `<div class="done-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
       <i class="ti ti-chevron-down chevron"></i><span>Completed (${completed.length})</span>
@@ -5361,24 +5386,30 @@ function renderNotifExpanded(missed, upcoming, awaiting, completed) {
     </div>`;
   };
 
-  if (missed.length) {
-    html += `<div class="notif-section-head missed" style="margin-bottom:6px;"><i class="ti ti-alert-circle"></i>Missed Deadlines (${missed.length})</div>`;
-    html += `<div class="notif-cards-grid">`;
-    missed.forEach(n => { html += card(n,'missed'); });
-    html += `</div>`;
-  }
-  if (awaiting.length) {
-    html += `<div class="notif-section-head awaiting" style="margin:10px 0 6px;"><i class="ti ti-arrow-forward-up"></i>Awaiting Reply (${awaiting.length})</div>`;
-    html += `<div class="notif-cards-grid">`;
-    awaiting.forEach(n => { html += card(n,'awaiting'); });
-    html += `</div>`;
-  }
-  if (upcoming.length) {
-    html += `<div class="notif-section-head upcoming" style="margin:10px 0 6px;"><i class="ti ti-clock"></i>Upcoming Deadlines (${upcoming.length})</div>`;
-    html += `<div class="notif-cards-grid">`;
-    upcoming.forEach(n => { html += card(n,'upcoming'); });
-    html += `</div>`;
-  }
+  const groups = groupNotifByType(missed, upcoming, awaiting);
+  groups.forEach(g => {
+    const groupTotal = g.missed.length + g.upcoming.length + g.awaiting.length;
+    html += `<div class="notif-type-head"><i class="ti ${g.icon}"></i>${g.label} <span class="notif-type-count">(${groupTotal})</span></div>`;
+    if (g.missed.length) {
+      html += `<div class="notif-section-head missed" style="margin-bottom:6px;"><i class="ti ti-alert-circle"></i>Missed Deadlines (${g.missed.length})</div>`;
+      html += `<div class="notif-cards-grid">`;
+      g.missed.forEach(n => { html += card(n,'missed'); });
+      html += `</div>`;
+    }
+    if (g.awaiting.length) {
+      html += `<div class="notif-section-head awaiting" style="margin:10px 0 6px;"><i class="ti ti-arrow-forward-up"></i>Awaiting Reply (${g.awaiting.length})</div>`;
+      html += `<div class="notif-cards-grid">`;
+      g.awaiting.forEach(n => { html += card(n,'awaiting'); });
+      html += `</div>`;
+    }
+    if (g.upcoming.length) {
+      html += `<div class="notif-section-head upcoming" style="margin:10px 0 6px;"><i class="ti ti-clock"></i>Upcoming Deadlines (${g.upcoming.length})</div>`;
+      html += `<div class="notif-cards-grid">`;
+      g.upcoming.forEach(n => { html += card(n,'upcoming'); });
+      html += `</div>`;
+    }
+  });
+
   if (completed.length) {
     html += `<div class="done-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
       <i class="ti ti-chevron-down chevron"></i><span>Completed (${completed.length})</span>
@@ -7337,6 +7368,7 @@ function saveInqTask(inqId, taskId, field, value) {
   if (!task) return;
   task[field] = value;
   save();
+  if (field === 'deadline') renderInqDetail();
 }
 
 function deleteInqTask(inqId, taskId) {

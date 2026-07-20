@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <!-- Firebase SDK (compat version) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -1219,6 +1220,118 @@ html{scroll-behavior:smooth;}
 .gantt-add-row input,.gantt-add-row select{font-size:11px;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);}
 .gantt-actual-inputs{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text3);}
 @keyframes ti-spin-kf{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ti-spin{animation:ti-spin-kf .7s linear infinite;display:inline-block;}
+
+/* ══════════════════════════════════════════════
+   PILL NAV — replaces the left sidebar
+   ══════════════════════════════════════════════ */
+.sidebar{display:none !important;}
+.main-content{margin-left:0 !important;}
+.main-content.sidebar-pinned{margin-left:0 !important;}
+.app-body{padding-top:60px;}
+
+.pill-nav-container{position:fixed;top:0;left:0;width:100%;z-index:160;}
+.pill-nav{
+  --nav-h:44px;
+  --base:var(--sidebar-bg);
+  --pill-bg:#eef1f7;
+  --pill-text:#12141a;
+  --hover-text:#ffffff;
+  --pill-pad-x:16px;
+  --pill-gap:3px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:8px 16px;
+  background:var(--base);
+  box-shadow:0 2px 14px rgba(0,0,0,.18);
+  box-sizing:border-box;
+  transition:background .2s;
+}
+.pill-logo{width:var(--nav-h);height:var(--nav-h);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(255,255,255,.06);}
+.pill-nav-center{display:flex;align-items:center;gap:14px;flex:1;min-width:0;overflow:hidden;}
+.pill-nav-items{position:relative;display:flex;align-items:center;height:var(--nav-h);background:rgba(255,255,255,.06);border-radius:9999px;flex-shrink:1;min-width:0;}
+.pill-list{list-style:none;display:flex;align-items:stretch;gap:var(--pill-gap);margin:0;padding:3px;height:100%;overflow-x:auto;scrollbar-width:none;}
+.pill-list::-webkit-scrollbar{display:none;}
+.pill-list>li{display:flex;height:100%;flex-shrink:0;position:relative;}
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:100%;padding:0 var(--pill-pad-x);
+  background:var(--pill-bg);color:var(--pill-text);
+  text-decoration:none;border-radius:9999px;box-sizing:border-box;
+  font-weight:600;font-size:11px;font-family:var(--f);
+  letter-spacing:.02em;white-space:nowrap;cursor:pointer;
+  position:relative;overflow:hidden;border:none;
+}
+.pill i{position:relative;z-index:2;font-size:14px;color:var(--pill-text);flex-shrink:0;}
+.pill .hover-circle{
+  position:absolute;left:50%;bottom:0;
+  border-radius:50%;background:var(--base);
+  z-index:1;pointer-events:none;will-change:transform;
+}
+.pill .label-stack{position:relative;display:inline-block;line-height:1;z-index:2;overflow:visible;}
+.pill .pill-label{position:relative;z-index:2;display:inline-block;line-height:1;color:var(--pill-text);will-change:transform;}
+.pill .pill-label-hover{position:absolute;left:0;top:0;color:var(--hover-text);z-index:3;display:inline-block;line-height:1;will-change:transform,opacity;}
+.pill.active{background:var(--base);}
+.pill.active i,.pill.active .pill-label{color:var(--hover-text);}
+.pill.active .hover-circle{display:none;}
+.pill-badge{position:relative;z-index:2;background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;}
+.pill-logo.spinning svg{will-change:transform;}
+
+/* More dropdown */
+.pill-more-wrap{position:relative;}
+.pill-more-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:170px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:170;}
+.pill-more-menu.open{display:flex;}
+.pill-more-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
+.pill-more-item:hover{background:var(--surface2);color:var(--text);}
+.pill-more-item.active{background:var(--al);color:var(--accent);}
+.pill-more-item i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+
+/* Right cluster: sync + user */
+.pill-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pill-sync-dot{width:8px;height:8px;border-radius:50%;background:#30c060;flex-shrink:0;}
+.pill-user{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 6px;border-radius:9999px;background:rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
+.pill-user:hover{background:rgba(255,255,255,.15);}
+.pill-user-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.pill-user-info{display:flex;flex-direction:column;line-height:1.15;}
+.pill-user-name{font-size:11px;font-weight:600;color:#fff;}
+.pill-user-role{font-size:9px;color:rgba(255,255,255,.55);font-family:var(--fm);}
+.pill-user i.ti-chevron-down{color:rgba(255,255,255,.6);font-size:10px;}
+.pill-user-menu{position:absolute;top:calc(100% + 8px);right:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:170px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:170;}
+.pill-user-menu.open{display:flex;}
+.pill-user-menu button{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
+.pill-user-menu button:hover{background:var(--surface2);color:var(--text);}
+.pill-user-menu i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+
+.pill-desktop-only{display:flex;}
+.pill-mobile-only{display:none;}
+@media (max-width:900px){
+  .pill-desktop-only{display:none;}
+  .pill-mobile-only{display:flex;}
+  .pill-nav-center{display:none;}
+}
+.pill-mobile-toggle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;flex-shrink:0;}
+.pill-hamburger-line{width:15px;height:2px;background:#fff;border-radius:1px;}
+.pill-mobile-popover{position:absolute;top:calc(100% + 8px);left:12px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 32px rgba(0,0,0,.22);z-index:170;display:none;flex-direction:column;max-height:calc(100vh - 70px);overflow-y:auto;}
+.pill-mobile-popover.open{display:flex;}
+.pill-mobile-popover .pill-more-item{border-radius:0;padding:11px 14px;border-bottom:1px solid var(--border);}
+.pill-mobile-popover .pill-more-item:last-child{border-bottom:none;}
+
+/* Hard overrides — pill buttons keep class "nav-item" for JS compatibility,
+   but must not inherit the old vertical-sidebar item styling. */
+.pill-list .pill.nav-item{width:auto;padding:0 var(--pill-pad-x);gap:5px;border-left:none;border-radius:9999px;font-size:11px;}
+.pill-list .pill.nav-item i{width:auto;text-align:left;font-size:14px;}
+.pill-list .pill.nav-item:hover{background:var(--pill-bg);color:var(--pill-text);}
+.pill-list .pill.nav-item.active{border-left:none;background:var(--base);color:var(--hover-text);}
+.pill-list .pill.nav-item.active i,.pill-list .pill.nav-item.active .pill-label{color:var(--hover-text);}
+.pill-more-menu .nav-item{width:100%;padding:8px 10px;border-left:none;}
+.pill-more-menu .nav-item i{width:18px;text-align:center;font-size:15px;}
+.pill-more-menu .nav-item:hover{background:var(--surface2);color:var(--text);}
+.pill-more-menu .nav-item.active{border-left:none;background:var(--al);color:var(--accent);}
+
+
+
 </style>
 </head>
 <body>
@@ -1279,52 +1392,95 @@ html{scroll-behavior:smooth;}
 <button class="fab-btn" id="fab-btn" onclick="fabAction()" title="Add New"><i class="ti ti-plus"></i></button>
 
 <!-- LEFT SIDEBAR -->
-<nav class="sidebar" id="sidebar">
-  <div class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn"><i class="ti ti-chevron-right" id="sidebar-toggle-icon"></i></div>
-  <!-- Logo -->
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-icon">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect width="28" height="28" rx="8" fill="url(#sg)"/>
+<div class="pill-nav-container">
+  <nav class="pill-nav" id="pill-nav-bar">
+    <div class="pill-logo" id="pill-logo" onclick="showPage('inquiries')" onmouseenter="pillLogoEnter(this)" title="NPD Tracker" style="cursor:pointer;">
+      <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="url(#sgpill)"/>
         <text x="14" y="19" text-anchor="middle" font-size="13" font-weight="700" fill="white" font-family="sans-serif">T</text>
-        <defs><linearGradient id="sg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
+        <defs><linearGradient id="sgpill" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
       </svg>
     </div>
-    <span class="sidebar-logo-text">NPD Tracker <span style="font-size:9px;font-weight:400;opacity:.6;" id="sidebar-version">V76.2</span></span>
-  </div>
-  <div class="sidebar-inner">
-    <div class="sidebar-nav">
-      <!-- User info -->
-      <div class="sidebar-user" id="sidebar-user-block" onclick="showPage('settings')" style="display:none;">
-        <div class="sidebar-user-avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#f0445a,#3a8ef5);">A</div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" id="sidebar-username">Adam</div>
-          <div class="sidebar-user-role" id="sidebar-userrole">Master</div>
+
+    <div class="pill-nav-center pill-desktop-only">
+      <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,.4);font-family:var(--fm);flex-shrink:0;margin-right:2px;" id="sidebar-version">V76.2</span>
+      <div class="pill-nav-items">
+        <ul class="pill-list">
+          <li><button class="pill nav-item active" id="nav-inquiries" onclick="showPage('inquiries')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+            <span class="hover-circle"></span><i class="ti ti-file-description"></i><span class="label-stack"><span class="pill-label">Inquiries</span><span class="pill-label-hover" aria-hidden="true">Inquiries</span></span>
+          </button></li>
+          <li><button class="pill nav-item" id="nav-projects" onclick="showPage('projects')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+            <span class="hover-circle"></span><i class="ti ti-folder"></i><span class="label-stack"><span class="pill-label">Projects</span><span class="pill-label-hover" aria-hidden="true">Projects</span></span>
+          </button></li>
+          <li><button class="pill nav-item" id="nav-tasks" onclick="showPage('tasks')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+            <span class="hover-circle"></span><i class="ti ti-checkbox"></i><span class="label-stack"><span class="pill-label">Tasks</span><span class="pill-label-hover" aria-hidden="true">Tasks</span></span><span class="pill-badge" id="tasks-viewall-badge" style="display:none"></span>
+          </button></li>
+          <li><button class="pill nav-item" id="nav-notifications" onclick="showPage('notifications')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+            <span class="hover-circle"></span><i class="ti ti-bell"></i><span class="label-stack"><span class="pill-label">Notifications</span><span class="pill-label-hover" aria-hidden="true">Notifications</span></span><span class="pill-badge" id="notif-nav-badge" style="display:none">0</span>
+          </button></li>
+          <li><button class="pill nav-item" id="nav-dashboard" onclick="showPage('dashboard')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+            <span class="hover-circle"></span><i class="ti ti-chart-bar"></i><span class="label-stack"><span class="pill-label">Dashboard</span><span class="pill-label-hover" aria-hidden="true">Dashboard</span></span>
+          </button></li>
+          <li class="pill-more-wrap">
+            <button class="pill" id="pill-more-toggle" onclick="toggleMoreMenu(event)" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
+              <span class="hover-circle"></span><i class="ti ti-dots" id="more-toggle-icon"></i><span class="label-stack"><span class="pill-label">More</span><span class="pill-label-hover" aria-hidden="true">More</span></span>
+            </button>
+            <div class="pill-more-menu" id="pill-more-menu">
+              <button class="pill-more-item nav-item" id="nav-pipeline" onclick="showPage('pipeline');closeMoreMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
+              <button class="pill-more-item nav-item" id="nav-calendar" onclick="showPage('calendar');closeMoreMenu()"><i class="ti ti-calendar"></i>Calendar</button>
+              <button class="pill-more-item nav-item" id="nav-scheduler" onclick="showPage('scheduler');closeMoreMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
+              <button class="pill-more-item nav-item" id="nav-changelog" onclick="showPage('changelog');closeMoreMenu()"><i class="ti ti-history"></i>Changelog</button>
+              <button class="pill-more-item nav-item" id="nav-users" style="display:none;" onclick="showPage('users');closeMoreMenu()"><i class="ti ti-users"></i>Users</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pill-nav-right pill-desktop-only">
+      <div style="display:flex;align-items:center;gap:5px;" title="Online">
+        <div class="pill-sync-dot" id="sidebar-sync"></div>
+        <div id="sidebar-sync-label" style="font-size:9px;color:rgba(255,255,255,.5);white-space:nowrap;"></div>
+      </div>
+      <div style="position:relative;">
+        <div class="pill-user" id="sidebar-user-block" onclick="toggleUserMenu(event)" style="display:none;">
+          <div class="pill-user-avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#f0445a,#3a8ef5);">A</div>
+          <div class="pill-user-info">
+            <div class="pill-user-name" id="sidebar-username">Adam</div>
+            <div class="pill-user-role" id="sidebar-userrole">Master</div>
+          </div>
+          <i class="ti ti-chevron-down"></i>
+        </div>
+        <div class="pill-user-menu" id="pill-user-menu">
+          <button onclick="toggleTheme()" id="sidebar-theme-btn"><i class="ti ti-moon" id="sidebar-theme-icon"></i><span id="sidebar-theme-label">Dark Mode</span></button>
+          <button onclick="showPage('settings');closeUserMenu()" id="nav-settings"><i class="ti ti-settings"></i>Settings</button>
+          <button onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
         </div>
       </div>
-      <!-- Status -->
-      <div style="display:flex;align-items:center;padding:4px 0 8px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:4px;">
-        <div style="width:64px;text-align:center;flex-shrink:0;"><div id="sidebar-sync" style="width:8px;height:8px;border-radius:50%;background:#30c060;display:inline-block;" title="Online"></div></div>
-        <div id="sidebar-sync-label" style="font-size:10px;color:var(--sidebar-text);opacity:.6;white-space:nowrap;overflow:hidden;max-width:0;opacity:0;transition:max-width .2s,opacity .15s ease .05s;"></div>
-      </div>
-      <button class="nav-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i><span class="nav-item-label">Inquiries</span></button>
-      <button class="nav-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i><span class="nav-item-label">Projects</span></button>
-      <button class="nav-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="nav-item-label">Tasks</span><span class="nav-badge" id="tasks-viewall-badge" style="display:none"></span></button>
-      <button class="nav-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="nav-item-label">Notifications</span><span class="nav-badge" id="notif-nav-badge" style="display:none">0</span></button>
-      <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="nav-item-label">Dashboard</span></button>
-      <button class="nav-item" id="nav-pipeline" onclick="showPage('pipeline')"><i class="ti ti-git-branch"></i><span class="nav-item-label">NPD Pipeline</span></button>
-      <button class="nav-item" id="nav-calendar" onclick="showPage('calendar')"><i class="ti ti-calendar"></i><span class="nav-item-label">Calendar</span></button>
-      <button class="nav-item" id="nav-scheduler" onclick="showPage('scheduler')"><i class="ti ti-clock-record"></i><span class="nav-item-label">Scheduler</span></button>
-      <button class="nav-item" id="nav-changelog" onclick="showPage('changelog')"><i class="ti ti-history"></i><span class="nav-item-label">Changelog</span></button>
-      <button class="nav-item" id="nav-users" style="display:none;" onclick="showPage('users')"><i class="ti ti-users"></i><span class="nav-item-label">Users</span></button>
     </div>
-    <div class="sidebar-bottom">
-      <button class="nav-item" onclick="toggleTheme()" id="sidebar-theme-btn"><i class="ti ti-moon" id="sidebar-theme-icon"></i><span class="nav-item-label" id="sidebar-theme-label">Dark Mode</span></button>
-      <button class="nav-item" id="nav-settings" onclick="showPage('settings')"><i class="ti ti-settings"></i><span class="nav-item-label">Settings</span></button>
-      <button class="nav-item" onclick="doLogout()"><i class="ti ti-logout"></i><span class="nav-item-label">Sign Out</span></button>
-    </div>
+
+    <button class="pill-mobile-toggle pill-mobile-only" id="pill-mobile-toggle" onclick="toggleMobileMenu(event)">
+      <span class="pill-hamburger-line"></span><span class="pill-hamburger-line"></span><span class="pill-hamburger-line"></span>
+    </button>
+  </nav>
+
+  <div class="pill-mobile-popover" id="pill-mobile-popover">
+    <button class="pill-more-item" onclick="showPage('inquiries');closeMobileMenu()"><i class="ti ti-file-description"></i>Inquiries</button>
+    <button class="pill-more-item" onclick="showPage('projects');closeMobileMenu()"><i class="ti ti-folder"></i>Projects</button>
+    <button class="pill-more-item" onclick="showPage('tasks');closeMobileMenu()"><i class="ti ti-checkbox"></i>Tasks</button>
+    <button class="pill-more-item" onclick="showPage('notifications');closeMobileMenu()"><i class="ti ti-bell"></i>Notifications</button>
+    <button class="pill-more-item" onclick="showPage('dashboard');closeMobileMenu()"><i class="ti ti-chart-bar"></i>Dashboard</button>
+    <button class="pill-more-item" onclick="showPage('pipeline');closeMobileMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
+    <button class="pill-more-item" onclick="showPage('calendar');closeMobileMenu()"><i class="ti ti-calendar"></i>Calendar</button>
+    <button class="pill-more-item" onclick="showPage('scheduler');closeMobileMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
+    <button class="pill-more-item" onclick="showPage('changelog');closeMobileMenu()"><i class="ti ti-history"></i>Changelog</button>
+    <button class="pill-more-item" id="mnav-users" style="display:none;" onclick="showPage('users');closeMobileMenu()"><i class="ti ti-users"></i>Users</button>
+    <button class="pill-more-item" onclick="toggleTheme();closeMobileMenu()"><i class="ti ti-moon"></i>Dark Mode</button>
+    <button class="pill-more-item" onclick="showPage('settings');closeMobileMenu()"><i class="ti ti-settings"></i>Settings</button>
+    <button class="pill-more-item" onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
   </div>
-</nav>
+</div>
+
 
 <!-- MAIN CONTENT -->
 <div class="main-content" id="main-content">
@@ -1738,7 +1894,7 @@ html{scroll-behavior:smooth;}
       <div><div class="settings-label">Appearance</div><div class="settings-sub">Sidebar style and font</div></div>
     </div>
     <div class="settings-row">
-      <div><div class="settings-label">Sidebar Style</div><div class="settings-sub">Dark sidebar or match background</div></div>
+      <div><div class="settings-label">Nav Bar Style</div><div class="settings-sub">Dark nav bar or match background</div></div>
       <div style="display:flex;gap:6px;">
         <button id="sb-dark-btn" onclick="setSidebarStyle('dark')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:var(--f);cursor:pointer;background:#0d0f14;color:#fff;">Dark</button>
         <button id="sb-light-btn" onclick="setSidebarStyle('light')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:var(--f);cursor:pointer;background:var(--surface2);color:var(--text);">Match BG</button>
@@ -7120,18 +7276,22 @@ function resetWindowPosition(type) {
 }
 
 function setSidebarStyle(style) {
-  const sb = document.getElementById('sidebar');
+  const sb = document.getElementById('pill-nav-bar');
   if (!sb) return;
   if (style === 'light') {
     sb.style.background = 'var(--surface)';
-    sb.style.borderRight = '1px solid var(--border)';
+    sb.style.borderBottom = '1px solid var(--border)';
     sb.style.boxShadow = 'none';
-    document.querySelectorAll('.nav-item').forEach(el => { el.style.color = 'var(--text3)'; });
+    sb.style.setProperty('--base', 'var(--surface2)');
+    sb.style.setProperty('--pill-text', 'var(--text)');
+    sb.style.setProperty('--hover-text', 'var(--text)');
   } else {
     sb.style.background = '';
-    sb.style.borderRight = '';
+    sb.style.borderBottom = '';
     sb.style.boxShadow = '';
-    document.querySelectorAll('.nav-item').forEach(el => { el.style.color = ''; });
+    sb.style.removeProperty('--base');
+    sb.style.removeProperty('--pill-text');
+    sb.style.removeProperty('--hover-text');
   }
   localStorage.setItem('pm_sidebar_style', style);
   const db = document.getElementById('sb-dark-btn');
@@ -8792,6 +8952,9 @@ function showPage(name) {
   if (pg) pg.classList.add('active');
   const navBtn = document.getElementById('nav-'+name);
   if (navBtn) navBtn.classList.add('active');
+  // Highlight the "More" pill when a secondary-menu page is active
+  const moreToggle = document.getElementById('pill-more-toggle');
+  if (moreToggle) moreToggle.classList.toggle('active', ['pipeline','calendar','scheduler','changelog','users'].includes(name));
   // Settings topbar button highlight
   const stb = document.getElementById('settings-topbar-btn');
   if (stb) stb.classList.toggle('active', name === 'settings');
@@ -8818,6 +8981,113 @@ function toggleSidebar() {
   if (icon) icon.className = sidebarCollapsed ? 'ti ti-chevron-right' : 'ti ti-chevron-left';
   localStorage.setItem('pm_sidebar', sidebarCollapsed ? '1' : '0');
 }
+
+// ── Pill nav: real GSAP spring animation (ported from reactbits PillNav) ──
+const PILL_EASE = 'power3.out';
+const pillTls = new WeakMap();
+const pillActiveTweens = new WeakMap();
+
+function pillNavLayout() {
+  if (typeof gsap === 'undefined') return;
+  document.querySelectorAll('.pill-nav-items .pill').forEach(pill => {
+    const circle = pill.querySelector(':scope > .hover-circle');
+    if (!circle) return;
+    const rect = pill.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    if (!w || !h) return;
+
+    const R = ((w * w) / 4 + h * h) / (2 * h);
+    const D = Math.ceil(2 * R) + 2;
+    const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
+    const originY = D - delta;
+
+    circle.style.width = D + 'px';
+    circle.style.height = D + 'px';
+    circle.style.bottom = -delta + 'px';
+    gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
+
+    const label = pill.querySelector(':scope > .label-stack > .pill-label');
+    const hoverLabel = pill.querySelector(':scope > .label-stack > .pill-label-hover');
+    if (label) gsap.set(label, { y: 0 });
+    if (hoverLabel) gsap.set(hoverLabel, { y: h + 12, opacity: 0 });
+
+    pillTls.get(pill)?.kill();
+    const tl = gsap.timeline({ paused: true });
+    tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
+    if (label) tl.to(label, { y: -(h + 8), duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
+    if (hoverLabel) {
+      gsap.set(hoverLabel, { y: Math.ceil(h + 100), opacity: 0 });
+      tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
+    }
+    pillTls.set(pill, tl);
+  });
+}
+function pillEnter(pill) {
+  const tl = pillTls.get(pill);
+  if (!tl) return;
+  pillActiveTweens.get(pill)?.kill();
+  pillActiveTweens.set(pill, tl.tweenTo(tl.duration(), { duration: 0.3, ease: PILL_EASE, overwrite: 'auto' }));
+}
+function pillLeave(pill) {
+  const tl = pillTls.get(pill);
+  if (!tl) return;
+  pillActiveTweens.get(pill)?.kill();
+  pillActiveTweens.set(pill, tl.tweenTo(0, { duration: 0.2, ease: PILL_EASE, overwrite: 'auto' }));
+}
+function pillLogoEnter(logoEl) {
+  if (typeof gsap === 'undefined') return;
+  const svg = logoEl.querySelector('svg');
+  if (!svg) return;
+  gsap.killTweensOf(svg);
+  gsap.set(svg, { rotate: 0, transformOrigin: '50% 50%' });
+  gsap.to(svg, { rotate: 360, duration: 0.2, ease: PILL_EASE, overwrite: 'auto' });
+}
+window.addEventListener('resize', pillNavLayout);
+if (document.fonts?.ready) { document.fonts.ready.then(pillNavLayout).catch(() => {}); }
+setTimeout(pillNavLayout, 0);
+
+// ── Pill nav: More menu / User menu / Mobile menu ──
+function toggleMoreMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('pill-more-menu');
+  if (!menu) return;
+  const opening = !menu.classList.contains('open');
+  closeUserMenu(); closeMobileMenu();
+  menu.classList.toggle('open', opening);
+}
+function closeMoreMenu() {
+  const menu = document.getElementById('pill-more-menu');
+  if (menu) menu.classList.remove('open');
+}
+function toggleUserMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('pill-user-menu');
+  if (!menu) return;
+  const opening = !menu.classList.contains('open');
+  closeMoreMenu(); closeMobileMenu();
+  menu.classList.toggle('open', opening);
+}
+function closeUserMenu() {
+  const menu = document.getElementById('pill-user-menu');
+  if (menu) menu.classList.remove('open');
+}
+function toggleMobileMenu(e) {
+  if (e) e.stopPropagation();
+  const pop = document.getElementById('pill-mobile-popover');
+  if (!pop) return;
+  const opening = !pop.classList.contains('open');
+  closeMoreMenu(); closeUserMenu();
+  pop.classList.toggle('open', opening);
+}
+function closeMobileMenu() {
+  const pop = document.getElementById('pill-mobile-popover');
+  if (pop) pop.classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#pill-more-menu') && !e.target.closest('#pill-more-toggle')) closeMoreMenu();
+  if (!e.target.closest('#pill-user-menu') && !e.target.closest('#sidebar-user-block')) closeUserMenu();
+  if (!e.target.closest('#pill-mobile-popover') && !e.target.closest('#pill-mobile-toggle')) closeMobileMenu();
+});
 
 function setTaskView(v) {
   taskView = v;
@@ -9627,6 +9897,8 @@ function applyNavPermissions() {
   // Users nav — master only
   const usersNav = document.getElementById('nav-users');
   if (usersNav) usersNav.style.display = role === 'master' ? '' : 'none';
+  const usersNavM = document.getElementById('mnav-users');
+  if (usersNavM) usersNavM.style.display = role === 'master' ? '' : 'none';
   // Hide add buttons based on permissions
   applyPermissionUI();
 }

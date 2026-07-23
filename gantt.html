@@ -477,6 +477,7 @@ var ganttDb = null;
 var ganttProjectId = null;
 var ganttAutoSaveTimer = null;
 
+var ganttAuthReady = false;
 function ganttInitFirebase() {
   try {
     if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
@@ -488,12 +489,20 @@ function ganttInitFirebase() {
     if (projName) document.getElementById('iProj').value = projName;
     if (projCode) document.getElementById('iRef').value = projCode;
     document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
-    // Sign in anonymously so Firestore auth rules pass
-    firebase.auth().signInAnonymously().then(function() {
-      ganttLoadFromFirebase();
-    }).catch(function(e) {
-      console.warn('Auth failed, trying load anyway:', e);
-      ganttLoadFromFirebase();
+    // Use onAuthStateChanged so we know when auth is truly ready
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        ganttAuthReady = true;
+        console.log('Gantt auth ready, uid:', user.uid, 'anon:', user.isAnonymous);
+        ganttLoadFromFirebase();
+      } else {
+        // Not signed in yet — sign in anonymously
+        firebase.auth().signInAnonymously().catch(function(e) {
+          console.error('Anonymous sign-in failed:', e);
+          // Fall back to local only
+          loadDefaults(); renderPanel(); renderNotes(); renderGantt();
+        });
+      }
     });
   } catch(e) {
     console.error('Firebase init error:', e);
@@ -502,7 +511,7 @@ function ganttInitFirebase() {
 }
 
 function ganttLoadFromFirebase() {
-  if (!ganttDb || !ganttProjectId) return;
+  if (!ganttDb || !ganttProjectId || !ganttAuthReady) { console.warn('Load skipped — not ready'); return; }
   var statusEl = document.getElementById('ganttSaveStatus');
   if (statusEl) statusEl.textContent = 'Loading…';
   ganttDb.collection('gantt_data').doc(ganttProjectId).get().then(function(doc) {
@@ -539,7 +548,7 @@ function ganttLoadFromFirebase() {
 }
 
 function ganttSaveToFirebase() {
-  if (!ganttDb || !ganttProjectId) return;
+  if (!ganttDb || !ganttProjectId || !ganttAuthReady) { console.warn('Save skipped — not ready'); return; }
   var statusEl = document.getElementById('ganttSaveStatus');
   if (statusEl) statusEl.textContent = 'Saving…';
   var payload = {

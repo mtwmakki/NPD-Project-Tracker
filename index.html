@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>NPD Tracker V76.2</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -41,10 +47,12 @@ html.light-mode{
 }
 :root{
   --r:12px;--rs:8px;
-  --f:'IBM Plex Sans',sans-serif;
+  --f:'Google Sans','IBM Plex Sans',sans-serif;
+  --f-head:'Archivo Black','Google Sans',sans-serif;
   --fm:'IBM Plex Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+h1,h2,h3,h4,h5,h6,[class*="title"]{font-family:var(--f-head);}
 body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;display:flex;flex-direction:column;}
 /* ── Top bar ── */
 .topbar{display:none !important;}
@@ -1248,8 +1256,7 @@ html{scroll-behavior:smooth;}
 .fn-logo:hover{transform:rotate(360deg);}
 .fn-logo img{width:19px;height:auto;display:block;}
 
-.fn-items{display:flex;align-items:stretch;gap:1px;overflow-x:auto;scrollbar-width:none;max-width:70vw;}
-.fn-items::-webkit-scrollbar{display:none;}
+.fn-items{display:flex;align-items:stretch;gap:1px;flex-wrap:wrap;justify-content:center;max-width:70vw;}
 
 .fn-item{
   position:relative; font-size:12px; font-weight:600; color:var(--text2);
@@ -1258,8 +1265,10 @@ html{scroll-behavior:smooth;}
   flex-shrink:0;
 }
 .fn-item i{font-size:14px;}
-.fn-item:hover{ color:var(--text); background:var(--surface2); }
-.fn-item.active{ color:#fff; background:var(--fn-active-bg, var(--sidebar-bg)); }
+#floatingNav .fn-item{ background:transparent !important; color:var(--text2) !important; }
+#floatingNav .fn-item:hover{ color:var(--text) !important; background:var(--surface2) !important; }
+#floatingNav .fn-item.active{ color:#fff !important; background:var(--fn-active-bg, var(--sidebar-bg)) !important; }
+#floatingNav .fn-item.active:hover{ background:var(--fn-active-bg, var(--sidebar-bg)) !important; }
 .fn-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;}
 
 /* More dropdown */
@@ -1848,9 +1857,10 @@ html{scroll-behavior:smooth;}
       </div>
     </div>
     <div class="settings-row">
-      <div><div class="settings-label">Font</div><div class="settings-sub">Switch between IBM Plex Sans and DM Sans</div></div>
-      <div style="display:flex;gap:6px;">
-        <button id="font-ibm-btn" onclick="setAppFont('ibm')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--accent);font-size:11px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;background:var(--al);color:var(--accent);">IBM Plex Sans</button>
+      <div><div class="settings-label">Font</div><div class="settings-sub">Switch between Google Sans, IBM Plex Sans and DM Sans</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button id="font-google-btn" onclick="setAppFont('google')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--accent);font-size:11px;font-family:'Google Sans',sans-serif;cursor:pointer;background:var(--al);color:var(--accent);">Google Sans</button>
+        <button id="font-ibm-btn" onclick="setAppFont('ibm')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;background:var(--surface2);color:var(--text);">IBM Plex Sans</button>
         <button id="font-dm-btn" onclick="setAppFont('dm')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--surface2);color:var(--text);">DM Sans</button>
       </div>
     </div>
@@ -7238,16 +7248,19 @@ function setSidebarStyle(style) {
 }
 
 function setAppFont(font) {
-  const fontMap = { ibm: "'IBM Plex Sans',sans-serif", dm: "'DM Sans',sans-serif" };
+  const fontMap = { google: "'Google Sans',sans-serif", ibm: "'IBM Plex Sans',sans-serif", dm: "'DM Sans',sans-serif" };
   document.documentElement.style.setProperty('--f', fontMap[font]);
   document.body.style.fontFamily = fontMap[font];
   localStorage.setItem('pm_font', font);
-  document.getElementById('font-ibm-btn').style.borderColor = font==='ibm'?'var(--accent)':'var(--border)';
-  document.getElementById('font-ibm-btn').style.background  = font==='ibm'?'var(--al)':'var(--surface2)';
-  document.getElementById('font-ibm-btn').style.color       = font==='ibm'?'var(--accent)':'var(--text)';
-  document.getElementById('font-dm-btn').style.borderColor  = font==='dm'?'var(--accent)':'var(--border)';
-  document.getElementById('font-dm-btn').style.background   = font==='dm'?'var(--al)':'var(--surface2)';
-  document.getElementById('font-dm-btn').style.color        = font==='dm'?'var(--accent)':'var(--text)';
+  const btns = { google: 'font-google-btn', ibm: 'font-ibm-btn', dm: 'font-dm-btn' };
+  Object.keys(btns).forEach(key => {
+    const btn = document.getElementById(btns[key]);
+    if (!btn) return;
+    const active = key === font;
+    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    btn.style.background  = active ? 'var(--al)' : 'var(--surface2)';
+    btn.style.color       = active ? 'var(--accent)' : 'var(--text)';
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -8884,7 +8897,7 @@ function exportSchedulerExcel() {
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .fn-item').forEach(b => b.classList.remove('active'));
   const pg = document.getElementById('page-'+name);
   if (pg) pg.classList.add('active');
   const navBtn = document.getElementById('nav-'+name);
@@ -9121,7 +9134,7 @@ function exportProjReportPDF() {
   const border   = cs.getPropertyValue('--border').trim()  || '#2e3444';
   const accent   = cs.getPropertyValue('--blue').trim()    || '#3a8ef5';
   const isDark   = document.documentElement.classList.contains('dark-mode');
-  const appFont  = localStorage.getItem('appFont') || 'IBM Plex Sans';
+  const appFont  = localStorage.getItem('appFont') || 'Google Sans';
   const fontURL  = appFont === 'DM Sans'
     ? 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap'
     : 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap';
@@ -9359,7 +9372,7 @@ function exportInqReportPDF() {
   const border   = cs.getPropertyValue('--border').trim()  || '#2e3444';
   const accent   = cs.getPropertyValue('--blue').trim()    || '#3a8ef5';
   const isDark   = document.documentElement.classList.contains('dark-mode');
-  const appFont  = localStorage.getItem('appFont') || 'IBM Plex Sans';
+  const appFont  = localStorage.getItem('appFont') || 'Google Sans';
   const fontURL  = appFont === 'DM Sans'
     ? 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap'
     : 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap';
@@ -9589,8 +9602,10 @@ if (savedSidebar === '0') {
 const savedDensity = localStorage.getItem('pm_density');
 
 // Restore appearance settings
-const savedFont = localStorage.getItem('pm_font') || 'ibm';
+const savedFont = localStorage.getItem('pm_font') || 'google';
 if (savedFont === 'dm') setAppFont('dm');
+else if (savedFont === 'ibm') setAppFont('ibm');
+else setAppFont('google');
 const savedSidebarStyle = localStorage.getItem('pm_sidebar_style') || 'dark';
 if (savedSidebarStyle === 'light') setSidebarStyle('light');
 if (savedDensity) currentDensity = parseInt(savedDensity);

@@ -9,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <!-- Firebase SDK (compat version) -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -1222,113 +1221,93 @@ html{scroll-behavior:smooth;}
 @keyframes ti-spin-kf{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ti-spin{animation:ti-spin-kf .7s linear infinite;display:inline-block;}
 
 /* ══════════════════════════════════════════════
-   PILL NAV — replaces the left sidebar
+   FLOATING NAV — ported from the Product Stacker tool
+   (scroll-aware: hides on scroll down, reveals on scroll up)
+   Replaces the left sidebar. Colors use NPD Tracker's own vars.
    ══════════════════════════════════════════════ */
 .sidebar{display:none !important;}
 .main-content{margin-left:0 !important;}
 .main-content.sidebar-pinned{margin-left:0 !important;}
-.app-body{padding-top:60px;}
 
-.pill-nav-container{position:fixed;top:0;left:0;width:100%;z-index:160;}
-.pill-nav{
-  --nav-h:44px;
-  --base:var(--sidebar-bg);
-  --pill-bg:#eef1f7;
-  --pill-text:#12141a;
-  --hover-text:#ffffff;
-  --pill-pad-x:16px;
-  --pill-gap:3px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  padding:8px 16px;
-  background:var(--base);
-  box-shadow:0 2px 14px rgba(0,0,0,.18);
-  box-sizing:border-box;
-  transition:background .2s;
+.floating-nav{
+  position:fixed; top:16px; left:50%;
+  transform:translateX(-50%) translateY(-90px);
+  opacity:0;
+  transition:transform .2s ease, opacity .2s ease;
+  z-index:200;
+  display:flex; align-items:center; gap:2px;
+  background:var(--surface); background:color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--border); border-radius:999px;
+  padding:6px; box-shadow:0 10px 30px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.08);
+  max-width:94vw;
 }
-.pill-logo{width:var(--nav-h);height:var(--nav-h);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(255,255,255,.06);}
-.pill-nav-center{display:flex;align-items:center;gap:14px;flex:1;min-width:0;overflow:hidden;}
-.pill-nav-items{position:relative;display:flex;align-items:center;height:var(--nav-h);background:rgba(255,255,255,.06);border-radius:9999px;flex-shrink:1;min-width:0;}
-.pill-list{list-style:none;display:flex;align-items:stretch;gap:var(--pill-gap);margin:0;padding:3px;height:100%;overflow-x:auto;scrollbar-width:none;}
-.pill-list::-webkit-scrollbar{display:none;}
-.pill-list>li{display:flex;height:100%;flex-shrink:0;position:relative;}
-.pill{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  height:100%;padding:0 var(--pill-pad-x);
-  background:var(--pill-bg);color:var(--pill-text);
-  text-decoration:none;border-radius:9999px;box-sizing:border-box;
-  font-weight:600;font-size:11px;font-family:var(--f);
-  letter-spacing:.02em;white-space:nowrap;cursor:pointer;
-  position:relative;overflow:hidden;border:none;
+.floating-nav.visible{ transform:translateX(-50%) translateY(0); opacity:1; }
+
+.fn-logo{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;margin-right:2px;transition:transform .4s ease;}
+.fn-logo:hover{transform:rotate(360deg);}
+.fn-logo img{width:19px;height:auto;display:block;}
+
+.fn-items{display:flex;align-items:stretch;gap:1px;overflow-x:auto;scrollbar-width:none;max-width:70vw;}
+.fn-items::-webkit-scrollbar{display:none;}
+
+.fn-item{
+  position:relative; font-size:12px; font-weight:600; color:var(--text2);
+  padding:8px 13px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:.15s;
+  display:inline-flex; align-items:center; gap:6px; border:none; background:none; font-family:var(--f);
+  flex-shrink:0;
 }
-.pill i{position:relative;z-index:2;font-size:14px;color:var(--pill-text);flex-shrink:0;}
-.pill .hover-circle{
-  position:absolute;left:50%;bottom:0;
-  border-radius:50%;background:var(--base);
-  z-index:1;pointer-events:none;will-change:transform;
-}
-.pill .label-stack{position:relative;display:inline-block;line-height:1;z-index:2;overflow:visible;}
-.pill .pill-label{position:relative;z-index:2;display:inline-block;line-height:1;color:var(--pill-text);will-change:transform;}
-.pill .pill-label-hover{position:absolute;left:0;top:0;color:var(--hover-text);z-index:3;display:inline-block;line-height:1;will-change:transform,opacity;}
-.pill.active{background:var(--base);}
-.pill.active i,.pill.active .pill-label{color:var(--hover-text);}
-.pill.active .hover-circle{display:none;}
-.pill-badge{position:relative;z-index:2;background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;}
-.pill-logo.spinning svg{will-change:transform;}
+.fn-item i{font-size:14px;}
+.fn-item:hover{ color:var(--text); background:var(--surface2); }
+.fn-item.active{ color:#fff; background:var(--fn-active-bg, var(--sidebar-bg)); }
+.fn-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;}
 
 /* More dropdown */
-.pill-more-wrap{position:relative;}
-.pill-more-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:170px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:170;}
-.pill-more-menu.open{display:flex;}
-.pill-more-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
-.pill-more-item:hover{background:var(--surface2);color:var(--text);}
-.pill-more-item.active{background:var(--al);color:var(--accent);}
-.pill-more-item i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.fn-more-wrap{position:relative;flex-shrink:0;}
+.fn-more-menu{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:180px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:210;}
+.fn-more-menu.open{display:flex;}
+.fn-more-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
+.fn-more-item:hover{background:var(--surface2);color:var(--text);}
+.fn-more-item.active{background:var(--al);color:var(--accent);}
+.fn-more-item i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
 
-/* Right cluster: sync + user */
-.pill-nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.pill-sync-dot{width:8px;height:8px;border-radius:50%;background:#30c060;flex-shrink:0;}
-.pill-user{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 6px;border-radius:9999px;background:rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
-.pill-user:hover{background:rgba(255,255,255,.15);}
-.pill-user-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
-.pill-user-info{display:flex;flex-direction:column;line-height:1.15;}
-.pill-user-name{font-size:11px;font-weight:600;color:#fff;}
-.pill-user-role{font-size:9px;color:rgba(255,255,255,.55);font-family:var(--fm);}
-.pill-user i.ti-chevron-down{color:rgba(255,255,255,.6);font-size:10px;}
-.pill-user-menu{position:absolute;top:calc(100% + 8px);right:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:170px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:170;}
-.pill-user-menu.open{display:flex;}
-.pill-user-menu button{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
-.pill-user-menu button:hover{background:var(--surface2);color:var(--text);}
-.pill-user-menu i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+/* User cluster (acts like the fn-cta in the source tool) */
+.fn-user-wrap{position:relative;flex-shrink:0;margin-left:4px;}
+.fn-user{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:.15s;}
+.fn-user:hover{background:var(--al);}
+.fn-user-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.fn-user-name{font-size:11px;font-weight:600;color:var(--text);}
+.fn-sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green,#26A25B);flex-shrink:0;}
+.fn-user-menu{position:absolute;top:calc(100% + 10px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 28px rgba(0,0,0,.22);min-width:170px;padding:5px;display:none;flex-direction:column;gap:1px;z-index:210;}
+.fn-user-menu.open{display:flex;}
+.fn-user-menu button{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
+.fn-user-menu button:hover{background:var(--surface2);color:var(--text);}
+.fn-user-menu i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
 
-.pill-desktop-only{display:flex;}
-.pill-mobile-only{display:none;}
+.fn-desktop-only{display:flex;}
+.fn-mobile-only{display:none;}
 @media (max-width:900px){
-  .pill-desktop-only{display:none;}
-  .pill-mobile-only{display:flex;}
-  .pill-nav-center{display:none;}
+  .fn-desktop-only{display:none;}
+  .fn-mobile-only{display:flex;}
 }
-.pill-mobile-toggle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;flex-shrink:0;}
-.pill-hamburger-line{width:15px;height:2px;background:#fff;border-radius:1px;}
-.pill-mobile-popover{position:absolute;top:calc(100% + 8px);left:12px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 32px rgba(0,0,0,.22);z-index:170;display:none;flex-direction:column;max-height:calc(100vh - 70px);overflow-y:auto;}
-.pill-mobile-popover.open{display:flex;}
-.pill-mobile-popover .pill-more-item{border-radius:0;padding:11px 14px;border-bottom:1px solid var(--border);}
-.pill-mobile-popover .pill-more-item:last-child{border-bottom:none;}
+.fn-mobile-toggle{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;flex-shrink:0;}
+.fn-hamburger-line{width:14px;height:2px;background:var(--text);border-radius:1px;}
+.fn-mobile-popover{position:absolute;top:calc(100% + 10px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 32px rgba(0,0,0,.22);z-index:210;display:none;flex-direction:column;max-height:70vh;overflow-y:auto;min-width:220px;}
+.fn-mobile-popover.open{display:flex;}
+.fn-mobile-popover .fn-more-item{border-radius:0;padding:11px 14px;border-bottom:1px solid var(--border);}
+.fn-mobile-popover .fn-more-item:last-child{border-bottom:none;}
 
-/* Hard overrides — pill buttons keep class "nav-item" for JS compatibility,
-   but must not inherit the old vertical-sidebar item styling. */
-.pill-list .pill.nav-item{width:auto;padding:0 var(--pill-pad-x);gap:5px;border-left:none;border-radius:9999px;font-size:11px;}
-.pill-list .pill.nav-item i{width:auto;text-align:left;font-size:14px;}
-.pill-list .pill.nav-item:hover{background:var(--pill-bg);color:var(--pill-text);}
-.pill-list .pill.nav-item.active{border-left:none;background:var(--base);color:var(--hover-text);}
-.pill-list .pill.nav-item.active i,.pill-list .pill.nav-item.active .pill-label{color:var(--hover-text);}
-.pill-more-menu .nav-item{width:100%;padding:8px 10px;border-left:none;}
-.pill-more-menu .nav-item i{width:18px;text-align:center;font-size:15px;}
-.pill-more-menu .nav-item:hover{background:var(--surface2);color:var(--text);}
-.pill-more-menu .nav-item.active{border-left:none;background:var(--al);color:var(--accent);}
+/* Hard overrides — fn-item/fn-more-item buttons keep class "nav-item" for
+   JS compatibility (showPage), but must not inherit the old vertical-
+   sidebar item styling (width:100%, big icon gutter, etc). */
+.fn-items .fn-item.nav-item{width:auto;padding:8px 13px;gap:6px;border-radius:999px;font-size:12px;}
+.fn-items .fn-item.nav-item i{width:auto;text-align:left;font-size:14px;flex-shrink:0;}
+.fn-items .fn-item.nav-item:hover{background:var(--surface2);color:var(--text);}
+.fn-items .fn-item.nav-item.active{background:var(--fn-active-bg, var(--sidebar-bg));color:#fff;}
+.fn-more-menu .nav-item,.fn-mobile-popover .nav-item{width:100%;}
+.fn-more-menu .nav-item i,.fn-mobile-popover .nav-item i{width:18px;text-align:center;font-size:15px;}
+.fn-more-menu .nav-item:hover{background:var(--surface2);color:var(--text);}
+.fn-more-menu .nav-item.active{background:var(--al);color:var(--accent);}
 
 
 
@@ -1392,92 +1371,60 @@ html{scroll-behavior:smooth;}
 <button class="fab-btn" id="fab-btn" onclick="fabAction()" title="Add New"><i class="ti ti-plus"></i></button>
 
 <!-- LEFT SIDEBAR -->
-<div class="pill-nav-container">
-  <nav class="pill-nav" id="pill-nav-bar">
-    <div class="pill-logo" id="pill-logo" onclick="showPage('inquiries')" onmouseenter="pillLogoEnter(this)" title="NPD Tracker" style="cursor:pointer;">
-      <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-        <rect width="28" height="28" rx="8" fill="url(#sgpill)"/>
-        <text x="14" y="19" text-anchor="middle" font-size="13" font-weight="700" fill="white" font-family="sans-serif">T</text>
-        <defs><linearGradient id="sgpill" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#f0445a"/><stop offset="50%" stop-color="#3a8ef5"/><stop offset="100%" stop-color="#30c060"/></linearGradient></defs>
-      </svg>
-    </div>
+<div class="floating-nav" id="floatingNav">
+  <div class="fn-logo" id="fn-logo" onclick="showPage('inquiries')" title="NPD Tracker">
+    <img src="data:image/png;base64,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" alt="NPD Tracker">
+  </div>
 
-    <div class="pill-nav-center pill-desktop-only">
-      <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,.4);font-family:var(--fm);flex-shrink:0;margin-right:2px;" id="sidebar-version">V76.2</span>
-      <div class="pill-nav-items">
-        <ul class="pill-list">
-          <li><button class="pill nav-item active" id="nav-inquiries" onclick="showPage('inquiries')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-            <span class="hover-circle"></span><i class="ti ti-file-description"></i><span class="label-stack"><span class="pill-label">Inquiries</span><span class="pill-label-hover" aria-hidden="true">Inquiries</span></span>
-          </button></li>
-          <li><button class="pill nav-item" id="nav-projects" onclick="showPage('projects')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-            <span class="hover-circle"></span><i class="ti ti-folder"></i><span class="label-stack"><span class="pill-label">Projects</span><span class="pill-label-hover" aria-hidden="true">Projects</span></span>
-          </button></li>
-          <li><button class="pill nav-item" id="nav-tasks" onclick="showPage('tasks')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-            <span class="hover-circle"></span><i class="ti ti-checkbox"></i><span class="label-stack"><span class="pill-label">Tasks</span><span class="pill-label-hover" aria-hidden="true">Tasks</span></span><span class="pill-badge" id="tasks-viewall-badge" style="display:none"></span>
-          </button></li>
-          <li><button class="pill nav-item" id="nav-notifications" onclick="showPage('notifications')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-            <span class="hover-circle"></span><i class="ti ti-bell"></i><span class="label-stack"><span class="pill-label">Notifications</span><span class="pill-label-hover" aria-hidden="true">Notifications</span></span><span class="pill-badge" id="notif-nav-badge" style="display:none">0</span>
-          </button></li>
-          <li><button class="pill nav-item" id="nav-dashboard" onclick="showPage('dashboard')" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-            <span class="hover-circle"></span><i class="ti ti-chart-bar"></i><span class="label-stack"><span class="pill-label">Dashboard</span><span class="pill-label-hover" aria-hidden="true">Dashboard</span></span>
-          </button></li>
-          <li class="pill-more-wrap">
-            <button class="pill" id="pill-more-toggle" onclick="toggleMoreMenu(event)" onmouseenter="pillEnter(this)" onmouseleave="pillLeave(this)">
-              <span class="hover-circle"></span><i class="ti ti-dots" id="more-toggle-icon"></i><span class="label-stack"><span class="pill-label">More</span><span class="pill-label-hover" aria-hidden="true">More</span></span>
-            </button>
-            <div class="pill-more-menu" id="pill-more-menu">
-              <button class="pill-more-item nav-item" id="nav-pipeline" onclick="showPage('pipeline');closeMoreMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
-              <button class="pill-more-item nav-item" id="nav-calendar" onclick="showPage('calendar');closeMoreMenu()"><i class="ti ti-calendar"></i>Calendar</button>
-              <button class="pill-more-item nav-item" id="nav-scheduler" onclick="showPage('scheduler');closeMoreMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
-              <button class="pill-more-item nav-item" id="nav-changelog" onclick="showPage('changelog');closeMoreMenu()"><i class="ti ti-history"></i>Changelog</button>
-              <button class="pill-more-item nav-item" id="nav-users" style="display:none;" onclick="showPage('users');closeMoreMenu()"><i class="ti ti-users"></i>Users</button>
-            </div>
-          </li>
-        </ul>
+  <div class="fn-items fn-desktop-only">
+    <button class="fn-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i>Inquiries</button>
+    <button class="fn-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i>Projects</button>
+    <button class="fn-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i>Tasks<span class="fn-badge" id="tasks-viewall-badge" style="display:none"></span></button>
+    <button class="fn-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i>Notifications<span class="fn-badge" id="notif-nav-badge" style="display:none">0</span></button>
+    <button class="fn-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i>Dashboard</button>
+    <div class="fn-more-wrap">
+      <button class="fn-item" id="fn-more-toggle" onclick="toggleMoreMenu(event)"><i class="ti ti-dots"></i>More</button>
+      <div class="fn-more-menu" id="pill-more-menu">
+        <button class="fn-more-item nav-item" id="nav-pipeline" onclick="showPage('pipeline');closeMoreMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
+        <button class="fn-more-item nav-item" id="nav-calendar" onclick="showPage('calendar');closeMoreMenu()"><i class="ti ti-calendar"></i>Calendar</button>
+        <button class="fn-more-item nav-item" id="nav-scheduler" onclick="showPage('scheduler');closeMoreMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
+        <button class="fn-more-item nav-item" id="nav-changelog" onclick="showPage('changelog');closeMoreMenu()"><i class="ti ti-history"></i>Changelog</button>
+        <button class="fn-more-item nav-item" id="nav-users" style="display:none;" onclick="showPage('users');closeMoreMenu()"><i class="ti ti-users"></i>Users</button>
       </div>
     </div>
+  </div>
 
-    <div class="pill-nav-right pill-desktop-only">
-      <div style="display:flex;align-items:center;gap:5px;" title="Online">
-        <div class="pill-sync-dot" id="sidebar-sync"></div>
-        <div id="sidebar-sync-label" style="font-size:9px;color:rgba(255,255,255,.5);white-space:nowrap;"></div>
-      </div>
-      <div style="position:relative;">
-        <div class="pill-user" id="sidebar-user-block" onclick="toggleUserMenu(event)" style="display:none;">
-          <div class="pill-user-avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#f0445a,#3a8ef5);">A</div>
-          <div class="pill-user-info">
-            <div class="pill-user-name" id="sidebar-username">Adam</div>
-            <div class="pill-user-role" id="sidebar-userrole">Master</div>
-          </div>
-          <i class="ti ti-chevron-down"></i>
-        </div>
-        <div class="pill-user-menu" id="pill-user-menu">
-          <button onclick="toggleTheme()" id="sidebar-theme-btn"><i class="ti ti-moon" id="sidebar-theme-icon"></i><span id="sidebar-theme-label">Dark Mode</span></button>
-          <button onclick="showPage('settings');closeUserMenu()" id="nav-settings"><i class="ti ti-settings"></i>Settings</button>
-          <button onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
-        </div>
-      </div>
+  <div class="fn-user-wrap fn-desktop-only">
+    <div class="fn-user" id="sidebar-user-block" onclick="toggleUserMenu(event)" style="display:none;">
+      <div class="fn-user-avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#f0445a,#3a8ef5);">A</div>
+      <span class="fn-user-name" id="sidebar-username">Adam</span>
+      <div class="fn-sync-dot" id="sidebar-sync" title="Online"></div>
     </div>
+    <div class="fn-user-menu" id="pill-user-menu">
+      <button onclick="toggleTheme()" id="sidebar-theme-btn"><i class="ti ti-moon" id="sidebar-theme-icon"></i><span id="sidebar-theme-label">Dark Mode</span></button>
+      <button onclick="showPage('settings');closeUserMenu()" id="nav-settings"><i class="ti ti-settings"></i>Settings</button>
+      <button onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
+    </div>
+  </div>
 
-    <button class="pill-mobile-toggle pill-mobile-only" id="pill-mobile-toggle" onclick="toggleMobileMenu(event)">
-      <span class="pill-hamburger-line"></span><span class="pill-hamburger-line"></span><span class="pill-hamburger-line"></span>
-    </button>
-  </nav>
+  <button class="fn-mobile-toggle fn-mobile-only" id="pill-mobile-toggle" onclick="toggleMobileMenu(event)">
+    <span class="fn-hamburger-line"></span><span class="fn-hamburger-line"></span>
+  </button>
 
-  <div class="pill-mobile-popover" id="pill-mobile-popover">
-    <button class="pill-more-item" onclick="showPage('inquiries');closeMobileMenu()"><i class="ti ti-file-description"></i>Inquiries</button>
-    <button class="pill-more-item" onclick="showPage('projects');closeMobileMenu()"><i class="ti ti-folder"></i>Projects</button>
-    <button class="pill-more-item" onclick="showPage('tasks');closeMobileMenu()"><i class="ti ti-checkbox"></i>Tasks</button>
-    <button class="pill-more-item" onclick="showPage('notifications');closeMobileMenu()"><i class="ti ti-bell"></i>Notifications</button>
-    <button class="pill-more-item" onclick="showPage('dashboard');closeMobileMenu()"><i class="ti ti-chart-bar"></i>Dashboard</button>
-    <button class="pill-more-item" onclick="showPage('pipeline');closeMobileMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
-    <button class="pill-more-item" onclick="showPage('calendar');closeMobileMenu()"><i class="ti ti-calendar"></i>Calendar</button>
-    <button class="pill-more-item" onclick="showPage('scheduler');closeMobileMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
-    <button class="pill-more-item" onclick="showPage('changelog');closeMobileMenu()"><i class="ti ti-history"></i>Changelog</button>
-    <button class="pill-more-item" id="mnav-users" style="display:none;" onclick="showPage('users');closeMobileMenu()"><i class="ti ti-users"></i>Users</button>
-    <button class="pill-more-item" onclick="toggleTheme();closeMobileMenu()"><i class="ti ti-moon"></i>Dark Mode</button>
-    <button class="pill-more-item" onclick="showPage('settings');closeMobileMenu()"><i class="ti ti-settings"></i>Settings</button>
-    <button class="pill-more-item" onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
+  <div class="fn-mobile-popover" id="pill-mobile-popover">
+    <button class="fn-more-item" onclick="showPage('inquiries');closeMobileMenu()"><i class="ti ti-file-description"></i>Inquiries</button>
+    <button class="fn-more-item" onclick="showPage('projects');closeMobileMenu()"><i class="ti ti-folder"></i>Projects</button>
+    <button class="fn-more-item" onclick="showPage('tasks');closeMobileMenu()"><i class="ti ti-checkbox"></i>Tasks</button>
+    <button class="fn-more-item" onclick="showPage('notifications');closeMobileMenu()"><i class="ti ti-bell"></i>Notifications</button>
+    <button class="fn-more-item" onclick="showPage('dashboard');closeMobileMenu()"><i class="ti ti-chart-bar"></i>Dashboard</button>
+    <button class="fn-more-item" onclick="showPage('pipeline');closeMobileMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
+    <button class="fn-more-item" onclick="showPage('calendar');closeMobileMenu()"><i class="ti ti-calendar"></i>Calendar</button>
+    <button class="fn-more-item" onclick="showPage('scheduler');closeMobileMenu()"><i class="ti ti-clock-record"></i>Scheduler</button>
+    <button class="fn-more-item" onclick="showPage('changelog');closeMobileMenu()"><i class="ti ti-history"></i>Changelog</button>
+    <button class="fn-more-item" id="mnav-users" style="display:none;" onclick="showPage('users');closeMobileMenu()"><i class="ti ti-users"></i>Users</button>
+    <button class="fn-more-item" onclick="toggleTheme();closeMobileMenu()"><i class="ti ti-moon"></i>Dark Mode</button>
+    <button class="fn-more-item" onclick="showPage('settings');closeMobileMenu()"><i class="ti ti-settings"></i>Settings</button>
+    <button class="fn-more-item" onclick="doLogout()"><i class="ti ti-logout"></i>Sign Out</button>
   </div>
 </div>
 
@@ -7276,22 +7223,12 @@ function resetWindowPosition(type) {
 }
 
 function setSidebarStyle(style) {
-  const sb = document.getElementById('pill-nav-bar');
+  const sb = document.getElementById('floatingNav');
   if (!sb) return;
   if (style === 'light') {
-    sb.style.background = 'var(--surface)';
-    sb.style.borderBottom = '1px solid var(--border)';
-    sb.style.boxShadow = 'none';
-    sb.style.setProperty('--base', 'var(--surface2)');
-    sb.style.setProperty('--pill-text', 'var(--text)');
-    sb.style.setProperty('--hover-text', 'var(--text)');
+    sb.style.setProperty('--fn-active-bg', 'var(--surface2)');
   } else {
-    sb.style.background = '';
-    sb.style.borderBottom = '';
-    sb.style.boxShadow = '';
-    sb.style.removeProperty('--base');
-    sb.style.removeProperty('--pill-text');
-    sb.style.removeProperty('--hover-text');
+    sb.style.removeProperty('--fn-active-bg');
   }
   localStorage.setItem('pm_sidebar_style', style);
   const db = document.getElementById('sb-dark-btn');
@@ -8953,7 +8890,7 @@ function showPage(name) {
   const navBtn = document.getElementById('nav-'+name);
   if (navBtn) navBtn.classList.add('active');
   // Highlight the "More" pill when a secondary-menu page is active
-  const moreToggle = document.getElementById('pill-more-toggle');
+  const moreToggle = document.getElementById('fn-more-toggle');
   if (moreToggle) moreToggle.classList.toggle('active', ['pipeline','calendar','scheduler','changelog','users'].includes(name));
   // Settings topbar button highlight
   const stb = document.getElementById('settings-topbar-btn');
@@ -8982,69 +8919,41 @@ function toggleSidebar() {
   localStorage.setItem('pm_sidebar', sidebarCollapsed ? '1' : '0');
 }
 
-// ── Pill nav: real GSAP spring animation (ported from reactbits PillNav) ──
-const PILL_EASE = 'power3.out';
-const pillTls = new WeakMap();
-const pillActiveTweens = new WeakMap();
+// ── Floating nav — hides on scroll down, reveals on scroll up ──
+// (ported from the Product Stacker tool's initFloatingNavScroll pattern,
+// attached to #main-content since that's this app's scroll container)
+function initFloatingNavScroll(){
+  var nav = document.getElementById('floatingNav');
+  var scroller = document.getElementById('main-content');
+  if (!nav || !scroller) return;
+  var lastY = scroller.scrollTop || 0;
+  var ticking = false;
+  var TOP_THRESHOLD = 80;
 
-function pillNavLayout() {
-  if (typeof gsap === 'undefined') return;
-  document.querySelectorAll('.pill-nav-items .pill').forEach(pill => {
-    const circle = pill.querySelector(':scope > .hover-circle');
-    if (!circle) return;
-    const rect = pill.getBoundingClientRect();
-    const w = rect.width, h = rect.height;
-    if (!w || !h) return;
+  function setVisible(v){ nav.classList.toggle('visible', v); }
+  setVisible(true); // shown initially so navigation is always reachable on load
 
-    const R = ((w * w) / 4 + h * h) / (2 * h);
-    const D = Math.ceil(2 * R) + 2;
-    const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
-    const originY = D - delta;
-
-    circle.style.width = D + 'px';
-    circle.style.height = D + 'px';
-    circle.style.bottom = -delta + 'px';
-    gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
-
-    const label = pill.querySelector(':scope > .label-stack > .pill-label');
-    const hoverLabel = pill.querySelector(':scope > .label-stack > .pill-label-hover');
-    if (label) gsap.set(label, { y: 0 });
-    if (hoverLabel) gsap.set(hoverLabel, { y: h + 12, opacity: 0 });
-
-    pillTls.get(pill)?.kill();
-    const tl = gsap.timeline({ paused: true });
-    tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
-    if (label) tl.to(label, { y: -(h + 8), duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
-    if (hoverLabel) {
-      gsap.set(hoverLabel, { y: Math.ceil(h + 100), opacity: 0 });
-      tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease: PILL_EASE, overwrite: 'auto' }, 0);
+  function onScroll(){
+    var current = scroller.scrollTop || 0;
+    var direction = current - lastY;
+    if (current < TOP_THRESHOLD) {
+      setVisible(true);
+    } else if (direction < 0) {
+      setVisible(true);   // scrolling up -> reveal
+    } else if (direction > 2) {
+      setVisible(false);  // scrolling down -> hide
     }
-    pillTls.set(pill, tl);
-  });
+    lastY = current;
+    ticking = false;
+  }
+  scroller.addEventListener('scroll', function(){
+    if (!ticking) {
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
 }
-function pillEnter(pill) {
-  const tl = pillTls.get(pill);
-  if (!tl) return;
-  pillActiveTweens.get(pill)?.kill();
-  pillActiveTweens.set(pill, tl.tweenTo(tl.duration(), { duration: 0.3, ease: PILL_EASE, overwrite: 'auto' }));
-}
-function pillLeave(pill) {
-  const tl = pillTls.get(pill);
-  if (!tl) return;
-  pillActiveTweens.get(pill)?.kill();
-  pillActiveTweens.set(pill, tl.tweenTo(0, { duration: 0.2, ease: PILL_EASE, overwrite: 'auto' }));
-}
-function pillLogoEnter(logoEl) {
-  if (typeof gsap === 'undefined') return;
-  const svg = logoEl.querySelector('svg');
-  if (!svg) return;
-  gsap.killTweensOf(svg);
-  gsap.set(svg, { rotate: 0, transformOrigin: '50% 50%' });
-  gsap.to(svg, { rotate: 360, duration: 0.2, ease: PILL_EASE, overwrite: 'auto' });
-}
-window.addEventListener('resize', pillNavLayout);
-if (document.fonts?.ready) { document.fonts.ready.then(pillNavLayout).catch(() => {}); }
-setTimeout(pillNavLayout, 0);
+initFloatingNavScroll();
 
 // ── Pill nav: More menu / User menu / Mobile menu ──
 function toggleMoreMenu(e) {
@@ -9084,7 +8993,7 @@ function closeMobileMenu() {
   if (pop) pop.classList.remove('open');
 }
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('#pill-more-menu') && !e.target.closest('#pill-more-toggle')) closeMoreMenu();
+  if (!e.target.closest('#pill-more-menu') && !e.target.closest('#fn-more-toggle')) closeMoreMenu();
   if (!e.target.closest('#pill-user-menu') && !e.target.closest('#sidebar-user-block')) closeUserMenu();
   if (!e.target.closest('#pill-mobile-popover') && !e.target.closest('#pill-mobile-toggle')) closeMobileMenu();
 });

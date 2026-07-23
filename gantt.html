@@ -882,20 +882,21 @@ function renderNotes(){
 }
 function registerLog(){
   var note=(prompt('Log note (e.g. "Week 29 update"):','Week '+getISOWeek(new Date())+' update')||'').trim();
-  if(note===null||note==='') return;
+  if(note===null) return; if(note==='') note=new Date().toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'});
   var snapshot=tasks.map(function(t){return {id:t.id,name:t.name,phase:t.phase,actStart:t.actStart||0,actDur:t.actDur||0,dur:t.dur};});
   var starts1=computeStarts();
   timelineLogs.push({id:uid(),date:new Date().toISOString().slice(0,10),time:new Date().toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'}),note:note,snapshot:snapshot,changes:pendingLogChanges.slice()});
   pendingLogChanges=[];
-  var btn=document.getElementById('logRegisterBtn'); if(btn) btn.textContent='Register Log';
+  var cnt=timelineLogs.length; var btn=document.getElementById('logRegisterBtn'); if(btn) btn.textContent='Register Log ('+cnt+' saved)';
   // Save immediately to Firebase — don't rely on debounced autosave
   ganttSaveToFirebase();
   alert('Log saved: "'+note+'" — '+timelineLogs[timelineLogs.length-1].changes.length+' change(s) recorded. Cloud save triggered.');
 }
 function openLogViewer(){
-  // Reload from save data to make sure we have latest
-  console.log('Timeline logs count:', timelineLogs.length, timelineLogs);
-  if(!timelineLogs.length){alert('No logs yet.\n\nTo create one:\n1. Switch to Actual mode\n2. Edit any actual values\n3. Click Register Log');return;}
+  if(!timelineLogs.length){
+    alert('No logs found in memory.\n\nCheck:\n1. Switch to Actual mode first\n2. Register at least one log\n3. Watch for Saved \u2713 in bottom bar after registering');
+    return;
+  }
   var proj=(document.getElementById('iProj').value||'Project').trim();
   var starts1=computeStarts();
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Timeline Log — '+proj+'</title><style>';

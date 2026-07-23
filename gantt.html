@@ -481,17 +481,13 @@ function ganttInitFirebase() {
     if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     ganttDb = firebase.firestore();
     var params = new URLSearchParams(window.location.search);
-    ganttProjectId = params.get('project') || null;
+    ganttProjectId = params.get('project') || 'default';
     var projName = params.get('name') || '';
     var projCode = params.get('code') || '';
     if (projName) document.getElementById('iProj').value = projName;
     if (projCode) document.getElementById('iRef').value = projCode;
-    if (ganttProjectId) {
-      document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
-      ganttLoadFromFirebase();
-    } else {
-      loadDefaults(); renderPanel(); renderNotes(); renderGantt();
-    }
+    document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
+    ganttLoadFromFirebase();
   } catch(e) {
     console.error('Firebase init error:', e);
     loadDefaults(); renderPanel(); renderNotes(); renderGantt();

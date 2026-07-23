@@ -896,6 +896,7 @@ function renderNotes(){
   }
   c.innerHTML=html;
 }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function registerLog(){
   var note=(prompt('Log note (e.g. "Week 29 update"):','Week '+getISOWeek(new Date())+' update')||'').trim();
   if(note===null) return; if(note==='') note=new Date().toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'});

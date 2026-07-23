@@ -366,6 +366,8 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
       <input type="file" id="xlsxIn" accept=".xlsx" style="display:none" onchange="importXLSX(this)">
       <button class="btnx" onclick="ganttSaveToFirebase()" title="Save to cloud">&#9729; Save</button>
       <span id="ganttSaveStatus" style="font-size:11px;color:#999;margin-left:4px;"></span>
+      <button id="logRegisterBtn" onclick="registerLog()" style="display:none;padding:6px 8px;font-size:10px;font-weight:700;background:#1B3A6B;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:var(--f);">Register Log</button>
+      <button id="logViewBtn" onclick="openLogViewer()" style="display:none;padding:6px 8px;font-size:10px;font-weight:600;background:var(--surface);color:var(--text-sub);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:var(--f);">View Log</button>
     </div>
   </aside>
 
@@ -391,6 +393,8 @@ var PC={study:{bar:'#00A99D',light:'#E0F5F4',text:'#007A74'},pilot:{bar:'#D98C00
 var SC={Mold:{bg:'#EDE9FE',text:'#6D28D9',bar:'#7C3AED'},Label:{bg:'#FEF9C3',text:'#854D0E',bar:'#CA8A04'},Machine:{bg:'#DCFCE7',text:'#166534',bar:'#16A34A'},Assembly:{bg:'#FEF0E6',text:'#92400E',bar:'#D97706'},Packaging:{bg:'#FDF0FF',text:'#7E22CE',bar:'#9333EA'},Logistics:{bg:'#E0F2FE',text:'#075985',bar:'#0284C7'}};
 /* scheduleMode: 'baseline' = editing plan, 'actual' = tracking real progress */
 var scheduleMode='baseline';
+var timelineLogs=[];
+var pendingLogChanges=[];
 var DEFS={
   study:[{name:'Feasibility Study',seg:'Mold',dur:3,pred:null,lag:0},{name:'Design Concept Review',seg:'Mold',dur:2,pred:'prev',lag:0},{name:'Study Approval',seg:'Mold',dur:0,pred:'prev',lag:0}],
   pilot:[{name:'Pilot Mold Modification',seg:'Mold',dur:4,pred:'prev',lag:0},{name:'Pilot Mold Trial at Combi-Pack',seg:'Mold',dur:0,pred:'prev',lag:0},{name:'Pilot T0 Samples Evaluation',seg:'Mold',dur:0,pred:'prev',lag:0},{name:'Pilot Samples Approval',seg:'Mold',dur:0,pred:'prev',lag:0}],
@@ -504,6 +508,7 @@ function ganttLoadFromFirebase() {
       if (d.tasks) { tasks = d.tasks; tid = Math.max.apply(null, tasks.map(function(t){return t.id||0;})) + 1; }
       if (d.notes) notes = d.notes;
       if (d.scheduleMode) scheduleMode = d.scheduleMode;
+  if (d.timelineLogs) timelineLogs = d.timelineLogs;
       if (d.activePhases) activePhases = d.activePhases;
       if (d.iDate) document.getElementById('iDate').value = d.iDate;
       if (d.iCust) document.getElementById('iCust').value = d.iCust;
@@ -536,6 +541,7 @@ function ganttSaveToFirebase() {
     tasks: tasks,
     notes: notes,
     scheduleMode: scheduleMode,
+    timelineLogs: timelineLogs,
     activePhases: activePhases,
     activeLogo: activeLogo || 'combipack',
     iDate: document.getElementById('iDate').value,
@@ -575,7 +581,7 @@ window.onload = function(){
 
 function loadDefaults(){
   tasks=[]; tid=1;
-  PORDER.forEach(function(p){if(!activePhases[p]) return; DEFS[p].forEach(function(t){tasks.push({id:tid++,name:t.name,phase:p,seg:t.seg||'Mold',dur:t.dur,preds:t.pred?[t.pred]:[],lag:t.lag||0,actStart:0,actDur:0,milestone:false});});});
+  PORDER.forEach(function(p){if(!activePhases[p]) return; DEFS[p].forEach(function(t){tasks.push({id:tid++,name:t.name,phase:p,seg:t.seg||'Mold',dur:t.dur,durUnit:'weeks',preds:t.pred?[t.pred]:[],lag:t.lag||0,actStart:0,actDur:0,milestone:false});});});
 }
 
 /* ---- Critical Path Algorithm ---- */
@@ -616,8 +622,9 @@ function computeStarts(){
     var t=tasks[i];migratePreds(t);var s=1;
     var myPI=PORDER.indexOf(t.phase);
     for(var pi=0;pi<myPI;pi++){var pp=PORDER[pi];if(!activePhases[pp]) continue;for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+(tasks[j].dur||0));}
-    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined) s=Math.max(s,(starts[p2.id]||1)+(p2.dur||0)+(t.lag||0));});
-    starts[t.id]=s;
+    var durW2=t.durUnit==='days'?t.dur/5:(t.dur||0);
+    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined){var p2w=p2.durUnit==='days'?p2.dur/5:(p2.dur||0);s=Math.max(s,(starts[p2.id]||1)+p2w+(t.lag||0));}});
+    starts[t.id]=s; t._durW=durW2;
   }
   return starts;
 }
@@ -660,8 +667,21 @@ function setMode(m){
   } else {
     act.classList.remove('inactive'); base.classList.add('inactive');
     badge.className='actual-badge'; badge.textContent='TRACKING ACTUAL';
-    help.innerHTML='<strong style="color:#1161A3">Actual mode:</strong> Enter real start week & duration per task below. The chart shows a <strong>grey baseline bar</strong> behind the coloured actual bar. Leave actual fields at 0 to inherit baseline.';
+    help.innerHTML='<strong style="color:#1161A3">Actual mode:</strong> Enter real start week & duration per task below. Grey bars show baseline; coloured bars show actual.';
     modeSec.style.background='var(--blue-lt)';
+    // F1: pre-fill actuals from baseline if not yet set
+    var starts0=computeStarts();
+    tasks.forEach(function(t){
+      if(!t.actStart||t.actStart===0) t.actStart=starts0[t.id]||1;
+      if(!t.actDur||t.actDur===0)    t.actDur=t.dur||0;
+    });
+    // Show log buttons
+    var lb=document.getElementById('logRegisterBtn'); if(lb) lb.style.display='';
+    var vb=document.getElementById('logViewBtn'); if(vb) vb.style.display='';
+  }
+  if(m==='baseline'){
+    var lb2=document.getElementById('logRegisterBtn'); if(lb2) lb2.style.display='none';
+    var vb2=document.getElementById('logViewBtn'); if(vb2) vb2.style.display='none';
   }
   renderPanel(); renderGantt();
 }
@@ -740,9 +760,10 @@ function renderPanel(){
       lastPh=t.phase;
     }
     var sw=starts[t.id]||1;
+    var durInW=(t.durUnit==='days'?t.dur/5:(t.dur||0));
     var isOpen=!!expanded[t.id];
     migratePreds(t); var pid=resolvePredsForTask(t,i)[0]||null; var predT=pid?getById(pid):null; var predIdx=predT?getIdx(predT.id):-1;
-    var weekTag='W'+sw+(t.dur>0?' - W'+(sw+t.dur):'');
+    var weekTag='W'+sw+(durInW>0?' - W'+(Math.round((sw+durInW)*10)/10):'');
     var segTag=t.seg?('<span class="seg-tag '+t.seg+'">'+t.seg+'</span>'):'';
 
     /* Variance chip in header (actual mode only) */
@@ -780,7 +801,13 @@ function renderPanel(){
     html+='<option value="__custom__">+ Custom…</option>';
     html+='</select>';
     html+='</div>';
-    html+='<div class="tf"><label>Dur (wks)</label><input type="number" value="'+t.dur+'" min="0" max="99" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)"></div>';
+    var dUnit=t.durUnit||'weeks';
+    html+='<div class="tf"><label>Duration</label><div style="display:flex;gap:4px;align-items:center">';
+    html+='<input type="number" value="'+t.dur+'" min="0" max="999" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)" style="flex:1">';
+    html+='<select data-id="'+t.id+'" onchange="updDurUnit(this)" style="width:54px;font-size:10px;padding:3px 2px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text)">';
+    html+='<option value="weeks"'+(dUnit==='weeks'?' selected':'')+'>wks</option>';
+    html+='<option value="days"'+(dUnit==='days'?' selected':'')+'>days</option>';
+    html+='</select></div></div>';
     html+='<div class="tf"><label>Lag (neg=overlap)</label><input type="number" value="'+(t.lag||0)+'" min="-52" max="52" data-id="'+t.id+'" data-field="lag" data-num="1" onchange="updField(this)"></div>';
     html+='</div>';
     migratePreds(t);
@@ -855,13 +882,109 @@ function renderNotes(){
   }
   c.innerHTML=html;
 }
+function registerLog(){
+  var note=(prompt('Log note (e.g. "Week 29 update"):','Week '+getISOWeek(new Date())+' update')||'').trim();
+  if(note===null||note==='') return;
+  var snapshot=tasks.map(function(t){return {id:t.id,name:t.name,phase:t.phase,actStart:t.actStart||0,actDur:t.actDur||0,dur:t.dur};});
+  var starts1=computeStarts();
+  timelineLogs.push({id:uid(),date:new Date().toISOString().slice(0,10),time:new Date().toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'}),note:note,snapshot:snapshot,changes:pendingLogChanges.slice()});
+  pendingLogChanges=[];
+  var btn=document.getElementById('logRegisterBtn'); if(btn) btn.textContent='Register Log';
+  ganttAutoSave();
+  alert('Log saved: "'+note+'" — '+timelineLogs[timelineLogs.length-1].changes.length+' change(s) recorded.');
+}
+function openLogViewer(){
+  if(!timelineLogs.length){alert('No logs yet. Switch to Actual mode, edit values, then click Register Log.');return;}
+  var proj=(document.getElementById('iProj').value||'Project').trim();
+  var starts1=computeStarts();
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Timeline Log — '+proj+'</title><style>';
+  html+='*{box-sizing:border-box;margin:0;padding:0}body{font-family:Calibri,sans-serif;font-size:11px;background:#f8fafc;color:#1e293b;padding:20px}';
+  html+='.hd{background:#1B3A6B;color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:20px}h2{font-size:16px;font-weight:800;margin-bottom:4px}';
+  html+='.block{background:#fff;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:14px;overflow:hidden}';
+  html+='.bh{background:#1B3A6B;color:#fff;padding:8px 14px;font-weight:700;display:flex;gap:12px;align-items:center;font-size:11px}';
+  html+='.bh .sub{font-weight:400;opacity:.65;font-size:10px}';
+  html+='.bd{padding:10px 14px}table{width:100%;border-collapse:collapse}';
+  html+='th{background:#f1f5f9;padding:5px 8px;text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}';
+  html+='td{padding:5px 8px;border-bottom:1px solid #f8fafc;font-size:10.5px}';
+  html+='.pos{color:#16a34a;font-weight:700}.neg{color:#dc2626;font-weight:700}.neu{color:#64748b}';
+  html+='h3{font-size:13px;font-weight:800;color:#1B3A6B;border-bottom:2px solid #1B3A6B;padding-bottom:6px;margin:24px 0 12px}';
+  html+='</style></head><body>';
+  html+='<div class="hd"><h2>Timeline Evolution Log — '+proj+'</h2><div style="font-size:10px;opacity:.7">Generated '+new Date().toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div></div>';
+  // View 1: Week by week
+  html+='<h3>View 1 — Week-by-Week Changes</h3>';
+  timelineLogs.slice().reverse().forEach(function(log){
+    html+='<div class="block"><div class="bh">'+log.date+' &nbsp;'+log.time+' &nbsp;—&nbsp; '+log.note+'<span class="sub">'+log.changes.length+' change(s)</span></div><div class="bd">';
+    if(log.changes.length){
+      html+='<table><tr><th>Phase</th><th>Task</th><th>Field</th><th>Before</th><th>After</th><th>Delta</th></tr>';
+      log.changes.forEach(function(c){
+        var d=c.newVal-c.oldVal; var cls=d>0?'pos':d<0?'neg':'neu';
+        html+='<tr><td>'+c.phase+'</td><td>'+c.name+'</td><td>'+(c.field==='actStart'?'Actual Start':'Actual Dur')+'</td><td>'+c.oldVal+'w</td><td>'+c.newVal+'w</td><td class="'+cls+'">'+(d>0?'+':'')+d+'w</td></tr>';
+      });
+      html+='</table>';
+    } else { html+='<div class="neu" style="padding:4px 0">No field changes — snapshot only.</div>'; }
+    html+='</div></div>';
+  });
+  // View 2: Baseline vs Actual
+  html+='<h3>View 2 — Baseline vs Current Actual</h3>';
+  html+='<table><tr><th>Phase</th><th>Task</th><th>Baseline Start</th><th>Baseline Dur</th><th>Actual Start</th><th>Actual Dur</th><th>End Variance</th><th>Status</th></tr>';
+  tasks.forEach(function(t){
+    var bs=starts1[t.id]||1,bd=t.dur,as2=t.actStart||bs,ad=t.actDur||bd;
+    var v=(as2+ad)-(bs+bd); var cls=v>0?'pos':v<0?'neg':'neu';
+    html+='<tr><td>'+t.phase+'</td><td>'+t.name+'</td><td>W'+bs+'</td><td>'+bd+'w</td><td>W'+as2+'</td><td>'+ad+'w</td><td class="'+cls+'">'+(v===0?'—':(v>0?'+':'')+v+'w')+'</td><td class="'+cls+'">'+(v===0?'On track':v>0?'+'+v+'w delayed':Math.abs(v)+'w ahead')+'</td></tr>';
+  });
+  html+='</table></body></html>';
+  var w=window.open('','_blank'); if(!w){alert('Pop-up blocked.');return;} w.document.write(html); w.document.close();
+}
+function exportLogExcel(){
+  if(!window.XLSX){alert('Excel library not loaded.');return;}
+  var wb=XLSX.utils.book_new();
+  var rows=[['Log Date','Time','Note','Phase','Task','Field','Before (w)','After (w)','Delta (w)']];
+  timelineLogs.forEach(function(log){
+    if(!log.changes.length){rows.push([log.date,log.time,log.note,'','','','','','']);}
+    else log.changes.forEach(function(c,ci){rows.push([ci===0?log.date:'',ci===0?log.time:'',ci===0?log.note:'',c.phase,c.name,c.field==='actStart'?'Actual Start':'Actual Dur',c.oldVal,c.newVal,c.newVal-c.oldVal]);});
+    rows.push(['','','','','','','','','']);
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'Weekly Changes');
+  var starts2=computeStarts();
+  var rows2=[['Phase','Task','Baseline Start (w)','Baseline Dur (w)','Actual Start (w)','Actual Dur (w)','Variance (w)','Status']];
+  tasks.forEach(function(t){var bs=starts2[t.id]||1,bd=t.dur,as2=t.actStart||bs,ad=t.actDur||bd,v=(as2+ad)-(bs+bd);rows2.push([t.phase,t.name,bs,bd,as2,ad,v,v===0?'On track':v>0?'Delayed +'+v+'w':'Ahead '+Math.abs(v)+'w']);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows2),'Baseline vs Actual');
+  var today2=new Date(),dd2=String(today2.getFullYear())+String(today2.getMonth()+1).padStart(2,'0')+String(today2.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb,dd2+' - Timeline Log - '+(document.getElementById('iProj').value||'Project').trim()+'.xlsx');
+}
 function addNote(){notes.push('New note - click to edit');renderNotes();renderGantt();}
 function delNote(i){notes.splice(i,1);renderNotes();renderGantt();}
 function moveNote(i,dir){var n=notes.splice(i,1)[0];notes.splice(i+dir,0,n);renderNotes();renderGantt();}
 
 function toggleExp(id){expanded[id]=!expanded[id];renderPanel();}
 function upd(id,f,v){var t=getById(id);if(!t) return;t[f]=v;renderPanel();renderGantt();ganttAutoSave();}
-function updField(el){var id=+el.getAttribute('data-id');var f=el.getAttribute('data-field');var isNum=el.getAttribute('data-num')==='1';var v=isNum?+el.value:el.value;upd(id,f,v);}
+function updField(el){
+  var id=+el.getAttribute('data-id');
+  var f=el.getAttribute('data-field');
+  var isNum=el.getAttribute('data-num')==='1';
+  var v=isNum?+el.value:el.value;
+  // F3: track before value for log
+  if(scheduleMode==='actual'&&(f==='actStart'||f==='actDur')){
+    var t0=getById(id);
+    if(t0){var oldV=t0[f]||0; pendingLogChanges.push({id:id,name:t0.name,phase:t0.phase,field:f,oldVal:oldV,newVal:v});}
+  }
+  upd(id,f,v);
+  if(scheduleMode==='actual'&&(f==='actStart'||f==='actDur')) cascadeActualDelays(id);
+}
+function cascadeActualDelays(changedId){
+  var safety=0, changed=true;
+  while(changed&&safety<50){
+    changed=false; safety++;
+    for(var i=0;i<tasks.length;i++){
+      var t=tasks[i]; var pids=resolvePredsForTask(t,i);
+      if(!pids.length) continue;
+      var minS=1;
+      pids.forEach(function(pid){var p2=getById(pid);if(p2){var p2end=(p2.actStart||1)+(p2.actDur||p2.dur||0);if(p2end>minS) minS=p2end;}});
+      if((t.actStart||1)<minS){t.actStart=minS;changed=true;}
+    }
+  }
+  renderPanel();renderGantt();ganttAutoSave();
+}
 function updPhase(id,v){var t=getById(id);if(!t) return;t.phase=v;migratePreds(t);t.preds=[];sortTasks();renderPanel();renderGantt();ganttAutoSave();}
 function togglePred(id,val,checked){var t=getById(id);if(!t) return;migratePreds(t);if(val==='none'){t.preds=[];updatePredLabel(id);renderGantt();ganttAutoSave();return;}var v=isNaN(+val)?val:+val;var idx2=t.preds.indexOf(v);if(checked){t.preds=t.preds.filter(function(p){return p!=='none';});if(idx2<0) t.preds.push(v);}else{if(idx2>=0) t.preds.splice(idx2,1);}updatePredLabel(id);renderGantt();ganttAutoSave();}
 function updatePredLabel(id){var t=getById(id);if(!t) return;migratePreds(t);var el=document.getElementById('pred-dd-trigger-'+id);if(!el) return;var lbl=el.querySelector('.pred-dd-label');if(!lbl) return;var preds=t.preds||[];if(!preds.length){lbl.textContent='None';lbl.className='pred-dd-label placeholder';return;}var pts=[];preds.forEach(function(p){if(p==='prev'){pts.push('Prev');}else{var px=getById(+p);if(px) pts.push('#'+(getIdx(px.id)+1)+' '+px.name.slice(0,12)+(px.name.length>12?'…':''));}});lbl.textContent=pts.join(', ');lbl.className='pred-dd-label';}
@@ -903,6 +1026,15 @@ function deleteCustomSegment(name){
   SEGMENTS.splice(idx,1);
   delete SC[name];
   renderPanel(); renderGantt(); ganttAutoSave();
+}
+function updDurUnit(el){
+  var id=+el.getAttribute('data-id');
+  var t=getById(id); if(!t) return;
+  var newUnit=el.value;
+  if(newUnit==='days'&&(t.durUnit||'weeks')==='weeks') t.dur=Math.round(t.dur*5);
+  else if(newUnit==='weeks'&&t.durUnit==='days') t.dur=Math.max(1,Math.round(t.dur/5));
+  t.durUnit=newUnit;
+  renderPanel();renderGantt();ganttAutoSave();
 }
 function updMilestone(id,val){var t=getById(id);if(!t) return;t.milestone=!!val;if(val) t.dur=0;renderPanel();renderGantt();ganttAutoSave();}
 function setPred(id,val){var t=getById(id);if(!t) return;migratePreds(t);if(val==='null') t.preds=[];else if(val==='prev') t.preds=['prev'];else t.preds=[+val];renderPanel();renderGantt();}
@@ -1287,7 +1419,7 @@ function renderGantt(){
       if(abw>0){
         s+='<rect x="'+(abx+1)+'" y="'+(by2+3)+'" width="'+abw+'" height="'+(BH-2)+'" rx="3" fill="rgba(0,0,0,0.06)"/>';
         s+='<rect x="'+abx+'" y="'+(by2+1)+'" width="'+abw+'" height="'+(BH-2)+'" rx="3" fill="'+barColor+'" opacity="0.9"/>';
-        if(abw>18) s+='<text x="'+(abx+abw/2)+'" y="'+(by2+BH/2+3)+'" font-size="7" fill="white" text-anchor="middle" font-weight="600">'+actDurVal+'w</text>';
+        if(abw>18) s+='<text x="'+(abx+abw/2)+'" y="'+(by2+BH/2+3)+'" font-size="7" fill="white" text-anchor="middle" font-weight="600">'+actDurVal+(t.durUnit==="days"?'d':'w')+'</text>';
         bpos[t.id]={endX:abx+abw,startX:abx,midY:midY,isMilestone:false};
       } else {
         bpos[t.id]={endX:mx3b+msiz,startX:mx3b-msiz,midY:midY,isMilestone:true,cx:mx3b,cy:mcy};
@@ -1307,7 +1439,7 @@ function renderGantt(){
       s+='<rect x="'+abx2+'" y="'+by2+'" width="'+abw2+'" height="'+BH+'" rx="3" fill="'+barColor+'" opacity="0.88"/>';
       s+='<rect x="'+(abx2+1)+'" y="'+(by2+1)+'" width="'+(abw2-2)+'" height="'+(BH/2-1)+'" rx="2" fill="rgba(255,255,255,0.15)"/>';
       if(isCrit&&colVis.crit) s+='<rect x="'+abx2+'" y="'+by2+'" width="'+abw2+'" height="'+BH+'" rx="3" fill="none" stroke="#D93025" stroke-width="1.5" opacity="0.6"/>';
-      if(abw2>24) s+='<text x="'+(abx2+abw2/2)+'" y="'+(by2+BH/2+3.5)+'" font-size="7" fill="white" text-anchor="middle" font-weight="600">'+actDurVal+'w</text>';
+      if(abw2>24) s+='<text x="'+(abx2+abw2/2)+'" y="'+(by2+BH/2+3.5)+'" font-size="7" fill="white" text-anchor="middle" font-weight="600">'+actDurVal+(t.durUnit==="days"?'d':'w')+'</text>';
       /* Slip indicator arrow if delayed */
       var slip3=(actSw+actDurVal)-(sw2+t.dur);
       if(slip3>0){
@@ -1327,7 +1459,7 @@ function renderGantt(){
         s+='<rect x="'+bx2+'" y="'+by2+'" width="'+bw2+'" height="'+BH+'" rx="3" fill="none" stroke="'+critClr+'" stroke-width="1.5" opacity="0.6"/>';
       }
       var barTextClr=thGS?'#FFFFFF':'white';
-      if(bw2>24) s+='<text x="'+(bx2+bw2/2)+'" y="'+(by2+BH/2+3.5)+'" font-size="7" fill="'+barTextClr+'" text-anchor="middle" font-weight="600">'+t.dur+'w</text>';
+      if(bw2>24) s+='<text x="'+(bx2+bw2/2)+'" y="'+(by2+BH/2+3.5)+'" font-size="7" fill="'+barTextClr+'" text-anchor="middle" font-weight="600">'+(t.durUnit==="days"?t.dur+'d':t.dur+'w')+'</text>';
       bpos[t.id]={endX:bx2+bw2,startX:bx2,midY:midY,isMilestone:false};
     }
     rowOff+=RH;
@@ -1500,8 +1632,8 @@ function exportXLSX(){
   var projData=[['Customer',document.getElementById('iCust').value],['Project',document.getElementById('iProj').value],['Reference',document.getElementById('iRef').value],['StartDate',document.getElementById('iDate').value],['PreparedBy',document.getElementById('iPrep').value],['ActivePhases',PORDER.filter(function(p){return activePhases[p];}).join(',')],['ScheduleMode',scheduleMode]];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(projData),'ProjectInfo');
   var starts=computeStarts();
-  var taskHdr=[['ID','Name','Phase','Segment','Duration','Predecessor','Lag','ComputedStart','ActualStart','ActualDur']];
-  var taskRows=tasks.map(function(t){migratePreds(t);var ps=(t.preds||[]).join(';');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0];});
+  var taskHdr=[['ID','Name','Phase','Segment','Duration','Predecessor','Lag','ComputedStart','ActualStart','ActualDur','DurUnit']];
+  var taskRows=tasks.map(function(t){migratePreds(t);var ps=(t.preds||[]).join(';');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0,t.durUnit||'weeks'];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(taskHdr.concat(taskRows)),'Tasks');
   var noteRows=notes.map(function(n,i){return [i+1,n];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['#','Note']].concat(noteRows)),'Notes');
@@ -1544,7 +1676,7 @@ function importXLSX(input){
           var r=trows[i]; if(!r||!r[1]) continue;
           var predRaw=r[5]===''||r[5]===undefined?'':String(r[5]);
           var predsArr=predRaw===''?[]:predRaw.split(';').map(function(p){p=p.trim();return p==='prev'?'prev':(!isNaN(+p)?+p:null);}).filter(function(p){return p!==null;});
-          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,preds:predsArr,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0,milestone:false};
+          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,durUnit:String(r[10]||'weeks'),preds:predsArr,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0,milestone:false};
           tasks.push(tk); if(tk.id>maxId) maxId=tk.id;
         }
         tid=maxId+1; sortTasks();

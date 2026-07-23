@@ -222,6 +222,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
 </style>
 <!-- Firebase SDK for per-project data persistence -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
@@ -487,7 +488,13 @@ function ganttInitFirebase() {
     if (projName) document.getElementById('iProj').value = projName;
     if (projCode) document.getElementById('iRef').value = projCode;
     document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
-    ganttLoadFromFirebase();
+    // Sign in anonymously so Firestore auth rules pass
+    firebase.auth().signInAnonymously().then(function() {
+      ganttLoadFromFirebase();
+    }).catch(function(e) {
+      console.warn('Auth failed, trying load anyway:', e);
+      ganttLoadFromFirebase();
+    });
   } catch(e) {
     console.error('Firebase init error:', e);
     loadDefaults(); renderPanel(); renderNotes(); renderGantt();

@@ -2786,6 +2786,9 @@ async function saveToFirebase() {
     if (result && result.error) {
       setFBStatus('error', 'Save error: ' + result.error);
       fbSaving = false;
+      if (result.error === 'write_blocked') {
+        alert('Save was blocked as a safety precaution: the data about to be saved looked much smaller than what is currently stored (possible accidental data loss). Nothing was overwritten. Please refresh the page and check your data before trying again, or contact Adam if this keeps happening.\n\nDetails: ' + (result.reason || ''));
+      }
       return;
     }
     localStorage.setItem('npd_last_saved', ts);

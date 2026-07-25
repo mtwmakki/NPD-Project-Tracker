@@ -220,10 +220,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
 .sb-close-btn{display:none;padding:6px 12px;font-size:11px;font-weight:600;color:var(--text-hint);cursor:pointer;text-align:right;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;border-bottom:1px solid var(--border)}
 .sb.drawer-mode .sb-close-btn{display:block}
 </style>
-<!-- Firebase SDK for per-project data persistence -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Data persistence via Google Sheets bridge (see script below) -->
 </head>
 <body>
 <header class="hdr">
@@ -464,77 +461,55 @@ function setLogo(logo){
   renderGantt();
 }
 
-/* ---- Firebase config (same as tracker) ---- */
-var FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDPDtEHBCCayL2AKDxhqOqq6TFKq9puTQA",
-  authDomain: "npd-project-tracker-v1.firebaseapp.com",
-  projectId: "npd-project-tracker-v1",
-  storageBucket: "npd-project-tracker-v1.firebasestorage.app",
-  messagingSenderId: "195486180153",
-  appId: "1:195486180153:web:685ac5c5d5174b2439fee8"
-};
-var ganttDb = null;
+/* ---- Google Sheets bridge (replaces Firebase) ---- */
+var SHEETS_BRIDGE_URL = 'https://script.google.com/macros/s/AKfycbxageVh6pW736Z1hcbICN4ab35H0BBz0iwvb35v-xkDGvGR9k0NRWrKHVkElYsFfAs9/exec';
+var SHEETS_BRIDGE_TOKEN = 'NzO8Z4aB3VME3sMFyLlo-U4uk0OmIX25';
 var ganttProjectId = null;
 var ganttAutoSaveTimer = null;
 
-var ganttAuthReady = false;
 function ganttInitFirebase() {
-  try {
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-    ganttDb = firebase.firestore();
-    var params = new URLSearchParams(window.location.search);
-    ganttProjectId = params.get('project') || 'default';
-    var projName = params.get('name') || '';
-    var projCode = params.get('code') || '';
-    if (projName) document.getElementById('iProj').value = projName;
-    if (projCode) document.getElementById('iRef').value = projCode;
-    document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
-    // Use onAuthStateChanged so we know when auth is truly ready
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        ganttAuthReady = true;
-        console.log('Gantt auth ready, uid:', user.uid, 'anon:', user.isAnonymous);
-        ganttLoadFromFirebase();
-      } else {
-        // Not signed in yet — sign in anonymously
-        firebase.auth().signInAnonymously().catch(function(e) {
-          console.error('Anonymous sign-in failed:', e);
-          // Fall back to local only
-          loadDefaults(); renderPanel(); renderNotes(); renderGantt();
-        });
-      }
-    });
-  } catch(e) {
-    console.error('Firebase init error:', e);
-    loadDefaults(); renderPanel(); renderNotes(); renderGantt();
-  }
+  // Kept function name for minimal diff — no longer Firebase, just reads the URL param and loads from Sheets.
+  var params = new URLSearchParams(window.location.search);
+  ganttProjectId = params.get('project') || 'default';
+  var projName = params.get('name') || '';
+  var projCode = params.get('code') || '';
+  if (projName) document.getElementById('iProj').value = projName;
+  if (projCode) document.getElementById('iRef').value = projCode;
+  document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
+  ganttLoadFromFirebase();
 }
 
 function ganttLoadFromFirebase() {
-  if (!ganttDb || !ganttProjectId || !ganttAuthReady) { console.warn('Load skipped — not ready'); return; }
+  if (!ganttProjectId) { console.warn('Load skipped — no project id'); return; }
   var statusEl = document.getElementById('ganttSaveStatus');
   if (statusEl) statusEl.textContent = 'Loading…';
-  ganttDb.collection('gantt_data').doc(ganttProjectId).get().then(function(doc) {
-    if (doc.exists) {
-      var d = doc.data();
-      if (d.tasks) { tasks = d.tasks; tid = Math.max.apply(null, tasks.map(function(t){return t.id||0;})) + 1; }
-      if (d.notes) notes = d.notes;
-      if (d.scheduleMode) scheduleMode = d.scheduleMode;
-  if (d.timelineLogs) timelineLogs = d.timelineLogs;
-      if (d.activePhases) activePhases = d.activePhases;
-      if (d.iDate) document.getElementById('iDate').value = d.iDate;
-      if (d.iCust) document.getElementById('iCust').value = d.iCust;
-      if (d.iProj) document.getElementById('iProj').value = d.iProj;
-      if (d.iRef)  document.getElementById('iRef').value  = d.iRef;
-      if (d.iPrep) document.getElementById('iPrep').value = d.iPrep;
-      if (d.activeLogo) { activeLogo = d.activeLogo; }
-      // Sync phase buttons
-      PORDER.forEach(function(p) {
-        var el = document.querySelector('.ppill[data-ph="'+p+'"]');
-        if (el) el.classList.toggle('active', !!activePhases[p]);
-      });
-      sortTasks();
-      if (statusEl) statusEl.textContent = 'Loaded ✓';
+  var url = SHEETS_BRIDGE_URL + '?action=ganttRead&project=' + encodeURIComponent(ganttProjectId) + '&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN);
+  fetch(url).then(function(r){ return r.json(); }).then(function(res) {
+    if (res && res.exists && res.data) {
+      var d;
+      try { d = JSON.parse(res.data); } catch(e) { d = null; }
+      if (d) {
+        if (d.tasks) { tasks = d.tasks; tid = Math.max.apply(null, tasks.map(function(t){return t.id||0;})) + 1; }
+        if (d.notes) notes = d.notes;
+        if (d.scheduleMode) scheduleMode = d.scheduleMode;
+        if (d.timelineLogs) timelineLogs = d.timelineLogs;
+        if (d.activePhases) activePhases = d.activePhases;
+        if (d.iDate) document.getElementById('iDate').value = d.iDate;
+        if (d.iCust) document.getElementById('iCust').value = d.iCust;
+        if (d.iProj) document.getElementById('iProj').value = d.iProj;
+        if (d.iRef)  document.getElementById('iRef').value  = d.iRef;
+        if (d.iPrep) document.getElementById('iPrep').value = d.iPrep;
+        if (d.activeLogo) { activeLogo = d.activeLogo; }
+        PORDER.forEach(function(p) {
+          var el = document.querySelector('.ppill[data-ph="'+p+'"]');
+          if (el) el.classList.toggle('active', !!activePhases[p]);
+        });
+        sortTasks();
+        if (statusEl) statusEl.textContent = 'Loaded ✓';
+      } else {
+        loadDefaults();
+        if (statusEl) statusEl.textContent = 'New chart';
+      }
     } else {
       loadDefaults();
       if (statusEl) statusEl.textContent = 'New chart';
@@ -548,7 +523,7 @@ function ganttLoadFromFirebase() {
 }
 
 function ganttSaveToFirebase() {
-  if (!ganttDb || !ganttProjectId || !ganttAuthReady) { console.warn('Save skipped — not ready'); return; }
+  if (!ganttProjectId) { console.warn('Save skipped — no project id'); return; }
   var statusEl = document.getElementById('ganttSaveStatus');
   if (statusEl) statusEl.textContent = 'Saving…';
   var payload = {
@@ -565,7 +540,20 @@ function ganttSaveToFirebase() {
     iPrep: document.getElementById('iPrep').value,
     savedAt: new Date().toISOString()
   };
-  ganttDb.collection('gantt_data').doc(ganttProjectId).set(payload).then(function() {
+  fetch(SHEETS_BRIDGE_URL + '?action=ganttWrite', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: SHEETS_BRIDGE_TOKEN,
+      action: 'ganttWrite',
+      project: ganttProjectId,
+      data: JSON.stringify(payload)
+    })
+  }).then(function(r){ return r.json(); }).then(function(res) {
+    if (res && res.error) {
+      if (statusEl) statusEl.textContent = 'Save failed';
+      console.error('Save error:', res.error);
+      return;
+    }
     if (statusEl) { statusEl.textContent = 'Saved ✓'; setTimeout(function(){ statusEl.textContent = ''; }, 2000); }
   }).catch(function(e) {
     if (statusEl) statusEl.textContent = 'Save failed';
@@ -581,17 +569,9 @@ function ganttAutoSave() {
 window.onload = function(){
   var d = new Date(); d.setDate(d.getDate()-((d.getDay()+6)%7));
   document.getElementById('iDate').value = d.toISOString().split('T')[0];
-  // Wait for Firebase SDK then init
-  (function waitFB(retries) {
-    if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
-      ganttInitFirebase();
-    } else if (retries < 20) {
-      setTimeout(function(){ waitFB(retries+1); }, 300);
-    } else {
-      loadDefaults(); renderPanel(); renderNotes(); renderGantt();
-    }
-  })(0);
+  ganttInitFirebase();
 };
+
 
 function loadDefaults(){
   tasks=[]; tid=1;

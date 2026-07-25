@@ -2712,90 +2712,89 @@ function setFBStatus(state, msg) {
   if (sub && state === 'offline') sub.textContent = 'Paste your Firebase config in the file to enable multi-user sync';
 }
 
+// ══════════════════════════════════════════════════════
+//  SHEETS BRIDGE CONFIG — paste your deployed Apps Script Web App URL here
+// ══════════════════════════════════════════════════════
+const SHEETS_BRIDGE_URL = 'https://script.google.com/macros/s/AKfycbxageVh6pW736Z1hcbICN4ab35H0BBz0iwvb35v-xkDGvGR9k0NRWrKHVkElYsFfAs9/exec';
+const SHEETS_BRIDGE_TOKEN = 'NzO8Z4aB3VME3sMFyLlo-U4uk0OmIX25';
+let sheetsPollTimer = null;
+
 function startFirebaseListener() {
-  if (!fbDb) return;
-  const [col, doc] = FIRESTORE_DOC.split('/');
-  if (fbUnsubscribe) fbUnsubscribe();
+  // Renamed conceptually to "start data sync" but kept function name so
+  // existing callers (initFirebase, etc.) don't need to change.
+  pollSheetsOnce();
+  if (sheetsPollTimer) clearInterval(sheetsPollTimer);
+  sheetsPollTimer = setInterval(pollSheetsOnce, 20000); // poll every 20s
+}
 
-  // Safety net: if Firebase doesn't respond in 8 seconds, use local data
-  const timeout = setTimeout(() => {
-    if (document.getElementById('firebase-status')?.textContent?.includes('Connecting')) {
-      setFBStatus('error', 'Timeout — using local');
-    }
-  }, 8000);
-
-  fbUnsubscribe = fbDb.collection(col).doc(doc).onSnapshot(snap => {
-    clearTimeout(timeout);
-    setFBStatus('online', 'Online ✓');
-
-    if (!snap.exists) {
-      // First ever open — no data in Firestore yet. Push local data up.
-      saveToFirebase();
-      // Data is already rendered from loadLocal() — nothing more to do
+async function pollSheetsOnce() {
+  if (!SHEETS_BRIDGE_URL || SHEETS_BRIDGE_URL.indexOf('PASTE_') === 0) {
+    setFBStatus('offline', 'Not configured');
+    return;
+  }
+  try {
+    setFBStatus('connecting', 'Syncing…');
+    const url = SHEETS_BRIDGE_URL + '?action=read&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN);
+    const resp = await fetch(url);
+    const remote = await resp.json();
+    if (remote && remote.error) {
+      setFBStatus('error', 'Error: ' + remote.error);
       return;
     }
-
-    // Skip re-render only if WE just saved (echo prevention)
-    if (fbSaving) return;
-
-    const remote = snap.data();
+    setFBStatus('online', 'Online ✓');
+    if (fbSaving) return; // skip re-render if we just saved (echo prevention)
     if (remote && remote._data) {
       try {
         const parsed = JSON.parse(remote._data);
-        // Only update if remote is actually newer (or we have nothing local)
         const remoteTs = remote._updatedAt || '';
         const localTs  = localStorage.getItem('npd_last_saved') || '';
         if (remoteTs >= localTs || !localTs) {
           data = parsed;
           data.bin = data.bin||[];
-  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
+          data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
           migrateStatusNoteToSubStatus();
           saveLocal();
           localStorage.setItem('npd_last_saved', remoteTs);
           renderAll(); renderBin();
         }
       } catch(e) {
-        console.error('Firebase parse error:', e);
+        console.error('Sheets bridge parse error:', e);
       }
     }
-  }, err => {
-    clearTimeout(timeout);
-    console.error('Firestore listener error:', err);
-    // Common causes: wrong project ID, Firestore not enabled, or test mode expired
-    if (err.code === 'permission-denied') {
-      setFBStatus('error', 'Permission denied — check Firestore rules');
-    } else if (err.code === 'unavailable') {
-      setFBStatus('error', 'Offline — using local data');
-    } else {
-      setFBStatus('error', 'Error: ' + (err.code || err.message));
-    }
-  });
+  } catch(err) {
+    console.error('Sheets bridge fetch error:', err);
+    setFBStatus('error', 'Offline — using local data');
+  }
 }
 
 async function saveToFirebase() {
-  if (!fbDb) return;
+  if (!SHEETS_BRIDGE_URL || SHEETS_BRIDGE_URL.indexOf('PASTE_') === 0) return;
   fbSaving = true;
   setFBStatus('saving', 'Saving…');
   try {
-    const [col, doc] = FIRESTORE_DOC.split('/');
     const ts = new Date().toISOString();
-    await fbDb.collection(col).doc(doc).set({
-      _data: JSON.stringify(data),
-      _updatedAt: ts,
-      _updatedBy: currentUser
+    const resp = await fetch(SHEETS_BRIDGE_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        token: SHEETS_BRIDGE_TOKEN,
+        _data: JSON.stringify(data),
+        _updatedAt: ts,
+        _updatedBy: currentUser
+      })
     });
+    const result = await resp.json();
+    if (result && result.error) {
+      setFBStatus('error', 'Save error: ' + result.error);
+      fbSaving = false;
+      return;
+    }
     localStorage.setItem('npd_last_saved', ts);
     setFBStatus('saved', 'Saved ✓');
-    // Reset fbSaving after enough time for the listener echo to be absorbed
     setTimeout(() => { fbSaving = false; }, 3000);
   } catch(e) {
-    console.error('Firebase save error:', e);
+    console.error('Sheets bridge save error:', e);
     fbSaving = false;
-    if (e.code === 'permission-denied') {
-      setFBStatus('error', 'Permission denied — check Firestore rules');
-    } else {
-      setFBStatus('error', 'Save failed');
-    }
+    setFBStatus('error', 'Save failed');
   }
 }
 
@@ -2890,22 +2889,21 @@ function forceRefreshFromCloud() {
   const btn = document.activeElement;
   const icon = btn && btn.querySelector ? btn.querySelector('i') : null;
   if (icon) icon.classList.add('ti-spin');
-  if (!FIREBASE_READY || !fbDb) {
+  if (!SHEETS_BRIDGE_URL || SHEETS_BRIDGE_URL.indexOf('PASTE_') === 0) {
     if (icon) icon.classList.remove('ti-spin');
     alert('Not connected to cloud — showing local data only.');
     return;
   }
-  const col = 'npd_tracker', doc = 'main';
-  fbDb.collection(col).doc(doc).get({source:'server'}).then(snap => {
+  const url = SHEETS_BRIDGE_URL + '?action=read&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN);
+  fetch(url).then(r => r.json()).then(remote => {
     if (icon) icon.classList.remove('ti-spin');
-    if (!snap.exists) return;
-    const remote = snap.data();
+    if (remote && remote.error) { setSyncStatus('error', 'Refresh error'); return; }
     if (remote && remote._data) {
       try {
         const parsed = JSON.parse(remote._data);
         data = parsed;
         data.bin = data.bin||[];
-  data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
+        data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
         migrateStatusNoteToSubStatus();
         saveLocal();
         localStorage.setItem('npd_last_saved', remote._updatedAt || '');

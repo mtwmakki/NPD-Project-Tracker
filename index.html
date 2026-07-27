@@ -587,7 +587,7 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .sort-chip i{font-size:11px;}
 
 /* ── Command row (reinvented filter bar) ── */
-.cmd-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 8px;flex-wrap:wrap;}
+.cmd-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 8px;flex-wrap:wrap;margin:0 28px 12px;}
 .status-tabs{display:flex;gap:2px;flex-wrap:wrap;}
 .status-tab.ftab{padding:7px 11px;border:none;border-bottom:2px solid transparent;border-radius:0;background:none;}
 .status-tab.ftab.active{background:none;}
@@ -1568,37 +1568,42 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel collapsed" id="proj-filter-panel">
-    <div class="filter-tabs">
-      <button class="ftab active" id="ftab-all" onclick="setProjFilter('all')">All</button>
-      <button class="ftab" id="ftab-new-mold" onclick="setProjFilter('new-mold')">New Mold</button>
-      <button class="ftab" id="ftab-improvement" onclick="setProjFilter('improvement')">Improvement</button>
-      <button class="ftab" id="ftab-masterbatch" onclick="setProjFilter('masterbatch')">Masterbatch</button>
-      <button class="ftab" id="ftab-new-iml" onclick="setProjFilter('new-iml')">New IML</button>
+  <div class="cmd-row" id="proj-filter-panel">
+    <div class="status-tabs">
+      <button class="ftab status-tab active" id="ftab-all" onclick="setProjFilter('all')">All</button>
+      <button class="ftab status-tab" id="ftab-new-mold" onclick="setProjFilter('new-mold')">New Mold</button>
+      <button class="ftab status-tab" id="ftab-improvement" onclick="setProjFilter('improvement')">Improvement</button>
+      <button class="ftab status-tab" id="ftab-masterbatch" onclick="setProjFilter('masterbatch')">Masterbatch</button>
+      <button class="ftab status-tab" id="ftab-new-iml" onclick="setProjFilter('new-iml')">New IML</button>
     </div>
-    <div class="filter-tabs" style="margin-top:-5px;">
-      <span style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);padding:5px 4px 5px 2px;flex-shrink:0;align-self:center;">Site</span>
-      <button class="ftab active" id="sitefab-all" onclick="setProjSiteFilter('all')">All Sites</button>
-      <button class="ftab" id="sitefab-combi" onclick="setProjSiteFilter('Combi-Pack')">Combi-Pack</button>
-      <button class="ftab" id="sitefab-uniart" onclick="setProjSiteFilter('Super Uniart')">Super Uniart</button>
-      <button class="ftab" id="sitefab-reach" onclick="setProjSiteFilter('Reachpac')">Reachpac</button>
+    <div class="cmd-divider"></div>
+    <div class="cmd-pop-wrap">
+      <button class="cmd-pop-trigger" onclick="toggleCmdPop('proj-site')"><i class="ti ti-building-factory-2"></i><span id="proj-site-label">All Sites</span><i class="ti ti-chevron-down chev"></i></button>
+      <div class="cmd-pop" id="proj-site-pop">
+        <button class="ftab active" id="sitefab-all" onclick="setProjSiteFilter('all')">All Sites</button>
+        <button class="ftab" id="sitefab-combi" onclick="setProjSiteFilter('Combi-Pack')">Combi-Pack</button>
+        <button class="ftab" id="sitefab-uniart" onclick="setProjSiteFilter('Super Uniart')">Super Uniart</button>
+        <button class="ftab" id="sitefab-reach" onclick="setProjSiteFilter('Reachpac')">Reachpac</button>
+      </div>
     </div>
-    <div class="sort-bar">
-      <span class="sort-bar-label"><i class="ti ti-arrows-sort" style="font-size:11px;vertical-align:middle;"></i> Sort</span>
-      <button class="sort-chip active" id="proj-sort-date-desc" onclick="setProjSort('date-desc')"><i class="ti ti-calendar-down"></i> Newest</button>
-      <button class="sort-chip" id="proj-sort-date-asc" onclick="setProjSort('date-asc')"><i class="ti ti-calendar-up"></i> Oldest</button>
-      <button class="sort-chip" id="proj-sort-overdue" onclick="setProjSort('overdue')"><i class="ti ti-alert-circle"></i> Overdue</button>
-      <button class="sort-chip" id="proj-sort-status" onclick="setProjSort('status')"><i class="ti ti-progress"></i> Status</button>
-      <button class="sort-chip" id="proj-sort-name" onclick="setProjSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
-      <button class="sort-chip" id="proj-sort-stale" onclick="setProjSort('stale')"><i class="ti ti-clock-off"></i> Least Updated</button>
+    <div class="cmd-pop-wrap">
+      <button class="cmd-pop-trigger" onclick="toggleCmdPop('proj-sort')"><i class="ti ti-arrows-sort"></i><span id="proj-sort-label">Newest</span><i class="ti ti-chevron-down chev"></i></button>
+      <div class="cmd-pop" id="proj-sort-pop">
+        <button class="sort-chip active" id="proj-sort-date-desc" onclick="setProjSort('date-desc')"><i class="ti ti-calendar-down"></i> Newest</button>
+        <button class="sort-chip" id="proj-sort-date-asc" onclick="setProjSort('date-asc')"><i class="ti ti-calendar-up"></i> Oldest</button>
+        <button class="sort-chip" id="proj-sort-overdue" onclick="setProjSort('overdue')"><i class="ti ti-alert-circle"></i> Overdue</button>
+        <button class="sort-chip" id="proj-sort-status" onclick="setProjSort('status')"><i class="ti ti-progress"></i> Status</button>
+        <button class="sort-chip" id="proj-sort-name" onclick="setProjSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
+        <button class="sort-chip" id="proj-sort-stale" onclick="setProjSort('stale')"><i class="ti ti-clock-off"></i> Least Updated</button>
+      </div>
     </div>
-    <div class="filter-zoom-row">
-      <i class="ti ti-zoom-out"></i>
+    <div class="cmd-spacer"></div>
+    <div class="cmd-zoom">
+      <i class="ti ti-zoom-out" style="font-size:12px;color:var(--text3);"></i>
       <div class="zoom-slider-wrap" id="zoom-wrap-proj">
         <div class="zoom-tooltip" id="zoom-tip-proj">280px</div>
         <input type="range" id="density-slider-proj" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'proj')">
       </div>
-      <i class="ti ti-zoom-in"></i>
     </div>
   </div>
   <div id="projects-list"></div>
@@ -1814,25 +1819,36 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="task-add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel collapsed" id="tasks-filter-panel">
-    <div class="filter-tabs">
-      <button class="ftab active" id="mtasktab-all" onclick="setMTaskFilter('all')">All</button>
-      <button class="ftab" id="mtasktab-general" onclick="setMTaskFilter('general')">General</button>
-      <button class="ftab" id="mtasktab-admin" onclick="setMTaskFilter('admin')">Admin</button>
-      <button class="ftab" id="mtasktab-meeting" onclick="setMTaskFilter('meeting')">Meeting</button>
-      <button class="ftab" id="mtasktab-followup" onclick="setMTaskFilter('followup')">Follow-Up</button>
-      <button class="ftab" id="mtasktab-urgent" onclick="setMTaskFilter('urgent')">Urgent</button>
+  <div class="cmd-row" id="tasks-filter-panel">
+    <div class="status-tabs">
+      <button class="ftab status-tab active" id="mtasktab-all" onclick="setMTaskFilter('all')">All</button>
+      <button class="ftab status-tab" id="mtasktab-general" onclick="setMTaskFilter('general')">General</button>
+      <button class="ftab status-tab" id="mtasktab-admin" onclick="setMTaskFilter('admin')">Admin</button>
+      <button class="ftab status-tab" id="mtasktab-meeting" onclick="setMTaskFilter('meeting')">Meeting</button>
+      <button class="ftab status-tab" id="mtasktab-followup" onclick="setMTaskFilter('followup')">Follow-Up</button>
+      <button class="ftab status-tab" id="mtasktab-urgent" onclick="setMTaskFilter('urgent')">Urgent</button>
     </div>
-    <div class="sort-bar">
-      <span class="sort-bar-label"><i class="ti ti-arrows-sort" style="font-size:11px;vertical-align:middle;"></i> Sort</span>
-      <button class="sort-chip active" id="task-sort-deadline-asc" onclick="setTaskSort('deadline-asc')"><i class="ti ti-calendar-due"></i> Due Soon</button>
-      <button class="sort-chip" id="task-sort-deadline-desc" onclick="setTaskSort('deadline-desc')"><i class="ti ti-calendar-down"></i> Due Last</button>
-      <button class="sort-chip" id="task-sort-priority" onclick="setTaskSort('priority')"><i class="ti ti-flame"></i> Priority</button>
-      <button class="sort-chip" id="task-sort-name" onclick="setTaskSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
-      <button class="sort-chip" id="task-sort-category" onclick="setTaskSort('category')"><i class="ti ti-tag"></i> Category</button>
+    <div class="cmd-divider"></div>
+    <div class="cmd-pop-wrap">
+      <button class="cmd-pop-trigger" onclick="toggleCmdPop('task-sort')"><i class="ti ti-arrows-sort"></i><span id="task-sort-label">Due Soon</span><i class="ti ti-chevron-down chev"></i></button>
+      <div class="cmd-pop" id="task-sort-pop">
+        <button class="sort-chip active" id="task-sort-deadline-asc" onclick="setTaskSort('deadline-asc')"><i class="ti ti-calendar-due"></i> Due Soon</button>
+        <button class="sort-chip" id="task-sort-deadline-desc" onclick="setTaskSort('deadline-desc')"><i class="ti ti-calendar-down"></i> Due Last</button>
+        <button class="sort-chip" id="task-sort-priority" onclick="setTaskSort('priority')"><i class="ti ti-flame"></i> Priority</button>
+        <button class="sort-chip" id="task-sort-name" onclick="setTaskSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
+        <button class="sort-chip" id="task-sort-category" onclick="setTaskSort('category')"><i class="ti ti-tag"></i> Category</button>
+      </div>
     </div>
-    <div class="filter-zoom-row">
-      <i class="ti ti-zoom-out"></i>
+    <div class="cmd-spacer"></div>
+    <div class="cmd-view-cluster">
+      <button class="view-tbtn active" id="tasks-view-card" onclick="setTaskView('card')" title="Default card"><i class="ti ti-layout-cards"></i></button>
+      <button class="view-tbtn" id="tasks-view-list" onclick="setTaskView('list')" title="List view"><i class="ti ti-list"></i></button>
+      <button class="view-tbtn" id="tasks-view-a" onclick="setTaskView('a')" title="Compact A">A</button>
+      <button class="view-tbtn" id="tasks-view-b" onclick="setTaskView('b')" title="Compact B">B</button>
+      <button class="view-tbtn" id="tasks-view-c" onclick="setTaskView('c')" title="Compact C">C</button>
+    </div>
+    <div class="cmd-zoom">
+      <i class="ti ti-zoom-out" style="font-size:12px;color:var(--text3);"></i>
       <div class="zoom-slider-wrap" id="zoom-wrap-tasks">
         <div class="zoom-tooltip" id="zoom-tip-tasks">280px</div>
         <input type="range" id="density-slider-tasks" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'tasks')">
@@ -3785,6 +3801,9 @@ function setProjSort(key) {
     const el = document.getElementById('proj-sort-'+k);
     if (el) el.classList.toggle('active', k === key);
   });
+  const lbl = document.getElementById('proj-sort-label');
+  if (lbl) { const btn = document.getElementById('proj-sort-'+key); lbl.textContent = btn ? btn.textContent.trim() : key; }
+  const pop = document.getElementById('proj-sort-pop'); if (pop) pop.classList.remove('open');
   localStorage.setItem('pm_projsort', key);
   renderProjects();
 }
@@ -3795,6 +3814,9 @@ function setTaskSort(key) {
     const el = document.getElementById('task-sort-'+k);
     if (el) el.classList.toggle('active', k === key);
   });
+  const lbl = document.getElementById('task-sort-label');
+  if (lbl) { const btn = document.getElementById('task-sort-'+key); lbl.textContent = btn ? btn.textContent.trim() : key; }
+  const pop = document.getElementById('task-sort-pop'); if (pop) pop.classList.remove('open');
   localStorage.setItem('pm_tasksort', key);
   renderMTasks();
 }
@@ -4451,6 +4473,8 @@ function setProjSiteFilter(f) {
   document.querySelectorAll('.ftab[id^="sitefab-"]').forEach(b => b.classList.remove('active'));
   const id = map[f];
   if (id) document.getElementById(id).classList.add('active');
+  const lbl = document.getElementById('proj-site-label'); if (lbl) lbl.textContent = f === 'all' ? 'All Sites' : f;
+  const pop = document.getElementById('proj-site-pop'); if (pop) pop.classList.remove('open');
   renderProjects();
 }
 
@@ -6969,20 +6993,21 @@ function _renderPageHeaderForPage(name) {
          </div><div></div>`
       ); break;
     case 'projects':
-      renderPageHeader('projects', 'Projects',
-        `${(data.projects||[]).length} projects · ${today}`,
+      renderPageHeader('projects', 'Projects', '',
         `<div style="display:flex;gap:6px;align-items:center;">
-           <button class="filter-toggle-btn filters-active" id="proj-filter-toggle-h" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
-           <button class="icon-btn" onclick="expandCollapseAllProjects(false)"><i class="ti ti-fold"></i></button>
-           <button class="icon-btn" id="proj-active-btn-h" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
-           <button class="icon-btn" onclick="openProjReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
+           <div class="cmd-more-wrap">
+             <button class="cmd-icon-btn" title="More" onclick="toggleCmdPop('proj-more')"><i class="ti ti-dots-vertical"></i></button>
+             <div class="cmd-more-pop" id="proj-more-pop">
+               <button onclick="expandCollapseAllProjects(false);toggleCmdPop('proj-more')"><i class="ti ti-fold"></i> Collapse all</button>
+               <button id="proj-active-btn-h" onclick="toggleActiveFilter('proj');toggleCmdPop('proj-more')"><i class="ti ti-flame"></i> Active only</button>
+               <button onclick="openProjReport();toggleCmdPop('proj-more')"><i class="ti ti-file-analytics"></i> Report</button>
+             </div>
+           </div>
          </div><div></div>`
       ); break;
     case 'tasks':
-      renderPageHeader('tasks', 'Tasks',
-        `My tasks · ${today}`,
+      renderPageHeader('tasks', 'Tasks', '',
         `<div style="display:flex;gap:6px;align-items:center;">
-           <button class="filter-toggle-btn filters-active" id="tasks-filter-toggle-h" onclick="toggleFilterPanel('tasks')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button id="tasks-viewall-btn" onclick="toggleTaskViewAll()" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);align-items:center;gap:5px;"><i class="ti ti-users"></i> <span id="tasks-viewall-label">View All</span></button>
          </div><div></div>`
       ); break;

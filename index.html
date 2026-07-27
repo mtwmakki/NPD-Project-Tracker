@@ -586,6 +586,38 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .sort-chip.active{background:var(--al);border-color:var(--accent);color:var(--accent);}
 .sort-chip i{font-size:11px;}
 
+/* ── Command row (reinvented filter bar) ── */
+.cmd-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 8px;flex-wrap:wrap;}
+.status-tabs{display:flex;gap:2px;flex-wrap:wrap;}
+.status-tab.ftab{padding:7px 11px;border:none;border-bottom:2px solid transparent;border-radius:0;background:none;}
+.status-tab.ftab.active{background:none;}
+.status-tab.ftab[id="inqtab-OPEN"].active,.status-tab.ftab[id="proj-tab-active"].active{color:var(--accent);border-color:var(--accent);}
+.status-tab.ftab[id="inqtab-CLOSED"].active{color:var(--text2);border-color:var(--text2);}
+.status-tab.ftab[id="inqtab-ON-HOLD"].active{color:var(--amber);border-color:var(--amber);}
+.cmd-divider{width:1px;align-self:stretch;background:var(--border);margin:2px 2px;flex-shrink:0;}
+.cmd-select{background:none;border:1px solid transparent;border-radius:8px;padding:6px 6px;font-size:11px;color:var(--text2);font-family:var(--f);cursor:pointer;}
+.cmd-select:hover{background:var(--surface2);border-color:var(--border);}
+.cmd-pop-wrap{position:relative;flex-shrink:0;}
+.cmd-pop-trigger{display:flex;align-items:center;gap:5px;padding:6px 9px;border-radius:8px;font-size:11px;color:var(--text2);cursor:pointer;background:none;border:1px solid transparent;font-family:var(--f);white-space:nowrap;}
+.cmd-pop-trigger:hover{background:var(--surface2);border-color:var(--border);}
+.cmd-pop-trigger i.chev{font-size:10px;}
+.cmd-pop{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:5px;min-width:150px;box-shadow:0 8px 24px rgba(0,0,0,.28);display:none;flex-direction:column;gap:1px;z-index:120;}
+.cmd-pop.open{display:flex;}
+.cmd-pop .ftab,.cmd-pop .sort-chip{width:100%;justify-content:flex-start;border-radius:6px;border:none;background:none;padding:7px 9px;}
+.cmd-pop .ftab.active,.cmd-pop .sort-chip.active{background:var(--al);color:var(--accent);}
+.cmd-spacer{flex:1;min-width:6px;}
+.cmd-zoom{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.cmd-zoom .zoom-slider-wrap{width:70px;}
+.cmd-icon-btn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;background:none;border:none;flex-shrink:0;}
+.cmd-icon-btn:hover{background:var(--surface2);color:var(--text);}
+.cmd-view-cluster{display:flex;background:var(--surface2);border-radius:8px;padding:2px;gap:1px;flex-shrink:0;}
+.cmd-view-cluster .view-tbtn{width:26px;height:26px;border-radius:6px;}
+.cmd-more-wrap{position:relative;flex-shrink:0;}
+.cmd-more-pop{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:5px;min-width:170px;box-shadow:0 8px 24px rgba(0,0,0,.28);display:none;flex-direction:column;gap:1px;z-index:120;}
+.cmd-more-pop.open{display:flex;}
+.cmd-more-pop button{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;border:none;background:none;color:var(--text2);font-size:12px;cursor:pointer;text-align:left;font-family:var(--f);width:100%;}
+.cmd-more-pop button:hover{background:var(--surface3);color:var(--text);}
+
 /* ── Inquiry List View ── */
 .inq-list-wrap{display:flex;flex-direction:column;gap:4px;}
 .inq-list-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:border-color .12s;}
@@ -1473,48 +1505,51 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="inq-add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel collapsed" id="inq-filter-panel">
-    <div class="filter-tabs">
-      <button class="ftab active" id="inqtab-all" onclick="setInqFilter('all')">All</button>
-      <button class="ftab" id="inqtab-OPEN" onclick="setInqFilter('OPEN')">Open</button>
-      <button class="ftab" id="inqtab-CLOSED" onclick="setInqFilter('CLOSED')">Closed</button>
-      <button class="ftab" id="inqtab-ON-HOLD" onclick="setInqFilter('ON-HOLD')">On Hold</button>
+  <div class="cmd-row" id="inq-filter-panel">
+    <div class="status-tabs">
+      <button class="ftab status-tab active" id="inqtab-all" onclick="setInqFilter('all')">All</button>
+      <button class="ftab status-tab" id="inqtab-OPEN" onclick="setInqFilter('OPEN')">Open</button>
+      <button class="ftab status-tab" id="inqtab-CLOSED" onclick="setInqFilter('CLOSED')">Closed</button>
+      <button class="ftab status-tab" id="inqtab-ON-HOLD" onclick="setInqFilter('ON-HOLD')">On Hold</button>
     </div>
-    <div class="filter-tabs" style="margin-top:-5px;">
-      <span style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);padding:5px 4px 5px 2px;flex-shrink:0;align-self:center;">Site</span>
-      <button class="ftab active" id="inqsitefab-all" onclick="setInqSiteFilter('all')">All Sites</button>
-      <button class="ftab" id="inqsitefab-combi" onclick="setInqSiteFilter('Combi-Pack')">Combi-Pack</button>
-      <button class="ftab" id="inqsitefab-uniart" onclick="setInqSiteFilter('Super Uniart')">Super Uniart</button>
-      <button class="ftab" id="inqsitefab-reach" onclick="setInqSiteFilter('Reachpac')">Reachpac</button>
+    <div class="cmd-divider"></div>
+    <div class="cmd-pop-wrap">
+      <button class="cmd-pop-trigger" onclick="toggleCmdPop('inq-site')"><i class="ti ti-building-factory-2"></i><span id="inq-site-label">All Sites</span><i class="ti ti-chevron-down chev"></i></button>
+      <div class="cmd-pop" id="inq-site-pop">
+        <button class="ftab active" id="inqsitefab-all" onclick="setInqSiteFilter('all')">All Sites</button>
+        <button class="ftab" id="inqsitefab-combi" onclick="setInqSiteFilter('Combi-Pack')">Combi-Pack</button>
+        <button class="ftab" id="inqsitefab-uniart" onclick="setInqSiteFilter('Super Uniart')">Super Uniart</button>
+        <button class="ftab" id="inqsitefab-reach" onclick="setInqSiteFilter('Reachpac')">Reachpac</button>
+      </div>
     </div>
-    <div class="date-filter-bar">
-      <select class="dfilter-select" id="inq-year-select" onchange="onInqDateFilter()">
-        <option value="">All Years</option>
-      </select>
-      <select class="dfilter-select" id="inq-month-select" onchange="onInqDateFilter()">
-        <option value="">All Months</option>
-        <option value="01">January</option><option value="02">February</option><option value="03">March</option>
-        <option value="04">April</option><option value="05">May</option><option value="06">June</option>
-        <option value="07">July</option><option value="08">August</option><option value="09">September</option>
-        <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-      </select>
-      <button class="dfilter-clear" id="inq-date-clear" onclick="clearInqDateFilter()" style="display:none"><i class="ti ti-x"></i> Clear</button>
+    <select class="cmd-select" id="inq-year-select" onchange="onInqDateFilter()">
+      <option value="">All Years</option>
+    </select>
+    <select class="cmd-select" id="inq-month-select" onchange="onInqDateFilter()">
+      <option value="">All Months</option>
+      <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+      <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+      <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+      <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+    </select>
+    <button class="dfilter-clear" id="inq-date-clear" onclick="clearInqDateFilter()" style="display:none"><i class="ti ti-x"></i></button>
+    <div class="cmd-pop-wrap">
+      <button class="cmd-pop-trigger" onclick="toggleCmdPop('inq-sort')"><i class="ti ti-arrows-sort"></i><span id="inq-sort-label">Newest</span><i class="ti ti-chevron-down chev"></i></button>
+      <div class="cmd-pop" id="inq-sort-pop">
+        <button class="sort-chip active" id="inq-sort-date-desc" onclick="setInqSort('date-desc')"><i class="ti ti-calendar-down"></i> Newest</button>
+        <button class="sort-chip" id="inq-sort-date-asc" onclick="setInqSort('date-asc')"><i class="ti ti-calendar-up"></i> Oldest</button>
+        <button class="sort-chip" id="inq-sort-priority" onclick="setInqSort('priority')"><i class="ti ti-flame"></i> Priority</button>
+        <button class="sort-chip" id="inq-sort-overdue" onclick="setInqSort('overdue')"><i class="ti ti-alert-circle"></i> Overdue</button>
+        <button class="sort-chip" id="inq-sort-name" onclick="setInqSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
+      </div>
     </div>
-    <div class="sort-bar" id="inq-sort-bar">
-      <span class="sort-bar-label"><i class="ti ti-arrows-sort" style="font-size:11px;vertical-align:middle;"></i> Sort</span>
-      <button class="sort-chip active" id="inq-sort-date-desc" onclick="setInqSort('date-desc')"><i class="ti ti-calendar-down"></i> Newest</button>
-      <button class="sort-chip" id="inq-sort-date-asc" onclick="setInqSort('date-asc')"><i class="ti ti-calendar-up"></i> Oldest</button>
-      <button class="sort-chip" id="inq-sort-priority" onclick="setInqSort('priority')"><i class="ti ti-flame"></i> Priority</button>
-      <button class="sort-chip" id="inq-sort-overdue" onclick="setInqSort('overdue')"><i class="ti ti-alert-circle"></i> Overdue</button>
-      <button class="sort-chip" id="inq-sort-name" onclick="setInqSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
-    </div>
-    <div class="filter-zoom-row">
-      <i class="ti ti-zoom-out"></i>
+    <div class="cmd-spacer"></div>
+    <div class="cmd-zoom">
+      <i class="ti ti-zoom-out" style="font-size:12px;color:var(--text3);"></i>
       <div class="zoom-slider-wrap" id="zoom-wrap-inq">
         <div class="zoom-tooltip" id="zoom-tip-inq">280px</div>
         <input type="range" id="density-slider" min="160" max="600" value="280" step="10" oninput="onDensityChange(this.value,'inq')">
       </div>
-      <i class="ti ti-zoom-in"></i>
     </div>
   </div>
   <div id="inquiries-list"></div>
@@ -3737,6 +3772,9 @@ function setInqSort(key) {
     const el = document.getElementById('inq-sort-'+k);
     if (el) el.classList.toggle('active', k === key);
   });
+  const lbl = document.getElementById('inq-sort-label');
+  if (lbl) { const btn = document.getElementById('inq-sort-'+key); lbl.textContent = btn ? btn.textContent.trim() : key; }
+  const pop = document.getElementById('inq-sort-pop'); if (pop) pop.classList.remove('open');
   localStorage.setItem('pm_inqsort', key);
   renderInquiries();
 }
@@ -4035,6 +4073,8 @@ function setInqSiteFilter(f) {
   document.querySelectorAll('.ftab[id^="inqsitefab-"]').forEach(b => b.classList.remove('active'));
   const id = map[f];
   if (id) document.getElementById(id).classList.add('active');
+  const lbl = document.getElementById('inq-site-label'); if (lbl) lbl.textContent = f === 'all' ? 'All Sites' : f;
+  const pop = document.getElementById('inq-site-pop'); if (pop) pop.classList.remove('open');
   renderInquiries();
 }
 
@@ -4428,6 +4468,19 @@ function toggleFilterPanel(key) {
   // Highlight button when panel hidden (so user knows filters exist)
   btn.classList.toggle('filters-active', !filterPanelOpen[key]);
 }
+
+// ── Command row popovers (site / sort / more) ──
+function toggleCmdPop(id) {
+  const pop = document.getElementById(id + '-pop');
+  if (!pop) return;
+  const wasOpen = pop.classList.contains('open');
+  document.querySelectorAll('.cmd-pop.open, .cmd-more-pop.open').forEach(p => p.classList.remove('open'));
+  if (!wasOpen) pop.classList.add('open');
+}
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.cmd-pop-wrap, .cmd-more-wrap')) return;
+  document.querySelectorAll('.cmd-pop.open, .cmd-more-pop.open').forEach(p => p.classList.remove('open'));
+});
 
 // ── Duplicate Items ──
 function duplicateItem(type, id) {
@@ -6898,17 +6951,21 @@ function _renderPageHeaderForPage(name) {
   }
   switch(name) {
     case 'inquiries':
-      renderPageHeader('inquiries', 'Inquiries',
-        `${(data.inquiries||[]).length} inquiries · ${today}`,
+      renderPageHeader('inquiries', 'Inquiries', '',
         `<div style="display:flex;gap:6px;align-items:center;">
-           <div class="view-toggle">
+           <div class="cmd-view-cluster">
              <button class="view-tbtn ${inqView==='card'?'active':''}" id="inq-view-card-h" onclick="setInqView('card')" title="Card view"><i class="ti ti-layout-cards"></i></button>
              <button class="view-tbtn ${inqView==='list'?'active':''}" id="inq-view-list-h" onclick="setInqView('list')" title="List view"><i class="ti ti-list"></i></button>
            </div>
-           <button class="filter-toggle-btn filters-active" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
-           <button class="icon-btn" id="inq-active-btn-h" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
-           <button class="icon-btn" onclick="openInqReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
-           ${currentUserProfile?.role==='master'?`<button class="icon-btn" onclick="openDuplicatesModal()" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
+           <div class="cmd-more-wrap">
+             <button class="cmd-icon-btn" title="More" onclick="toggleCmdPop('inq-more')"><i class="ti ti-dots-vertical"></i></button>
+             <div class="cmd-more-pop" id="inq-more-pop">
+               <button id="inq-active-btn-h" onclick="toggleActiveFilter('inq');toggleCmdPop('inq-more')"><i class="ti ti-flame"></i> Active only</button>
+               <button onclick="openInqReport();toggleCmdPop('inq-more')"><i class="ti ti-file-analytics"></i> Report</button>
+               ${currentUserProfile?.role==='master'?`<button onclick="openDuplicatesModal();toggleCmdPop('inq-more')" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
+               <button onclick="forceRefreshFromCloud();toggleCmdPop('inq-more')"><i class="ti ti-refresh"></i> Refresh from cloud</button>
+             </div>
+           </div>
          </div><div></div>`
       ); break;
     case 'projects':

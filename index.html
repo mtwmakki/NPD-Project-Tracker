@@ -613,7 +613,7 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .cmd-view-cluster{display:flex;background:var(--surface2);border-radius:8px;padding:2px;gap:1px;flex-shrink:0;}
 .cmd-view-cluster .view-tbtn{width:26px;height:26px;border-radius:6px;}
 .cmd-more-wrap{position:relative;flex-shrink:0;}
-.cmd-more-pop{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:5px;min-width:170px;box-shadow:0 8px 24px rgba(0,0,0,.28);display:none;flex-direction:column;gap:1px;z-index:120;}
+.cmd-more-pop{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:5px;min-width:170px;box-shadow:0 8px 24px rgba(0,0,0,.28);display:none;flex-direction:column;gap:1px;z-index:120;}
 .cmd-more-pop.open{display:flex;}
 .cmd-more-pop button{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;border:none;background:none;color:var(--text2);font-size:12px;cursor:pointer;text-align:left;font-family:var(--f);width:100%;}
 .cmd-more-pop button:hover{background:var(--surface3);color:var(--text);}
@@ -9220,6 +9220,8 @@ function getSelectedProjRptProjects() {
   return (data.projects||[]).filter(p => ids.includes(p.id));
 }
 
+const RPT_LOGO_B64 = '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';
+
 function exportProjReportPDF() {
   const list = getSelectedProjRptProjects();
   if (!list.length) { alert('No projects selected.'); return; }
@@ -9233,63 +9235,96 @@ function exportProjReportPDF() {
   const text2    = cs.getPropertyValue('--text-sub').trim()|| '#9aa8be';
   const border   = cs.getPropertyValue('--border').trim()  || '#2e3444';
   const accent   = cs.getPropertyValue('--blue').trim()    || '#3a8ef5';
-  const isDark   = document.documentElement.classList.contains('dark-mode');
+  const red      = '#f0445a';
   const appFont  = localStorage.getItem('appFont') || 'Google Sans';
   const fontURL  = appFont === 'DM Sans'
     ? 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap'
     : 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap';
-  const headerBg = isDark ? '#0d1117' : '#0f172a';
 
   const statusColor = s => s==='in-progress'?'#3a8ef5':s==='completed'?'#30c060':s==='on-hold'?'#f5a623':'#9aa8be';
   const statusLabel2 = s => ({'not-started':'Not Started','in-progress':'In Progress','completed':'Completed','on-hold':'On Hold'})[s]||s||'—';
   const fmtDate = d => d ? new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  const todayISO = new Date().toISOString().slice(0,10);
 
-  const rows = list.map((p, i) => {
-    const latestSS = (p.subStatuses||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+  // Group by factory — scanning site-by-site beats an alphabetical dump
+  const groups = {};
+  list.forEach(p => { const f = p.factory || 'Unassigned'; (groups[f] = groups[f]||[]).push(p); });
+  const factoryNames = Object.keys(groups).sort();
 
-    // On-time / delayed logic
-    const todayISO = new Date().toISOString().slice(0,10);
+  const buildRow = (p, i) => {
+    // Current Activity now correctly pulled from the project's own Activity tab (p.activities),
+    // not the changelog and not sub-status — those are three different things.
+    const latestActivity = (p.activities||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    const progress = completion(p.tasks||[]);
     let timeliness = '—', timeColor = text2;
     if (p.deliveryDate) {
-      if (p.status === 'completed') {
-        timeliness = 'Completed'; timeColor = '#30c060';
-      } else if (p.deliveryDate < todayISO) {
-        const daysLate = Math.round((new Date(todayISO) - new Date(p.deliveryDate)) / 86400000);
-        timeliness = daysLate + 'd overdue'; timeColor = '#f0445a';
-      } else {
-        const daysLeft = Math.round((new Date(p.deliveryDate) - new Date(todayISO)) / 86400000);
-        timeliness = daysLeft + 'd remaining'; timeColor = daysLeft < 14 ? '#f5a623' : '#30c060';
-      }
+      if (p.status === 'completed') { timeliness = 'Completed'; timeColor = '#30c060'; }
+      else if (p.deliveryDate < todayISO) { const d = Math.round((new Date(todayISO)-new Date(p.deliveryDate))/86400000); timeliness = d+'d overdue'; timeColor = red; }
+      else { const d = Math.round((new Date(p.deliveryDate)-new Date(todayISO))/86400000); timeliness = d+'d remaining'; timeColor = d<14?'#f5a623':'#30c060'; }
     }
+    const isOverdue = !!(p.deliveryDate && p.status!=='completed' && p.deliveryDate < todayISO);
+    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3)
+      .map(t=>`• ${t.name||''}${t.deadline?` <span style="color:${text2};">(${fmtDate(t.deadline)})</span>`:''}`).join('<br>') || '—';
+    const subLine = [p.customer, p.salesPerson].filter(Boolean).join(' &middot; ');
 
-    // Next actions from tasks
-    const nextActions = (p.tasks||[]).filter(t=>!t.done).slice(0,3).map(t=>`• ${t.name||''}`).join('<br>') || '—';
-
-    const rowBg = i%2===0 ? bg : surface;
-    return `<tr style="background:${rowBg};">
+    return `<tr style="background:${surface};${isOverdue?`border-left:3px solid ${red};`:'border-left:3px solid transparent;'}">
       <td style="color:${text2};text-align:center;font-size:9px;">${i+1}</td>
-      <td>
-        <div style="font-weight:700;color:${text};margin-bottom:2px;">${p.name||'—'}</div>
-        <div style="font-size:9px;color:${accent};font-family:monospace;">${p.code||''}</div>
-        <div style="font-size:9px;color:${text2};margin-top:2px;">${classLabel(p.classification)||''}</div>
+      <td style="min-width:170px;">
+        <div style="font-weight:700;color:${text};">${p.name||'—'}</div>
+        <div style="font-size:9px;color:${accent};font-family:monospace;margin-top:1px;">${p.code||''}${p.code&&classLabel(p.classification)?' &middot; ':''}${classLabel(p.classification)||''}</div>
+        ${subLine ? `<div style="font-size:9px;color:${text2};margin-top:2px;">${subLine}</div>` : ''}
+        <div style="height:4px;background:${border};border-radius:3px;margin-top:6px;overflow:hidden;width:110px;">
+          <div style="height:100%;width:${progress}%;background:${progress===100?'#30c060':accent};"></div>
+        </div>
       </td>
-      <td>${p.customer||'—'}</td>
-      <td style="font-size:10px;">${p.salesPerson||'—'}</td>
-      <td>${p.factory||'—'}</td>
       <td>
         <span style="display:inline-flex;align-items:center;gap:5px;">
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusColor(p.status)};"></span>
-          <span style="color:${statusColor(p.status)};font-weight:700;">${statusLabel2(p.status)}</span>
+          <span style="color:${statusColor(p.status)};font-weight:700;text-transform:uppercase;">${statusLabel2(p.status)}</span>
         </span>
       </td>
-      <td style="font-size:9.5px;color:${text2};">
-        ${latestSS ? `<div style="font-weight:600;color:${text};margin-bottom:2px;">${latestSS.status||''}</div><div>${latestSS.note||''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestSS.date)}</div>` : '—'}
+      <td style="font-size:9.5px;color:${text2};max-width:230px;">
+        ${latestActivity ? `<div style="font-weight:600;color:${text};margin-bottom:2px;text-transform:uppercase;">${latestActivity.category||'Activity'}</div><div>${latestActivity.title||''}${latestActivity.note?' — '+latestActivity.note:''}</div><div style="font-size:8.5px;color:${text2};margin-top:2px;">${fmtDate(latestActivity.date)}</div>` : '—'}
       </td>
-      <td style="font-size:9px;">${nextActions}</td>
-      <td style="font-weight:700;color:${timeColor};font-size:10px;white-space:nowrap;">${timeliness}</td>
-      <td style="font-size:10px;white-space:nowrap;color:${text2};">${fmtDate(p.deliveryDate)}</td>
+      <td style="font-size:9px;max-width:190px;">${nextActions}</td>
+      <td style="white-space:nowrap;">
+        <div style="font-weight:700;color:${timeColor};font-size:10px;text-transform:uppercase;">${timeliness}</div>
+        <div style="font-size:9px;color:${text2};margin-top:1px;">${fmtDate(p.deliveryDate)}</div>
+      </td>
     </tr>`;
+  };
+
+  const groupBlocks = factoryNames.map(fname => {
+    const items = groups[fname];
+    const inProg = items.filter(p=>p.status==='in-progress').length;
+    const done = items.filter(p=>p.status==='completed').length;
+    const overdueCount = items.filter(p=>p.deliveryDate&&p.status!=='completed'&&p.deliveryDate<todayISO).length;
+    return `
+      <div class="rpt-group-head">
+        <span class="rpt-group-name">${fname}</span>
+        <span class="rpt-group-stats">${items.length} project${items.length!==1?'s':''} &middot; ${inProg} in progress &middot; ${done} completed${overdueCount?` &middot; <span style="color:${red};font-weight:700;">${overdueCount} overdue</span>`:''}</span>
+      </div>
+      <table>
+        <thead><tr>
+          <th style="width:3%">#</th>
+          <th style="width:26%">Project</th>
+          <th style="width:10%">Status</th>
+          <th style="width:26%">Current Activity</th>
+          <th style="width:22%">Next Actions</th>
+          <th style="width:13%">Delivery</th>
+        </tr></thead>
+        <tbody>${items.map((p,i)=>buildRow(p,i)).join('')}</tbody>
+      </table>`;
   }).join('');
+
+  // Portfolio-wide status breakdown — one glance before reading a single row
+  const total = list.length;
+  const cIn = list.filter(p=>p.status==='in-progress').length;
+  const cDone = list.filter(p=>p.status==='completed').length;
+  const cHold = list.filter(p=>p.status==='on-hold').length;
+  const cNotStarted = total - cIn - cDone - cHold;
+  const cOverdue = list.filter(p=>p.deliveryDate&&p.status!=='completed'&&p.deliveryDate<todayISO).length;
+  const pct = n => total ? (n/total*100) : 0;
 
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>TPAC Project Report</title>
@@ -9298,52 +9333,50 @@ function exportProjReportPDF() {
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'${appFont}','IBM Plex Sans','DM Sans',sans-serif;background:${bg};color:${text};font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .rpt-header{background:${headerBg};padding:14px 20px;border-bottom:3px solid ${accent};}
-    .rpt-header-inner{display:flex;justify-content:space-between;align-items:center;}
-    .rpt-brand{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
-    .rpt-brand span{color:${accent};}
-    .rpt-title{font-size:13px;font-weight:700;color:#fff;text-align:right;}
-    .rpt-meta{font-size:9.5px;color:rgba(255,255,255,0.5);margin-top:3px;text-align:right;}
-    .rpt-body{padding:14px 20px;}
-    .rpt-stats{display:flex;gap:10px;margin-bottom:16px;}
-    .rpt-stat{background:${surface};border:1px solid ${border};border-radius:6px;padding:8px 14px;flex:1;text-align:center;}
-    .rpt-stat-val{font-size:20px;font-weight:800;color:${accent};}
-    .rpt-stat-label{font-size:8.5px;color:${text2};text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
-    table{width:100%;border-collapse:collapse;}
-    th{background:${surface};color:${text2};font-weight:700;padding:7px 9px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid ${accent};white-space:nowrap;}
+    .rpt-body{padding:16px 20px;}
+    .rpt-header{padding:0 0 10px;border-bottom:1px solid ${border};display:flex;justify-content:space-between;align-items:baseline;}
+    .rpt-logo{height:30px;width:auto;display:block;}
+    .rpt-title{font-size:12px;font-weight:600;color:${text};text-align:right;}
+    .rpt-meta{font-size:9.5px;color:${text2};margin-top:3px;text-align:right;}
+    .rpt-summary{display:flex;align-items:center;gap:16px;margin:16px 0 6px;}
+    .rpt-summary-num{font-size:30px;font-weight:800;color:${text};line-height:1;}
+    .rpt-summary-bar{height:14px;border-radius:8px;overflow:hidden;display:flex;background:${border};}
+    .rpt-legend{display:flex;gap:14px;margin-top:6px;font-size:9px;color:${text2};flex-wrap:wrap;}
+    .rpt-legend .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;}
+    .rpt-group-head{display:flex;justify-content:space-between;align-items:baseline;padding:10px 4px 6px;margin-top:16px;border-bottom:1px solid ${border};}
+    .rpt-group-head:first-of-type{margin-top:8px;}
+    .rpt-group-name{font-size:13px;font-weight:800;color:${text};text-transform:uppercase;letter-spacing:.03em;}
+    .rpt-group-stats{font-size:9px;color:${text2};}
+    table{width:100%;border-collapse:collapse;margin-bottom:4px;}
+    th{color:${text2};font-weight:700;padding:6px 9px;text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
     td{padding:8px 9px;border-bottom:1px solid ${border};vertical-align:top;font-size:10px;}
     .rpt-footer{text-align:center;font-size:8.5px;color:${text2};padding:12px 0;border-top:1px solid ${border};margin-top:16px;}
     @media print{@page{size:A4 landscape;margin:8mm;}body{font-size:9px;}}
   </style></head><body>
-  <div class="rpt-header">
-    <div class="rpt-header-inner">
-      <div><div class="rpt-brand">TP<span>AC</span></div><div style="font-size:9.5px;color:rgba(255,255,255,0.45);margin-top:2px;">NPD Project Tracker</div></div>
-      <div><div class="rpt-title">Project Status Report</div><div class="rpt-meta">Prepared by ${prepared} &nbsp;·&nbsp; ${today}</div></div>
-    </div>
-  </div>
   <div class="rpt-body">
-    <div class="rpt-stats">
-      <div class="rpt-stat"><div class="rpt-stat-val">${list.length}</div><div class="rpt-stat-label">Total</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#3a8ef5;">${list.filter(p=>p.status==='in-progress').length}</div><div class="rpt-stat-label">In Progress</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#30c060;">${list.filter(p=>p.status==='completed').length}</div><div class="rpt-stat-label">Completed</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#f5a623;">${list.filter(p=>p.status==='on-hold').length}</div><div class="rpt-stat-label">On Hold</div></div>
-      <div class="rpt-stat"><div class="rpt-stat-val" style="color:#f0445a;">${list.filter(p=>p.deliveryDate&&p.status!=='completed'&&p.deliveryDate<new Date().toISOString().slice(0,10)).length}</div><div class="rpt-stat-label">Overdue</div></div>
+  <div class="rpt-header">
+    <img class="rpt-logo" src="data:image/png;base64,${RPT_LOGO_B64}" alt="TPAC">
+    <div><div class="rpt-title">Project Status Report</div><div class="rpt-meta">Prepared by ${prepared} &nbsp;·&nbsp; ${today}</div></div>
+  </div>
+    <div class="rpt-summary">
+      <div class="rpt-summary-num">${total}</div>
+      <div style="flex:1;">
+        <div class="rpt-summary-bar">
+          ${cIn?`<div style="width:${pct(cIn)}%;background:#3a8ef5;"></div>`:''}
+          ${cDone?`<div style="width:${pct(cDone)}%;background:#30c060;"></div>`:''}
+          ${cHold?`<div style="width:${pct(cHold)}%;background:#f5a623;"></div>`:''}
+          ${cNotStarted?`<div style="width:${pct(cNotStarted)}%;background:#5a6a82;"></div>`:''}
+        </div>
+        <div class="rpt-legend">
+          <span><span class="dot" style="background:#3a8ef5;"></span>${cIn} In Progress</span>
+          <span><span class="dot" style="background:#30c060;"></span>${cDone} Completed</span>
+          <span><span class="dot" style="background:#f5a623;"></span>${cHold} On Hold</span>
+          <span><span class="dot" style="background:#5a6a82;"></span>${cNotStarted} Not Started</span>
+          ${cOverdue?`<span><span class="dot" style="background:${red};"></span><b style="color:${red};">${cOverdue} Overdue</b></span>`:''}
+        </div>
+      </div>
     </div>
-    <table>
-      <thead><tr>
-        <th style="width:3%">#</th>
-        <th style="width:18%">Project</th>
-        <th style="width:10%">Customer</th>
-        <th style="width:8%">Sales</th>
-        <th style="width:8%">Factory</th>
-        <th style="width:9%">Status</th>
-        <th style="width:18%">Current Activity</th>
-        <th style="width:14%">Next Actions</th>
-        <th style="width:8%">Timeline</th>
-        <th style="width:8%">Est. Delivery</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+    ${groupBlocks}
     <div class="rpt-footer">TPAC NPD Project Report &mdash; ${today} &mdash; Confidential &mdash; For Internal Use Only</div>
   </div>
   <script>window.onload=function(){window.print();}<\/script>

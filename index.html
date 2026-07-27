@@ -1473,7 +1473,7 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="inq-add-btn" onclick="openModal('inq')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel" id="inq-filter-panel">
+  <div class="filter-panel collapsed" id="inq-filter-panel">
     <div class="filter-tabs">
       <button class="ftab active" id="inqtab-all" onclick="setInqFilter('all')">All</button>
       <button class="ftab" id="inqtab-OPEN" onclick="setInqFilter('OPEN')">Open</button>
@@ -1533,7 +1533,7 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel" id="proj-filter-panel">
+  <div class="filter-panel collapsed" id="proj-filter-panel">
     <div class="filter-tabs">
       <button class="ftab active" id="ftab-all" onclick="setProjFilter('all')">All</button>
       <button class="ftab" id="ftab-new-mold" onclick="setProjFilter('new-mold')">New Mold</button>
@@ -1779,7 +1779,7 @@ html{scroll-behavior:smooth;}
       <button class="add-btn" id="task-add-btn" onclick="openModal('mtask')"><i class="ti ti-plus"></i> New</button>
     </div>
   </div>
-  <div class="filter-panel" id="tasks-filter-panel">
+  <div class="filter-panel collapsed" id="tasks-filter-panel">
     <div class="filter-tabs">
       <button class="ftab active" id="mtasktab-all" onclick="setMTaskFilter('all')">All</button>
       <button class="ftab" id="mtasktab-general" onclick="setMTaskFilter('general')">General</button>
@@ -4415,7 +4415,7 @@ function setProjSiteFilter(f) {
 }
 
 // ── Filter Panel Toggle ──
-const filterPanelOpen = {inq: true, proj: true, tasks: true};
+const filterPanelOpen = {inq: false, proj: false, tasks: false};
 function toggleFilterPanel(key) {
   filterPanelOpen[key] = !filterPanelOpen[key];
   const panel = document.getElementById(key + '-filter-panel');
@@ -6905,7 +6905,7 @@ function _renderPageHeaderForPage(name) {
              <button class="view-tbtn ${inqView==='card'?'active':''}" id="inq-view-card-h" onclick="setInqView('card')" title="Card view"><i class="ti ti-layout-cards"></i></button>
              <button class="view-tbtn ${inqView==='list'?'active':''}" id="inq-view-list-h" onclick="setInqView('list')" title="List view"><i class="ti ti-list"></i></button>
            </div>
-           <button class="filter-toggle-btn panel-open" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
+           <button class="filter-toggle-btn filters-active" id="inq-filter-toggle-h" onclick="toggleFilterPanel('inq')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button class="icon-btn" id="inq-active-btn-h" onclick="toggleActiveFilter('inq')"><i class="ti ti-flame"></i> Active</button>
            <button class="icon-btn" onclick="openInqReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
            ${currentUserProfile?.role==='master'?`<button class="icon-btn" onclick="openDuplicatesModal()" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
@@ -6915,7 +6915,7 @@ function _renderPageHeaderForPage(name) {
       renderPageHeader('projects', 'Projects',
         `${(data.projects||[]).length} projects · ${today}`,
         `<div style="display:flex;gap:6px;align-items:center;">
-           <button class="filter-toggle-btn panel-open" id="proj-filter-toggle-h" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
+           <button class="filter-toggle-btn filters-active" id="proj-filter-toggle-h" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button class="icon-btn" onclick="expandCollapseAllProjects(false)"><i class="ti ti-fold"></i></button>
            <button class="icon-btn" id="proj-active-btn-h" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
            <button class="icon-btn" onclick="openProjReport()" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-file-analytics"></i> Report</button>
@@ -6925,7 +6925,7 @@ function _renderPageHeaderForPage(name) {
       renderPageHeader('tasks', 'Tasks',
         `My tasks · ${today}`,
         `<div style="display:flex;gap:6px;align-items:center;">
-           <button class="filter-toggle-btn panel-open" id="tasks-filter-toggle-h" onclick="toggleFilterPanel('tasks')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
+           <button class="filter-toggle-btn filters-active" id="tasks-filter-toggle-h" onclick="toggleFilterPanel('tasks')"><i class="ti ti-filter"></i><span>Filters</span><i class="ti ti-chevron-down"></i></button>
            <button id="tasks-viewall-btn" onclick="toggleTaskViewAll()" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--f);align-items:center;gap:5px;"><i class="ti ti-users"></i> <span id="tasks-viewall-label">View All</span></button>
          </div><div></div>`
       ); break;

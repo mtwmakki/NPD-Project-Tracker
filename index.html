@@ -1122,8 +1122,8 @@ html{scroll-behavior:smooth;}
 .page-header-bell{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s;}
 .page-header-bell:hover{background:var(--surface2);}
 .page-header-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg);}
-.page-header-divider{height:1px;background:var(--border);margin:0 28px 4px;position:sticky;top:136px;z-index:99;}
-.page-header-actions{padding:0 28px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;position:sticky;top:137px;z-index:99;background:var(--bg);}
+.page-header-divider{height:1px;background:var(--border);margin:0 28px 4px;position:sticky;top:118px;z-index:99;}
+.page-header-actions{padding:0 28px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;position:sticky;top:119px;z-index:99;background:var(--bg);}
 .page-header-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .pipeline-target-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
 .pipeline-target-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
@@ -7298,7 +7298,6 @@ function renderPageHeader(pageId, title, subtitle, actionsHTML) {
     <div class="page-header">
       <div class="page-header-left">
         <div class="page-header-title">${title}</div>
-        ${subtitle ? `<div class="page-header-sub">${subtitle}</div>` : ''}
       </div>
       <div class="page-header-right">
         <div class="search-wrap" id="global-search-wrap">

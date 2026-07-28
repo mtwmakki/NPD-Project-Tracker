@@ -129,6 +129,11 @@ select.finput{cursor:pointer;}
 textarea.finput{resize:vertical;min-height:64px;line-height:1.5;}
 /* ── Section Dividers ── */
 .fsection{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-family:var(--fm);padding:14px 0 8px;margin-top:2px;border-top:1px solid var(--border);}
+.freq{color:var(--red);}
+.proj-preview-bar{display:flex;align-items:center;gap:7px;padding:10px 22px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:var(--fm);font-size:12px;flex-shrink:0;}
+.proj-preview-code{color:var(--text3);}
+.proj-preview-sep{color:var(--text3);}
+.proj-preview-name{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .fsection:first-child{border-top:none;padding-top:0;}
 .fsection i{font-size:12px;}
 /* ── Grid ── */
@@ -148,6 +153,7 @@ textarea.finput{resize:vertical;min-height:64px;line-height:1.5;}
 .card.expanded .card-body{display:block;}
 /* ── Overdue card left border ── */
 .card.has-overdue{border-left:3px solid var(--red);}
+.card.kiv-marked{border-left:3px solid var(--amber);}
 /* ── Highlight flash for goToItem ── */
 @keyframes highlightFlash{0%{box-shadow:0 0 0 0 rgba(74,170,122,.6)}50%{box-shadow:0 0 0 6px rgba(74,170,122,.2)}100%{box-shadow:0 0 0 0 rgba(74,170,122,0)}}
 .card.flash{animation:highlightFlash .8s ease 2;}
@@ -803,11 +809,12 @@ html{scroll-behavior:smooth;}
 /* Clip button */
 .proj-clip-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;color:var(--text3);font-size:10px;font-family:var(--f);display:flex;align-items:center;gap:3px;transition:all .15s;}
 .proj-clip-btn.clipped{border-color:var(--accent);color:var(--accent);background:var(--al);}
-.proj-detail-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;background:var(--surface);flex-shrink:0;}
+.proj-detail-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;background:var(--surface);flex-shrink:0;}
 .proj-detail-hl{flex:1;min-width:0;}
-.proj-detail-code{font-size:10px;font-family:var(--fm);color:var(--text3);margin-bottom:3px;}
-.proj-detail-name{font-size:17px;font-weight:600;line-height:1.3;}
-.proj-detail-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+.proj-detail-code{font-size:10px;font-family:var(--fm);color:var(--text3);margin-bottom:4px;letter-spacing:.04em;}
+.proj-detail-name{font-size:20px;font-weight:700;line-height:1.25;letter-spacing:-.01em;}
+.proj-detail-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.proj-detail-badges select{font-weight:600;letter-spacing:.01em;}
 .proj-detail-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:2px;flex-shrink:0;margin-top:-2px;}
 .proj-detail-close:hover{color:var(--text);}
 .proj-detail-body{overflow-y:auto;flex:1;}
@@ -817,6 +824,40 @@ html{scroll-behavior:smooth;}
 .proj-detail-section:last-child{border-bottom:none;}
 .proj-detail-slabel{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
 .proj-detail-slabel-add{background:none;border:none;color:var(--accent);font-size:10px;font-family:var(--f);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:3px;padding:0;}
+/* Stat tile row */
+.pd-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);}
+.pd-stat{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;}
+.pd-stat-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--fm);margin-bottom:5px;}
+.pd-stat-val{font-size:18px;font-weight:700;font-family:var(--fm);line-height:1;}
+.pd-stat-sub{font-size:10px;color:var(--text3);margin-top:3px;}
+/* Customer & Sales info grid */
+.pd-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+.pd-info-item{min-width:0;}
+.pd-info-item.full{grid-column:1 / -1;}
+.pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:4px;}
+.pd-info-v{font-size:13px;color:var(--text);outline:none;}
+.pd-info-v[contenteditable="true"]{cursor:text;border-bottom:1px dashed var(--border);padding-bottom:2px;}
+.pd-info-v[contenteditable="true"]:hover{border-color:var(--accent);}
+.pd-info-v[contenteditable="true"]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic;}
+.pd-info-v.empty{color:var(--text3);font-style:italic;}
+.pd-info-v input[type="date"]{background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--fm);font-size:12px;padding:1px 0;cursor:pointer;width:100%;}
+/* KIV banner */
+.kiv-banner{margin:0 20px 14px;padding:12px 14px;border-radius:var(--rs);background:var(--ambg);border:1px solid var(--amber);display:flex;gap:10px;align-items:flex-start;}
+.kiv-banner i{color:var(--amber);font-size:16px;margin-top:1px;flex-shrink:0;}
+.kiv-banner-body{flex:1;min-width:0;}
+.kiv-banner-title{font-size:11px;font-weight:700;color:var(--amber);font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.kiv-banner-comment{font-size:12px;color:var(--text2);line-height:1.5;outline:none;}
+.kiv-banner-acts{display:flex;gap:6px;flex-shrink:0;}
+.kiv-banner-acts button{background:none;border:1px solid var(--amber);color:var(--amber);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:var(--f);}
+.kiv-flag-btn{background:none;border:1px solid var(--border);color:var(--text3);border-radius:20px;padding:2px 9px;font-size:11px;cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:4px;}
+.kiv-flag-btn:hover{border-color:var(--amber);color:var(--amber);}
+.kiv-flag-btn.on{background:var(--ambg);border-color:var(--amber);color:var(--amber);}
+.kiv-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ambg);color:var(--amber);font-family:var(--fm);display:inline-flex;align-items:center;gap:3px;}
+/* Sub-status timeline connector */
+.substatus-item{position:relative;}
+.substatus-item:not(:last-child)::before{content:'';position:absolute;left:3px;top:14px;bottom:-6px;width:1px;background:var(--border);}
+.substatus-item.latest:not(:last-child)::before{left:14px;top:24px;bottom:-6px;}
+.substatus-item.older:not(:last-child)::before{left:7px;top:12px;bottom:-2px;}
 /* Tab transition */
 .pd-tab-content{display:none;opacity:0;transform:translateY(6px);transition:opacity .15s ease, transform .15s ease;}
 .pd-tab-content.active{display:block;animation:tabIn .18s ease forwards;}
@@ -1564,6 +1605,7 @@ html{scroll-behavior:smooth;}
       <button class="icon-btn" onclick="expandCollapseAllProjects(true)" title="Expand all"><i class="ti ti-fold-up"></i></button>
       <button class="filter-toggle-btn panel-open" id="proj-filter-toggle" onclick="toggleFilterPanel('proj')"><i class="ti ti-filter"></i><span id="proj-filter-toggle-label">Filters</span><i class="ti ti-chevron-down"></i></button>
       <button class="icon-btn" id="proj-active-btn" onclick="toggleActiveFilter('proj')"><i class="ti ti-flame"></i> Active</button>
+      <button class="icon-btn" id="proj-kiv-btn" onclick="toggleProjKivFilter()" title="Show only KIV projects"><i class="ti ti-flag-3"></i> KIV</button>
       <button class="icon-btn" id="proj-refresh-btn" onclick="forceRefreshFromCloud()" title="Refresh data from cloud"><i class="ti ti-refresh"></i></button>
       <button class="add-btn" id="proj-add-btn" onclick="openModal('proj')"><i class="ti ti-plus"></i> New</button>
     </div>
@@ -2334,13 +2376,19 @@ html{scroll-behavior:smooth;}
       </div>
       <button class="modal-close-btn" onclick="closeModal('proj')"><i class="ti ti-x"></i></button>
     </div>
+    <div class="proj-preview-bar" id="proj-preview-bar">
+      <i class="ti ti-folder" style="font-size:13px;color:var(--text3);"></i>
+      <span class="proj-preview-code" id="proj-preview-code">Code…</span>
+      <span class="proj-preview-sep">·</span>
+      <span class="proj-preview-name" id="proj-preview-name">Untitled project</span>
+    </div>
     <div class="mbody">
       <div class="fsection"><i class="ti ti-info-circle"></i> Basic Info</div>
       <div class="frow2">
-        <div class="fg"><label class="flabel">Project Code</label><input class="finput" id="proj-code" type="text" placeholder="e.g. PRJ-2025-001"></div>
-        <div class="fg"><label class="flabel">Date Started</label><input class="finput" id="proj-date" type="date"></div>
+        <div class="fg"><label class="flabel">Project Code <span class="freq">*</span></label><input class="finput" id="proj-code" type="text" placeholder="e.g. PRJ-2025-001" oninput="updateProjPreview()"></div>
+        <div class="fg"><label class="flabel">Date Started <span class="freq">*</span></label><input class="finput" id="proj-date" type="date"></div>
       </div>
-      <div class="fg"><label class="flabel">Project Name</label><input class="finput" id="proj-name" type="text" placeholder="e.g. Acme – Lid Type A Production"></div>
+      <div class="fg"><label class="flabel">Project Name <span class="freq">*</span></label><input class="finput" id="proj-name" type="text" placeholder="e.g. Acme – Lid Type A Production" oninput="updateProjPreview()"></div>
       <div class="fg"><label class="flabel">Project Brief</label><textarea class="finput" id="proj-brief" rows="3" placeholder="Short description of what this project is about…"></textarea></div>
       <div class="frow2">
         <div class="fg"><label class="flabel">Classification</label>
@@ -2361,7 +2409,7 @@ html{scroll-behavior:smooth;}
         <div class="fg"><label class="flabel">Sales Person</label><input class="finput" id="proj-salesperson" type="text" placeholder="e.g. Adam"></div>
       </div>
       <div class="fg"><label class="flabel">Target Delivery Date</label><input class="finput" id="proj-delivery" type="date"></div>
-      <div class="fsection">Status</div>
+      <div class="fsection"><i class="ti ti-progress"></i> Status</div>
       <div class="fg"><label class="flabel">Overall Status</label>
         <select class="finput" id="proj-status"><option value="not-started">Not Started</option><option value="in-progress">In Progress</option><option value="completed">Completed</option><option value="on-hold">On Hold</option></select>
       </div>
@@ -2553,7 +2601,7 @@ let calView = 'month', calDate = new Date();
 let projFilter = 'all', inqFilter = 'all';
 let inqSiteFilter = 'all';
 let projSiteFilter = 'all';
-let inqActiveOnly = false, projActiveOnly = false;
+let inqActiveOnly = false, projActiveOnly = false, projKivOnly = false;
 let dashTab = 'inq', dashView = 'month', dashDate = new Date();
 let binFilter = 'all';
 let charts = {};
@@ -4271,6 +4319,7 @@ function getFilteredProjects() {
   if (projFilter !== 'all') list = list.filter(p => p.classification === projFilter);
   if (projSiteFilter !== 'all') list = list.filter(p => p.factory === projSiteFilter);
   if (projActiveOnly) list = list.filter(p => p.status === 'in-progress' || p.status === 'not-started');
+  if (projKivOnly) list = list.filter(p => p.kiv);
   return list;
 }
 
@@ -4346,12 +4395,14 @@ function renderCard(item, type) {
         </div>` : `<div style="font-size:11px;color:var(--text3);padding:4px 0;">No sub-statuses yet.</div>`}
     </div>`;
 
-  return `<div class="card ${exp} ${overdueClass}" id="card-${item.id}">
+  const kivClass = (type === 'project' && item.kiv) ? 'kiv-marked' : '';
+  const kivBadge = (type === 'project' && item.kiv) ? `<span class="kiv-pill" title="${(item.kivComment||'').replace(/"/g,'&quot;')}"><i class="ti ti-flag-3" style="font-size:10px"></i> KIV</span>` : '';
+  return `<div class="card ${exp} ${overdueClass} ${kivClass}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard('${item.id}','${type}')">
       <div class="card-hl">
         <div class="card-code">${item.code}${item.date?' · '+fmtDate(item.date):''}</div>
         <div class="card-name">${item.name}</div>
-        <div class="card-meta"><span class="sbadge ${item.status}">${statusLabel(item.status)}</span>${clsBadge}${factoryBadge}<span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>${staleTag}${overdueChip}</div>
+        <div class="card-meta"><span class="sbadge ${item.status}">${statusLabel(item.status)}</span>${clsBadge}${factoryBadge}<span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>${staleTag}${overdueChip}${kivBadge}</div>
       </div>
       <button class="card-open-btn" onclick="event.stopPropagation();openProjDetail('${item.id}')" title="Open detail view"><i class="ti ti-external-link"></i></button>
       <i class="ti ti-chevron-down chevron"></i>
@@ -4459,6 +4510,11 @@ function toggleTask(type, id, idx) {
 function toggleActiveFilter(type) {
   if (type === 'inq') { inqActiveOnly = !inqActiveOnly; document.getElementById('inq-active-btn').classList.toggle('on', inqActiveOnly); renderInquiries(); }
   else { projActiveOnly = !projActiveOnly; document.getElementById('proj-active-btn').classList.toggle('on', projActiveOnly); renderProjects(); }
+}
+function toggleProjKivFilter() {
+  projKivOnly = !projKivOnly;
+  document.getElementById('proj-kiv-btn').classList.toggle('on', projKivOnly);
+  renderProjects();
 }
 function setProjFilter(f) {
   projFilter = f;
@@ -4581,6 +4637,7 @@ function openModal(name) {
       document.getElementById('proj-code').value = '';
       document.getElementById('proj-name').value = '';
     }
+    updateProjPreview();
   }
   document.getElementById('modal-'+name).classList.add('open');
   // Always scroll modal body to top
@@ -5163,6 +5220,15 @@ function submitInlineInqEdit(inqId) {
   save(); renderInquiries(); renderInqDetail();
 }
 let editingSSCtx = {projId:null, ssIdx:null};
+
+function updateProjPreview() {
+  const codeEl = document.getElementById('proj-preview-code'), nameEl = document.getElementById('proj-preview-name');
+  if (!codeEl || !nameEl) return;
+  const code = document.getElementById('proj-code').value.trim();
+  const name = document.getElementById('proj-name').value.trim();
+  codeEl.textContent = code || 'Code…';
+  nameEl.textContent = name || 'Untitled project';
+}
 
 function submitProject() {
   const code = document.getElementById('proj-code').value.trim();
@@ -7775,6 +7841,33 @@ function saveProjField(projId, field, value) {
   }
 }
 
+function toggleKivForm(projId) {
+  const el = document.getElementById('kiv-form-' + projId);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  if (el.style.display === 'block') { const ta = document.getElementById('il-kiv-comment'); if (ta) ta.focus(); }
+}
+
+function submitKiv(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !can('projects','edit')) return;
+  const wasKiv = !!p.kiv;
+  const comment = (document.getElementById('il-kiv-comment').value || '').trim();
+  p.kiv = true;
+  p.kivComment = comment;
+  if (!wasKiv) p.kivDate = todayStr();
+  appendChangelog({ type:'update', icon:'flag-3', text:`${wasKiv?'Updated':'Marked'} project <strong>${p.name}</strong> as <strong>KIV</strong>${comment?': '+comment:''}`, section:'projects' });
+  save(); renderProjects(); renderProjDetail();
+}
+
+function removeKiv(projId) {
+  const p = data.projects.find(x => x.id === projId);
+  if (!p || !can('projects','edit')) return;
+  p.kiv = false;
+  appendChangelog({ type:'update', icon:'flag-3', text:`Removed KIV from project <strong>${p.name}</strong>`, section:'projects' });
+  save(); renderProjects(); renderProjDetail();
+}
+
 function openGanttForProject(projId) {
   if (!projId) return;
   const p = data.projects.find(x => x.id === projId);
@@ -8022,7 +8115,9 @@ function renderProjDetail() {
     `<span class="sbadge ${p.status}">${statusLabel(p.status)}</span>
      ${p.classification?`<span class="cbadge ${classCSS(p.classification)}">${classLabel(p.classification)}</span>`:''}
      ${p.factory?`<span class="factory-pill">${p.factory}</span>`:''}`}
-    <span class="ppill">${rate}% · ${doneFrac} actions</span>`;
+    <span class="ppill">${rate}% · ${doneFrac} actions</span>
+    ${p.kiv ? `<span class="kiv-pill" title="${p.kivComment?p.kivComment.replace(/"/g,'&quot;'):''}"><i class="ti ti-flag-3" style="font-size:10px"></i> KIV</span>` : ''}
+    ${canEdit ? `<button class="kiv-flag-btn ${p.kiv?'on':''}" onclick="toggleKivForm('${p.id}')" title="${p.kiv?'Update / remove KIV':'Mark as KIV'}"><i class="ti ti-flag-3" style="font-size:11px"></i> ${p.kiv?'KIV':'Mark KIV'}</button>` : ''}`;
 
   const tab = currentPDTab || 'overview';
   document.querySelectorAll('.pd-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -8030,11 +8125,66 @@ function renderProjDetail() {
   let html = '';
 
   if (tab === 'overview') {
+    // ── At-a-glance stat tiles ──
+    let delivTxt = '—', delivSub = 'No target set', delivColor = 'var(--text3)';
+    if (p.deliveryDate) {
+      const d = Math.round((new Date(p.deliveryDate) - new Date(today)) / 86400000);
+      if (p.status === 'completed') { delivTxt = fmtDate(p.deliveryDate); delivSub = 'Delivered'; delivColor = 'var(--green)'; }
+      else if (d < 0) { delivTxt = `${Math.abs(d)}d`; delivSub = 'overdue'; delivColor = 'var(--red)'; }
+      else { delivTxt = `${d}d`; delivSub = 'remaining'; delivColor = d < 14 ? 'var(--amber)' : 'var(--green)'; }
+    }
+    html += `<div class="pd-stats">
+      <div class="pd-stat"><div class="pd-stat-label">Progress</div><div class="pd-stat-val" style="color:var(--accent)">${rate}%</div><div class="pd-stat-sub">${doneFrac} actions done</div></div>
+      <div class="pd-stat"><div class="pd-stat-label">Delivery</div><div class="pd-stat-val" style="color:${delivColor}">${delivTxt}</div><div class="pd-stat-sub">${delivSub}${p.deliveryDate?' · '+fmtDate(p.deliveryDate):''}</div></div>
+      <div class="pd-stat"><div class="pd-stat-label">Sub-Status</div><div class="pd-stat-val" style="color:var(--text)">${(p.subStatuses||[]).length}</div><div class="pd-stat-sub">logged entries</div></div>
+    </div>`;
+
+    // ── KIV mark/edit inline form ──
+    if (canEdit) {
+      html += `<div id="kiv-form-${p.id}" style="display:none;margin:0 20px 14px;">
+        <div class="inline-form">
+          <div class="fg"><label class="flabel">KIV Reason</label><textarea class="finput" id="il-kiv-comment" rows="2" placeholder="Why is this project on KIV?">${p.kivComment||''}</textarea></div>
+          <div class="inline-form-footer">
+            <button class="btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="toggleKivForm('${p.id}')">Cancel</button>
+            ${p.kiv ? `<button class="btn-secondary" style="font-size:11px;padding:4px 10px;color:var(--red);border-color:var(--red);" onclick="removeKiv('${p.id}')">Remove KIV</button>` : ''}
+            <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="submitKiv('${p.id}')">${p.kiv?'Update':'Mark as KIV'}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── KIV banner ──
+    if (p.kiv) {
+      html += `<div class="kiv-banner">
+        <i class="ti ti-flag-3"></i>
+        <div class="kiv-banner-body">
+          <div class="kiv-banner-title">On KIV${p.kivDate?' since '+fmtDate(p.kivDate):''}</div>
+          <div class="kiv-banner-comment" contenteditable="${canEdit}" onblur="saveProjField('${p.id}','kivComment',this.textContent)">${p.kivComment||(canEdit?'':'No reason given.')}</div>
+        </div>
+        ${canEdit ? `<div class="kiv-banner-acts"><button onclick="removeKiv('${p.id}')">Remove</button></div>` : ''}
+      </div>`;
+    }
+
     // Progress bar + brief — inline editable
     html += `<div class="proj-detail-section">
       <div class="proj-detail-prog"><div class="proj-detail-prog-fill" style="width:${rate}%"></div></div>
       ${canEdit ? `<textarea onblur="saveProjField('${p.id}','brief',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:52px;line-height:1.6;margin-top:8px;" placeholder="Project brief…">${p.brief||''}</textarea>` :
       p.brief ? `<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;">${p.brief}</div>` : ''}
+    </div>`;
+
+    // ── Customer & Sales (fix: previously captured on create, never shown/editable) ──
+    const editableInfo = (field, val, placeholder) => canEdit
+      ? `<div class="pd-info-v" contenteditable="true" onblur="saveProjField('${p.id}','${field}',this.textContent)" data-ph="${placeholder}">${val||''}</div>`
+      : `<div class="pd-info-v ${val?'':'empty'}">${val||'—'}</div>`;
+    html += `<div class="proj-detail-section">
+      <div class="proj-detail-slabel">Customer &amp; Sales</div>
+      <div class="pd-info-grid">
+        <div class="pd-info-item"><div class="pd-info-k">Customer</div>${editableInfo('customer', p.customer, 'Customer name')}</div>
+        <div class="pd-info-item"><div class="pd-info-k">Sales Person</div>${editableInfo('salesPerson', p.salesPerson, 'Sales person')}</div>
+        <div class="pd-info-item full"><div class="pd-info-k">Target Delivery Date</div>
+          ${canEdit ? `<div class="pd-info-v"><input type="date" value="${p.deliveryDate||''}" onchange="saveProjField('${p.id}','deliveryDate',this.value)"></div>` : `<div class="pd-info-v ${p.deliveryDate?'':'empty'}">${p.deliveryDate?fmtDate(p.deliveryDate):'—'}</div>`}
+        </div>
+      </div>
     </div>`;
 
     // Sub-Statuses with inline add/edit

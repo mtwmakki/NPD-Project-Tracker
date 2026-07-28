@@ -831,7 +831,8 @@ html{scroll-behavior:smooth;}
 .pd-stat-val{font-size:18px;font-weight:700;font-family:var(--fm);line-height:1;}
 .pd-stat-sub{font-size:10px;color:var(--text3);margin-top:3px;}
 /* Customer & Sales info grid */
-.pd-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+.pd-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;}
+@media(max-width:640px){.pd-info-grid{grid-template-columns:1fr;}}
 .pd-info-item{min-width:0;}
 .pd-info-item.full{grid-column:1 / -1;}
 .pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:4px;}
@@ -893,12 +894,13 @@ html{scroll-behavior:smooth;}
 .proj-detail-prog{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:12px;}
 .proj-detail-prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;}
 /* PIC list */
-.pic-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
-.pic-item:last-child{border-bottom:none;}
-.pic-avatar{width:28px;height:28px;border-radius:50%;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;font-family:var(--fm);}
-.pic-info{flex:1;min-width:0;}
-.pic-name{font-size:12px;font-weight:500;}
-.pic-role{font-size:10px;color:var(--text3);margin-top:1px;}
+.pics-row{display:flex;flex-wrap:wrap;gap:8px;}
+.pic-item{display:flex;align-items:center;gap:8px;background:var(--surface3);border:1px solid var(--border2,var(--border));border-radius:24px;padding:5px 12px 5px 5px;}
+.pic-avatar{width:26px;height:26px;border-radius:50%;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--accent);flex-shrink:0;font-family:var(--f);}
+.pic-info{display:flex;flex-direction:column;line-height:1.25;min-width:0;}
+.pic-name{font-size:12px;font-weight:600;}
+.pic-role{font-size:9.5px;color:var(--text3);margin-top:1px;font-family:var(--f);}
+.pic-acts{display:flex;gap:2px;flex-shrink:0;}
 .pic-acts{display:flex;gap:3px;flex-shrink:0;}
 /* Rolling Action Plan */
 .rap-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
@@ -960,6 +962,73 @@ html{scroll-behavior:smooth;}
 .tdl.awaiting{color:var(--amber);font-weight:500;}
 .titem.awaiting-reply{border-left:3px solid var(--amber);padding-left:6px;}
 .rap-item.awaiting-reply{border-left:3px solid var(--amber);padding-left:7px;}
+
+/* ══════════════════════════════════════════════════════
+   PROJECT DETAIL REDESIGN — hero / runway / people
+   Everything here is scoped under #proj-detail-panel so the
+   Inquiry Detail overlay (which reuses .proj-detail-header,
+   .proj-detail-code/name/badges and #.pd-tab) is untouched.
+   New elements use a pdx- prefix to guarantee no collisions
+   with list/card views that reuse .sbadge/.cbadge/.factory-pill/
+   .substatus-*/.kiv-pill elsewhere in the app.
+   ══════════════════════════════════════════════════════ */
+#proj-detail-panel .proj-detail-header{
+  --pdx-accent1:var(--purple);--pdx-accent2:var(--accent);
+  position:relative;overflow:hidden;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--pdx-accent1) 16%, transparent), color-mix(in srgb, var(--pdx-accent2) 10%, transparent) 55%, transparent 100%),
+    var(--surface);
+}
+#proj-detail-panel .proj-detail-header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--pdx-accent1),var(--pdx-accent2) 60%,transparent);
+}
+/* id bits: code + date — sans-serif, not the app-wide mono token */
+#proj-detail-panel .proj-detail-code{font-family:var(--f);font-weight:500;letter-spacing:.02em;}
+/* project name: gradient display face, matches approved concept */
+#proj-detail-panel .proj-detail-name{
+  font-family:var(--f-head);font-size:24px;line-height:1.15;letter-spacing:-.01em;margin:4px 0 2px;
+  background:linear-gradient(135deg,var(--text),var(--text2) 75%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* Segmented tab bar — scoped to the project overlay's tab strip only */
+#proj-detail-panel #pd-tabs{background:var(--surface2);padding:0 18px;gap:2px;}
+#proj-detail-panel #pd-tabs .pd-tab{border-radius:0;padding:10px 13px 9px;}
+#proj-detail-panel #pd-tabs .pd-tab.active{background:none;}
+.pdx-tab-badge{font-family:var(--f);font-size:9px;font-weight:600;background:var(--surface3);color:var(--text3);border-radius:20px;padding:1px 6px;margin-left:5px;}
+
+/* Delivery Runway — the signature stat block, replaces the 3 flat tiles */
+.pdx-runway{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r,14px);padding:16px 18px 14px;margin:14px 20px 4px;}
+.pdx-runway-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;}
+.pdx-runway-label{font-family:var(--f);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);}
+.pdx-runway-date{font-family:var(--f);font-size:10.5px;color:var(--text3);}
+.pdx-runway-stats{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.pdx-ring{position:relative;width:76px;height:76px;flex-shrink:0;}
+.pdx-ring svg{transform:rotate(-90deg);width:100%;height:100%;}
+.pdx-ring-track{fill:none;stroke:var(--surface3);stroke-width:8;}
+.pdx-ring-fill{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1);}
+.pdx-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pdx-ring-pct{font-family:var(--f-head);font-size:16px;color:var(--text);line-height:1;}
+.pdx-ring-sub{font-family:var(--f);font-size:8px;color:var(--text3);margin-top:2px;}
+.pdx-runway-mid{flex:1;min-width:140px;}
+.pdx-runway-days{font-family:var(--f-head);font-size:30px;line-height:1;letter-spacing:-.01em;}
+.pdx-runway-days small{font-family:var(--f);font-size:11px;font-weight:500;color:var(--text3);margin-left:6px;letter-spacing:0;}
+.pdx-runway-track{position:relative;height:6px;background:var(--surface3);border-radius:4px;margin-top:26px;overflow:visible;}
+.pdx-runway-track-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--green));}
+.pdx-runway-today{position:absolute;top:-4px;width:2px;height:14px;background:var(--text);border-radius:2px;}
+.pdx-runway-today::after{content:'TODAY';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-family:var(--f);font-size:7.5px;color:var(--text3);letter-spacing:.06em;white-space:nowrap;}
+.pdx-runway-endcaps{display:flex;justify-content:space-between;margin-top:14px;font-family:var(--f);font-size:9.5px;color:var(--text3);}
+.pdx-substat-mini{flex-shrink:0;text-align:right;}
+.pdx-substat-mini .n{font-family:var(--f-head);font-size:20px;color:var(--text);}
+.pdx-substat-mini .l{font-family:var(--f);font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+/* Panel shell for Sub-Status / People In Charge lists */
+.pdx-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs,10px);padding:12px 14px;}
+
+/* Avatar chip for Sales Person (reuses picColor()/picAvatar() helpers already in the app) */
+.pdx-avchip{width:20px;height:20px;border-radius:50%;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-family:var(--f);flex-shrink:0;margin-right:6px;vertical-align:middle;}
+
 /* Follow-up chain indicator */
 .followup-chain{font-size:9px;color:var(--text3);font-family:var(--fm);display:flex;align-items:center;gap:3px;margin-top:2px;}
 .followup-chain i{font-size:10px;color:var(--amber);}
@@ -2123,7 +2192,7 @@ html{scroll-behavior:smooth;}
     </div>
     <div class="pd-tabs" id="pd-tabs">
       <button class="pd-tab active" data-tab="overview" onclick="switchPDTab('overview')"><i class="ti ti-layout-list"></i> Overview</button>
-      <button class="pd-tab" data-tab="actions" onclick="switchPDTab('actions')"><i class="ti ti-checkbox"></i> Actions</button>
+      <button class="pd-tab" data-tab="actions" onclick="switchPDTab('actions')"><i class="ti ti-checkbox"></i> Actions <span class="pdx-tab-badge" id="pd-actions-badge"></span></button>
       <button class="pd-tab" data-tab="milestones" onclick="switchPDTab('milestones')"><i class="ti ti-flag"></i> Milestones</button>
       <button class="pd-tab" data-tab="activity" onclick="switchPDTab('activity')"><i class="ti ti-activity"></i> Activity</button>
       <button class="pd-tab" data-tab="changelog" onclick="switchPDTab('changelog')"><i class="ti ti-history"></i> Changelog</button>
@@ -8119,24 +8188,60 @@ function renderProjDetail() {
     ${p.kiv ? `<span class="kiv-pill" title="${p.kivComment?p.kivComment.replace(/"/g,'&quot;'):''}"><i class="ti ti-flag-3" style="font-size:10px"></i> KIV</span>` : ''}
     ${canEdit ? `<button class="kiv-flag-btn ${p.kiv?'on':''}" onclick="toggleKivForm('${p.id}')" title="${p.kiv?'Update / remove KIV':'Mark as KIV'}"><i class="ti ti-flag-3" style="font-size:11px"></i> ${p.kiv?'KIV':'Mark KIV'}</button>` : ''}`;
 
+  // ── Hero wash tinted by classification, actions tab badge ──
+  const CLASS_TINT = {
+    'new-mold': ['var(--accent)','var(--al)'], 'improvement': ['var(--amber)','var(--ambg)'],
+    'masterbatch': ['var(--purple)','var(--pubg)'], 'new-iml': ['var(--green)','var(--gbg)']
+  }[p.classification] || ['var(--purple)','var(--pubg)'];
+  const headerEl = document.querySelector('#proj-detail-panel .proj-detail-header');
+  if (headerEl) { headerEl.style.setProperty('--pdx-accent1', CLASS_TINT[0]); headerEl.style.setProperty('--pdx-accent2', 'var(--accent)'); }
+  const actionsBadgeEl = document.getElementById('pd-actions-badge');
+  if (actionsBadgeEl) actionsBadgeEl.textContent = doneFrac;
+
   const tab = currentPDTab || 'overview';
   document.querySelectorAll('.pd-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
 
   let html = '';
 
   if (tab === 'overview') {
-    // ── At-a-glance stat tiles ──
-    let delivTxt = '—', delivSub = 'No target set', delivColor = 'var(--text3)';
+    // ── Delivery Runway — signature stat block: ring progress + opened→target countdown + sub-status count ──
+    const subCount = (p.subStatuses||[]).length;
+    const ringR = 32, ringC = Math.round(2*Math.PI*ringR*10)/10;
+    const ringOffset = ringC - (rate/100)*ringC;
+    let daysBig = '—', daysSmall = 'no target set', daysColor = 'var(--text3)', trackPct = 0;
     if (p.deliveryDate) {
       const d = Math.round((new Date(p.deliveryDate) - new Date(today)) / 86400000);
-      if (p.status === 'completed') { delivTxt = fmtDate(p.deliveryDate); delivSub = 'Delivered'; delivColor = 'var(--green)'; }
-      else if (d < 0) { delivTxt = `${Math.abs(d)}d`; delivSub = 'overdue'; delivColor = 'var(--red)'; }
-      else { delivTxt = `${d}d`; delivSub = 'remaining'; delivColor = d < 14 ? 'var(--amber)' : 'var(--green)'; }
+      if (p.status === 'completed') { daysBig = 'Done'; daysSmall = 'delivered ' + fmtDate(p.deliveryDate); daysColor = 'var(--green)'; trackPct = 100; }
+      else if (d < 0) { daysBig = Math.abs(d); daysSmall = 'days overdue'; daysColor = 'var(--red)'; trackPct = 100; }
+      else {
+        daysBig = d; daysSmall = 'days remaining'; daysColor = d < 14 ? 'var(--amber)' : 'var(--green)';
+        const opened = p.date ? new Date(p.date) : null, target = new Date(p.deliveryDate);
+        trackPct = (opened && target > opened) ? Math.max(0, Math.min(100, Math.round((new Date(today)-opened)/(target-opened)*100))) : 0;
+      }
     }
-    html += `<div class="pd-stats">
-      <div class="pd-stat"><div class="pd-stat-label">Progress</div><div class="pd-stat-val" style="color:var(--accent)">${rate}%</div><div class="pd-stat-sub">${doneFrac} actions done</div></div>
-      <div class="pd-stat"><div class="pd-stat-label">Delivery</div><div class="pd-stat-val" style="color:${delivColor}">${delivTxt}</div><div class="pd-stat-sub">${delivSub}${p.deliveryDate?' · '+fmtDate(p.deliveryDate):''}</div></div>
-      <div class="pd-stat"><div class="pd-stat-label">Sub-Status</div><div class="pd-stat-val" style="color:var(--text)">${(p.subStatuses||[]).length}</div><div class="pd-stat-sub">logged entries</div></div>
+    html += `<div class="pdx-runway">
+      <div class="pdx-runway-head">
+        <span class="pdx-runway-label"><i class="ti ti-rocket" style="margin-right:5px;"></i>Delivery Runway</span>
+        <span class="pdx-runway-date">${p.deliveryDate ? 'Target · '+fmtDate(p.deliveryDate) : 'No target set'}</span>
+      </div>
+      <div class="pdx-runway-stats">
+        <div class="pdx-ring">
+          <svg viewBox="0 0 80 80">
+            <circle class="pdx-ring-track" cx="40" cy="40" r="${ringR}"></circle>
+            <circle class="pdx-ring-fill" cx="40" cy="40" r="${ringR}" stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}"></circle>
+          </svg>
+          <div class="pdx-ring-center"><div class="pdx-ring-pct">${rate}%</div><div class="pdx-ring-sub">${doneFrac}</div></div>
+        </div>
+        <div class="pdx-runway-mid">
+          <div class="pdx-runway-days" style="color:${daysColor}">${daysBig}<small>${daysSmall}</small></div>
+          ${p.deliveryDate ? `<div class="pdx-runway-track">
+            <div class="pdx-runway-track-fill" style="width:${trackPct}%;"></div>
+            <div class="pdx-runway-today" style="left:${trackPct}%;"></div>
+          </div>
+          <div class="pdx-runway-endcaps"><span>Opened ${p.date?fmtDate(p.date):'—'}</span><span style="color:var(--green)">${fmtDate(p.deliveryDate)} target</span></div>` : ''}
+        </div>
+        <div class="pdx-substat-mini"><div class="n">${subCount}</div><div class="l">Sub-Status<br>Entries</div></div>
+      </div>
     </div>`;
 
     // ── KIV mark/edit inline form ──
@@ -8180,8 +8285,13 @@ function renderProjDetail() {
       <div class="proj-detail-slabel">Customer &amp; Sales</div>
       <div class="pd-info-grid">
         <div class="pd-info-item"><div class="pd-info-k">Customer</div>${editableInfo('customer', p.customer, 'Customer name')}</div>
-        <div class="pd-info-item"><div class="pd-info-k">Sales Person</div>${editableInfo('salesPerson', p.salesPerson, 'Sales person')}</div>
-        <div class="pd-info-item full"><div class="pd-info-k">Target Delivery Date</div>
+        <div class="pd-info-item"><div class="pd-info-k">Sales Person</div>
+          <div style="display:flex;align-items:center;">
+            ${p.salesPerson ? `<span class="pdx-avchip" style="background:${picColor(p.salesPerson)}">${picAvatar(p.salesPerson)}</span>` : ''}
+            ${editableInfo('salesPerson', p.salesPerson, 'Sales person')}
+          </div>
+        </div>
+        <div class="pd-info-item"><div class="pd-info-k">Target Delivery Date</div>
           ${canEdit ? `<div class="pd-info-v"><input type="date" value="${p.deliveryDate||''}" onchange="saveProjField('${p.id}','deliveryDate',this.value)"></div>` : `<div class="pd-info-v ${p.deliveryDate?'':'empty'}">${p.deliveryDate?fmtDate(p.deliveryDate):'—'}</div>`}
         </div>
       </div>
@@ -8220,6 +8330,7 @@ function renderProjDetail() {
           </div>
         </div>
       </div>
+      <div class="pdx-panel">
       ${subs.length ? subs.map((ss,i) => `
         <div class="substatus-item ${(ss.status!=='completed'&&ss.status!=='cancelled')?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
           <div class="substatus-dot ss-${ss.status}"></div>
@@ -8265,6 +8376,7 @@ function renderProjDetail() {
           </div>
         </div>`).join('')
       : `<div style="font-size:11px;color:var(--text3)">No sub-statuses yet.</div>`}
+      </div>
     </div>`;
 
     // PICs with inline add/edit
@@ -8285,7 +8397,7 @@ function renderProjDetail() {
           </div>
         </div>
       </div>
-      ${pics.length ? pics.map((pic,i) => `
+      ${pics.length ? `<div class="pdx-panel"><div class="pics-row">` + pics.map((pic,i) => `
         <div class="pic-item">
           <div class="pic-avatar" style="background:${picColor(pic.name)}22;color:${picColor(pic.name)}">${picAvatar(pic.name)}</div>
           <div class="pic-info"><div class="pic-name">${pic.name}</div>${pic.role?`<div class="pic-role">${pic.role}</div>`:''}</div>
@@ -8294,7 +8406,7 @@ function renderProjDetail() {
             ${can('projects','edit') ? `<button class="tact-btn" onclick="inlineDeletePIC('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
           </div>
         </div>
-        <div id="pic-edit-${p.id}-${i}" style="display:none;margin:0 0 8px;">
+        <div id="pic-edit-${p.id}-${i}" style="display:none;margin:0 0 8px;width:100%;">
           <div class="inline-form">
             <div class="frow2">
               <div class="fg"><label class="flabel">Name</label><input class="finput" id="il-pic-e-name-${i}" type="text" value="${pic.name}"></div>
@@ -8305,7 +8417,7 @@ function renderProjDetail() {
               <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="inlineEditPIC('${p.id}',${i})">Save</button>
             </div>
           </div>
-        </div>`).join('')
+        </div>`).join('') + `</div></div>`
       : `<div style="font-size:11px;color:var(--text3)">No PIC assigned yet.</div>`}
     </div>`;
   }

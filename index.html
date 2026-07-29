@@ -831,17 +831,21 @@ html{scroll-behavior:smooth;}
 .pd-stat-val{font-size:18px;font-weight:700;font-family:var(--fm);line-height:1;}
 .pd-stat-sub{font-size:10px;color:var(--text3);margin-top:3px;}
 /* Customer & Sales info grid */
-.pd-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;}
-@media(max-width:640px){.pd-info-grid{grid-template-columns:1fr;}}
+.pd-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:18px 20px;}
+@media(max-width:640px){.pd-info-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.pd-info-grid{grid-template-columns:1fr;}}
 .pd-info-item{min-width:0;}
 .pd-info-item.full{grid-column:1 / -1;}
-.pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:4px;}
-.pd-info-v{font-size:13px;color:var(--text);outline:none;}
-.pd-info-v[contenteditable="true"]{cursor:text;padding-bottom:2px;}
-.pd-info-v[contenteditable="true"]:hover{color:var(--accent);}
+.pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:6px;}
+.pd-info-v{font-size:13px;line-height:1.4;color:var(--text);outline:none;padding-bottom:3px;border-bottom:1px solid transparent;}
+.pd-info-v[contenteditable="true"]{cursor:text;}
+.pd-info-v[contenteditable="true"]:hover{color:var(--accent);border-bottom-color:var(--border);}
 .pd-info-v[contenteditable="true"]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic;}
 .pd-info-v.empty{color:var(--text3);font-style:italic;}
-.pd-info-v input[type="date"]{background:none;border:none;color:var(--text);font-family:var(--fm);font-size:12px;padding:1px 0;cursor:pointer;width:100%;}
+.pd-info-v input[type="date"]{background:none;border:none;color:var(--text);font-family:var(--f);font-size:13px;padding:0;cursor:pointer;width:100%;line-height:1.4;}
+.pd-info-v:has(input[type="date"]){padding-bottom:2px;}
+.pd-info-v input[type="date"]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer;margin-left:4px;}
+.pd-info-v input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:.8;}
 /* KIV banner */
 .kiv-banner{margin:0 20px 14px;padding:12px 14px;border-radius:var(--rs);background:var(--ambg);border:1px solid var(--amber);display:flex;gap:10px;align-items:flex-start;}
 .kiv-banner i{color:var(--amber);font-size:16px;margin-top:1px;flex-shrink:0;}
@@ -1014,7 +1018,7 @@ html{scroll-behavior:smooth;}
 .pdx-runway-mid{flex:1;min-width:140px;}
 .pdx-runway-days{font-family:var(--f-head);font-size:30px;line-height:1;letter-spacing:-.01em;}
 .pdx-runway-days small{font-family:var(--f);font-size:11px;font-weight:500;color:var(--text3);margin-left:6px;letter-spacing:0;}
-.pdx-runway-track{position:relative;height:6px;background:var(--surface3);border-radius:4px;margin-top:26px;overflow:visible;}
+.pdx-runway-track{position:relative;height:6px;background:var(--surface3);border-radius:4px;margin-top:10px;overflow:visible;}
 .pdx-runway-track-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--green));}
 .pdx-runway-today{position:absolute;top:-4px;width:2px;height:14px;background:var(--text);border-radius:2px;}
 .pdx-runway-today::after{content:'TODAY';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-family:var(--f);font-size:7.5px;color:var(--text3);letter-spacing:.06em;white-space:nowrap;}
@@ -1202,6 +1206,8 @@ html{scroll-behavior:smooth;}
 /* ── Next Action Rows (inline in expanded card) ── */
 .na-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border);padding:9px 12px;margin-bottom:7px;transition:border-color .15s;}
 .na-card:last-child{margin-bottom:0;}
+.na-card.done-row{opacity:.55;}
+.na-action-text.done{text-decoration:line-through;}
 .na-card:hover{border-color:var(--border2);}
 .na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
 .na-pic-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45);flex-shrink:0;}
@@ -4393,14 +4399,12 @@ function renderInquiryCard(item) {
           <span class="sbadge ${statusKey}">${statusLabel(item.status)}</span>
           ${priPill}${bdPill}${overdueBadge}
           ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
-          <span class="ppill">${doneFrac||'—'}</span>
+          <span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>
           ${delivPill}
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
-        <button class="cact-icon" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Full View" style="width:26px;height:26px;font-size:12px;"><i class="ti ti-layout-sidebar-right"></i></button>
-        <i class="ti ti-chevron-down chevron"></i>
-      </div>
+      <button class="card-open-btn" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Open detail view"><i class="ti ti-external-link"></i></button>
+      <i class="ti ti-chevron-down chevron"></i>
     </div>
     <div class="prog-wrap"><div class="prog-bg"><div class="prog-fill" style="width:${rate}%"></div></div></div>
     <div class="card-body">
@@ -5032,43 +5036,74 @@ function _renderInqDetailInner() {
   let html = '';
 
   if (currentInqDTab === 'overview') {
-    // Delivery Performance
+    // ── Delivery Runway — signature stat block, ported from project detail: ring progress (Inquiry Progress checklist) + elapsed/target countdown ──
     const delivThreshY = (data.settings?.deliveryThresholdYellow)||14;
     const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
     const ovPriceDate  = (inq.pipeline?.priceSubmission?.date)||'';
     const ovDelivDays  = inq.date && ovPriceDate ? Math.round((new Date(ovPriceDate+'T00:00:00') - new Date(inq.date+'T00:00:00')) / 86400000) : null;
-    const ovDelivColor = ovDelivDays===null?'var(--text3)':ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
-    if (ovDelivDays !== null || inq.date) {
-      html += `<div class="proj-detail-section" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;">
-        <div>
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;">Delivery Performance</div>
-          <div style="font-size:11px;color:var(--text3);">Inquiry received → Price submitted${ovDelivDays===null?' (price not yet submitted)':''}</div>
+    const tasks = inq.tasks||[];
+    const rate = completion(tasks);
+    const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '0/0';
+    const ringR = 32, ringC = Math.round(2*Math.PI*ringR*10)/10;
+    const ringOffset = ringC - (rate/100)*ringC;
+    let daysBig = '—', daysSmall = 'no date recorded', daysColor = 'var(--text3)', trackPct = 0;
+    if (inq.date) {
+      if (ovDelivDays !== null) {
+        daysBig = ovDelivDays; daysSmall = 'days to price submission';
+        daysColor = ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
+        trackPct = 100;
+      } else {
+        const elapsed = Math.round((new Date(today) - new Date(inq.date)) / 86400000);
+        daysBig = elapsed; daysSmall = 'days elapsed · pending';
+        daysColor = elapsed>=delivThreshR?'var(--red)':elapsed>=delivThreshY?'var(--amber)':'var(--accent)';
+        trackPct = Math.max(0, Math.min(100, Math.round(elapsed/delivThreshR*100)));
+      }
+    }
+    if (inq.date || ovDelivDays !== null) {
+      html += `<div class="pdx-runway">
+        <div class="pdx-runway-head">
+          <span class="pdx-runway-label"><i class="ti ti-rocket" style="margin-right:5px;"></i>Delivery Runway</span>
+          <span class="pdx-runway-date" ${ovPriceDate ? '' : 'style="color:var(--amber);background:var(--ambg);font-weight:600;padding:2px 8px;border-radius:20px;"'}>${ovPriceDate ? 'Submitted · '+fmtDate(ovPriceDate) : 'Price not yet submitted'}</span>
         </div>
-        <div style="font-size:${ovDelivDays!==null?'36px':'20px'};font-weight:800;color:${ovDelivColor};line-height:1;">
-          ${ovDelivDays!==null ? ovDelivDays+'<span style="font-size:14px;font-weight:600;margin-left:3px;">days</span>' : '—'}
+        <div class="pdx-runway-stats">
+          <div class="pdx-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="pdx-ring-track" cx="40" cy="40" r="${ringR}"></circle>
+              <circle class="pdx-ring-fill" cx="40" cy="40" r="${ringR}" stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}"></circle>
+            </svg>
+            <div class="pdx-ring-center"><div class="pdx-ring-pct">${rate}%</div></div>
+          </div>
+          <div class="pdx-runway-mid">
+            <div class="pdx-runway-days" style="color:${daysColor}">${daysBig}<small>${daysSmall}</small></div>
+            ${inq.date ? `<div class="pdx-runway-track">
+              <div class="pdx-runway-track-fill" style="width:${trackPct}%;"></div>
+              <div class="pdx-runway-today" style="left:${trackPct}%;"></div>
+            </div>
+            <div class="pdx-runway-endcaps"><span>Received ${fmtDate(inq.date)}</span><span style="color:var(--green)">${ovPriceDate ? fmtDate(ovPriceDate)+' submitted' : 'pending'}</span></div>` : ''}
+          </div>
         </div>
       </div>`;
     }
 
-    // Basic Info — inline editable
+    // Basic Info — inline editable, ported to shared pd-info-grid styling
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Basic Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
-        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Date</span>
-          ${canEdit?`<input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:pointer;">`:
-          `<strong>${inq.date?fmtDate(inq.date):'—'}</strong>`}
+      <div class="pd-info-grid">
+        <div class="pd-info-item"><div class="pd-info-k">Date</div>
+          ${canEdit?`<div class="pd-info-v"><input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)"></div>`:
+          `<div class="pd-info-v ${inq.date?'':'empty'}">${inq.date?fmtDate(inq.date):'—'}</div>`}
         </div>
-        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Customer</span>
-          ${canEdit?`<input type="text" value="${inq.customer||''}" onblur="saveInqField('${inq.id}','customer',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="Customer name">`:
-          `<strong>${inq.customer||'—'}</strong>`}
+        <div class="pd-info-item"><div class="pd-info-k">Customer</div>
+          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','customer',this.textContent)" data-ph="Customer name">${inq.customer||''}</div>`:
+          `<div class="pd-info-v ${inq.customer?'':'empty'}">${inq.customer||'—'}</div>`}
         </div>
-        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Material</span>
-          ${canEdit?`<input type="text" value="${inq.material||''}" onblur="saveInqField('${inq.id}','material',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="PP / HDPE / PET">`:
-          `<strong>${inq.material||'—'}</strong>`}
+        <div class="pd-info-item"><div class="pd-info-k">Material</div>
+          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','material',this.textContent)" data-ph="PP / HDPE / PET">${inq.material||''}</div>`:
+          `<div class="pd-info-v ${inq.material?'':'empty'}">${inq.material||'—'}</div>`}
         </div>
-        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">BD Person</span>
-          ${canEdit?`<input type="text" value="${inq.bdPerson||''}" onblur="saveInqField('${inq.id}','bdPerson',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="BD person">`:
-          `<strong>${inq.bdPerson||'—'}</strong>`}
+        <div class="pd-info-item"><div class="pd-info-k">BD Person</div>
+          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','bdPerson',this.textContent)" data-ph="BD person">${inq.bdPerson||''}</div>`:
+          `<div class="pd-info-v ${inq.bdPerson?'':'empty'}">${inq.bdPerson||'—'}</div>`}
         </div>
       </div>
     </div>`;
@@ -5123,7 +5158,8 @@ function _renderInqDetailInner() {
         const dlIcon    = isOverdue ? 'ti-alert-triangle' : 'ti-calendar';
         const dlLabel   = na.deadline ? fmtDate(na.deadline) : '+ Set deadline';
         const allPics   = cachedUserList;
-        html += `<div class="na-card" id="na-row-${na.id}">
+        html += `<div class="na-card${na.done?' done-row':''}" id="na-row-${na.id}">
+          <div class="ip-check ${na.done?'done':''}" onclick="toggleInqNA('${inq.id}','${na.id}')"><i class="ti ti-check"></i></div>
           <div style="position:relative;flex-shrink:0;">
             <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
               <span class="na-pic-dot"></span>
@@ -5134,8 +5170,8 @@ function _renderInqDetailInner() {
             </div>`:''}
           </div>
           ${canEdit
-            ? `<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
-            : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
+            ? `<input type="text" class="na-action-text${na.done?' done':''}" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
+            : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;${na.done?'text-decoration:line-through;opacity:.55;':''}">${na.action||'—'}</div>`}
           <div class="na-right">
             <div class="na-deadline-badge ${dlClass}" ${canEdit?`onclick="var el=this.querySelector('input[type=date]'); if(el){ if(el.showPicker){try{el.showPicker();}catch(e){el.focus();} } else { el.focus(); } }"`:''}>
               <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}</span>
@@ -5152,7 +5188,6 @@ function _renderInqDetailInner() {
     html += `</div>`;
 
     // Inquiry Progress (Tasks) — styled rows (NA card style)
-    const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddTask('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
@@ -7779,6 +7814,16 @@ function saveInqNA(inqId, naId, field, value) {
   if (!na) return;
   na[field] = value;
   save();
+}
+
+function toggleInqNA(inqId, naId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const na = (inq.nextActions||[]).find(n => n.id === naId);
+  if (!na) return;
+  na.done = !na.done;
+  appendInqLog(inqId, 'done', 'circle-check', `${na.done?'Completed':'Reopened'} next action: <strong>${na.action}</strong>`);
+  save(); renderInqDetail();
 }
 
 function saveInqNADeadline(inqId, naId, newDl, oldDl) {

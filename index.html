@@ -1032,8 +1032,8 @@ html{scroll-behavior:smooth;}
    Scoped with pdx- prefix + #proj-detail-panel so the list/card views
    that reuse plain .substatus-* elsewhere in the app are untouched. */
 #proj-detail-panel .pdx-subline{display:flex;flex-direction:column;}
-#proj-detail-panel .pdx-subitem{display:flex;gap:11px;position:relative;padding:9px 2px;}
-#proj-detail-panel .pdx-subitem:not(:last-child)::before{content:'';position:absolute;left:4px;top:23px;bottom:-9px;width:1px;background:var(--border2,var(--border));}
+#proj-detail-panel .pdx-subitem{display:flex;gap:11px;position:relative;padding:9px 0;}
+#proj-detail-panel .pdx-subitem:not(:last-child)::before{content:'';position:absolute;left:4.5px;top:23px;bottom:-9px;width:1px;background:var(--border2,var(--border));}
 #proj-detail-panel .pdx-subdot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0;box-shadow:0 0 0 3px var(--surface2);}
 #proj-detail-panel .pdx-subdot.ss-completed{background:var(--accent);}
 #proj-detail-panel .pdx-subdot.ss-ongoing{background:var(--blue);}

@@ -842,6 +842,8 @@ html{scroll-behavior:smooth;}
 .pd-info-v[contenteditable="true"]:hover{color:var(--accent);border-bottom-color:var(--border);}
 .pd-info-v[contenteditable="true"]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic;}
 .pd-info-v.empty{color:var(--text3);font-style:italic;}
+.inq-de-header-field[contenteditable="true"]{border-bottom:1px dashed transparent;}
+.inq-de-header-field[contenteditable="true"]:hover{border-bottom-color:var(--border);}
 .pd-info-v input[type="date"]{background:none;border:none;color:var(--text);font-family:var(--f);font-size:13px;padding:0;cursor:pointer;width:100%;line-height:1.4;}
 .pd-info-v:has(input[type="date"]){padding-bottom:2px;}
 .pd-info-v input[type="date"]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer;margin-left:4px;}
@@ -1209,8 +1211,7 @@ html{scroll-behavior:smooth;}
 .na-card.done-row{opacity:.55;}
 .na-action-text.done{text-decoration:line-through;}
 .na-card:hover{border-color:var(--border2);}
-.na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
-.na-pic-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45);flex-shrink:0;}
+.na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 10px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
 .na-pic-select-wrap{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none;min-width:140px;padding:5px;overflow:hidden;}
 .na-pic-select-wrap.open{display:block;}
 .na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);color:var(--text);}
@@ -4993,17 +4994,17 @@ function _renderInqDetailInner() {
   // Inline-editable header fields
   const statusKey = INQ_STATUS_MAP[inq.status]||inq.status?.toLowerCase()||'';
   document.getElementById('inq-d-code').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-code-inline"
+    <span contenteditable="${canEdit}" id="inq-de-code-inline" class="inq-de-header-field"
       onblur="saveInqField('${inq.id}','code',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:1px;"
       title="${canEdit?'Click to edit':''}">${inq.code||''}</span>
     ${inq.date?` · <span contenteditable="false" style="opacity:.7;">${fmtDate(inq.date)}</span>`:''}
     ${inq.bdNum?` · BD#${inq.bdNum}`:''}`;
 
   document.getElementById('inq-d-name').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-name-inline"
+    <span contenteditable="${canEdit}" id="inq-de-name-inline" class="inq-de-header-field"
       onblur="saveInqField('${inq.id}','name',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:2px;"
       title="${canEdit?'Click to edit name':''}">${inq.name||''}</span>`;
 
   document.getElementById('inq-d-badges').innerHTML = `
@@ -5162,7 +5163,6 @@ function _renderInqDetailInner() {
           <div class="ip-check ${na.done?'done':''}" onclick="toggleInqNA('${inq.id}','${na.id}')"><i class="ti ti-check"></i></div>
           <div style="position:relative;flex-shrink:0;">
             <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
-              <span class="na-pic-dot"></span>
               ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>
             </div>
             ${canEdit?`<div class="na-pic-select-wrap" id="na-pic-menu-${na.id}">
@@ -5205,8 +5205,8 @@ function _renderInqDetailInner() {
           return `<div class="ip-row${t.done?' done-row':''}">
             <div class="ip-check ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')"><i class="ti ti-check"></i></div>
             <div style="position:relative;flex-shrink:0;">
-              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;cursor:${canEdit?'pointer':'default'};" onclick="${canEdit?`toggleInqTaskPicMenu('${t.id}')`:''}" title="${canEdit?'Change PIC':''}">
-                <span class="na-pic-dot"></span>${t.pic||'—'} ${canEdit?'<i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>':''}
+              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 9px;cursor:${canEdit?'pointer':'default'};" onclick="${canEdit?`toggleInqTaskPicMenu('${t.id}')`:''}" title="${canEdit?'Change PIC':''}">
+                ${t.pic||'—'} ${canEdit?'<i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>':''}
               </div>
               ${canEdit?`<div class="na-pic-select-wrap" id="ip-pic-menu-${t.id}">
                 ${cachedUserList.map(u=>`<div class="na-pic-option" onclick="setInqTaskPic('${inq.id}','${t.id}',this.textContent)">${u}</div>`).join('')}

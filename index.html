@@ -831,23 +831,17 @@ html{scroll-behavior:smooth;}
 .pd-stat-val{font-size:18px;font-weight:700;font-family:var(--fm);line-height:1;}
 .pd-stat-sub{font-size:10px;color:var(--text3);margin-top:3px;}
 /* Customer & Sales info grid */
-.pd-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:18px 20px;}
-@media(max-width:640px){.pd-info-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:420px){.pd-info-grid{grid-template-columns:1fr;}}
+.pd-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;}
+@media(max-width:640px){.pd-info-grid{grid-template-columns:1fr;}}
 .pd-info-item{min-width:0;}
 .pd-info-item.full{grid-column:1 / -1;}
-.pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:6px;}
-.pd-info-v{font-size:13px;line-height:1.4;color:var(--text);outline:none;padding-bottom:3px;border-bottom:1px solid transparent;}
-.pd-info-v[contenteditable="true"]{cursor:text;}
-.pd-info-v[contenteditable="true"]:hover{color:var(--accent);border-bottom-color:var(--border);}
+.pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:4px;}
+.pd-info-v{font-size:13px;color:var(--text);outline:none;}
+.pd-info-v[contenteditable="true"]{cursor:text;border-bottom:1px dashed var(--border);padding-bottom:2px;}
+.pd-info-v[contenteditable="true"]:hover{border-color:var(--accent);}
 .pd-info-v[contenteditable="true"]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic;}
 .pd-info-v.empty{color:var(--text3);font-style:italic;}
-.inq-de-header-field[contenteditable="true"]{border-bottom:1px dashed transparent;}
-.inq-de-header-field[contenteditable="true"]:hover{border-bottom-color:var(--border);}
-.pd-info-v input[type="date"]{background:none;border:none;color:var(--text);font-family:var(--f);font-size:13px;padding:0;cursor:pointer;width:100%;line-height:1.4;}
-.pd-info-v:has(input[type="date"]){padding-bottom:2px;}
-.pd-info-v input[type="date"]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer;margin-left:4px;}
-.pd-info-v input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:.8;}
+.pd-info-v input[type="date"]{background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--fm);font-size:12px;padding:1px 0;cursor:pointer;width:100%;}
 /* KIV banner */
 .kiv-banner{margin:0 20px 14px;padding:12px 14px;border-radius:var(--rs);background:var(--ambg);border:1px solid var(--amber);display:flex;gap:10px;align-items:flex-start;}
 .kiv-banner i{color:var(--amber);font-size:16px;margin-top:1px;flex-shrink:0;}
@@ -944,7 +938,7 @@ html{scroll-behavior:smooth;}
 .proj-substatus-add{background:none;border:none;color:var(--accent);cursor:pointer;font-size:10px;font-family:var(--f);font-weight:500;display:flex;align-items:center;gap:3px;padding:0;}
 .substatus-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
 .substatus-item:last-child{border-bottom:none;}
-.substatus-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.substatus-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px;opacity:.8;}
 .substatus-dot.ss-completed{background:var(--accent);}
 .substatus-dot.ss-ongoing{background:var(--blue);}
 .substatus-dot.ss-pending{background:var(--amber);}
@@ -1020,7 +1014,7 @@ html{scroll-behavior:smooth;}
 .pdx-runway-mid{flex:1;min-width:140px;}
 .pdx-runway-days{font-family:var(--f-head);font-size:30px;line-height:1;letter-spacing:-.01em;}
 .pdx-runway-days small{font-family:var(--f);font-size:11px;font-weight:500;color:var(--text3);margin-left:6px;letter-spacing:0;}
-.pdx-runway-track{position:relative;height:6px;background:var(--surface3);border-radius:4px;margin-top:10px;overflow:visible;}
+.pdx-runway-track{position:relative;height:6px;background:var(--surface3);border-radius:4px;margin-top:26px;overflow:visible;}
 .pdx-runway-track-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--green));}
 .pdx-runway-today{position:absolute;top:-4px;width:2px;height:14px;background:var(--text);border-radius:2px;}
 .pdx-runway-today::after{content:'TODAY';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-family:var(--f);font-size:7.5px;color:var(--text3);letter-spacing:.06em;white-space:nowrap;}
@@ -1031,35 +1025,6 @@ html{scroll-behavior:smooth;}
 
 /* Panel shell for Sub-Status / People In Charge lists */
 .pdx-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs,10px);padding:12px 14px;}
-
-/* Sub-Status timeline — uniform card treatment for every entry (no
-   more special-cased "latest vs older" split from the old list view;
-   this reuses .pdx-panel above as its shell), matches approved concept.
-   Scoped with pdx- prefix + #proj-detail-panel so the list/card views
-   that reuse plain .substatus-* elsewhere in the app are untouched. */
-#proj-detail-panel .pdx-subline{display:flex;flex-direction:column;}
-#proj-detail-panel .pdx-subitem{display:flex;gap:11px;position:relative;padding:9px 0;}
-#proj-detail-panel .pdx-subitem:not(:last-child)::before{content:'';position:absolute;left:4.5px;top:23px;bottom:-9px;width:1px;background:var(--border2,var(--border));}
-#proj-detail-panel .pdx-subdot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0;box-shadow:0 0 0 3px var(--surface2);}
-#proj-detail-panel .pdx-subdot.ss-completed{background:var(--accent);}
-#proj-detail-panel .pdx-subdot.ss-ongoing{background:var(--blue);}
-#proj-detail-panel .pdx-subdot.ss-pending{background:var(--amber);}
-#proj-detail-panel .pdx-subdot.ss-cancelled{background:var(--text3);}
-#proj-detail-panel .pdx-subdot.ss-not-started{background:var(--border);}
-#proj-detail-panel .pdx-subinfo{flex:1;min-width:0;}
-#proj-detail-panel .pdx-subtitle{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3;}
-#proj-detail-panel .pdx-subitem.ss-cancelled .pdx-subtitle{color:var(--text3);text-decoration:line-through;text-decoration-color:var(--border2,var(--border));}
-#proj-detail-panel .pdx-submeta{display:flex;gap:7px;align-items:center;margin-top:4px;flex-wrap:wrap;}
-#proj-detail-panel .pdx-subbadge{font-family:var(--f);font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;}
-#proj-detail-panel .pdx-subbadge.ss-completed{background:var(--al);color:var(--accent);}
-#proj-detail-panel .pdx-subbadge.ss-ongoing{background:var(--blbg);color:var(--blue);}
-#proj-detail-panel .pdx-subbadge.ss-pending{background:var(--ambg);color:var(--amber);}
-#proj-detail-panel .pdx-subbadge.ss-cancelled{background:var(--surface3);color:var(--text3);}
-#proj-detail-panel .pdx-subbadge.ss-not-started{background:var(--surface3);color:var(--text3);}
-#proj-detail-panel .pdx-subcat{font-family:var(--f);font-size:9px;color:var(--text3);}
-#proj-detail-panel .pdx-subdate{font-family:var(--f);font-size:9.5px;color:var(--text3);}
-#proj-detail-panel .pdx-subnote{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5;}
-#proj-detail-panel .pdx-subacts{display:flex;gap:3px;flex-shrink:0;align-self:flex-start;}
 
 /* Avatar chip for Sales Person (reuses picColor()/picAvatar() helpers already in the app) */
 .pdx-avchip{width:20px;height:20px;border-radius:50%;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-family:var(--f);flex-shrink:0;margin-right:6px;vertical-align:middle;}
@@ -1208,10 +1173,9 @@ html{scroll-behavior:smooth;}
 /* ── Next Action Rows (inline in expanded card) ── */
 .na-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border);padding:9px 12px;margin-bottom:7px;transition:border-color .15s;}
 .na-card:last-child{margin-bottom:0;}
-.na-card.done-row{opacity:.55;}
-.na-action-text.done{text-decoration:line-through;}
 .na-card:hover{border-color:var(--border2);}
-.na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 10px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
+.na-pic-pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 9px 4px 6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;color:#fff;white-space:nowrap;border:none;position:relative;}
+.na-pic-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45);flex-shrink:0;}
 .na-pic-select-wrap{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none;min-width:140px;padding:5px;overflow:hidden;}
 .na-pic-select-wrap.open{display:block;}
 .na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);color:var(--text);}
@@ -1434,20 +1398,28 @@ html{scroll-behavior:smooth;}
 .fn-logo:hover{transform:rotate(360deg);}
 .fn-logo img{width:19px;height:auto;display:block;}
 
-.fn-items{display:flex;align-items:stretch;gap:1px;flex-wrap:wrap;justify-content:center;max-width:70vw;}
+.fn-items{display:flex;align-items:flex-end;gap:4px;flex-wrap:wrap;justify-content:center;max-width:70vw;}
 
 .fn-item{
-  position:relative; font-size:12px; font-weight:600; color:var(--text2);
-  padding:8px 13px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:.15s;
-  display:inline-flex; align-items:center; gap:6px; border:none; background:none; font-family:var(--f);
-  flex-shrink:0;
+  position:relative; color:var(--text2);
+  width:40px; height:40px; border-radius:50%; cursor:pointer; transition:background .15s,color .15s;
+  display:inline-flex; align-items:center; justify-content:center; border:none; background:none; font-family:var(--f);
+  flex-shrink:0; will-change:width,height;
 }
-.fn-item i{font-size:14px;}
+.fn-item i{font-size:17px;transition:font-size .1s;}
 #floatingNav .fn-item{ background:transparent !important; color:var(--text2) !important; }
 #floatingNav .fn-item:hover{ color:var(--text) !important; background:var(--surface2) !important; }
 #floatingNav .fn-item.active{ color:#fff !important; background:var(--fn-active-bg, var(--sidebar-bg)) !important; }
 #floatingNav .fn-item.active:hover{ background:var(--fn-active-bg, var(--sidebar-bg)) !important; }
-.fn-badge{background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;}
+.fn-tooltip{
+  position:absolute;bottom:calc(100% + 12px);left:50%;transform:translate(-50%,4px);
+  opacity:0;pointer-events:none;transition:opacity .15s ease,transform .15s ease;
+  background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  padding:4px 9px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;font-family:var(--f);
+  z-index:5;
+}
+.fn-item:hover .fn-tooltip{opacity:1;transform:translate(-50%,0);}
+.fn-badge{position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;font-family:var(--fm);min-width:13px;text-align:center;line-height:1.3;}
 
 /* More dropdown */
 .fn-more-wrap{position:relative;flex-shrink:0;}
@@ -1564,13 +1536,13 @@ html{scroll-behavior:smooth;}
   </div>
 
   <div class="fn-items fn-desktop-only">
-    <button class="fn-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i>Inquiries</button>
-    <button class="fn-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i>Projects</button>
-    <button class="fn-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i>Tasks<span class="fn-badge" id="tasks-viewall-badge" style="display:none"></span></button>
-    <button class="fn-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i>Notifications<span class="fn-badge" id="notif-nav-badge" style="display:none">0</span></button>
-    <button class="fn-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i>Dashboard</button>
+    <button class="fn-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i><span class="fn-tooltip">Inquiries</span></button>
+    <button class="fn-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i><span class="fn-tooltip">Projects</span></button>
+    <button class="fn-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="fn-tooltip">Tasks</span><span class="fn-badge" id="tasks-viewall-badge" style="display:none"></span></button>
+    <button class="fn-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="fn-tooltip">Notifications</span><span class="fn-badge" id="notif-nav-badge" style="display:none">0</span></button>
+    <button class="fn-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="fn-tooltip">Dashboard</span></button>
     <div class="fn-more-wrap">
-      <button class="fn-item" id="fn-more-toggle" onclick="toggleMoreMenu(event)"><i class="ti ti-dots"></i>More</button>
+      <button class="fn-item" id="fn-more-toggle" onclick="toggleMoreMenu(event)"><i class="ti ti-dots"></i><span class="fn-tooltip">More</span></button>
       <div class="fn-more-menu" id="pill-more-menu">
         <button class="fn-more-item nav-item" id="nav-pipeline" onclick="showPage('pipeline');closeMoreMenu()"><i class="ti ti-git-branch"></i>NPD Pipeline</button>
         <button class="fn-more-item nav-item" id="nav-calendar" onclick="showPage('calendar');closeMoreMenu()"><i class="ti ti-calendar"></i>Calendar</button>
@@ -4400,12 +4372,14 @@ function renderInquiryCard(item) {
           <span class="sbadge ${statusKey}">${statusLabel(item.status)}</span>
           ${priPill}${bdPill}${overdueBadge}
           ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
-          <span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>
+          <span class="ppill">${doneFrac||'—'}</span>
           ${delivPill}
         </div>
       </div>
-      <button class="card-open-btn" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Open detail view"><i class="ti ti-external-link"></i></button>
-      <i class="ti ti-chevron-down chevron"></i>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <button class="cact-icon" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Full View" style="width:26px;height:26px;font-size:12px;"><i class="ti ti-layout-sidebar-right"></i></button>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
     </div>
     <div class="prog-wrap"><div class="prog-bg"><div class="prog-fill" style="width:${rate}%"></div></div></div>
     <div class="card-body">
@@ -4664,6 +4638,49 @@ document.addEventListener('click', function(e) {
   if (e.target.closest('.cmd-pop-wrap, .cmd-more-wrap')) return;
   document.querySelectorAll('.cmd-pop.open, .cmd-more-pop.open').forEach(p => p.classList.remove('open'));
 });
+
+// ── Floating nav magnification dock — vanilla port, spring-lerp mimics framer-motion ──
+(function initNavDock() {
+  const dockRow = document.querySelector('#floatingNav .fn-items');
+  if (!dockRow) return;
+  const BASE = 40, MAX = 58, DISTANCE = 120;
+  let items = [], targets = [], current = [];
+
+  function refresh() {
+    items = [...dockRow.querySelectorAll('.fn-item')];
+    targets = items.map(() => BASE);
+    current = items.map(() => BASE);
+  }
+  refresh();
+
+  function falloff(dist) {
+    const t = Math.max(0, 1 - Math.abs(dist) / DISTANCE);
+    return BASE + (MAX - BASE) * t;
+  }
+
+  dockRow.addEventListener('mousemove', e => {
+    if (items.length !== dockRow.querySelectorAll('.fn-item').length) refresh();
+    const mouseX = e.clientX;
+    items.forEach((it, i) => {
+      const r = it.getBoundingClientRect();
+      targets[i] = falloff(mouseX - (r.left + r.width / 2));
+    });
+  });
+  dockRow.addEventListener('mouseleave', () => { targets = targets.map(() => BASE); });
+
+  function tick() {
+    items.forEach((it, i) => {
+      const diff = (targets[i] ?? BASE) - current[i];
+      current[i] += Math.abs(diff) > 0.3 ? diff * 0.25 : diff;
+      it.style.width = current[i] + 'px';
+      it.style.height = current[i] + 'px';
+      const icon = it.querySelector('i');
+      if (icon) icon.style.fontSize = (current[i] * 0.42) + 'px';
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
 
 // ── Duplicate Items ──
 function duplicateItem(type, id) {
@@ -4994,17 +5011,17 @@ function _renderInqDetailInner() {
   // Inline-editable header fields
   const statusKey = INQ_STATUS_MAP[inq.status]||inq.status?.toLowerCase()||'';
   document.getElementById('inq-d-code').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-code-inline" class="inq-de-header-field"
+    <span contenteditable="${canEdit}" id="inq-de-code-inline"
       onblur="saveInqField('${inq.id}','code',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:1px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
       title="${canEdit?'Click to edit':''}">${inq.code||''}</span>
     ${inq.date?` · <span contenteditable="false" style="opacity:.7;">${fmtDate(inq.date)}</span>`:''}
     ${inq.bdNum?` · BD#${inq.bdNum}`:''}`;
 
   document.getElementById('inq-d-name').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-name-inline" class="inq-de-header-field"
+    <span contenteditable="${canEdit}" id="inq-de-name-inline"
       onblur="saveInqField('${inq.id}','name',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:2px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
       title="${canEdit?'Click to edit name':''}">${inq.name||''}</span>`;
 
   document.getElementById('inq-d-badges').innerHTML = `
@@ -5037,74 +5054,43 @@ function _renderInqDetailInner() {
   let html = '';
 
   if (currentInqDTab === 'overview') {
-    // ── Delivery Runway — signature stat block, ported from project detail: ring progress (Inquiry Progress checklist) + elapsed/target countdown ──
+    // Delivery Performance
     const delivThreshY = (data.settings?.deliveryThresholdYellow)||14;
     const delivThreshR = (data.settings?.deliveryThresholdRed)||30;
     const ovPriceDate  = (inq.pipeline?.priceSubmission?.date)||'';
     const ovDelivDays  = inq.date && ovPriceDate ? Math.round((new Date(ovPriceDate+'T00:00:00') - new Date(inq.date+'T00:00:00')) / 86400000) : null;
-    const tasks = inq.tasks||[];
-    const rate = completion(tasks);
-    const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '0/0';
-    const ringR = 32, ringC = Math.round(2*Math.PI*ringR*10)/10;
-    const ringOffset = ringC - (rate/100)*ringC;
-    let daysBig = '—', daysSmall = 'no date recorded', daysColor = 'var(--text3)', trackPct = 0;
-    if (inq.date) {
-      if (ovDelivDays !== null) {
-        daysBig = ovDelivDays; daysSmall = 'days to price submission';
-        daysColor = ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
-        trackPct = 100;
-      } else {
-        const elapsed = Math.round((new Date(today) - new Date(inq.date)) / 86400000);
-        daysBig = elapsed; daysSmall = 'days elapsed · pending';
-        daysColor = elapsed>=delivThreshR?'var(--red)':elapsed>=delivThreshY?'var(--amber)':'var(--accent)';
-        trackPct = Math.max(0, Math.min(100, Math.round(elapsed/delivThreshR*100)));
-      }
-    }
-    if (inq.date || ovDelivDays !== null) {
-      html += `<div class="pdx-runway">
-        <div class="pdx-runway-head">
-          <span class="pdx-runway-label"><i class="ti ti-rocket" style="margin-right:5px;"></i>Delivery Runway</span>
-          <span class="pdx-runway-date" ${ovPriceDate ? '' : 'style="color:var(--amber);background:var(--ambg);font-weight:600;padding:2px 8px;border-radius:20px;"'}>${ovPriceDate ? 'Submitted · '+fmtDate(ovPriceDate) : 'Price not yet submitted'}</span>
+    const ovDelivColor = ovDelivDays===null?'var(--text3)':ovDelivDays>=delivThreshR?'var(--red)':ovDelivDays>=delivThreshY?'var(--amber)':'var(--accent)';
+    if (ovDelivDays !== null || inq.date) {
+      html += `<div class="proj-detail-section" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;">
+        <div>
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);margin-bottom:2px;">Delivery Performance</div>
+          <div style="font-size:11px;color:var(--text3);">Inquiry received → Price submitted${ovDelivDays===null?' (price not yet submitted)':''}</div>
         </div>
-        <div class="pdx-runway-stats">
-          <div class="pdx-ring">
-            <svg viewBox="0 0 80 80">
-              <circle class="pdx-ring-track" cx="40" cy="40" r="${ringR}"></circle>
-              <circle class="pdx-ring-fill" cx="40" cy="40" r="${ringR}" stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}"></circle>
-            </svg>
-            <div class="pdx-ring-center"><div class="pdx-ring-pct">${rate}%</div></div>
-          </div>
-          <div class="pdx-runway-mid">
-            <div class="pdx-runway-days" style="color:${daysColor}">${daysBig}<small>${daysSmall}</small></div>
-            ${inq.date ? `<div class="pdx-runway-track">
-              <div class="pdx-runway-track-fill" style="width:${trackPct}%;"></div>
-              <div class="pdx-runway-today" style="left:${trackPct}%;"></div>
-            </div>
-            <div class="pdx-runway-endcaps"><span>Received ${fmtDate(inq.date)}</span><span style="color:var(--green)">${ovPriceDate ? fmtDate(ovPriceDate)+' submitted' : 'pending'}</span></div>` : ''}
-          </div>
+        <div style="font-size:${ovDelivDays!==null?'36px':'20px'};font-weight:800;color:${ovDelivColor};line-height:1;">
+          ${ovDelivDays!==null ? ovDelivDays+'<span style="font-size:14px;font-weight:600;margin-left:3px;">days</span>' : '—'}
         </div>
       </div>`;
     }
 
-    // Basic Info — inline editable, ported to shared pd-info-grid styling
+    // Basic Info — inline editable
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Basic Info</div>
-      <div class="pd-info-grid">
-        <div class="pd-info-item"><div class="pd-info-k">Date</div>
-          ${canEdit?`<div class="pd-info-v"><input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)"></div>`:
-          `<div class="pd-info-v ${inq.date?'':'empty'}">${inq.date?fmtDate(inq.date):'—'}</div>`}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Date</span>
+          ${canEdit?`<input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:pointer;">`:
+          `<strong>${inq.date?fmtDate(inq.date):'—'}</strong>`}
         </div>
-        <div class="pd-info-item"><div class="pd-info-k">Customer</div>
-          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','customer',this.textContent)" data-ph="Customer name">${inq.customer||''}</div>`:
-          `<div class="pd-info-v ${inq.customer?'':'empty'}">${inq.customer||'—'}</div>`}
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Customer</span>
+          ${canEdit?`<input type="text" value="${inq.customer||''}" onblur="saveInqField('${inq.id}','customer',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="Customer name">`:
+          `<strong>${inq.customer||'—'}</strong>`}
         </div>
-        <div class="pd-info-item"><div class="pd-info-k">Material</div>
-          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','material',this.textContent)" data-ph="PP / HDPE / PET">${inq.material||''}</div>`:
-          `<div class="pd-info-v ${inq.material?'':'empty'}">${inq.material||'—'}</div>`}
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Material</span>
+          ${canEdit?`<input type="text" value="${inq.material||''}" onblur="saveInqField('${inq.id}','material',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="PP / HDPE / PET">`:
+          `<strong>${inq.material||'—'}</strong>`}
         </div>
-        <div class="pd-info-item"><div class="pd-info-k">BD Person</div>
-          ${canEdit?`<div class="pd-info-v" contenteditable="true" onblur="saveInqField('${inq.id}','bdPerson',this.textContent)" data-ph="BD person">${inq.bdPerson||''}</div>`:
-          `<div class="pd-info-v ${inq.bdPerson?'':'empty'}">${inq.bdPerson||'—'}</div>`}
+        <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">BD Person</span>
+          ${canEdit?`<input type="text" value="${inq.bdPerson||''}" onblur="saveInqField('${inq.id}','bdPerson',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="BD person">`:
+          `<strong>${inq.bdPerson||'—'}</strong>`}
         </div>
       </div>
     </div>`;
@@ -5159,10 +5145,10 @@ function _renderInqDetailInner() {
         const dlIcon    = isOverdue ? 'ti-alert-triangle' : 'ti-calendar';
         const dlLabel   = na.deadline ? fmtDate(na.deadline) : '+ Set deadline';
         const allPics   = cachedUserList;
-        html += `<div class="na-card${na.done?' done-row':''}" id="na-row-${na.id}">
-          <div class="ip-check ${na.done?'done':''}" onclick="toggleInqNA('${inq.id}','${na.id}')"><i class="ti ti-check"></i></div>
+        html += `<div class="na-card" id="na-row-${na.id}">
           <div style="position:relative;flex-shrink:0;">
             <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
+              <span class="na-pic-dot"></span>
               ${na.pic||'—'} <i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>
             </div>
             ${canEdit?`<div class="na-pic-select-wrap" id="na-pic-menu-${na.id}">
@@ -5170,8 +5156,8 @@ function _renderInqDetailInner() {
             </div>`:''}
           </div>
           ${canEdit
-            ? `<input type="text" class="na-action-text${na.done?' done':''}" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
-            : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;${na.done?'text-decoration:line-through;opacity:.55;':''}">${na.action||'—'}</div>`}
+            ? `<input type="text" class="na-action-text" value="${(na.action||'').replace(/"/g,'&quot;')}" onblur="saveInqNA('${inq.id}','${na.id}','action',this.value)" placeholder="Describe the action…">`
+            : `<div style="font-size:12px;color:var(--text);line-height:1.4;flex:1;">${na.action||'—'}</div>`}
           <div class="na-right">
             <div class="na-deadline-badge ${dlClass}" ${canEdit?`onclick="var el=this.querySelector('input[type=date]'); if(el){ if(el.showPicker){try{el.showPicker();}catch(e){el.focus();} } else { el.focus(); } }"`:''}>
               <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}</span>
@@ -5188,6 +5174,7 @@ function _renderInqDetailInner() {
     html += `</div>`;
 
     // Inquiry Progress (Tasks) — styled rows (NA card style)
+    const tasks = inq.tasks||[];
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Inquiry Progress <span style="font-weight:400;color:var(--text3)">(${tasks.length})</span>
         ${canEdit?`<button class="proj-detail-slabel-add" onclick="inqAddTask('${inq.id}')"><i class="ti ti-plus" style="font-size:10px"></i> Add</button>`:''}
@@ -5205,8 +5192,8 @@ function _renderInqDetailInner() {
           return `<div class="ip-row${t.done?' done-row':''}">
             <div class="ip-check ${t.done?'done':''}" onclick="toggleInqTask('${inq.id}','${t.id}')"><i class="ti ti-check"></i></div>
             <div style="position:relative;flex-shrink:0;">
-              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 9px;cursor:${canEdit?'pointer':'default'};" onclick="${canEdit?`toggleInqTaskPicMenu('${t.id}')`:''}" title="${canEdit?'Change PIC':''}">
-                ${t.pic||'—'} ${canEdit?'<i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>':''}
+              <div class="na-pic-pill" style="background:${picColor};font-size:10px;padding:3px 7px 3px 5px;cursor:${canEdit?'pointer':'default'};" onclick="${canEdit?`toggleInqTaskPicMenu('${t.id}')`:''}" title="${canEdit?'Change PIC':''}">
+                <span class="na-pic-dot"></span>${t.pic||'—'} ${canEdit?'<i class="ti ti-chevron-down" style="font-size:9px;opacity:.7;"></i>':''}
               </div>
               ${canEdit?`<div class="na-pic-select-wrap" id="ip-pic-menu-${t.id}">
                 ${cachedUserList.map(u=>`<div class="na-pic-option" onclick="setInqTaskPic('${inq.id}','${t.id}',this.textContent)">${u}</div>`).join('')}
@@ -7816,16 +7803,6 @@ function saveInqNA(inqId, naId, field, value) {
   save();
 }
 
-function toggleInqNA(inqId, naId) {
-  const inq = data.inquiries.find(x => x.id === inqId);
-  if (!inq || !can('inquiries','edit')) return;
-  const na = (inq.nextActions||[]).find(n => n.id === naId);
-  if (!na) return;
-  na.done = !na.done;
-  appendInqLog(inqId, 'done', 'circle-check', `${na.done?'Completed':'Reopened'} next action: <strong>${na.action}</strong>`);
-  save(); renderInqDetail();
-}
-
 function saveInqNADeadline(inqId, naId, newDl, oldDl) {
   const inq = data.inquiries.find(x => x.id === inqId);
   if (!inq || !can('inquiries','edit')) return;
@@ -8226,13 +8203,13 @@ function renderProjDetail() {
   // ── INLINE EDITABLE HEADER ──
   document.getElementById('pd-code').innerHTML = `
     <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','code',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:1px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
       title="${canEdit?'Click to edit code':''}">${p.code||''}</span>
-    ${p.date?` · <input type="date" value="${p.date||''}" onchange="saveProjField('${p.id}','date',this.value)" style="font-size:10px;background:none;border:none;color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;">`:' · No date'}`;
+    ${p.date?` · <input type="date" value="${p.date||''}" onchange="saveProjField('${p.id}','date',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;">`:' · No date'}`;
 
   document.getElementById('pd-name').innerHTML = `
     <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','name',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:2px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
       title="${canEdit?'Click to edit name':''}">${p.name||''}</span>`;
 
   document.getElementById('pd-badges').innerHTML = `
@@ -8304,7 +8281,7 @@ function renderProjDetail() {
             <circle class="pdx-ring-track" cx="40" cy="40" r="${ringR}"></circle>
             <circle class="pdx-ring-fill" cx="40" cy="40" r="${ringR}" stroke-dasharray="${ringC}" stroke-dashoffset="${ringOffset}"></circle>
           </svg>
-          <div class="pdx-ring-center"><div class="pdx-ring-pct">${rate}%</div><div class="pdx-ring-sub">${doneFrac}</div></div>
+          <div class="pdx-ring-center"><div class="pdx-ring-pct">${rate}%</div></div>
         </div>
         <div class="pdx-runway-mid">
           <div class="pdx-runway-days" style="color:${daysColor}">${daysBig}<small>${daysSmall}</small></div>
@@ -8405,19 +8382,19 @@ function renderProjDetail() {
         </div>
       </div>
       <div class="pdx-panel">
-      ${subs.length ? `<div class="pdx-subline">` + subs.map((ss,i) => `
-        <div class="pdx-subitem ss-${ss.status}" id="ss-item-${p.id}-${i}">
-          <div class="pdx-subdot ss-${ss.status}"></div>
-          <div class="pdx-subinfo">
-            <div class="pdx-subtitle">${ss.title}</div>
-            <div class="pdx-submeta">
-              <span class="pdx-subbadge ss-${ss.status}">${ss.status.charAt(0).toUpperCase()+ss.status.slice(1).replace('-',' ')}</span>
-              ${ss.classification?`<span class="pdx-subcat">${ss.classification}</span>`:''}
-              ${ss.date?`<span class="pdx-subdate">${fmtDate(ss.date)}</span>`:''}
+      ${subs.length ? subs.map((ss,i) => `
+        <div class="substatus-item ${(ss.status!=='completed'&&ss.status!=='cancelled')?'latest':'older'} ss-${ss.status}" id="ss-item-${p.id}-${i}">
+          <div class="substatus-dot ss-${ss.status}"></div>
+          <div class="substatus-info">
+            <div class="substatus-title">${ss.title}</div>
+            <div class="substatus-meta">
+              <span class="substatus-sbadge ss-${ss.status}">${ss.status.charAt(0).toUpperCase()+ss.status.slice(1)}</span>
+              ${ss.classification?`<span class="ms-category">${ss.classification}</span>`:''}
+              ${ss.date?`<span class="substatus-date">${fmtDate(ss.date)}</span>`:''}
+              ${(ss.status!=='completed'&&ss.status!=='cancelled')&&ss.note?`<div style="font-size:10px;color:var(--text2);margin-top:4px;">${ss.note}</div>`:''}
             </div>
-            ${ss.note?`<div class="pdx-subnote">${ss.note}</div>`:''}
           </div>
-          <div class="pdx-subacts">
+          <div class="substatus-acts">
             ${can('subStatus','edit') ? `<button class="tact-btn" onclick="toggleInlineForm('ss-edit-${p.id}-${i}')"><i class="ti ti-pencil"></i></button>` : ''}
             ${can('subStatus','delete') ? `<button class="tact-btn" onclick="inlineDeleteSubStatus('${p.id}',${i})" style="color:var(--red)"><i class="ti ti-trash"></i></button>` : ''}
           </div>
@@ -8448,7 +8425,7 @@ function renderProjDetail() {
               <button class="btn-primary" style="font-size:11px;padding:4px 12px;" onclick="inlineEditSubStatus('${p.id}',${i})">Save</button>
             </div>
           </div>
-        </div>`).join('') + `</div>`
+        </div>`).join('')
       : `<div style="font-size:11px;color:var(--text3)">No sub-statuses yet.</div>`}
       </div>
     </div>`;

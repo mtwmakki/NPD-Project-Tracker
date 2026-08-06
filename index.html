@@ -837,11 +837,15 @@ html{scroll-behavior:smooth;}
 .pd-info-item.full{grid-column:1 / -1;}
 .pd-info-k{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-family:var(--fm);margin-bottom:4px;}
 .pd-info-v{font-size:13px;color:var(--text);outline:none;}
-.pd-info-v[contenteditable="true"]{cursor:text;border-bottom:1px dashed var(--border);padding-bottom:2px;}
-.pd-info-v[contenteditable="true"]:hover{border-color:var(--accent);}
+.pd-info-v[contenteditable="true"]{cursor:text;padding-bottom:2px;}
 .pd-info-v[contenteditable="true"]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic;}
 .pd-info-v.empty{color:var(--text3);font-style:italic;}
-.pd-info-v input[type="date"]{background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--fm);font-size:12px;padding:1px 0;cursor:pointer;width:100%;}
+.pd-info-v input[type="date"]{background:none;border:none;color:var(--text);font-family:var(--fm);font-size:12px;padding:1px 0;cursor:pointer;width:100%;}
+/* Inline-edit affordance — no persistent underline; soft tint on hover, accent ring on focus */
+.ied,.pd-info-v[contenteditable="true"],.pd-info-v input[type="date"],.na-action-text,.ip-name{background:transparent;border-radius:4px;outline:none;transition:background-color .12s ease,box-shadow .12s ease;}
+.ied:hover,.pd-info-v[contenteditable="true"]:hover,.pd-info-v input[type="date"]:hover,.na-action-text:hover,.ip-name:hover{background:var(--surface3);box-shadow:0 0 0 4px var(--surface3);}
+.ied:focus,.pd-info-v[contenteditable="true"]:focus,.pd-info-v input[type="date"]:focus,.na-action-text:focus,.ip-name:focus{background:var(--al);box-shadow:0 0 0 4px var(--al),0 0 0 5px var(--accent);}
+@media(prefers-reduced-motion:reduce){.ied,.pd-info-v[contenteditable="true"],.pd-info-v input[type="date"],.na-action-text,.ip-name{transition:none;}}
 /* KIV banner */
 .kiv-banner{margin:0 20px 14px;padding:12px 14px;border-radius:var(--rs);background:var(--ambg);border:1px solid var(--amber);display:flex;gap:10px;align-items:flex-start;}
 .kiv-banner i{color:var(--amber);font-size:16px;margin-top:1px;flex-shrink:0;}
@@ -1180,8 +1184,7 @@ html{scroll-behavior:smooth;}
 .na-pic-select-wrap.open{display:block;}
 .na-pic-option{padding:7px 10px;font-size:11px;cursor:pointer;border-radius:6px;transition:background .1s;font-family:var(--f);color:var(--text);}
 .na-pic-option:hover{background:var(--surface2);}
-.na-action-text{font-size:12px;color:var(--text);background:none;border:none;border-bottom:1px dashed var(--border2);width:100%;font-family:var(--f);padding:1px 0;outline:none;line-height:1.5;flex:1;}
-.na-action-text:focus{border-bottom-color:var(--accent);}
+.na-action-text{font-size:12px;color:var(--text);background:none;border:none;width:100%;font-family:var(--f);padding:1px 0;outline:none;line-height:1.5;flex:1;}
 .na-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
 .na-deadline-badge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;position:relative;}
 .na-deadline-badge.overdue{background:var(--rebg);color:var(--red);border:1px solid var(--red);}
@@ -1201,10 +1204,8 @@ html{scroll-behavior:smooth;}
 .ip-check.done i{color:#fff;}
 .ip-check i{font-size:10px;color:transparent;}
 .ip-body{flex:1;min-width:0;}
-.ip-name{font-size:12px;background:none;border:none;border-bottom:1px dashed transparent;width:100%;font-family:var(--f);color:var(--text);padding:2px 0;outline:none;}
+.ip-name{font-size:12px;background:none;border:none;width:100%;font-family:var(--f);color:var(--text);padding:2px 0;outline:none;}
 .ip-name.done{text-decoration:line-through;opacity:.6;}
-.ip-name:focus{border-bottom-color:var(--accent);}
-.ip-name:hover{border-bottom-color:var(--border);}
 .ip-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
 .ip-deadline{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fm);cursor:pointer;position:relative;white-space:nowrap;}
 .ip-deadline.empty{background:transparent;border:1px dashed var(--border);color:var(--text3);}
@@ -5011,17 +5012,17 @@ function _renderInqDetailInner() {
   // Inline-editable header fields
   const statusKey = INQ_STATUS_MAP[inq.status]||inq.status?.toLowerCase()||'';
   document.getElementById('inq-d-code').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-code-inline"
+    <span contenteditable="${canEdit}" id="inq-de-code-inline" class="${canEdit?'ied':''}"
       onblur="saveInqField('${inq.id}','code',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:1px;"
       title="${canEdit?'Click to edit':''}">${inq.code||''}</span>
     ${inq.date?` · <span contenteditable="false" style="opacity:.7;">${fmtDate(inq.date)}</span>`:''}
     ${inq.bdNum?` · BD#${inq.bdNum}`:''}`;
 
   document.getElementById('inq-d-name').innerHTML = `
-    <span contenteditable="${canEdit}" id="inq-de-name-inline"
+    <span contenteditable="${canEdit}" id="inq-de-name-inline" class="${canEdit?'ied':''}"
       onblur="saveInqField('${inq.id}','name',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:2px;"
       title="${canEdit?'Click to edit name':''}">${inq.name||''}</span>`;
 
   document.getElementById('inq-d-badges').innerHTML = `
@@ -5077,19 +5078,19 @@ function _renderInqDetailInner() {
       <div class="proj-detail-slabel">Basic Info</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
         <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Date</span>
-          ${canEdit?`<input type="date" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:pointer;">`:
+          ${canEdit?`<input type="date" class="ied" value="${inq.date||''}" onchange="saveInqField('${inq.id}','date',this.value)" style="font-size:12px;border:none;color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:pointer;">`:
           `<strong>${inq.date?fmtDate(inq.date):'—'}</strong>`}
         </div>
         <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Customer</span>
-          ${canEdit?`<input type="text" value="${inq.customer||''}" onblur="saveInqField('${inq.id}','customer',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="Customer name">`:
+          ${canEdit?`<input type="text" class="ied" value="${inq.customer||''}" onblur="saveInqField('${inq.id}','customer',this.value)" style="font-size:12px;border:none;color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:text;" placeholder="Customer name">`:
           `<strong>${inq.customer||'—'}</strong>`}
         </div>
         <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">Material</span>
-          ${canEdit?`<input type="text" value="${inq.material||''}" onblur="saveInqField('${inq.id}','material',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="PP / HDPE / PET">`:
+          ${canEdit?`<input type="text" class="ied" value="${inq.material||''}" onblur="saveInqField('${inq.id}','material',this.value)" style="font-size:12px;border:none;color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:text;" placeholder="PP / HDPE / PET">`:
           `<strong>${inq.material||'—'}</strong>`}
         </div>
         <div><span style="color:var(--text3);display:block;font-size:10px;margin-bottom:2px;">BD Person</span>
-          ${canEdit?`<input type="text" value="${inq.bdPerson||''}" onblur="saveInqField('${inq.id}','bdPerson',this.value)" style="font-size:12px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;width:100%;" placeholder="BD person">`:
+          ${canEdit?`<input type="text" class="ied" value="${inq.bdPerson||''}" onblur="saveInqField('${inq.id}','bdPerson',this.value)" style="font-size:12px;border:none;color:var(--text);font-family:var(--f);padding:1px 0;width:100%;cursor:text;" placeholder="BD person">`:
           `<strong>${inq.bdPerson||'—'}</strong>`}
         </div>
       </div>
@@ -5106,11 +5107,11 @@ function _renderInqDetailInner() {
 
     (inq.products||[]).forEach(prod => {
       html += `<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-        ${canEdit?`<input type="text" value="${prod.name||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','name',this.value)" style="font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 0;min-width:0;">`:
+        ${canEdit?`<input type="text" class="ied" value="${prod.name||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','name',this.value)" style="font-size:11px;border:none;color:var(--text);font-family:var(--f);padding:1px 0;min-width:0;cursor:text;">`:
         `<span>${prod.name}</span>`}
-        ${canEdit?`<input type="number" value="${prod.volume||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','volume',this.value)" style="width:80px;font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px 4px;text-align:right;" placeholder="Volume">`:
+        ${canEdit?`<input type="number" class="ied" value="${prod.volume||''}" onblur="saveInqProduct('${inq.id}','${prod.id}','volume',this.value)" style="width:80px;font-size:11px;border:none;color:var(--text);font-family:var(--f);padding:1px 4px;text-align:right;cursor:text;" placeholder="Volume">`:
         `<span style="color:var(--text2);text-align:right;">${prod.volume?.toLocaleString()||'—'}</span>`}
-        ${canEdit?`<input type="number" value="${prod.cost||''}" step="0.01" onblur="saveInqProduct('${inq.id}','${prod.id}','cost',this.value)" style="width:90px;font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--accent);font-family:var(--f);padding:1px 4px;text-align:right;" placeholder="Cost (RM)">`:
+        ${canEdit?`<input type="number" class="ied" value="${prod.cost||''}" step="0.01" onblur="saveInqProduct('${inq.id}','${prod.id}','cost',this.value)" style="width:90px;font-size:11px;border:none;color:var(--accent);font-family:var(--f);padding:1px 4px;text-align:right;cursor:text;" placeholder="Cost (RM)">`:
         `<span style="color:${prod.cost?'var(--accent)':'var(--text3)'}">${prod.cost?'RM '+prod.cost.toFixed(2):'Pending'}</span>`}
         ${canEdit?`<button onclick="deleteInqProduct('${inq.id}','${prod.id}')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:0 4px;"><i class="ti ti-trash"></i></button>`:''}
       </div>`;
@@ -5122,7 +5123,7 @@ function _renderInqDetailInner() {
     html += `<div class="proj-detail-section">
       <div class="proj-detail-slabel">Inquiry Brief
         ${inq.remarkDate?`<span style="font-weight:400;color:var(--text3);font-size:10px;">· ${fmtDate(inq.remarkDate)}</span>`:''}
-        ${canEdit?`<input type="date" value="${inq.remarkDate||today}" onchange="saveInqField('${inq.id}','remarkDate',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;margin-left:6px;" title="Brief date">`:''}</div>
+        ${canEdit?`<input type="date" class="ied" value="${inq.remarkDate||today}" onchange="saveInqField('${inq.id}','remarkDate',this.value)" style="font-size:10px;border:none;color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;margin-left:6px;" title="Brief date">`:''}</div>
       ${canEdit?`<textarea onblur="saveInqField('${inq.id}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:60px;line-height:1.6;" placeholder="Write the inquiry brief here…">${inq.remark||''}</textarea>`:
       `<div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark||'<span style="color:var(--text3);">No brief yet.</span>'}</div>`}
     </div>`;
@@ -5239,7 +5240,7 @@ function _renderInqDetailInner() {
           </div>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
             <span style="font-size:10px;color:var(--text3);flex-shrink:0;">Date:</span>
-            ${canEdit?`<input type="date" value="${ph.data.date||''}" onchange="saveInqPipeline('${inq.id}','${ph.key}','date',this.value)" style="font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:var(--f);padding:1px;cursor:pointer;">`:
+            ${canEdit?`<input type="date" class="ied" value="${ph.data.date||''}" onchange="saveInqPipeline('${inq.id}','${ph.key}','date',this.value)" style="font-size:11px;border:none;color:var(--text);font-family:var(--f);padding:1px;cursor:pointer;">`:
             `<span style="font-size:11px;color:var(--text2);">${ph.data.date?fmtDate(ph.data.date):'Not recorded'}</span>`}
           </div>
           ${canEdit?`<textarea onblur="saveInqPipeline('${inq.id}','${ph.key}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:11px;font-family:var(--f);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:6px 8px;resize:vertical;min-height:40px;color:var(--text2);" placeholder="Notes…">${ph.data.remark||''}</textarea>`:
@@ -8202,14 +8203,14 @@ function renderProjDetail() {
 
   // ── INLINE EDITABLE HEADER ──
   document.getElementById('pd-code').innerHTML = `
-    <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','code',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:1px;"
+    <span contenteditable="${canEdit}" class="${canEdit?'ied':''}" onblur="saveProjField('${p.id}','code',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:1px;"
       title="${canEdit?'Click to edit code':''}">${p.code||''}</span>
-    ${p.date?` · <input type="date" value="${p.date||''}" onchange="saveProjField('${p.id}','date',this.value)" style="font-size:10px;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;">`:' · No date'}`;
+    ${p.date?` · <input type="date" class="ied" value="${p.date||''}" onchange="saveProjField('${p.id}','date',this.value)" style="font-size:10px;border:none;color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;">`:' · No date'}`;
 
   document.getElementById('pd-name').innerHTML = `
-    <span contenteditable="${canEdit}" onblur="saveProjField('${p.id}','name',this.textContent)"
-      style="outline:none;cursor:${canEdit?'text':'default'};border-bottom:${canEdit?'1px dashed var(--border)':'none'};padding-bottom:2px;"
+    <span contenteditable="${canEdit}" class="${canEdit?'ied':''}" onblur="saveProjField('${p.id}','name',this.textContent)"
+      style="outline:none;cursor:${canEdit?'text':'default'};padding-bottom:2px;"
       title="${canEdit?'Click to edit name':''}">${p.name||''}</span>`;
 
   document.getElementById('pd-badges').innerHTML = `
@@ -10116,6 +10117,10 @@ async function doLogin() {
   errEl.textContent = '';
   btn.disabled = true; btn.textContent = 'Signing in…';
   try {
+    // SESSION persistence: the login survives a page refresh but is cleared
+    // when the tab is closed. Keeps the original "don't stay signed in after
+    // closing" intent without logging the user out on every reload.
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
     await firebase.auth().signInWithEmailAndPassword(email, pw);
     // onAuthStateChanged will handle the rest
   } catch(e) {
@@ -10295,8 +10300,9 @@ function startInactivityTimer() {
   clearInactivityTimer();
   INACTIVITY_EVENTS.forEach(e => document.addEventListener(e, resetInactivityTimer, { passive:true }));
   scheduleInactivityTimeout();
-  // Clear session on tab close
-  window.addEventListener('beforeunload', () => { firebase.auth().signOut(); });
+  // Session is cleared on tab close by SESSION auth persistence (set in doLogin),
+  // not by a beforeunload signOut — beforeunload also fires on reload, which
+  // signed the user out on every page refresh.
 }
 
 function scheduleInactivityTimeout() {

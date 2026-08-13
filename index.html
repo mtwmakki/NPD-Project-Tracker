@@ -227,11 +227,14 @@ textarea.finput{resize:vertical;min-height:64px;line-height:1.5;}
 .page > #pipeline-targets,.page > #pipeline-kanban-wrap,.page > #pipeline-timeline-wrap{padding-left:28px;padding-right:28px;}
 .page > #cl-filter-wrap{padding-left:0;padding-right:0;}
 .page.active{display:block;}
-.notif-wrap{padding:10px 11px 0;}
-.notif-banner{background:var(--rebg);border:1px solid var(--red);border-radius:var(--rs);padding:9px 11px;display:flex;gap:9px;align-items:flex-start;}
+.notif-wrap{padding:calc(72px + env(safe-area-inset-top)) 11px 0;}
+.notif-banner{background:var(--rebg);border:1px solid var(--red);border-radius:var(--rs);padding:9px 30px 9px 11px;display:flex;gap:9px;align-items:flex-start;}
 .notif-banner i{color:var(--red);font-size:15px;flex-shrink:0;margin-top:1px;}
 .notif-title{font-size:11px;font-weight:600;color:var(--red);margin-bottom:3px;}
 .notif-item{font-size:11px;color:var(--text);line-height:1.6;}
+#notif-list{max-height:220px;overflow-y:auto;padding-right:4px;}
+#notif-list::-webkit-scrollbar{width:4px;}
+#notif-list::-webkit-scrollbar-thumb{background:var(--red);border-radius:4px;opacity:.4;}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:6px;flex-wrap:wrap;}
 .sec-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm);}
 .btn-row{display:flex;gap:6px;align-items:center;}
@@ -1485,10 +1488,53 @@ html{scroll-behavior:smooth;}
 body{padding-bottom:env(safe-area-inset-bottom);}
 
 @media (max-width:900px){
-  /* Grids that assumed desktop width — collapse to a single column */
-  .pipeline-target-row{grid-template-columns:1fr;}
+  /* Grids that assumed desktop width — collapse toward a single column.
+     pipeline-target-row was forced straight to 1 column here, which on
+     the Fold's 673px unfolded screen wastes the extra width and makes
+     the target cards look like a stretched phone layout instead of the
+     small-tablet-ish canvas it actually has. Match pm-dash/frow3 below:
+     stay 2-up down to 600px, only go fully 1-col on true phone widths
+     (handled in the 600px tier further down). */
+  .pipeline-target-row{grid-template-columns:1fr 1fr;}
   .pm-dash{grid-template-columns:1fr 1fr;}
   .frow3{grid-template-columns:1fr 1fr;}
+
+  /* Project/inquiry detail "floating window" — it's positioned with a
+     hardcoded left:280px left over from the old sidebar layout, and that
+     same 280px gets re-applied by resetWindowPosition()/drag-to-move via
+     inline styles. On a phone that shoves nearly the whole panel off the
+     right edge (only a sliver stays on-screen, text wrapping one letter
+     per line). Force it to a full-screen sheet on narrow viewports —
+     !important is required to beat the inline style JS sets. */
+  .proj-detail{
+    position:fixed !important;
+    inset:0 !important;
+    top:0 !important;
+    left:0 !important;
+    width:100% !important;
+    max-width:100% !important;
+    height:100% !important;
+    max-height:100% !important;
+    border-radius:0 !important;
+  }
+  .proj-detail-header{padding-top:calc(18px + env(safe-area-inset-top));}
+  .proj-drag-handle{display:none;}
+  .proj-clip-btn{display:none;}
+  /* proj-detail-close was a 20px-icon/2px-padding hit box (~24px) — too
+     small to reliably tap on the full-screen mobile sheet. Pad it out to
+     a proper touch target without changing its visual icon size. */
+  .proj-detail-close{padding:12px;margin:-12px -10px -12px 0;}
+  /* pd-tab strip was ~28px tall (7px vertical padding + 11px text) —
+     bump padding so each tab is a comfortable ~44px tap target. */
+  .pd-tab,#proj-detail-panel #pd-tabs .pd-tab{padding:13px 14px;}
+
+  /* Floating-nav hamburger + logo are the only two controls left on a
+     collapsed pill nav below 900px, both sized at 32px — under the
+     44px touch-target floor. Grow the tap area via padding/box-sizing
+     rather than blowing up the icon, so the pill still reads compact. */
+  .fn-mobile-toggle{width:44px;height:44px;}
+  .fn-logo{width:44px;height:44px;}
+  .fn-logo img{width:22px;}
 }
 
 @media (max-width:600px){
@@ -1501,6 +1547,11 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   .page-header-right{padding-top:0;}
   .page-header-avatar .page-header-av-name,.page-header-avatar .page-header-av-role{display:none;}
 
+  .notif-wrap{padding:calc(60px + env(safe-area-inset-top)) 10px 0;}
+  #notif-list{max-height:160px;}
+  .notif-title{font-size:10.5px;}
+  .notif-item{font-size:10.5px;line-height:1.5;}
+
   .frow2,.frow3,.stat-grid,.pm-dash,.pipeline-target-row,.pd-stats{grid-template-columns:1fr;}
   .pd-stats{grid-template-columns:repeat(2,1fr);}
 
@@ -1512,8 +1563,24 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   .modal{border-radius:16px 16px 0 0;max-height:92vh;}
   .overlay{padding:0;align-items:flex-end;}
   .overlay .modal{max-width:100%;}
+  /* The bottom-sheet treatment above needs a visual "this slides down"
+     affordance — .mhandle exists in the base stylesheet (display:none)
+     but nothing ever used it. Draw the handle bar with a pseudo-element
+     instead of touching every modal template in the app. */
+  .overlay .modal::before{content:'';display:block;flex-shrink:0;width:36px;height:4px;border-radius:2px;background:var(--border);margin:10px auto 2px;}
 
   .login-card{padding:26px 18px;max-width:100%;}
+
+  /* modal-close-btn was an 18px icon in 6px of padding (~30px hit box) —
+     grow it to a real touch target on the bottom-sheet modals. */
+  .modal-close-btn{padding:13px;}
+
+  /* .search-results is a fixed 380px box anchored right:0 against its
+     34px search-button wrap — on a 393px phone that's flush edge-to-edge
+     with zero margin, and on the Fold cover screen (344px) it runs off
+     the LEFT edge by ~35px, clipping results. Decouple it from that
+     cramped anchor and pin it to the viewport instead. */
+  .search-results{position:fixed;left:10px;right:10px;top:calc(100px + env(safe-area-inset-top));width:auto;max-width:none;}
 
   .floating-nav{max-width:96vw;padding:5px;}
   .fn-items{max-width:60vw;}
@@ -1541,7 +1608,10 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   .floating-nav{padding:4px;gap:1px;}
   .fn-item{width:32px;height:32px;}
   .fn-item i{font-size:15px;}
-  .fn-logo{width:28px;height:28px;}
+  /* fn-logo/fn-mobile-toggle stay at the 44px touch-target size set in the
+     900px tier — the Fold cover screen is the device that most needs the
+     tap area, not less of it. Only the image inside shrinks a touch. */
+  .fn-logo img{width:20px;}
   .fn-user{padding:4px;gap:4px;}
   .fn-user-avatar{width:20px;height:20px;}
 

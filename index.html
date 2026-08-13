@@ -1469,7 +1469,84 @@ html{scroll-behavior:smooth;}
 .fn-more-menu .nav-item:hover{background:var(--surface2);color:var(--text);}
 .fn-more-menu .nav-item.active{background:var(--al);color:var(--accent);}
 
+/* ══════════════════════════════════════════════
+   MOBILE / SMALL-SCREEN RESPONSIVE LAYER
+   Targets phones (iPhone 15 Pro ≈393×852) and the
+   Galaxy Z Fold 7's cover screen (≈344×882, folded)
+   and inner screen (≈673×841, unfolded — behaves
+   like a small tablet and mostly rides the 900px
+   tier already used by the floating nav above).
+   Respects notch / home-indicator safe areas.
+   ══════════════════════════════════════════════ */
 
+/* Safe-area padding for notched / gesture-bar devices, all widths */
+.floating-nav{top:calc(16px + env(safe-area-inset-top));}
+.fab-btn{bottom:calc(28px + env(safe-area-inset-bottom));right:calc(28px + env(safe-area-inset-right));}
+body{padding-bottom:env(safe-area-inset-bottom);}
+
+@media (max-width:900px){
+  /* Grids that assumed desktop width — collapse to a single column */
+  .pipeline-target-row{grid-template-columns:1fr;}
+  .pm-dash{grid-template-columns:1fr 1fr;}
+  .frow3{grid-template-columns:1fr 1fr;}
+}
+
+@media (max-width:600px){
+  html,body{overflow-x:hidden;}
+  .page-header{padding:60px 14px 12px;}
+  .page-header-title{font-size:20px;}
+  .page-header-sub{font-size:10.5px;}
+  .page-header-divider{margin:0 14px 4px;top:100px;}
+  .page-header-actions{padding:0 14px 12px;top:101px;flex-wrap:wrap;}
+  .page-header-right{padding-top:0;}
+  .page-header-avatar .page-header-av-name,.page-header-avatar .page-header-av-role{display:none;}
+
+  .frow2,.frow3,.stat-grid,.pm-dash,.pipeline-target-row,.pd-stats{grid-template-columns:1fr;}
+  .pd-stats{grid-template-columns:repeat(2,1fr);}
+
+  .cards-grid,.mtasks-grid,.notif-cards-grid{grid-template-columns:1fr;}
+
+  .cal-grid{gap:1px;}
+  .cal-grid > *{font-size:10px;padding:2px !important;}
+
+  .modal{border-radius:16px 16px 0 0;max-height:92vh;}
+  .overlay{padding:0;align-items:flex-end;}
+  .overlay .modal{max-width:100%;}
+
+  .login-card{padding:26px 18px;max-width:100%;}
+
+  .floating-nav{max-width:96vw;padding:5px;}
+  .fn-items{max-width:60vw;}
+  .fn-item{width:36px;height:36px;}
+  .fn-user-name{display:none;}
+  .fn-user{padding:5px;}
+
+  .pipeline-col{flex:0 0 210px;}
+  .fab-btn{width:46px;height:46px;bottom:calc(18px + env(safe-area-inset-bottom));right:18px;}
+}
+
+@media (max-width:380px){
+  /* Galaxy Z Fold 7 cover screen (~344px wide, folded) and other
+     very narrow phones — trim further so nothing clips or overlaps */
+  body{font-size:13px;}
+  .page-header{padding:56px 10px 10px;}
+  .page-header-title{font-size:18px;}
+  .page-header-divider{margin:0 10px 4px;}
+  .page-header-actions{padding:0 10px 10px;}
+  .page-header-filters{gap:4px;}
+
+  .pd-stats{grid-template-columns:1fr 1fr;}
+  .pipeline-col{flex:0 0 180px;}
+
+  .floating-nav{padding:4px;gap:1px;}
+  .fn-item{width:32px;height:32px;}
+  .fn-item i{font-size:15px;}
+  .fn-logo{width:28px;height:28px;}
+  .fn-user{padding:4px;gap:4px;}
+  .fn-user-avatar{width:20px;height:20px;}
+
+  .login-card{padding:20px 14px;}
+}
 
 </style>
 </head>

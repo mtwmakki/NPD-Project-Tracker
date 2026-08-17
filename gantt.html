@@ -189,7 +189,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
 .seg-tag.Packaging{background:#FDF0FF;color:#7E22CE}
 .seg-tag.Logistics{background:#E0F2FE;color:#075985}
 .pred-dd-wrap{position:relative}
-.pred-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-size:11px;color:var(--text);min-height:30px;user-select:none;transition:border-color .12s}
+.pred-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-input);cursor:pointer;font-size:11px;color:var(--text-main);min-height:30px;user-select:none;transition:border-color .12s}
 .pred-dd-trigger:hover,.pred-dd-trigger.open{border-color:var(--blue)}
 .pred-dd-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pred-dd-label.placeholder{color:var(--text-hint)}
@@ -198,10 +198,10 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
 .pred-dd-backdrop{position:fixed;inset:0;z-index:2147483646;display:none;background:rgba(0,0,0,0.4)}
 .pred-dd-backdrop.open{display:block}
 .pred-dd-float{position:fixed;display:none;flex-direction:column;background:#ffffff;border:1px solid #cccccc;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.35);z-index:2147483647;overflow-y:auto;max-height:220px;min-width:240px}
-.pred-dd-item{display:flex;align-items:center;gap:8px;padding:6px 11px;cursor:pointer;font-size:11px;color:var(--text)}
-.pred-dd-item:hover{background:var(--surface2)}
+.pred-dd-item{display:flex;align-items:center;gap:8px;padding:6px 11px;cursor:pointer;font-size:11px;color:var(--text-main)}
+.pred-dd-item:hover{background:var(--g100)}
 .pred-dd-item input{accent-color:var(--blue);width:13px;height:13px;flex-shrink:0;cursor:pointer}
-.pred-dd-week{font-size:9.5px;color:var(--text-hint);font-family:var(--fm);margin-left:auto;flex-shrink:0}
+.pred-dd-week{font-size:9.5px;color:var(--text-hint);font-family:'DM Mono',monospace;margin-left:auto;flex-shrink:0}
 .pred-dd-sep{height:1px;background:var(--border);margin:2px 0}
 .sb-mode-bar{display:flex;align-items:center;gap:6px;padding:8px 14px 6px;border-bottom:1px solid var(--border);background:var(--bg-sb);flex-shrink:0}
 .sb-mode-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--g50);color:var(--text-sub);font-family:'DM Sans',sans-serif;transition:all .14s}
@@ -257,6 +257,15 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
           <div><label>Start Date</label><input type="date" id="iDate" onchange="renderGantt();ganttAutoSave()"></div>
         </div>
         <div class="f" style="margin-bottom:0"><label>Prepared By</label><input type="text" id="iPrep" placeholder="e.g. Ahmad Fadzli" oninput="renderGantt();ganttAutoSave()"></div>
+        <!-- Backward scheduling: drive the whole plan from a delivery date -->
+        <div class="f" style="margin-top:11px;margin-bottom:0;padding-top:10px;border-top:1px dashed var(--border)">
+          <label>Target Delivery Date <span style="font-weight:400;color:var(--text-hint)">— work backwards</span></label>
+          <div style="display:flex;gap:5px;align-items:center;margin-top:3px">
+            <input type="date" id="iDelivery" onchange="previewBackSchedule()" style="flex:1 1 auto;min-width:0">
+            <button onclick="applyBackSchedule()" style="flex:0 0 auto;padding:5px 10px;font-size:10.5px;font-weight:600;color:#fff;background:var(--blue);border:none;border-radius:5px;cursor:pointer">Apply</button>
+          </div>
+          <p id="backSchedMsg" style="font-size:10px;color:var(--text-hint);margin:4px 0 0;line-height:1.45"></p>
+        </div>
         <div class="f" style="margin-top:9px;margin-bottom:0">
           <label>Partner Logo</label>
           <div style="display:flex;gap:7px;margin-top:4px">
@@ -364,8 +373,8 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
       <input type="file" id="xlsxIn" accept=".xlsx" style="display:none" onchange="importXLSX(this)">
       <button class="btnx" onclick="ganttSaveToFirebase()" title="Save to cloud">&#9729; Save</button>
       <span id="ganttSaveStatus" style="font-size:11px;color:#999;margin-left:4px;"></span>
-      <button id="logRegisterBtn" onclick="registerLog()" style="display:none;padding:6px 8px;font-size:10px;font-weight:700;background:#1B3A6B;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:var(--f);">Register Log</button>
-      <button id="logViewBtn" onclick="openLogViewer()" style="display:none;padding:6px 8px;font-size:10px;font-weight:600;background:var(--surface);color:var(--text-sub);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:var(--f);">View Log</button>
+      <button id="logRegisterBtn" onclick="registerLog()" style="display:none;padding:6px 8px;font-size:10px;font-weight:700;background:#1B3A6B;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;">Register Log</button>
+      <button id="logViewBtn" onclick="openLogViewer()" style="display:none;padding:6px 8px;font-size:10px;font-weight:600;background:var(--bg-input);color:var(--text-sub);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;">View Log</button>
     </div>
   </aside>
 
@@ -499,6 +508,8 @@ function ganttLoadFromFirebase() {
         if (d.iProj) document.getElementById('iProj').value = d.iProj;
         if (d.iRef)  document.getElementById('iRef').value  = d.iRef;
         if (d.iPrep) document.getElementById('iPrep').value = d.iPrep;
+        if (d.iDelivery && document.getElementById('iDelivery')) document.getElementById('iDelivery').value = d.iDelivery;
+        if (d.phaseDeadlines) phaseDeadlines = d.phaseDeadlines;
         if (d.activeLogo) { activeLogo = d.activeLogo; }
         PORDER.forEach(function(p) {
           var el = document.querySelector('.ppill[data-ph="'+p+'"]');
@@ -538,6 +549,8 @@ function ganttSaveToFirebase() {
     iProj: document.getElementById('iProj').value,
     iRef: document.getElementById('iRef').value,
     iPrep: document.getElementById('iPrep').value,
+    iDelivery: (document.getElementById('iDelivery')||{}).value||'',
+    phaseDeadlines: phaseDeadlines,
     savedAt: new Date().toISOString()
   };
   fetch(SHEETS_BRIDGE_URL + '?action=ganttWrite', {
@@ -583,7 +596,7 @@ function computeCriticalPath(starts){
   if(!tasks.length) return {};
   // Forward pass to get early finish
   var ef={}, es={};
-  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; ef[t.id]=es[t.id]+(t.dur||0); });
+  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; ef[t.id]=es[t.id]+durW(t); });
   // Find project end
   var projEnd=0; tasks.forEach(function(t){projEnd=Math.max(projEnd,ef[t.id]);});
   // Backward pass - late start/finish
@@ -599,7 +612,7 @@ function computeCriticalPath(starts){
         lf[t.id]=Math.min(lf[t.id],(ls[succ.id]!==undefined?ls[succ.id]:projEnd)-(succ.lag||0));
       }
     });
-    ls[t.id]=lf[t.id]-(t.dur||0);
+    ls[t.id]=lf[t.id]-durW(t);
   }
   // Float = LS - ES; critical if float == 0
   var crit={};
@@ -610,17 +623,130 @@ function computeCriticalPath(starts){
 /* ---- Dependency engine ---- */
 function migratePreds(t){if(!t.preds){t.preds=t.pred&&t.pred!=='null'&&t.pred!==null?[t.pred]:[];delete t.pred;}}
 function resolvePredsForTask(t,idx){migratePreds(t);var preds=t.preds||[];if(!preds.length){var myPI=PORDER.indexOf(t.phase),isFirst=true;for(var fi=0;fi<idx;fi++){if(tasks[fi].phase===t.phase){isFirst=false;break;}}if(isFirst&&myPI>0){for(var pi2=myPI-1;pi2>=0;pi2--){var pp2=PORDER[pi2];if(!activePhases[pp2]) continue;var lastId=null;for(var li=0;li<tasks.length;li++){if(tasks[li].phase===pp2) lastId=tasks[li].id;}if(lastId!==null) return [lastId];}}return [];}var res=[];preds.forEach(function(p){if(p==='prev'){for(var i=idx-1;i>=0;i--) if(tasks[i].phase===t.phase){res.push(tasks[i].id);break;}}else if(p&&p!=='null'){var n=+p;if(!isNaN(n)) res.push(n);}});return res;}
+/* Duration in WEEKS — the unit the whole schedule/render pipeline works in.
+   t.dur is stored in whatever unit t.durUnit says, so every consumer that
+   treats a duration as weeks MUST go through this. (5-day work week.) */
+function durW(t){
+  if(!t) return 0;
+  var d=+t.dur||0;
+  return t.durUnit==='days'?d/5:d;
+}
+/* Round to 1 decimal — week math with day-based tasks produces long floats. */
+function r1(n){return Math.round((+n||0)*10)/10;}
+
+/* ══════════════════════════════════════════════════════
+   DATE ↔ WEEK BRIDGE
+   The scheduler works in fractional week offsets (week 1 = project start).
+   These convert between that and real calendar dates so tasks can be
+   pinned to, and phases deadlined against, actual dates.
+   ══════════════════════════════════════════════════════ */
+var MS_WEEK=7*24*3600*1000;
+/* Parse a yyyy-mm-dd input value as LOCAL midnight (not UTC) — using
+   new Date('2026-05-04') would shift the day backwards in +08 Malaysia. */
+function parseDateLocal(str){
+  if(!str) return null;
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str).trim());
+  if(!m) return null;
+  var d=new Date(+m[1],+m[2]-1,+m[3]);
+  return isNaN(d.getTime())?null:d;
+}
+function toISODate(d){
+  if(!d||isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+/* Project start date — the anchor for week 1. */
+function projStartDate(){
+  var el=document.getElementById('iDate');
+  return (el&&parseDateLocal(el.value))||new Date();
+}
+/* Week offset (1-based, fractional) for a calendar date. */
+function weekFromDate(dateStr,sd){
+  var d=parseDateLocal(dateStr); if(!d) return null;
+  sd=sd||projStartDate();
+  return ((d.getTime()-sd.getTime())/MS_WEEK)+1;
+}
+/* Calendar date at the start of a given (1-based, fractional) week. */
+function dateFromWeek(w,sd){
+  sd=sd||projStartDate();
+  return new Date(sd.getTime()+((+w||1)-1)*MS_WEEK);
+}
+function fmtDateShort(d){
+  if(!d||isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'2-digit'});
+}
+
+/* Per-phase deadline overrides: {phaseKey: 'yyyy-mm-dd'}. A phase deadline
+   is expressed as an effective pin on that phase's LAST task — the task
+   must END on the deadline — which lets it reuse the pin + conflict logic
+   below rather than being a second, parallel scheduling path. */
+var phaseDeadlines={};
+function lastTaskIdOfPhase(ph){
+  var id=null;
+  for(var i=0;i<tasks.length;i++) if(tasks[i].phase===ph) id=tasks[i].id;
+  return id;
+}
+/* The pinned START week for a task, from either its own pin or an
+   inherited phase deadline. Returns null when the task is free-floating. */
+function pinnedStartWeek(t,sd){
+  if(!t) return null;
+  if(t.pinDate){
+    var w=weekFromDate(t.pinDate,sd);
+    if(w!==null) return w;
+  }
+  var dl=phaseDeadlines[t.phase];
+  if(dl&&lastTaskIdOfPhase(t.phase)===t.id){
+    var we=weekFromDate(dl,sd);
+    if(we!==null) return we-durW(t); // deadline is an END date
+  }
+  return null;
+}
+
+/* Conflict map from the last computeStarts() run: taskId -> {pinned, needed}
+   where a predecessor chain demanded a later start than the pin allows. */
+var pinConflicts={};
+
 function computeStarts(){
-  var starts={};
+  var starts={}; var sd=projStartDate(); pinConflicts={};
   for(var i=0;i<tasks.length;i++){
     var t=tasks[i];migratePreds(t);var s=1;
     var myPI=PORDER.indexOf(t.phase);
-    for(var pi=0;pi<myPI;pi++){var pp=PORDER[pi];if(!activePhases[pp]) continue;for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+(tasks[j].dur||0));}
-    var durW2=t.durUnit==='days'?t.dur/5:(t.dur||0);
-    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined){var p2w=p2.durUnit==='days'?p2.dur/5:(p2.dur||0);s=Math.max(s,(starts[p2.id]||1)+p2w+(t.lag||0));}});
+    for(var pi=0;pi<myPI;pi++){var pp=PORDER[pi];if(!activePhases[pp]) continue;for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+durW(tasks[j]));}
+    var durW2=durW(t);
+    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined){s=Math.max(s,(starts[p2.id]||1)+durW(p2)+(t.lag||0));}});
+    /* Pin wins over the dependency-driven start (Adam's call). We still keep
+       the dependency result so an impossible pin is surfaced, not silently
+       swallowed — a pin that starts before its predecessor finishes is a
+       real-world overlap the planner needs to see. */
+    var pw=pinnedStartWeek(t,sd);
+    if(pw!==null){
+      if(s>pw+0.01) pinConflicts[t.id]={pinned:r1(pw),needed:r1(s)};
+      s=pw;
+    }
     starts[t.id]=s; t._durW=durW2;
   }
   return starts;
+}
+
+/* ---- Backward scheduling ----
+   Forward-schedule first to learn the project's natural length, then derive
+   the start date that makes it land exactly on the target delivery date. */
+function projectSpanWeeks(){
+  var starts=computeStarts(), mn=Infinity, mx=0;
+  tasks.forEach(function(t){
+    var s=starts[t.id]||1;
+    if(s<mn) mn=s;
+    if(s+durW(t)>mx) mx=s+durW(t);
+  });
+  if(!isFinite(mn)) return 0;
+  return mx-mn;
+}
+/* Returns {requiredStart:Date, span:weeks, inPast:bool} or null. */
+function backScheduleFromDelivery(deliveryStr){
+  var dd=parseDateLocal(deliveryStr); if(!dd) return null;
+  var span=projectSpanWeeks(); if(!span) return null;
+  var reqStart=new Date(dd.getTime()-span*MS_WEEK);
+  var today=new Date(); today.setHours(0,0,0,0);
+  return {requiredStart:reqStart, span:r1(span), inPast:reqStart<today};
 }
 function resolvePred(t,idx){
   // Shim: delegates to multi-pred system, returns first pred only
@@ -751,21 +877,31 @@ function renderPanel(){
     if(t.phase!==lastPh){
       var pc=PC[t.phase];
       html+='<div class="phdr"><span style="color:'+pc.text+'">'+PLABEL[t.phase].toUpperCase()+' PHASE</span><div class="phdr-line"></div><button onclick="addTaskToPhase(\''+t.phase+'\')" style="flex-shrink:0;padding:2px 8px;font-size:10px;font-weight:600;color:'+pc.text+';background:'+pc.light+';border:1px solid '+pc.bar+';border-radius:4px;cursor:pointer">+ Task</button><button onclick="addTaskToPhase(\''+t.phase+'\',true)" style="flex-shrink:0;padding:2px 7px;font-size:10px;font-weight:600;color:#7C3AED;background:#EDE9FE;border:1px solid #c4b5fd;border-radius:4px;cursor:pointer">◆</button></div>';
+      /* Per-phase deadline override — pins the phase's last task to END here. */
+      var phDl=phaseDeadlines[t.phase]||'';
+      var lastIdOfPh=lastTaskIdOfPhase(t.phase);
+      var phConf=lastIdOfPh!==null?pinConflicts[lastIdOfPh]:null;
+      html+='<div style="display:flex;gap:5px;align-items:center;margin:0 0 7px;padding-left:2px">';
+      html+='<span style="font-size:9.5px;font-weight:600;color:var(--text-hint);flex-shrink:0">Must finish by</span>';
+      html+='<input type="date" value="'+phDl+'" onchange="updPhaseDeadline(\''+t.phase+'\',this.value)" style="flex:1 1 auto;min-width:0;font-family:\'DM Mono\',monospace;font-size:10px;padding:2px 5px;background:var(--white);border:1px solid '+(phDl?pc.bar:'var(--border)')+';border-radius:4px;color:var(--text-main)">';
+      if(phDl) html+='<button onclick="updPhaseDeadline(\''+t.phase+'\',\'\')" title="Clear phase deadline" style="flex:0 0 auto;padding:2px 6px;font-size:9.5px;color:var(--text-hint);background:var(--bg-input);border:1px solid var(--border);border-radius:4px;cursor:pointer">&times;</button>';
+      html+='</div>';
+      if(phDl&&phConf) html+='<p style="font-size:9.5px;color:#B91C1C;font-weight:600;margin:-3px 0 7px;padding-left:2px">&#9888; Phase cannot finish that early - needs W'+phConf.needed+'.</p>';
       lastPh=t.phase;
     }
     var sw=starts[t.id]||1;
-    var durInW=(t.durUnit==='days'?t.dur/5:(t.dur||0));
+    var durInW=durW(t);
     var isOpen=!!expanded[t.id];
     migratePreds(t); var pid=resolvePredsForTask(t,i)[0]||null; var predT=pid?getById(pid):null; var predIdx=predT?getIdx(predT.id):-1;
-    var weekTag='W'+sw+(durInW>0?' - W'+(Math.round((sw+durInW)*10)/10):'');
+    var weekTag='W'+r1(sw)+(durInW>0?' - W'+r1(sw+durInW):'');
     var segTag=t.seg?('<span class="seg-tag '+t.seg+'">'+t.seg+'</span>'):'';
 
     /* Variance chip in header (actual mode only) */
     var varChip='';
     if(scheduleMode==='actual'&&(t.actStart||t.actDur)){
-      var aStart=t.actStart||sw; var aDur=(t.actDur!==undefined&&t.actDur>0)?t.actDur:t.dur;
-      var aEnd=aStart+aDur; var bEnd=sw+t.dur;
-      var slip=aEnd-bEnd;
+      var aStart=t.actStart||sw; var aDur=(t.actDur!==undefined&&t.actDur>0)?t.actDur:durW(t);
+      var aEnd=aStart+aDur; var bEnd=sw+durW(t);
+      var slip=r1(aEnd-bEnd);
       if(slip>0) varChip='<span class="variance-chip delay">+'+slip+'w</span>';
       else if(slip<0) varChip='<span class="variance-chip early">'+slip+'w</span>';
       else varChip='<span class="variance-chip ontrack">&#10003;</span>';
@@ -783,7 +919,11 @@ function renderPanel(){
     html+='</div>';
     html+='<div class="'+(isOpen?'tbody open':'tbody')+'">';
     html+='<div class="tf" style="margin-top:4px"><label>Task Name</label><input type="text" value="'+eh(t.name)+'" data-id="'+t.id+'" data-field="name" onchange="updField(this)"></div>';
-    html+='<div class="tgrid4">';
+    /* Duration holds two controls (number + unit select) in one cell, so it
+       needs a wider track than the single-control fields — at an even 1fr
+       the number input collapsed to ~21px and the digits were hidden behind
+       the native spinner arrows. */
+    html+='<div class="tgrid4" style="grid-template-columns:1fr 1fr 1.6fr 0.9fr">';
     html+='<div class="tf"><label>Phase</label><select onchange="updPhase('+t.id+',this.value)">';
     PORDER.forEach(function(p){if(!activePhases[p]) return; html+='<option value="'+p+'"'+(t.phase===p?' selected':'')+'>'+PLABEL[p]+'</option>';});
     html+='</select></div>';
@@ -797,12 +937,25 @@ function renderPanel(){
     html+='</div>';
     var dUnit=t.durUnit||'weeks';
     html+='<div class="tf"><label>Duration</label><div style="display:flex;gap:4px;align-items:center">';
-    html+='<input type="number" value="'+t.dur+'" min="0" max="999" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)" style="flex:1">';
-    html+='<select data-id="'+t.id+'" onchange="updDurUnit(this)" style="width:54px;font-size:10px;padding:3px 2px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text)">';
+    html+='<input type="number" value="'+t.dur+'" min="0" max="999" step="0.1" data-id="'+t.id+'" data-field="dur" data-num="1" onchange="updField(this)" style="flex:1 1 auto;min-width:42px">';
+    html+='<select data-id="'+t.id+'" onchange="updDurUnit(this)" style="width:46px;flex:0 0 46px;font-size:10px;padding:3px 2px;border:1px solid var(--border);border-radius:5px;background:var(--bg-input);color:var(--text-main)">';
     html+='<option value="weeks"'+(dUnit==='weeks'?' selected':'')+'>wks</option>';
     html+='<option value="days"'+(dUnit==='days'?' selected':'')+'>days</option>';
     html+='</select></div></div>';
     html+='<div class="tf"><label>Lag (neg=overlap)</label><input type="number" value="'+(t.lag||0)+'" min="-52" max="52" data-id="'+t.id+'" data-field="lag" data-num="1" onchange="updField(this)"></div>';
+    html+='</div>';
+    /* ---- Fixed date (pin) ---- */
+    var sdNow=projStartDate();
+    var calcStart=dateFromWeek(starts[t.id]||1,sdNow);
+    var isPinned=!!t.pinDate;
+    var conf=pinConflicts[t.id];
+    html+='<div class="tf" style="margin-bottom:5px"><label>Fixed start date <span style="font-weight:400;color:var(--text-hint)">'+(isPinned?'— pinned, overrides dependencies':'— leave blank to follow dependencies')+'</span></label>';
+    html+='<div style="display:flex;gap:4px;align-items:center">';
+    html+='<input type="date" value="'+(t.pinDate||'')+'" data-id="'+t.id+'" onchange="updPinDate('+t.id+',this.value)" style="flex:1 1 auto;min-width:0;font-family:\'DM Mono\',monospace;font-size:11px;padding:4px 6px;background:var(--white);border:1px solid '+(isPinned?'var(--blue)':'var(--border)')+';border-radius:var(--rsm);color:var(--text-main)">';
+    if(isPinned) html+='<button onclick="updPinDate('+t.id+',\'\')" title="Unpin — return to dependency-driven start" style="flex:0 0 auto;padding:4px 7px;font-size:10px;font-weight:600;color:var(--text-hint);background:var(--bg-input);border:1px solid var(--border);border-radius:5px;cursor:pointer">Unpin</button>';
+    html+='</div>';
+    if(!isPinned) html+='<p style="font-size:10px;color:var(--text-hint);margin:3px 0 0">Currently starts '+fmtDateShort(calcStart)+' (W'+r1(starts[t.id]||1)+')</p>';
+    else if(conf) html+='<p style="font-size:10px;color:#B91C1C;font-weight:600;margin:3px 0 0">&#9888; Predecessors need W'+conf.needed+' ('+fmtDateShort(dateFromWeek(conf.needed,sdNow))+') — pin holds at W'+conf.pinned+', so work overlaps.</p>';
     html+='</div>';
     migratePreds(t);
     var cp=t.preds||[];
@@ -812,7 +965,7 @@ function renderPanel(){
     var depDesc='';
     if(!cp.length) depDesc='No dependency — starts at phase beginning.';
     else if(cp.indexOf('prev')>=0) depDesc='Starts after previous '+PLABEL[t.phase]+' task ends.';
-    else{var dn=[];cp.forEach(function(p){var px=getById(+p);if(px){var pxs=starts[px.id]||1;dn.push('#'+(getIdx(px.id)+1)+' ends W'+(pxs+(px.dur||0)));}}); depDesc=dn.length?'Starts after: '+dn.join(', '):'';}
+    else{var dn=[];cp.forEach(function(p){var px=getById(+p);if(px){var pxs=starts[px.id]||1;dn.push('#'+(getIdx(px.id)+1)+' ends W'+r1(pxs+durW(px)));}}); depDesc=dn.length?'Starts after: '+dn.join(', '):'';}
     html+='<p class="depdesc" id="depdesc-'+t.id+'">'+depDesc+'</p>';
 
     /* Actual fields — shown only in actual mode */
@@ -825,11 +978,11 @@ function renderPanel(){
       html+='<div class="tf"><label>Actual Dur (wks)</label><input type="number" value="'+aD+'" min="0" max="99" data-id="'+t.id+'" data-field="actDur" data-num="1" placeholder="0=use baseline" onchange="updField(this)" style="border-color:#93C5FD"></div>';
       html+='</div>';
       /* Show computed variance */
-      var planEnd=(starts[t.id]||1)+t.dur;
+      var planEnd=r1((starts[t.id]||1)+durW(t));
       var actStartV=aS>0?aS:(starts[t.id]||1);
-      var actDurV=aD>0?aD:t.dur;
-      var actEndV=actStartV+actDurV;
-      var slipV=actEndV-planEnd;
+      var actDurV=aD>0?aD:durW(t);
+      var actEndV=r1(actStartV+actDurV);
+      var slipV=r1(actEndV-planEnd);
       var slipText='';
       if(aS===0&&aD===0) slipText='<span style="color:var(--text-hint);font-style:italic">Enter values above to compare vs baseline</span>';
       else if(slipV>0) slipText='<span style="color:#B91C1C;font-weight:600">&#9650; Delayed by '+slipV+' week'+(slipV>1?'s':'')+'</span> (ends Wk '+actEndV+' vs plan Wk '+planEnd+')';
@@ -927,8 +1080,8 @@ function openLogViewer(){
   html+='<h3>View 2 — Baseline vs Current Actual</h3>';
   html+='<table><tr><th>Phase</th><th>Task</th><th>Baseline Start</th><th>Baseline Dur</th><th>Actual Start</th><th>Actual Dur</th><th>End Variance</th><th>Status</th></tr>';
   tasks.forEach(function(t){
-    var bs=starts1[t.id]||1,bd=t.dur,as2=t.actStart||bs,ad=t.actDur||bd;
-    var v=(as2+ad)-(bs+bd); var cls=v>0?'pos':v<0?'neg':'neu';
+    var bs=starts1[t.id]||1,bd=durW(t),as2=t.actStart||bs,ad=t.actDur||bd;
+    var v=r1((as2+ad)-(bs+bd)); var cls=v>0?'pos':v<0?'neg':'neu';
     html+='<tr><td>'+t.phase+'</td><td>'+t.name+'</td><td>W'+bs+'</td><td>'+bd+'w</td><td>W'+as2+'</td><td>'+ad+'w</td><td class="'+cls+'">'+(v===0?'—':(v>0?'+':'')+v+'w')+'</td><td class="'+cls+'">'+(v===0?'On track':v>0?'+'+v+'w delayed':Math.abs(v)+'w ahead')+'</td></tr>';
   });
   html+='</table></body></html>';
@@ -946,7 +1099,7 @@ function exportLogExcel(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'Weekly Changes');
   var starts2=computeStarts();
   var rows2=[['Phase','Task','Baseline Start (w)','Baseline Dur (w)','Actual Start (w)','Actual Dur (w)','Variance (w)','Status']];
-  tasks.forEach(function(t){var bs=starts2[t.id]||1,bd=t.dur,as2=t.actStart||bs,ad=t.actDur||bd,v=(as2+ad)-(bs+bd);rows2.push([t.phase,t.name,bs,bd,as2,ad,v,v===0?'On track':v>0?'Delayed +'+v+'w':'Ahead '+Math.abs(v)+'w']);});
+  tasks.forEach(function(t){var bs=starts2[t.id]||1,bd=durW(t),as2=t.actStart||bs,ad=t.actDur||bd,v=r1((as2+ad)-(bs+bd));rows2.push([t.phase,t.name,bs,bd,as2,ad,v,v===0?'On track':v>0?'Delayed +'+v+'w':'Ahead '+Math.abs(v)+'w']);});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows2),'Baseline vs Actual');
   var today2=new Date(),dd2=String(today2.getFullYear())+String(today2.getMonth()+1).padStart(2,'0')+String(today2.getDate()).padStart(2,'0');
   XLSX.writeFile(wb,dd2+' - Timeline Log - '+(document.getElementById('iProj').value||'Project').trim()+'.xlsx');
@@ -1036,6 +1189,47 @@ function updDurUnit(el){
   renderPanel();renderGantt();ganttAutoSave();
 }
 function updMilestone(id,val){var t=getById(id);if(!t) return;t.milestone=!!val;if(val) t.dur=0;renderPanel();renderGantt();ganttAutoSave();}
+/* Pin a task to a fixed calendar date (blank clears the pin). */
+function updPinDate(id,val){
+  var t=getById(id); if(!t) return;
+  t.pinDate=(val||'').trim();
+  renderPanel(); renderGantt(); ganttAutoSave();
+}
+/* Per-phase deadline — the phase's last task must END on this date. */
+function updPhaseDeadline(ph,val){
+  val=(val||'').trim();
+  if(val) phaseDeadlines[ph]=val; else delete phaseDeadlines[ph];
+  renderPanel(); renderGantt(); ganttAutoSave();
+}
+/* Apply backward scheduling: move the project Start Date so the schedule
+   lands exactly on the target delivery date. */
+function applyBackSchedule(){
+  var el=document.getElementById('iDelivery');
+  var res=el?backScheduleFromDelivery(el.value):null;
+  var out=document.getElementById('backSchedMsg');
+  if(!res){
+    if(out) out.innerHTML='<span style="color:#B91C1C">Set a delivery date first (and at least one task).</span>';
+    return;
+  }
+  var iso=toISODate(res.requiredStart);
+  document.getElementById('iDate').value=iso;
+  renderPanel(); renderGantt(); ganttAutoSave();
+  if(out){
+    out.innerHTML='Start set to <strong>'+fmtDateShort(res.requiredStart)+'</strong> &mdash; '+res.span+' wks to delivery.'+
+      (res.inPast?' <span style="color:#B91C1C;font-weight:600">&#9888; That start date is already in the past.</span>':'');
+  }
+}
+/* Live preview of what backward scheduling would do, without applying it. */
+function previewBackSchedule(){
+  var el=document.getElementById('iDelivery');
+  var out=document.getElementById('backSchedMsg');
+  if(!out) return;
+  var res=el&&el.value?backScheduleFromDelivery(el.value):null;
+  if(!res){ out.innerHTML=''; ganttAutoSave(); return; }
+  out.innerHTML='Needs to start <strong>'+fmtDateShort(res.requiredStart)+'</strong> ('+res.span+' wks). Click Apply to set it.'+
+    (res.inPast?' <span style="color:#B91C1C;font-weight:600">&#9888; In the past.</span>':'');
+  ganttAutoSave();
+}
 function setPred(id,val){var t=getById(id);if(!t) return;migratePreds(t);if(val==='null') t.preds=[];else if(val==='prev') t.preds=['prev'];else t.preds=[+val];renderPanel();renderGantt();}
 function delTask(id){tasks=tasks.filter(function(t){return t.id!==id;});tasks.forEach(function(t){migratePreds(t);t.preds=t.preds.filter(function(p){return p!==id&&p!==String(id);});});renderPanel();renderGantt();ganttAutoSave();}
 function addTask(asMilestone){
@@ -1053,11 +1247,14 @@ function renderGantt(){
   var prep=document.getElementById('iPrep').value||'--';
   var sdv=document.getElementById('iDate').value;
   var sd=sdv?new Date(sdv):new Date();
+  /* Locally-parsed twin of sd, used for all pin/deadline week math so date
+     pinning agrees with the scheduler regardless of timezone offset. */
+  var sdPin=projStartDate();
   if(!tasks.length){document.getElementById('gc').innerHTML='<div class="empty"><p>No tasks to display.</p></div>';return;}
 
   var starts=computeStarts();
   var critMap=colVis.crit?computeCriticalPath(starts):{};
-  var maxW=1; tasks.forEach(function(t){maxW=Math.max(maxW,(starts[t.id]||1)+(t.dur||0));});
+  var maxW=1; tasks.forEach(function(t){maxW=Math.max(maxW,(starts[t.id]||1)+durW(t));});
   var TW=Math.max(maxW+4,20);
 
   /* A4 landscape = 297mm x 210mm at 96dpi ~ 1122 x 794px
@@ -1262,8 +1459,8 @@ function renderGantt(){
     if(!activePhases[ph]) return;
     var pt=tasks.filter(function(t){return t.phase===ph;}); if(!pt.length) return;
     var mn=9999,mx=0;
-    pt.forEach(function(t){var sw=starts[t.id]||1; mn=Math.min(mn,sw); mx=Math.max(mx,sw+(t.dur||0));});
-    phaseSummary[ph]={start:mn,end:mx,dur:mx-mn};
+    pt.forEach(function(t){var sw=starts[t.id]||1; mn=Math.min(mn,sw); mx=Math.max(mx,sw+durW(t));});
+    phaseSummary[ph]={start:r1(mn),end:r1(mx),dur:r1(mx-mn)};
   });
 
   /* ---- Task rows ---- */
@@ -1349,9 +1546,9 @@ function renderGantt(){
     if(CVR>0){
       var aS2=t.actStart||0; var aD2=t.actDur||0;
       if(aS2>0||aD2>0){
-        var planEnd2=sw2+t.dur;
-        var actEnd2=(aS2>0?aS2:sw2)+(aD2>0?aD2:t.dur);
-        var slip2=actEnd2-planEnd2;
+        var planEnd2=sw2+durW(t);
+        var actEnd2=(aS2>0?aS2:sw2)+(aD2>0?aD2:durW(t));
+        var slip2=r1(actEnd2-planEnd2);
         var vtext=slip2>0?'+'+slip2+'w':(slip2<0?slip2+'w':'✓');
         var vcol=slip2>0?critClr:(slip2<0?'#16A34A':'#16A34A');
         var vbg=slip2>0?(thDark?'#2A0A0A':'#FEE2E2'):(thDark?'#052E16':'#D1FAE5');
@@ -1425,7 +1622,7 @@ function renderGantt(){
       }
     } else if(hasActual){
       /* Dual bars: baseline (grey, thin, behind) + actual (coloured, full height) */
-      var bbw=t.dur*WW;
+      var bbw=durW(t)*WW;
       /* Baseline ghost bar */
       s+='<rect x="'+(bx2+1)+'" y="'+(midY-3.5)+'" width="'+bbw+'" height="7" rx="3" fill="#CCCCCC" opacity="0.55"/>';
       s+='<rect x="'+bx2+'" y="'+(midY-3.5)+'" width="'+bbw+'" height="7" rx="3" fill="none" stroke="#AAAAAA" stroke-width="1" opacity="0.5" stroke-dasharray="3,2"/>';
@@ -1448,7 +1645,7 @@ function renderGantt(){
       bpos[t.id]={endX:abx2+abw2,startX:abx2,midY:midY,isMilestone:false};
     } else {
       /* Normal baseline-only bar */
-      var bw2=t.dur*WW;
+      var bw2=durW(t)*WW;
       if(!thGS) s+='<rect x="'+(bx2+1)+'" y="'+(by2+2)+'" width="'+bw2+'" height="'+BH+'" rx="3" fill="rgba(0,0,0,0.06)"/>';
       s+='<rect x="'+bx2+'" y="'+by2+'" width="'+bw2+'" height="'+BH+'" rx="3" fill="'+barColor+'" opacity="0.88"/>';
       /* Greyscale hatch pattern overlay for segment differentiation */
@@ -1459,6 +1656,15 @@ function renderGantt(){
       }
       var barTextClr=thGS?'#FFFFFF':'white';
       if(bw2>24) s+='<text x="'+(bx2+bw2/2)+'" y="'+(by2+BH/2+3.5)+'" font-size="7" fill="'+barTextClr+'" text-anchor="middle" font-weight="600">'+(t.durUnit==="days"?t.dur+'d':t.dur+'w')+'</text>';
+      /* Pin marker + conflict flag: a pinned task is anchored to a real date,
+         so make that legible on the chart, not just in the side panel. */
+      if(t.pinDate||pinnedStartWeek(t,sdPin)!==null){
+        var pinConf=pinConflicts[t.id];
+        var pinClr=pinConf?critClr:'#0077CC';
+        s+='<path d="M'+bx2+' '+(by2-2)+' l4 -5 l-8 0 z" fill="'+pinClr+'"/>';
+        s+='<line x1="'+bx2+'" y1="'+(by2-2)+'" x2="'+bx2+'" y2="'+(by2+BH+2)+'" stroke="'+pinClr+'" stroke-width="1.4" stroke-dasharray="2,2" opacity="0.85"/>';
+        if(pinConf) s+='<rect x="'+(bx2-1)+'" y="'+(by2-1)+'" width="'+(bw2+2)+'" height="'+(BH+2)+'" rx="3" fill="none" stroke="'+critClr+'" stroke-width="1.6"/>';
+      }
       bpos[t.id]={endX:bx2+bw2,startX:bx2,midY:midY,isMilestone:false};
     }
     rowOff+=RH;
@@ -1631,8 +1837,8 @@ function exportXLSX(){
   var projData=[['Customer',document.getElementById('iCust').value],['Project',document.getElementById('iProj').value],['Reference',document.getElementById('iRef').value],['StartDate',document.getElementById('iDate').value],['PreparedBy',document.getElementById('iPrep').value],['ActivePhases',PORDER.filter(function(p){return activePhases[p];}).join(',')],['ScheduleMode',scheduleMode]];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(projData),'ProjectInfo');
   var starts=computeStarts();
-  var taskHdr=[['ID','Name','Phase','Segment','Duration','Predecessor','Lag','ComputedStart','ActualStart','ActualDur','DurUnit']];
-  var taskRows=tasks.map(function(t){migratePreds(t);var ps=(t.preds||[]).join(';');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0,t.durUnit||'weeks'];});
+  var taskHdr=[['ID','Name','Phase','Segment','Duration','Predecessor','Lag','ComputedStart','ActualStart','ActualDur','DurUnit','PinDate']];
+  var taskRows=tasks.map(function(t){migratePreds(t);var ps=(t.preds||[]).join(';');return [t.id,t.name,t.phase,t.seg,t.dur,ps,t.lag,starts[t.id]||1,t.actStart||0,t.actDur||0,t.durUnit||'weeks',t.pinDate||''];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(taskHdr.concat(taskRows)),'Tasks');
   var noteRows=notes.map(function(n,i){return [i+1,n];});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['#','Note']].concat(noteRows)),'Notes');
@@ -1675,7 +1881,7 @@ function importXLSX(input){
           var r=trows[i]; if(!r||!r[1]) continue;
           var predRaw=r[5]===''||r[5]===undefined?'':String(r[5]);
           var predsArr=predRaw===''?[]:predRaw.split(';').map(function(p){p=p.trim();return p==='prev'?'prev':(!isNaN(+p)?+p:null);}).filter(function(p){return p!==null;});
-          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,durUnit:String(r[10]||'weeks'),preds:predsArr,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0,milestone:false};
+          var tk={id:+r[0],name:String(r[1]),phase:String(r[2]),seg:String(r[3]||'Mold'),dur:+r[4]||0,durUnit:String(r[10]||'weeks'),pinDate:String(r[11]||''),preds:predsArr,lag:+r[6]||0,actStart:+r[8]||0,actDur:+r[9]||0,milestone:false};
           tasks.push(tk); if(tk.id>maxId) maxId=tk.id;
         }
         tid=maxId+1; sortTasks();
@@ -1715,12 +1921,12 @@ function openPredDD(e,tid){
     if(tx.id===tid) continue;
     // Phase header separator
     if(tx.phase!==lastPhase2){
-      h+='<div style="padding:4px 11px 2px;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;background:var(--surface2)">'+PLABEL[tx.phase]+'</div>';
+      h+='<div style="padding:4px 11px 2px;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;background:var(--g100)">'+PLABEL[tx.phase]+'</div>';
       lastPhase2=tx.phase;
     }
     var txs=starts2[tx.id]||1,chk=cp.indexOf(tx.id)>=0||cp.indexOf(String(tx.id))>=0;
     var isSelf=(tx.id===tid);
-    h+='<div class="pred-dd-item"><input type="checkbox" value="'+tx.id+'"'+(chk?' checked':'')+' onchange="togglePred('+tid+','+tx.id+',this.checked)"><span>#'+(k+1)+' '+tx.name.slice(0,26)+(tx.name.length>26?'…':'')+'</span><span class="pred-dd-week">W'+(txs+(tx.dur||0))+'</span></div>';
+    h+='<div class="pred-dd-item"><input type="checkbox" value="'+tx.id+'"'+(chk?' checked':'')+' onchange="togglePred('+tid+','+tx.id+',this.checked)"><span>#'+(k+1)+' '+tx.name.slice(0,26)+(tx.name.length>26?'…':'')+'</span><span class="pred-dd-week">W'+r1(txs+durW(tx))+'</span></div>';
   }
   menu.innerHTML=h;
   // Always move to body last child so it renders above everything

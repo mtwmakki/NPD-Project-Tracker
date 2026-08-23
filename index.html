@@ -268,7 +268,8 @@ textarea.finput{resize:vertical;min-height:64px;line-height:1.5;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden;}
 .card-head{padding:11px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:7px;cursor:pointer;}
 .card-hl{flex:1;min-width:0;}
-.card-code{font-size:9px;font-family:var(--fm);color:var(--text3);margin-bottom:1px;}
+.card-code{font-size:11.5px;font-family:var(--fm);color:var(--text2);font-weight:600;
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-bottom:3px;}
 .card-name{font-size:13px;font-weight:500;line-height:1.3;}
 .card-meta{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap;}
 .sbadge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;}
@@ -633,7 +634,8 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .inq-list-row:hover{border-color:var(--accent);}
 .inq-list-row.has-overdue{border-left:3px solid var(--red);}
 .inq-list-main{display:flex;align-items:center;gap:9px;min-width:0;}
-.inq-list-code{font-size:9px;font-family:var(--fm);color:var(--text3);flex-shrink:0;min-width:80px;}
+.inq-list-code{font-size:12px;font-family:var(--fm);color:var(--text);font-weight:600;
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;flex-shrink:0;min-width:106px;}
 .inq-list-name{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .inq-list-customer{font-size:10px;color:var(--text3);flex-shrink:0;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;}
 .inq-list-meta{display:flex;align-items:center;gap:5px;flex-shrink:0;}
@@ -1127,6 +1129,29 @@ html{scroll-behavior:smooth;}
 .mtask-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-family:var(--fm);flex-shrink:0;}
 .mtask-section-line{flex:1;height:1px;background:var(--border);}
 .mtask-section-count{font-size:9px;font-family:var(--fm);color:var(--text3);flex-shrink:0;}
+/* ── Done-section collapse + multi-select ── */
+.mtask-section-head.tapable{cursor:pointer;user-select:none;border-radius:6px;padding-left:5px;transition:background .12s;}
+.mtask-section-head.tapable:hover{background:var(--surface2);}
+.mtask-sec-chev{font-size:11px;color:var(--text3);transition:transform .15s;flex-shrink:0;}
+.mtask-sec-chev.open{transform:rotate(90deg);}
+.mtask-done-block{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;}
+.mtask-selectable.sel{outline:2px solid var(--accent);outline-offset:1px;border-radius:8px;}
+#mtasks-list.select-mode{padding-bottom:62px;}
+#mtasks-list.select-mode .mtask-selectable{cursor:pointer;}
+#mtasks-list.select-mode .mtask-selectable *{pointer-events:none;}
+.mtask-selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:400;display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;box-shadow:0 8px 30px rgba(0,0,0,.35);}
+.mtask-selbar.on{display:flex;}
+.mtask-selbar-count{font-size:11px;font-family:var(--fm);color:var(--text3);white-space:nowrap;}
+.mtask-selbar-count b{color:var(--text);}
+.mtask-selbar-sep{width:1px;height:18px;background:var(--border);}
+.selbar-btn{font-size:11px;font-family:var(--f);padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.selbar-btn:hover{color:var(--text);border-color:var(--text3);}
+.selbar-btn.danger{color:var(--red);}
+.selbar-btn.danger:hover{border-color:var(--red);background:var(--red);color:#fff;}
+.selbar-btn[disabled]{opacity:.35;cursor:default;}
+.selbar-btn[disabled]:hover{color:var(--text3);border-color:var(--border);}
+#tasks-select-btn.on,#tasks-archived-btn.on{color:var(--accent);border-color:var(--accent);}
+.fold-btn.on{color:var(--accent);border-color:var(--accent);}
 /* ── Login Screen ── */
 #login-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;}
 .login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
@@ -1196,6 +1221,16 @@ html{scroll-behavior:smooth;}
 .na-deadline-badge.empty{background:var(--surface);color:var(--text3);border:1px dashed var(--border);font-weight:400;}
 .na-deadline-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;margin:0;}
 .na-added{font-size:10px;color:var(--text3);font-family:var(--fm);white-space:nowrap;}
+.na-chk{width:18px;height:18px;border:1.5px solid var(--border);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.na-chk:hover{border-color:var(--accent);}
+.na-chk i{font-size:12px;color:transparent;}
+.na-chk.done{background:var(--accent);border-color:var(--accent);}
+.na-chk.done i{color:#fff;}
+.na-card.done{opacity:.6;}
+.na-card.done .na-action-text{text-decoration:line-through;color:var(--text3);}
+.na-done-badge{display:inline-flex;align-items:center;gap:4px;position:relative;font-size:10px;font-family:var(--fm);color:var(--green,#3fb950);white-space:nowrap;cursor:pointer;}
+.na-done-badge input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+textarea.autogrow{overflow:hidden;resize:none;}
 .na-delete-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .na-delete-btn:hover{color:var(--red);}
 /* ── Inquiry Progress Task Rows ── */
@@ -1809,6 +1844,9 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <button class="sort-chip" id="inq-sort-name" onclick="setInqSort('name')"><i class="ti ti-sort-ascending-letters"></i> Name</button>
       </div>
     </div>
+    <div class="cmd-divider"></div>
+    <button class="cmd-pop-trigger fold-btn" id="inq-fold-rows" onclick="toggleAllRows('inq')" title="Collapse every open record"><i class="ti ti-fold"></i><span>Rows</span></button>
+    <button class="cmd-pop-trigger fold-btn" id="inq-fold-years" onclick="toggleAllYears('inq')" title="Fold every year group"><i class="ti ti-chevrons-up"></i><span>Years</span></button>
     <div class="cmd-spacer"></div>
     <div class="cmd-zoom">
       <i class="ti ti-zoom-out" style="font-size:12px;color:var(--text3);"></i>
@@ -1864,6 +1902,9 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <button class="sort-chip" id="proj-sort-stale" onclick="setProjSort('stale')"><i class="ti ti-clock-off"></i> Least Updated</button>
       </div>
     </div>
+    <div class="cmd-divider"></div>
+    <button class="cmd-pop-trigger fold-btn" id="proj-fold-rows" onclick="toggleAllRows('proj')" title="Collapse every open record"><i class="ti ti-fold"></i><span>Rows</span></button>
+    <button class="cmd-pop-trigger fold-btn" id="proj-fold-years" onclick="toggleAllYears('proj')" title="Fold every year group"><i class="ti ti-chevrons-up"></i><span>Years</span></button>
     <div class="cmd-spacer"></div>
     <div class="cmd-zoom">
       <i class="ti ti-zoom-out" style="font-size:12px;color:var(--text3);"></i>
@@ -2106,6 +2147,9 @@ body{padding-bottom:env(safe-area-inset-bottom);}
         <button class="sort-chip" id="task-sort-category" onclick="setTaskSort('category')"><i class="ti ti-tag"></i> Category</button>
       </div>
     </div>
+    <div class="cmd-divider"></div>
+    <button class="cmd-pop-trigger" id="tasks-select-btn" onclick="toggleMTaskSelectMode()" title="Pick several tasks, then archive or delete them in one go"><i class="ti ti-list-check"></i><span>Select</span></button>
+    <button class="cmd-pop-trigger" id="tasks-archived-btn" onclick="toggleShowArchived()" title="Show archived tasks"><i class="ti ti-archive"></i><span>Archived</span></button>
     <div class="cmd-spacer"></div>
     <div class="cmd-view-cluster">
       <button class="view-tbtn active" id="tasks-view-card" onclick="setTaskView('card')" title="Default card"><i class="ti ti-layout-cards"></i></button>
@@ -2124,6 +2168,16 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     </div>
   </div>
   <div id="mtasks-list" class="mtasks-grid d-normal"></div>
+  <div class="mtask-selbar" id="mtask-selbar">
+    <span class="mtask-selbar-count" id="selbar-count"><b>0</b> selected</span>
+    <div class="mtask-selbar-sep"></div>
+    <button class="selbar-btn" onclick="selectAllVisibleDone()"><i class="ti ti-checkbox"></i> All done</button>
+    <button class="selbar-btn" id="selbar-arch" onclick="bulkArchiveMTasks()"><i class="ti ti-archive"></i> Archive</button>
+    <button class="selbar-btn danger" id="selbar-del" onclick="bulkDeleteMTasks()"><i class="ti ti-trash"></i> Delete</button>
+    <div class="mtask-selbar-sep"></div>
+    <button class="selbar-btn" onclick="clearMTaskSel()">Clear</button>
+    <button class="selbar-btn" onclick="toggleMTaskSelectMode()"><i class="ti ti-x"></i> Exit</button>
+  </div>
 </div>
 
 <!-- SETTINGS PAGE -->
@@ -2525,7 +2579,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
       </div>
       <div class="fsection"><i class="ti ti-notes"></i> Inquiry Brief</div>
       <div class="frow2">
-        <div class="fg" style="flex:2"><label class="flabel">Inquiry Brief / Current Status</label><textarea class="finput" id="inq-remark" rows="2" placeholder="Brief description of the inquiry…"></textarea></div>
+        <div class="fg" style="flex:2"><label class="flabel">Inquiry Brief / Current Status</label><textarea class="finput autogrow" id="inq-remark" rows="2" oninput="autoGrowTA(this)" placeholder="Brief description of the inquiry…"></textarea></div>
         <div class="fg"><label class="flabel">Brief Date</label><input class="finput" id="inq-remark-date" type="date"></div>
       </div>
       <div class="fsection"><i class="ti ti-package"></i> Products &amp; Volume <span style="font-weight:400;color:var(--text3);font-size:10px;">— add each product</span></div>
@@ -2884,12 +2938,22 @@ let editingProjId = null;
 let editingMTaskId = null;
 // Firebase handles auth — no separate token needed
 let mtaskFilter = 'all', mtaskActiveOnly = false;
+let mtaskDoneCollapsed = localStorage.getItem('pm_done_collapsed') !== '0'; // Done folded away by default
+let mtaskShowArchived  = false;
+let mtaskSelectMode    = false;
+let mtaskSelected      = new Set();
 let inqYearFilter = '', inqMonthFilter = '';
 let inqView = 'card'; // 'card' or 'list'
 let inqSort = 'date-desc'; // sort key for inquiries
 let projSort = 'date-desc'; // sort key for projects
 let taskSort = 'deadline-asc'; // sort key for standalone tasks
-let collapsedYears = {}; // track which year groups are collapsed per page
+let collapsedYears = (() => {           // which year groups are folded, per page
+  try { return JSON.parse(localStorage.getItem('pm_collapsed_years') || '{}'); }
+  catch(e) { return {}; }
+})();
+function persistCollapsedYears() {
+  try { localStorage.setItem('pm_collapsed_years', JSON.stringify(collapsedYears)); } catch(e) {}
+}
 let globalBannerDismissed = false; // session-only dismiss for the top red banner
 let sidebarCollapsed = false;
 let taskView = 'card';
@@ -3892,6 +3956,57 @@ function toggleYearGroup(page, year) {
   collapsedYears[key] = !collapsedYears[key];
   const el = document.getElementById('ygroup-' + page + '-' + year);
   if (el) el.classList.toggle('collapsed', collapsedYears[key]);
+  persistCollapsedYears();
+  syncFoldButtons(page);
+}
+
+// ══════════════════════════════════════════════════════
+//  COLLAPSE / EXPAND — rows and year groups
+// ══════════════════════════════════════════════════════
+
+/** The records currently on screen for a page, after every active filter. */
+function visibleRecords(page) {
+  return page === 'inq' ? getFilteredInquiries() : getFilteredProjects();
+}
+
+/** Years currently on screen for a page. */
+function visibleYears(page) {
+  return [...new Set(visibleRecords(page).map(r => (r.date || '').slice(0,4) || 'Unknown'))];
+}
+
+function toggleAllRows(page) {
+  const list = visibleRecords(page);
+  const collapse = list.some(r => r.expanded);   // anything open? close everything
+  list.forEach(r => { r.expanded = !collapse; });
+  save();
+  page === 'inq' ? renderInquiries() : renderProjects();
+}
+
+function toggleAllYears(page) {
+  const years = visibleYears(page);
+  const collapse = years.some(y => !collapsedYears[page + '_' + y]);
+  years.forEach(y => { collapsedYears[page + '_' + y] = collapse; });
+  persistCollapsedYears();
+  page === 'inq' ? renderInquiries() : renderProjects();
+}
+
+/** Point each fold button's icon at what it will actually do next. */
+function syncFoldButtons(page) {
+  const list = visibleRecords(page);
+  const rowsOpen  = list.some(r => r.expanded);
+  const yearsOpen = visibleYears(page).some(y => !collapsedYears[page + '_' + y]);
+  const rb = document.getElementById(page + '-fold-rows');
+  const yb = document.getElementById(page + '-fold-years');
+  if (rb) {
+    rb.querySelector('i').className = 'ti ' + (rowsOpen ? 'ti-fold' : 'ti-fold-up');
+    rb.title = (rowsOpen ? 'Collapse' : 'Expand') + ' every open record';
+    rb.classList.toggle('on', !rowsOpen);
+  }
+  if (yb) {
+    yb.querySelector('i').className = 'ti ' + (yearsOpen ? 'ti-chevrons-up' : 'ti-chevrons-down');
+    yb.title = (yearsOpen ? 'Fold' : 'Unfold') + ' every year group';
+    yb.classList.toggle('on', !yearsOpen);
+  }
 }
 
 // ── Group items by year then month ──
@@ -4373,19 +4488,24 @@ function setInqSiteFilter(f) {
   renderInquiries();
 }
 
-function renderInquiries() {
-  const el = document.getElementById('inquiries-list');
-  populateYearDropdowns();
+function getFilteredInquiries() {
   let list = [...data.inquiries];
   if (inqFilter !== 'all') list = list.filter(x => (x.status||'').toUpperCase() === inqFilter.toUpperCase());
   if (inqSiteFilter !== 'all') list = list.filter(x => x.factory === inqSiteFilter);
   if (inqActiveOnly) list = list.filter(x => !['CLOSED','CLOSE','Discarded'].includes(x.status));
   if (inqYearFilter)  list = list.filter(x => (x.date||'').startsWith(inqYearFilter));
   if (inqMonthFilter) list = list.filter(x => (x.date||'').slice(5,7) === inqMonthFilter);
+  return list;
+}
+
+function renderInquiries() {
+  const el = document.getElementById('inquiries-list');
+  populateYearDropdowns();
+  let list = getFilteredInquiries();
 
   if (!list.length) {
     el.innerHTML = '<div class="empty"><i class="ti ti-file-search"></i><p>No inquiries found.</p></div>';
-    applyDensity(); return;
+    applyDensity(); syncFoldButtons('inq'); return;
   }
 
   const today = todayStr();
@@ -4400,6 +4520,7 @@ function renderInquiries() {
     } else {
       el.innerHTML = `<div class="inq-list-wrap">${list.map(i=>renderInquiryListRow(i)).join('')}</div>`;
     }
+    syncFoldButtons('inq');
     return;
   }
 
@@ -4410,6 +4531,7 @@ function renderInquiries() {
     el.innerHTML = `<div class="cards-grid">${list.map(i => { try { return renderInquiryCard(i); } catch(e) { console.error('renderInquiryCard error on', i?.code, ':', e.message, e); return `<div style="padding:8px 12px;color:var(--red);font-size:11px;background:var(--rebg);border-radius:var(--rs);margin-bottom:4px;">⚠ ${i?.code||i?.id}: ${e.message}</div>`; } }).join('')}</div>`;
   }
   applyDensity();
+  syncFoldButtons('inq');
 }
 
 function buildInqBodyHTML(item) {
@@ -4553,7 +4675,7 @@ function renderProjects() {
   let list = getFilteredProjects();
   if (!list.length) {
     el.innerHTML = '<div class="empty"><i class="ti ti-folder"></i><p>No projects' + (projActiveOnly?' active':projFilter!=='all'?' in this category':' yet') + '.</p></div>';
-    applyDensity(); return;
+    applyDensity(); syncFoldButtons('proj'); return;
   }
   const today = todayStr();
   const useDateGrouping = projSort === 'date-desc' || projSort === 'date-asc';
@@ -4565,6 +4687,7 @@ function renderProjects() {
     el.innerHTML = `<div class="cards-grid">${list.map(p=>renderCard(p,'project')).join('')}</div>`;
   }
   applyDensity();
+  syncFoldButtons('proj');
 }
 
 function renderCard(item, type) {
@@ -5120,6 +5243,9 @@ function openInqDetail(inqId) {
   currentInqDTab = 'overview';
   renderInqDetail();
   document.getElementById('inq-detail-overlay').classList.add('open');
+  // A textarea measures to zero while its overlay is display:none, so the brief
+  // has to be sized again once the overlay is actually on screen.
+  requestAnimationFrame(sizeInqAutogrow);
   setTimeout(() => { initDraggableWindow('inq'); applyClippedPosition('inq'); }, 50);
 }
 
@@ -5271,7 +5397,7 @@ function _renderInqDetailInner() {
       <div class="proj-detail-slabel">Inquiry Brief
         ${inq.remarkDate?`<span style="font-weight:400;color:var(--text3);font-size:10px;">· ${fmtDate(inq.remarkDate)}</span>`:''}
         ${canEdit?`<input type="date" class="ied" value="${inq.remarkDate||today}" onchange="saveInqField('${inq.id}','remarkDate',this.value)" style="font-size:10px;border:none;color:var(--text3);font-family:var(--fm);padding:1px;cursor:pointer;margin-left:6px;" title="Brief date">`:''}</div>
-      ${canEdit?`<textarea onblur="saveInqField('${inq.id}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;resize:vertical;min-height:60px;line-height:1.6;" placeholder="Write the inquiry brief here…">${inq.remark||''}</textarea>`:
+      ${canEdit?`<textarea class="autogrow" oninput="autoGrowTA(this)" onblur="saveInqField('${inq.id}','remark',this.value)" style="width:100%;box-sizing:border-box;font-size:12px;font-family:var(--f);color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;min-height:60px;line-height:1.6;" placeholder="Write the inquiry brief here…">${inq.remark||''}</textarea>`:
       `<div style="font-size:12px;color:var(--text2);line-height:1.6;">${inq.remark||'<span style="color:var(--text3);">No brief yet.</span>'}</div>`}
     </div>`;
 
@@ -5286,14 +5412,17 @@ function _renderInqDetailInner() {
       </div>`;
     if (nas.length) {
       nas.forEach(na => {
-        const isOverdue = na.deadline && na.deadline < today;
-        const isSoon    = !isOverdue && na.deadline && na.deadline <= addDays(today, 3);
+        const naDone    = !!na.done;
+        // A finished action stops nagging, even if its deadline has passed.
+        const isOverdue = !naDone && na.deadline && na.deadline < today;
+        const isSoon    = !naDone && !isOverdue && na.deadline && na.deadline <= addDays(today, 3);
         const picColor  = naPicColorMap[na.pic] || '#64748b';
         const dlClass   = !na.deadline ? 'empty' : isOverdue ? 'overdue' : isSoon ? 'soon' : 'ok';
         const dlIcon    = isOverdue ? 'ti-alert-triangle' : 'ti-calendar';
         const dlLabel   = na.deadline ? fmtDate(na.deadline) : '+ Set deadline';
         const allPics   = cachedUserList;
-        html += `<div class="na-card" id="na-row-${na.id}">
+        html += `<div class="na-card ${naDone?'done':''}" id="na-row-${na.id}">
+          ${canEdit?`<div class="na-chk ${naDone?'done':''}" onclick="toggleInqNA('${inq.id}','${na.id}')" title="${naDone?'Mark as not done':'Mark as done'}"><i class="ti ti-check"></i></div>`:''}
           <div style="position:relative;flex-shrink:0;">
             <div class="na-pic-pill" style="background:${picColor};" onclick="toggleNAPicMenu('${na.id}')" title="Change PIC">
               <span class="na-pic-dot"></span>
@@ -5311,7 +5440,12 @@ function _renderInqDetailInner() {
               <span style="pointer-events:none;display:inline-flex;align-items:center;gap:5px;"><i class="ti ${dlIcon}" style="font-size:11px;"></i> ${dlLabel}</span>
               ${canEdit?`<input type="date" value="${na.deadline||''}" onchange="saveInqNADeadline('${inq.id}','${na.id}',this.value,'${na.deadline||''}')">` : ''}
             </div>
-            <span class="na-added">Added ${fmtDate(na.dateAdded||today)}</span>
+            ${naDone
+              ? `<span class="na-done-badge" title="Completed on this date — click to change">
+                   <i class="ti ti-circle-check" style="font-size:11px;pointer-events:none;"></i> Done ${fmtDate(na.completedAt||today)}
+                   ${canEdit?`<input type="date" value="${na.completedAt||today}" onchange="saveInqNACompleted('${inq.id}','${na.id}',this.value)">`:''}
+                 </span>`
+              : `<span class="na-added">Added ${fmtDate(na.dateAdded||today)}</span>`}
           </div>
           ${canEdit?`<button class="na-delete-btn" onclick="deleteInqNA('${inq.id}','${na.id}')"><i class="ti ti-trash"></i></button>`:''}
         </div>`;
@@ -5455,8 +5589,51 @@ function _renderInqDetailInner() {
     </div>`;
   }
 
-  document.getElementById('inq-d-body').innerHTML = html;
+  const body = document.getElementById('inq-d-body');
+  body.innerHTML = html;
+  // Textareas have no load event, so size them once the markup is in the DOM.
+  body.querySelectorAll('textarea.autogrow').forEach(autoGrowTA);
 } // end _renderInqDetailInner
+
+/** Grow a textarea to fit its content instead of clipping it behind a scrollbar. */
+function autoGrowTA(el) {
+  if (!el || !el.isConnected) return;
+  el.style.height = 'auto';
+  const h = el.scrollHeight;
+  if (!h) return;   // still display:none — leave it auto, a later pass will size it
+  el.style.height = Math.max(h + 2, 60) + 'px';
+}
+
+function sizeInqAutogrow() {
+  document.querySelectorAll('#inq-d-body textarea.autogrow').forEach(autoGrowTA);
+}
+
+/** Tick a next action off. Stamps the day it was completed so the record
+ *  shows when work actually happened, not just when it was due. */
+function toggleInqNA(inqId, naId) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const na = (inq.nextActions||[]).find(n => n.id === naId);
+  if (!na) return;
+  na.done = !na.done;
+  if (na.done) {
+    na.completedAt = todayStr();
+    appendInqLog(inqId, 'update', 'circle-check', `Next action completed: "<strong>${na.action||'(untitled)'}</strong>"`);
+  } else {
+    delete na.completedAt;
+  }
+  save(); renderInqDetail();
+}
+
+function saveInqNACompleted(inqId, naId, value) {
+  const inq = data.inquiries.find(x => x.id === inqId);
+  if (!inq || !can('inquiries','edit')) return;
+  const na = (inq.nextActions||[]).find(n => n.id === naId);
+  if (!na) return;
+  na.completedAt = value;
+  na.done = !!value;
+  save(); renderInqDetail();
+}
 
 function toggleInqTask(inqId, taskId) {
   const inq = data.inquiries.find(x => x.id === inqId);
@@ -5885,7 +6062,7 @@ function renderNotificationsPage() {
       completedItems.push({type: item.tasks ? (data.inquiries.includes(item)?'inquiry':'project') : 'mtask', parentId:item.id, taskId:t.id, parentCode:item.code||'', parentName:item.name||'', taskName:t.name, deadline:t.deadline});
     });
   });
-  (data.mtasks||[]).filter(t => t.status==='done' && t.deadline).forEach(t => {
+  (data.mtasks||[]).filter(t => t.status==='done' && t.deadline && !t.archived).forEach(t => {
     completedItems.push({type:'mtask', parentId:t.id, taskId:t.id, parentCode:'TASK', parentName:t.title, taskName:t.title, deadline:t.deadline});
   });
   completedItems.sort((a,b) => b.deadline < a.deadline ? -1 : 1);
@@ -6473,7 +6650,7 @@ function getAllTasks() {
   [...data.inquiries,...data.projects].forEach(item => {
     (item.tasks||[]).filter(taskVisible).forEach(t => tasks.push({...t, parentCode:item.code, parentName:item.name}));
   });
-  (data.mtasks||[]).forEach(t => {
+  (data.mtasks||[]).filter(t => !t.archived).forEach(t => {
     const owner = t.owner || 'Adam';
     if (showAll || owner === filterName) {
       if (t.deadline) tasks.push({id:t.id, name:t.title, deadline:t.deadline, done:t.status==='done', parentCode:'TASK', parentName:t.title, pic:owner});
@@ -6585,7 +6762,17 @@ function toggleTasksActiveFilter() {
   renderMTasks();
 }
 
-function renderMTaskSectionHead(label, count) {
+function renderMTaskSectionHead(label, count, collapsible) {
+  if (collapsible) {
+    const open = !mtaskDoneCollapsed;
+    return `<div class="mtask-section-head tapable" onclick="toggleDoneCollapsed()" title="${open?'Hide':'Show'} completed tasks">
+      <i class="ti ti-chevron-right mtask-sec-chev ${open?'open':''}"></i>
+      <span class="mtask-section-label">${label}</span>
+      <span class="mtask-section-count">${count}</span>
+      <div class="mtask-section-line"></div>
+      ${open ? '' : '<span class="mtask-section-count" style="opacity:.65">show</span>'}
+    </div>`;
+  }
   return `<div class="mtask-section-head"><span class="mtask-section-label">${label}</span><span class="mtask-section-count">${count}</span><div class="mtask-section-line"></div></div>`;
 }
 
@@ -6615,14 +6802,20 @@ function renderMTasks() {
     ownerLabel.textContent = taskViewAll ? 'All Users' : myName;
   }
 
-  // Filter by owner
-  let list = [...data.mtasks];
-  if (!isMaster || !taskViewAll) {
-    list = list.filter(t => (t.owner || 'Adam') === myName);
-  }
+  let list = visibleMTasks();
 
-  if (mtaskFilter !== 'all') list = list.filter(t => t.category === mtaskFilter);
-  if (mtaskActiveOnly) list = list.filter(t => t.status !== 'done');
+  // Wire the select-mode click interception once. Capture phase, so a click
+  // in select mode never reaches a card's own toggle/edit/delete handler.
+  if (!el.__selWired) {
+    el.__selWired = true;
+    el.addEventListener('click', e => {
+      if (!mtaskSelectMode) return;
+      const row = e.target.closest('[data-mtid]');
+      if (!row) return;
+      e.preventDefault(); e.stopPropagation();
+      toggleMTaskSelect(row.dataset.mtid);
+    }, true);
+  }
 
   const today = todayStr();
   let active = list.filter(t => t.status !== 'done');
@@ -6641,19 +6834,25 @@ function renderMTasks() {
   done = sortMTasks(done, taskSort === 'deadline-asc' ? 'deadline-desc' : taskSort, today);
 
   if (!list.length) {
-    el.innerHTML = '<div class="empty"><i class="ti ti-checkbox"></i><p>No tasks' + (mtaskActiveOnly?' active':mtaskFilter!=='all'?' in this category':' yet') + '.</p></div>';
-    applyDensity(); return;
+    el.innerHTML = '<div class="empty"><i class="ti ti-checkbox"></i><p>' +
+      (mtaskShowArchived ? 'Nothing archived yet.'
+        : 'No tasks' + (mtaskActiveOnly?' active':mtaskFilter!=='all'?' in this category':' yet') + '.') + '</p></div>';
+    applyDensity(); updateSelBar(); return;
   }
 
-  function buildHtml(renderFn) {
+  function buildHtml(renderFn, doneFn) {
     let h = '';
     if (active.length) {
       h += renderMTaskSectionHead('To Do', active.length);
       h += active.map(renderFn).join('');
     }
     if (done.length && !mtaskActiveOnly) {
-      h += renderMTaskSectionHead('Done', done.length);
-      h += done.map(renderFn).join('');
+      h += renderMTaskSectionHead('Done', done.length, true);
+      // Folded away by default; the header is the toggle. The block spans the
+      // full grid width so compact rows stack instead of becoming grid cells.
+      if (!mtaskDoneCollapsed) {
+        h += '<div class="mtask-done-block">' + done.map(doneFn || renderFn).join('') + '</div>';
+      }
     }
     return h;
   }
@@ -6672,9 +6871,16 @@ function renderMTasks() {
     el.innerHTML = buildHtml(t => renderMTaskCompact(t, 'c'));
   } else {
     el.className = 'mtasks-grid';
-    el.innerHTML = buildHtml(t => renderMTaskCard(t));
+    el.innerHTML = buildHtml(t => renderMTaskCard(t), t => renderMTaskCompact(t, 'a'));
     applyDensity();
   }
+
+  el.classList.toggle('select-mode', mtaskSelectMode);
+  if (mtaskSelectMode) {
+    el.querySelectorAll('[data-mtid]').forEach(n =>
+      n.classList.toggle('sel', mtaskSelected.has(n.dataset.mtid)));
+  }
+  updateSelBar();
 }
 
 function renderMTaskListRow(task) {
@@ -6688,7 +6894,7 @@ function renderMTaskListRow(task) {
   const priColor = PRI_COLORS[task.priority] || 'var(--text3)';
   const priLabel = PRI_LABELS[task.priority] || '';
 
-  return `<div class="mtask-list-row">
+  return `<div class="mtask-list-row mtask-selectable" data-mtid="${task.id}">
     <div class="mtask-list-chk ${isDone?'done':''}" onclick="toggleMTask('${task.id}')"><i class="ti ti-check"></i></div>
     <div class="mtask-list-title ${isDone?'done':''}" title="${task.title}">${task.title}</div>
     <div class="mtask-list-meta">
@@ -6712,7 +6918,8 @@ function renderMTaskCompact(task, variant) {
   const isOverdue = !isDone && !isAwaiting && task.deadline && task.deadline < today;
   const isToday   = !isDone && !isAwaiting && task.deadline === today;
   const dlColor   = isAwaiting ? 'var(--amber)' : isOverdue ? 'var(--red)' : isToday ? 'var(--amber)' : 'var(--text3)';
-  const dlText    = isAwaiting ? '🕐 Awaiting'
+  const dlText    = isDone && task.completedAt ? '✓ ' + fmtDate(task.completedAt)
+    : isAwaiting ? '🕐 Awaiting'
     : task.deadline ? (isOverdue ? '⚠ ' : isToday ? '⏰ ' : '') + fmtDate(task.deadline) : '';
   const priColor  = PRI_COLORS[task.priority] || 'var(--text3)';
   const priLabel  = PRI_LABELS[task.priority] || '';
@@ -6726,7 +6933,7 @@ function renderMTaskCompact(task, variant) {
     <button class="tact-btn" onclick="deleteMTask('${task.id}')" title="Delete" style="color:var(--red)"><i class="ti ti-trash"></i></button>`;
 
   if (variant === 'a') {
-    return `<div class="card-a ${borderCls}" style="${donedim}">
+    return `<div class="card-a mtask-selectable ${borderCls}" data-mtid="${task.id}" style="${donedim}">
       <div class="ca-chk ${isDone?'done':''}" onclick="toggleMTask('${task.id}')"><i class="ti ti-check"></i></div>
       <div class="ca-title ${isDone?'done':''}">${followup}${task.title}</div>
       <div class="ca-meta">
@@ -6739,7 +6946,7 @@ function renderMTaskCompact(task, variant) {
   }
 
   if (variant === 'b') {
-    return `<div class="card-b ${borderCls}" style="${donedim}">
+    return `<div class="card-b mtask-selectable ${borderCls}" data-mtid="${task.id}" style="${donedim}">
       <div class="cb-chk ${isDone?'done':''}" onclick="toggleMTask('${task.id}')"><i class="ti ti-check"></i></div>
       <div class="cb-body">
         <div class="cb-title ${isDone?'done':''}">${followup}${task.title}</div>
@@ -6755,7 +6962,7 @@ function renderMTaskCompact(task, variant) {
   }
 
   // variant === 'c'
-  return `<div class="card-c ${borderCls}" style="${donedim}">
+  return `<div class="card-c mtask-selectable ${borderCls}" data-mtid="${task.id}" style="${donedim}">
     <div class="cc-chk ${isDone?'done':''}" onclick="toggleMTask('${task.id}')"><i class="ti ti-check"></i></div>
     <div class="cc-title ${isDone?'done':''}">${followup}${task.title}</div>
     <span class="sbadge ${catCls}" style="font-size:8px;padding:1px 5px;flex-shrink:0;">${catLabel}</span>
@@ -6772,16 +6979,18 @@ function renderMTaskCard(task) {
   const isOverdue = !isDone && !isAwaiting && task.deadline && task.deadline < today;
   const isToday  = !isDone && !isAwaiting && task.deadline === today;
   const dlColor  = isAwaiting ? 'var(--amber)' : isOverdue ? 'var(--red)' : isToday ? 'var(--amber)' : 'var(--text3)';
-  const dlText   = isAwaiting
-    ? '🕐 Awaiting reply' + (task.reminder ? ' · reminder ' + fmtDate(task.reminder) : '')
-    : task.deadline ? (isOverdue ? '⚠ Overdue · ' : isToday ? '⏰ Today · ' : '') + fmtDate(task.deadline) : 'No deadline';
+  const dlText   = isDone && task.completedAt
+    ? '✓ Done ' + fmtDate(task.completedAt)
+    : isAwaiting
+      ? '🕐 Awaiting reply' + (task.reminder ? ' · reminder ' + fmtDate(task.reminder) : '')
+      : task.deadline ? (isOverdue ? '⚠ Overdue · ' : isToday ? '⏰ Today · ' : '') + fmtDate(task.deadline) : 'No deadline';
   const priColor = PRI_COLORS[task.priority] || 'var(--text3)';
   const priLabel = PRI_LABELS[task.priority] || '';
   const awaitingBorder = isAwaiting ? 'border-left:3px solid var(--amber);' : '';
   const followupHTML = task.followupOf ? `<div class="followup-chain"><i class="ti ti-arrow-forward-up"></i> follow-up</div>` : '';
   const ownerPill = (taskViewAll && task.owner) ? `<span style="font-size:9px;padding:1px 6px;border-radius:20px;background:var(--surface2);color:var(--text3);font-family:var(--fm);"><i class="ti ti-user" style="font-size:8px"></i> ${task.owner}</span>` : '';
 
-  return `<div class="mtask-card" style="${awaitingBorder}">
+  return `<div class="mtask-card mtask-selectable" data-mtid="${task.id}" style="${awaitingBorder}">
     <div class="mtask-row">
       <div class="mtask-chk ${isDone?'done':''}" onclick="toggleMTask('${task.id}')"><i class="ti ti-check"></i></div>
       <div class="mtask-info">
@@ -6810,6 +7019,7 @@ function toggleMTask(id) {
   if (!t) return;
   const wasDone = t.status === 'done';
   t.status = wasDone ? 'todo' : 'done';
+  if (wasDone) delete t.completedAt; else t.completedAt = todayStr();
   save(); renderMTasks(); showNotifications();
   if (!wasDone) showFollowupPrompt(t.title, 'mtask', null, null, id);
 }
@@ -7318,6 +7528,8 @@ function _renderPageHeaderForPage(name) {
            <div class="cmd-more-wrap">
              <button class="cmd-icon-btn" title="More" onclick="toggleCmdPop('inq-more')"><i class="ti ti-dots-vertical"></i></button>
              <div class="cmd-more-pop" id="inq-more-pop">
+               <button onclick="toggleAllRows('inq');toggleCmdPop('inq-more')"><i class="ti ti-fold"></i> Collapse / expand rows</button>
+               <button onclick="toggleAllYears('inq');toggleCmdPop('inq-more')"><i class="ti ti-chevrons-up"></i> Fold / unfold years</button>
                <button id="inq-active-btn-h" onclick="toggleActiveFilter('inq');toggleCmdPop('inq-more')"><i class="ti ti-flame"></i> Active only</button>
                <button onclick="openInqReport();toggleCmdPop('inq-more')"><i class="ti ti-file-analytics"></i> Report</button>
                ${currentUserProfile?.role==='master'?`<button onclick="openDuplicatesModal();toggleCmdPop('inq-more')" id="inq-dup-btn-h"><i class="ti ti-copy"></i> Duplicates</button>`:''}
@@ -7332,7 +7544,8 @@ function _renderPageHeaderForPage(name) {
            <div class="cmd-more-wrap">
              <button class="cmd-icon-btn" title="More" onclick="toggleCmdPop('proj-more')"><i class="ti ti-dots-vertical"></i></button>
              <div class="cmd-more-pop" id="proj-more-pop">
-               <button onclick="expandCollapseAllProjects(false);toggleCmdPop('proj-more')"><i class="ti ti-fold"></i> Collapse all</button>
+               <button onclick="toggleAllRows('proj');toggleCmdPop('proj-more')"><i class="ti ti-fold"></i> Collapse / expand rows</button>
+               <button onclick="toggleAllYears('proj');toggleCmdPop('proj-more')"><i class="ti ti-chevrons-up"></i> Fold / unfold years</button>
                <button id="proj-active-btn-h" onclick="toggleActiveFilter('proj');toggleCmdPop('proj-more')"><i class="ti ti-flame"></i> Active only</button>
                <button onclick="openProjReport();toggleCmdPop('proj-more')"><i class="ti ti-file-analytics"></i> Report</button>
              </div>
@@ -8156,6 +8369,145 @@ function deleteMTask(id) {
   data.bin.push({id:uid(), kind:'mtask', name:t.title, item:JSON.parse(JSON.stringify(t)), deletedAt:todayStr()});
   data.mtasks = data.mtasks.filter(x => x.id !== id);
   save(); renderMTasks(); renderBin();
+}
+
+// ══════════════════════════════════════════════════════
+//  TASKS — DONE COLLAPSE, ARCHIVE, MULTI-SELECT
+// ══════════════════════════════════════════════════════
+
+/** Which tasks the Tasks page is currently showing. renderMTasks and the
+ *  bulk actions both read this, so a selection can never include something
+ *  that is not on screen. */
+function visibleMTasks() {
+  const isMaster = currentUserProfile?.role === 'master';
+  const myName   = currentUserProfile?.name || currentUser || 'Adam';
+  let list = [...(data.mtasks || [])];
+  if (!isMaster || !taskViewAll) list = list.filter(t => (t.owner || 'Adam') === myName);
+  list = list.filter(t => mtaskShowArchived ? !!t.archived : !t.archived);
+  if (mtaskFilter !== 'all') list = list.filter(t => t.category === mtaskFilter);
+  if (mtaskActiveOnly)       list = list.filter(t => t.status !== 'done');
+  return list;
+}
+
+function toggleDoneCollapsed() {
+  mtaskDoneCollapsed = !mtaskDoneCollapsed;
+  localStorage.setItem('pm_done_collapsed', mtaskDoneCollapsed ? '1' : '0');
+  renderMTasks();
+}
+
+function toggleShowArchived() {
+  mtaskShowArchived = !mtaskShowArchived;
+  const b = document.getElementById('tasks-archived-btn');
+  if (b) b.classList.toggle('on', mtaskShowArchived);
+  mtaskSelected.clear();
+  if (mtaskShowArchived) mtaskDoneCollapsed = false;   // archived are all done
+  renderMTasks();
+}
+
+function toggleMTaskSelectMode() {
+  mtaskSelectMode = !mtaskSelectMode;
+  const b = document.getElementById('tasks-select-btn');
+  if (b) b.classList.toggle('on', mtaskSelectMode);
+  if (!mtaskSelectMode) mtaskSelected.clear();
+  renderMTasks();
+}
+
+function toggleMTaskSelect(id) {
+  if (mtaskSelected.has(id)) mtaskSelected.delete(id); else mtaskSelected.add(id);
+  const n = document.querySelector('#mtasks-list [data-mtid="' + id + '"]');
+  if (n) n.classList.toggle('sel', mtaskSelected.has(id));
+  updateSelBar();
+}
+
+function clearMTaskSel() {
+  mtaskSelected.clear();
+  document.querySelectorAll('#mtasks-list .mtask-selectable.sel').forEach(n => n.classList.remove('sel'));
+  updateSelBar();
+}
+
+/** The shortcut that does the actual work: grab every completed task on
+ *  screen, unfolding the Done section so you can see what you picked. */
+function selectAllVisibleDone() {
+  visibleMTasks().filter(t => t.status === 'done').forEach(t => mtaskSelected.add(t.id));
+  if (mtaskDoneCollapsed) {
+    mtaskDoneCollapsed = false;
+    localStorage.setItem('pm_done_collapsed', '0');
+  }
+  renderMTasks();
+}
+
+function updateSelBar() {
+  const bar = document.getElementById('mtask-selbar');
+  if (!bar) return;
+  bar.classList.toggle('on', mtaskSelectMode);
+  const n = mtaskSelected.size;
+  const cnt = document.getElementById('selbar-count');
+  if (cnt) cnt.innerHTML = '<b>' + n + '</b> selected';
+  const arch = document.getElementById('selbar-arch');
+  const del  = document.getElementById('selbar-del');
+  if (arch) {
+    arch.disabled = n === 0;
+    arch.innerHTML = mtaskShowArchived
+      ? '<i class="ti ti-arrow-back-up"></i> Restore'
+      : '<i class="ti ti-archive"></i> Archive';
+  }
+  if (del) del.disabled = n === 0;
+}
+
+/** Archive hides a task everywhere without touching it. Restricted to
+ *  completed tasks so nothing still on your plate can vanish by accident. */
+function bulkArchiveMTasks() {
+  if (!mtaskSelected.size) return;
+  const restoring = mtaskShowArchived;
+  let n = 0, skipped = 0;
+  mtaskSelected.forEach(id => {
+    const t = (data.mtasks || []).find(x => x.id === id);
+    if (!t) return;
+    if (restoring)                  { delete t.archived; n++; }
+    else if (t.status === 'done')   { t.archived = true;  n++; }
+    else                            { skipped++; }
+  });
+  mtaskSelected.clear();
+  save(); renderMTasks();
+  if (skipped) {
+    alert(n + ' task' + (n === 1 ? '' : 's') + ' archived.\n\n' +
+          skipped + ' skipped — only completed tasks can be archived. ' +
+          'Tick them off first, or delete them instead.');
+  }
+}
+
+/** Bulk delete routes through data.bin exactly like the single-task delete,
+ *  so everything stays restorable from Settings > Bin. */
+function bulkDeleteMTasks() {
+  const ids = [...mtaskSelected];
+  if (!ids.length) return;
+
+  // Pre-flight the Apps Script write-safety guard. It blocks any save that
+  // drops inquiries+projects+mtasks below 30% of the current count, so catch
+  // it here rather than letting the save bounce back rejected.
+  const before = (data.inquiries || []).length + (data.projects || []).length + (data.mtasks || []).length;
+  const after  = before - ids.length;
+  if (before >= 5 && after < before * 0.3) {
+    alert('The write-safety guard would block this save.\n\n' +
+          'Deleting ' + ids.length + ' of ' + before + ' records would leave ' + after +
+          ', below the 30% floor. The Sheet would refuse the write and nothing would change.\n\n' +
+          'Delete them in smaller batches instead.');
+    return;
+  }
+
+  if (!confirm('Move ' + ids.length + ' task' + (ids.length === 1 ? '' : 's') +
+               ' to the Bin?\n\nThey stay restorable from Settings > Bin.')) return;
+
+  data.bin = data.bin || [];
+  ids.forEach(id => {
+    const t = (data.mtasks || []).find(x => x.id === id);
+    if (!t) return;
+    data.bin.push({id:uid(), kind:'mtask', name:t.title, item:JSON.parse(JSON.stringify(t)), deletedAt:todayStr()});
+  });
+  const gone = new Set(ids);
+  data.mtasks = (data.mtasks || []).filter(x => !gone.has(x.id));
+  mtaskSelected.clear();
+  save(); renderMTasks(); renderBin();      // one save for the whole batch
 }
 
 // ══════════════════════════════════════════════════════

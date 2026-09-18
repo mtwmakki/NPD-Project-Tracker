@@ -1035,6 +1035,51 @@ html{scroll-behavior:smooth;}
 /* Panel shell for Sub-Status / People In Charge lists */
 .pdx-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs,10px);padding:12px 14px;}
 
+/* ── Project Dashboard (compute-driven overview panels) ── */
+.pdx-dash{margin:14px 20px 4px;}
+.pdx-dash-title{font-family:var(--f);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin:0 2px 10px;display:flex;align-items:center;gap:6px;}
+.pdx-dash-title i{font-size:14px;color:var(--accent);}
+.pdx-dash-top{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.pdx-dash-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r,12px);padding:14px 16px;}
+.pdx-dash-gauge{display:flex;align-items:center;gap:14px;}
+.pdx-dash-gauge .pdx-ring{width:88px;height:88px;}
+.pdx-dash-gauge .pdx-ring-pct{font-size:19px;}
+.pdx-dash-gaugemeta{display:flex;flex-direction:column;gap:3px;}
+.pdx-dash-gaugemeta .gm-lab{font-family:var(--f);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.pdx-dash-gaugemeta .gm-val{font-family:var(--f-head);font-size:15px;color:var(--text);}
+.pdx-dash-right{flex:1;min-width:230px;display:flex;flex-direction:column;gap:12px;}
+.pdx-health{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;padding:6px 12px;border-radius:20px;font-family:var(--f);font-weight:700;font-size:12px;}
+.pdx-health i{font-size:14px;}
+.pdx-health-reason{font-family:var(--f);font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.45;}
+.pdx-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pdx-tile{background:var(--surface3);border:1px solid var(--border);border-radius:var(--rs,8px);padding:9px 8px;text-align:center;}
+.pdx-tile .n{font-family:var(--f-head);font-size:20px;line-height:1;color:var(--text);}
+.pdx-tile .l{font-family:var(--f);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--text3);margin-top:5px;line-height:1.25;}
+.pdx-tile.t-green .n{color:var(--green);}
+.pdx-tile.t-blue .n{color:var(--blue);}
+.pdx-tile.t-accent .n{color:var(--accent);}
+.pdx-tile.t-red{border-color:color-mix(in srgb,var(--red) 45%,var(--border));}
+.pdx-tile.t-red .n{color:var(--red);}
+/* Workstream by phase */
+.pdx-phase-list{display:flex;flex-direction:column;gap:11px;}
+.pdx-phase-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:10px;}
+.pdx-phase-name{font-family:var(--f);font-size:12px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pdx-phase-name.unassigned{color:var(--text3);font-style:italic;}
+.pdx-phase-nums{font-family:var(--fm);font-size:10.5px;color:var(--text3);flex-shrink:0;white-space:nowrap;}
+.pdx-phase-nums b{color:var(--text2);font-weight:600;}
+.pdx-phase-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.pdx-phase-bar-fill{height:100%;border-radius:3px;transition:width .4s;}
+.pdx-dash-empty{font-family:var(--f);font-size:11px;color:var(--text3);padding:2px;}
+/* Comments (sub-status notes) */
+.pdx-comment{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);}
+.pdx-comment:last-child{border-bottom:none;}
+.pdx-comment-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px;opacity:.7;}
+.pdx-comment-body{flex:1;min-width:0;}
+.pdx-comment-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.pdx-comment-title{font-family:var(--f);font-size:11.5px;font-weight:600;color:var(--text);}
+.pdx-comment-date{font-family:var(--fm);font-size:9.5px;color:var(--text3);flex-shrink:0;}
+.pdx-comment-note{font-family:var(--f);font-size:11px;color:var(--text2);line-height:1.5;margin-top:2px;white-space:pre-wrap;}
+
 /* Avatar chip for Sales Person (reuses picColor()/picAvatar() helpers already in the app) */
 .pdx-avchip{width:20px;height:20px;border-radius:50%;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-family:var(--f);flex-shrink:0;margin-right:6px;vertical-align:middle;}
 
@@ -2728,6 +2773,11 @@ body{padding-bottom:env(safe-area-inset-bottom);}
     <div class="mbody">
       <div class="fg"><label class="flabel">Task Name</label><input class="finput" id="task-name-input" type="text" placeholder="Task description"></div>
       <div class="fg"><label class="flabel">Deadline</label><input class="finput" id="task-dl-input" type="date"></div>
+      <div class="fg"><label class="flabel">Phase</label>
+        <select class="finput" id="task-phase-input">
+          <option value="">Unassigned</option>
+        </select>
+      </div>
     </div>
     <div class="mfooter"><button class="btn-secondary" onclick="closeModal('task')">Cancel</button><button class="btn-primary" onclick="submitTask()">Add Task</button></div>
   </div>
@@ -2901,6 +2951,8 @@ let pipelineYear       = new Date().getFullYear();
 
 const SS_CLASSES     = ['General','Mold','Machine','Material','Delivery'];
 const ACTION_CLASSES = ['General','Mold','Machine','Material','Delivery'];
+// Template project phases (fixed order) — drives the dashboard "Workstream by Phase" panel.
+const TASK_PHASES    = ['Design','CAPEX Approval','Pilot Mold','Commercial Mold','Machine (Auxiliary Equipment)','IML Development','Production Ramp-Up'];
 const INQ_STATUS_MAP = { 'OPEN':'open', 'CLOSED':'closed', 'ON-HOLD':'on-hold', 'open':'open', 'closed':'closed', 'on-hold':'on-hold' };
 
 const DEFAULT_PIPELINE_STAGES = [
@@ -3807,6 +3859,88 @@ function addDays(s,n) { const d=new Date(s+'T00:00:00'); d.setDate(d.getDate()+n
 function fmtDate(s) { if(!s)return''; try{return new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return s;} }
 function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 function completion(tasks) { if(!tasks||!tasks.length)return 0; return Math.round(tasks.filter(t=>t.done).length/tasks.length*100); }
+
+/* ══════════════════════════════════════════════════════
+   Per-project dashboard compute helpers
+   Ported from the validated scratchpad/dashboard-logic.js.
+   Pure data in / data out (no DOM). `today` is a 'YYYY-MM-DD'
+   string; date-only comparisons are lexical (safe for that
+   format) and day math is done in UTC to avoid DST drift.
+   Named with a dash* prefix so they never clash with the
+   existing completion() helper.
+   ══════════════════════════════════════════════════════ */
+function dashDaysBetween(fromStr, toStr) {
+  const a = Date.parse(fromStr + 'T00:00:00Z'), b = Date.parse(toStr + 'T00:00:00Z');
+  return Math.round((b - a) / 86400000);
+}
+function dashIsActiveStatus(status) { return status === 'inprogress' || status === 'awaiting-reply'; }
+function dashTaskBreakdown(project, today) {
+  const tasks = (project && project.tasks) || [];
+  const out = { total: tasks.length, completed:0, inProcess:0, notStarted:0, delayed:0, delayedInProcess:0, remaining:0 };
+  tasks.forEach(t => {
+    if (t.done === true) { out.completed++; return; }
+    const overdue = !!(t.deadline && t.deadline < today);
+    const active = dashIsActiveStatus(t.status);
+    if (overdue && active) out.delayedInProcess++;
+    else if (overdue && !active) out.delayed++;
+    else if (!overdue && active) out.inProcess++;
+    else out.notStarted++;
+  });
+  out.remaining = out.total - out.completed;
+  return out;
+}
+function dashCompletionPct(project) {
+  const tasks = (project && project.tasks) || [];
+  if (!tasks.length) return (project && project.status === 'completed') ? 100 : 0;
+  return Math.round(tasks.filter(t => t.done === true).length / tasks.length * 100);
+}
+function dashDeliveryRunway(project, today) {
+  const dd = project && project.deliveryDate;
+  if (!dd) return null;
+  const daysRemaining = dashDaysBetween(today, dd); // negative when in the past
+  return { deliveryDate: dd, daysRemaining, overdue: daysRemaining < 0 };
+}
+function dashHealthVerdict(project, today) {
+  const BEHIND_DELAY_RATIO = 0.20; // >20% of tasks overdue => "behind" rather than "at-risk"
+  const pct = dashCompletionPct(project);
+  if (pct === 100) return { level:'complete', reason:'All tasks complete (100%).' };
+  const tb = dashTaskBreakdown(project, today);
+  const delayedCount = tb.delayed + tb.delayedInProcess;
+  const runway = dashDeliveryRunway(project, today);
+  const overdueDelivery = !!(runway && runway.overdue);
+  const delayRatio = tb.total > 0 ? (delayedCount / tb.total) : 0;
+  if (delayedCount > 0 || overdueDelivery) {
+    if (overdueDelivery || delayRatio > BEHIND_DELAY_RATIO) {
+      const parts = [];
+      if (overdueDelivery) parts.push('delivery date passed ' + Math.abs(runway.daysRemaining) + 'd ago');
+      if (delayedCount > 0) parts.push(delayedCount + ' of ' + tb.total + ' tasks overdue (' + Math.round(delayRatio*100) + '%)');
+      return { level:'behind', reason: parts.join('; ') + '.' };
+    }
+    return { level:'at-risk', reason: delayedCount + ' of ' + tb.total + ' tasks overdue (' + Math.round(delayRatio*100) + '%).' };
+  }
+  return { level:'on-track', reason: pct + '% complete, no overdue tasks or delivery.' };
+}
+// New: completion of each template phase that has ≥1 task, in TASK_PHASES order,
+// with an "Unassigned" row appended when any task carries no phase.
+function workstreamByPhase(project) {
+  const tasks = (project && project.tasks) || [];
+  const rows = [];
+  TASK_PHASES.forEach(ph => {
+    const inPhase = tasks.filter(t => (t.phase || '') === ph);
+    if (inPhase.length) {
+      const done = inPhase.filter(t => t.done === true).length;
+      rows.push({ phase: ph, done, total: inPhase.length, pct: Math.round(done / inPhase.length * 100) });
+    }
+  });
+  const unassigned = tasks.filter(t => !t.phase);
+  if (unassigned.length) {
+    const done = unassigned.filter(t => t.done === true).length;
+    rows.push({ phase: 'Unassigned', done, total: unassigned.length, pct: Math.round(done / unassigned.length * 100) });
+  }
+  return rows;
+}
+// Bar colour by the same thresholds as progressDot(): ≥70 green / ≥30 amber / else red.
+function dashBarColor(pct) { return pct >= 70 ? 'var(--green)' : pct >= 30 ? 'var(--amber)' : 'var(--red)'; }
 function statusLabel(s) { return{'not-started':'Not Started','in-progress':'In Progress','completed':'Completed','on-hold':'On Hold','OPEN':'Open','CLOSED':'Closed','CLOSE':'Closed','ON-HOLD':'On Hold'}[s]||s; }
 function impLabel(i) { return{critical:'Critical',high:'High',medium:'Medium',low:'Low'}[i]||i; }
 function classLabel(c) { return{'new-mold':'New Mold','improvement':'Improvement','masterbatch':'Masterbatch','new-iml':'New IML'}[c]||''; }
@@ -5794,15 +5928,18 @@ function openAddTask(type, id) {
   taskCtx = {type, id};
   document.getElementById('task-name-input').value='';
   document.getElementById('task-dl-input').value = todayStr();
+  const phaseSel = document.getElementById('task-phase-input');
+  if (phaseSel) phaseSel.innerHTML = '<option value="">Unassigned</option>' + TASK_PHASES.map(ph=>`<option value="${ph}">${ph}</option>`).join('');
   document.getElementById('modal-task').classList.add('open');
 }
 function submitTask() {
   const name = document.getElementById('task-name-input').value.trim();
   const deadline = document.getElementById('task-dl-input').value;
   if (!name||!deadline) { alert('Fill in task name and deadline.'); return; }
+  const phase = (document.getElementById('task-phase-input')||{}).value || '';
   const arr = taskCtx.type === 'inquiry' ? data.inquiries : data.projects;
   const item = arr.find(x => x.id === taskCtx.id);
-  if (item) { if(!item.tasks)item.tasks=[]; item.tasks.push({id:uid(),name,deadline,done:false}); save(); renderAll(); }
+  if (item) { if(!item.tasks)item.tasks=[]; item.tasks.push({id:uid(),name,deadline,phase,done:false}); save(); renderAll(); }
   closeModal('task');
 }
 
@@ -8632,7 +8769,7 @@ function inlineAddTask(projId) {
   if (!p) return;
   if (!p.tasks) p.tasks = [];
   const status = document.getElementById('il-task-status').value;
-  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'', dependsOn: document.getElementById('il-task-dep')?.value||'' });
+  p.tasks.push({ id: uid(), name, deadline: document.getElementById('il-task-dl').value||todayStr(), pic: document.getElementById('il-task-pic').value||currentUserProfile?.name||'Adam', status, classification: document.getElementById('il-task-class')?.value||'General', phase: document.getElementById('il-task-phase')?.value||'', done: status==='done', linkedSubStatus: document.getElementById('il-task-ss').value||'', dependsOn: document.getElementById('il-task-dep')?.value||'' });
   logActivity(projId, 'add', 'circle-check', `Added action: <strong>${name}</strong>`);
   appendChangelog({ type:'create', icon:'circle-check', text:`Added action to <strong>${p.name||p.code}</strong>: ${name}`, section:'actions' });
   save(); renderProjects(); renderProjDetail(); showNotifications();
@@ -8644,7 +8781,7 @@ function inlineEditTask(projId, idx) {
   if (!name) { alert('Please enter an action name.'); return; }
   const status = document.getElementById(`il-te-status-${idx}`).value;
   const old = p.tasks[idx];
-  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'', dependsOn: document.getElementById(`il-te-dep-${idx}`)?.value||'' };
+  p.tasks[idx] = { ...old, name, deadline: document.getElementById(`il-te-dl-${idx}`).value||old.deadline, pic: document.getElementById(`il-te-pic-${idx}`).value||currentUserProfile?.name||'Adam', status, phase: document.getElementById(`il-te-phase-${idx}`)?.value||'', done: status==='done', linkedSubStatus: document.getElementById(`il-te-ss-${idx}`).value||'', dependsOn: document.getElementById(`il-te-dep-${idx}`)?.value||'' };
   logActivity(projId, 'edit', 'pencil', `Updated action: <strong>${name}</strong>`);
   save(); renderProjects(); renderProjDetail(); showNotifications();
 }
@@ -8792,6 +8929,77 @@ function renderProjDetail() {
           <div class="pdx-runway-endcaps"><span>Opened ${p.date?fmtDate(p.date):'—'}</span><span style="color:var(--green)">${fmtDate(p.deliveryDate)} target</span></div>` : ''}
         </div>
         <div class="pdx-substat-mini"><div class="n">${subCount}</div><div class="l">Sub-Status<br>Entries</div></div>
+      </div>
+    </div>`;
+
+    // ── PROJECT DASHBOARD — compute-driven snapshot (completion gauge, health, task tiles, workstream-by-phase, comments) ──
+    const dToday = todayStr();
+    const dTb = dashTaskBreakdown(p, dToday);
+    const dPct = dashCompletionPct(p);
+    const dHv = dashHealthVerdict(p, dToday);
+    const dPhases = workstreamByPhase(p);
+    const dComments = (p.subStatuses||[]).filter(ss => ss.note && String(ss.note).trim())
+      .slice().sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+    const gaugeR = 32, gaugeC = Math.round(2*Math.PI*gaugeR*10)/10;
+    const gaugeOffset = gaugeC - (dPct/100)*gaugeC;
+    const HEALTH_META = {
+      'on-track': { label:'On Track', color:'var(--green)', bg:'var(--gbg)', icon:'ti-circle-check' },
+      'at-risk':  { label:'At Risk',  color:'var(--amber)', bg:'var(--ambg)', icon:'ti-alert-triangle' },
+      'behind':   { label:'Behind',   color:'var(--red)',   bg:'var(--rebg)', icon:'ti-alert-octagon' },
+      'complete': { label:'Complete', color:'var(--blue)',  bg:'var(--blbg)', icon:'ti-rosette-discount-check' }
+    }[dHv.level] || { label:'—', color:'var(--text3)', bg:'var(--surface3)', icon:'ti-circle' };
+    html += `<div class="pdx-dash">
+      <div class="pdx-dash-title"><i class="ti ti-layout-dashboard"></i>Project Dashboard</div>
+      <div class="pdx-dash-top">
+        <div class="pdx-dash-card pdx-dash-gauge">
+          <div class="pdx-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="pdx-ring-track" cx="40" cy="40" r="${gaugeR}"></circle>
+              <circle class="pdx-ring-fill" cx="40" cy="40" r="${gaugeR}" stroke-dasharray="${gaugeC}" stroke-dashoffset="${gaugeOffset}"></circle>
+            </svg>
+            <div class="pdx-ring-center"><div class="pdx-ring-pct">${dPct}%</div><div class="pdx-ring-sub">COMPLETE</div></div>
+          </div>
+          <div class="pdx-dash-gaugemeta">
+            <span class="gm-lab">Overall Completion</span>
+            <span class="gm-val">${dTb.completed}/${dTb.total} tasks</span>
+          </div>
+        </div>
+        <div class="pdx-dash-right">
+          <div>
+            <span class="pdx-health" style="color:${HEALTH_META.color};background:${HEALTH_META.bg};"><i class="ti ${HEALTH_META.icon}"></i>${HEALTH_META.label}</span>
+            <div class="pdx-health-reason">${dHv.reason}</div>
+          </div>
+          <div class="pdx-tiles">
+            <div class="pdx-tile t-accent"><div class="n">${dTb.total}</div><div class="l">Total</div></div>
+            <div class="pdx-tile"><div class="n">${dTb.notStarted}</div><div class="l">Not Started</div></div>
+            <div class="pdx-tile t-blue"><div class="n">${dTb.inProcess}</div><div class="l">In Process</div></div>
+            <div class="pdx-tile t-green"><div class="n">${dTb.completed}</div><div class="l">Completed</div></div>
+            <div class="pdx-tile t-red"><div class="n">${dTb.delayed}</div><div class="l">Delayed</div></div>
+            <div class="pdx-tile t-red"><div class="n">${dTb.delayedInProcess}</div><div class="l">Delayed In-Process</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="pdx-dash-card" style="margin-bottom:12px;">
+        <div class="proj-detail-slabel" style="margin-bottom:12px;">Workstream by Phase</div>
+        ${dPhases.length ? `<div class="pdx-phase-list">${dPhases.map(ph => `
+          <div class="pdx-phase-row">
+            <div class="pdx-phase-head">
+              <span class="pdx-phase-name ${ph.phase==='Unassigned'?'unassigned':''}">${ph.phase}</span>
+              <span class="pdx-phase-nums"><b>${ph.done}/${ph.total}</b> · ${ph.pct}%</span>
+            </div>
+            <div class="pdx-phase-bar"><div class="pdx-phase-bar-fill" style="width:${ph.pct}%;background:${dashBarColor(ph.pct)};"></div></div>
+          </div>`).join('')}</div>` : `<div class="pdx-dash-empty">No tasks assigned to a phase yet. Set a Phase when adding or editing an action.</div>`}
+      </div>
+      <div class="pdx-dash-card">
+        <div class="proj-detail-slabel" style="margin-bottom:8px;">Comments <span style="font-weight:400;color:var(--text3)">(${dComments.length})</span></div>
+        ${dComments.length ? dComments.map(c => `
+          <div class="pdx-comment">
+            <div class="pdx-comment-dot"></div>
+            <div class="pdx-comment-body">
+              <div class="pdx-comment-top"><span class="pdx-comment-title">${c.title||'Untitled'}</span>${c.date?`<span class="pdx-comment-date">${fmtDate(c.date)}</span>`:''}</div>
+              <div class="pdx-comment-note">${c.note}</div>
+            </div>
+          </div>`).join('') : `<div class="pdx-dash-empty">No comments yet — sub-status notes appear here.</div>`}
       </div>
     </div>`;
 
@@ -9003,6 +9211,12 @@ function renderProjDetail() {
               </select>
             </div>
           </div>
+            <div class="fg"><label class="flabel">Phase</label>
+              <select class="finput" id="il-task-phase">
+                <option value="">Unassigned</option>
+                ${TASK_PHASES.map(ph=>`<option value="${ph}">${ph}</option>`).join('')}
+              </select>
+            </div>
             <div class="fg"><label class="flabel">Link Sub-Status</label>
               <select class="finput" id="il-task-ss">
                 <option value="">— None —</option>
@@ -9071,6 +9285,12 @@ function renderProjDetail() {
                   <option value="inprogress" ${t.status==='inprogress'?'selected':''}>In Progress</option>
                   <option value="awaiting-reply" ${t.status==='awaiting-reply'?'selected':''}>Awaiting Reply</option>
                   <option value="done" ${t.status==='done'?'selected':''}>Done</option>
+                </select>
+              </div>
+              <div class="fg"><label class="flabel">Phase</label>
+                <select class="finput" id="il-te-phase-${idx}">
+                  <option value="" ${!t.phase?'selected':''}>Unassigned</option>
+                  ${TASK_PHASES.map(ph=>`<option value="${ph}" ${t.phase===ph?'selected':''}>${ph}</option>`).join('')}
                 </select>
               </div>
               <div class="fg"><label class="flabel">Link Sub-Status</label>

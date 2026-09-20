@@ -211,6 +211,52 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
 .sb-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .sb-tab-panel{display:none;flex-direction:column;overflow-y:auto;flex:1;min-height:0}
 .sb-tab-panel.active{display:flex;flex-direction:column}
+/* ---- Read-only per-project Dashboard tab ---- */
+.gdash{padding:14px 15px;display:flex;flex-direction:column;gap:12px}
+.gdash-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--text-hint);display:flex;align-items:center;gap:7px}
+.gdash-card{background:var(--g50);border:1px solid var(--border);border-radius:var(--rlg);padding:14px}
+.gdash-loading,.gdash-empty,.gdash-error{font-size:11.5px;color:var(--text-hint);line-height:1.5;text-align:center;padding:16px}
+.gdash-error{color:var(--red)}
+.gdash-slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text-hint);margin-bottom:10px}
+.gdash-gauge-wrap{display:flex;align-items:center;gap:14px}
+.gdash-ring{position:relative;width:92px;height:92px;flex-shrink:0}
+.gdash-ring svg{width:92px;height:92px;transform:rotate(-90deg)}
+.gdash-ring-track{fill:none;stroke:var(--g100);stroke-width:7}
+.gdash-ring-fill{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .5s}
+.gdash-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gdash-ring-pct{font-size:21px;font-weight:700;color:var(--text-main);line-height:1}
+.gdash-ring-sub{font-size:7.5px;font-weight:700;letter-spacing:.7px;color:var(--text-hint);margin-top:2px}
+.gdash-gauge-meta{display:flex;flex-direction:column;gap:4px;min-width:0}
+.gdash-gauge-meta .lab{font-size:11px;color:var(--text-sub);font-weight:600}
+.gdash-gauge-meta .val{font-size:14px;color:var(--text-main);font-weight:700}
+.gdash-health{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px}
+.gdash-health-reason{font-size:10.5px;color:var(--text-hint);line-height:1.45;margin-top:7px}
+.gdash-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.gdash-tile{background:var(--white);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 5px;text-align:center}
+.gdash-tile .n{font-size:18px;font-weight:700;color:var(--text-main);line-height:1}
+.gdash-tile .l{font-size:8.5px;font-weight:700;color:var(--text-hint);text-transform:uppercase;letter-spacing:.3px;margin-top:5px;line-height:1.2}
+.gdash-tile.t-blue .n{color:var(--blue)}
+.gdash-tile.t-teal .n{color:var(--teal)}
+.gdash-tile.t-red .n{color:var(--red)}
+.gdash-runway{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.gdash-runway .big{font-size:24px;font-weight:700;line-height:1}
+.gdash-runway .small{font-size:10.5px;color:var(--text-hint)}
+.gdash-phase-list{display:flex;flex-direction:column;gap:11px}
+.gdash-phase-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:5px}
+.gdash-phase-name{font-size:12px;font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gdash-phase-name.unassigned{color:var(--text-hint);font-style:italic}
+.gdash-phase-nums{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-hint);flex-shrink:0;white-space:nowrap}
+.gdash-phase-nums b{color:var(--text-sub);font-weight:600}
+.gdash-phase-bar{height:6px;background:var(--g100);border-radius:3px;overflow:hidden}
+.gdash-phase-bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.gdash-comment{display:flex;gap:8px;padding:9px 0;border-top:1px solid var(--border)}
+.gdash-comment:first-of-type{border-top:none;padding-top:0}
+.gdash-comment-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);margin-top:5px;flex-shrink:0}
+.gdash-comment-body{min-width:0;flex:1}
+.gdash-comment-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.gdash-comment-title{font-size:11.5px;font-weight:700;color:var(--text-main)}
+.gdash-comment-date{font-size:9.5px;color:var(--text-hint);font-family:'DM Mono',monospace;flex-shrink:0}
+.gdash-comment-note{font-size:11px;color:var(--text-sub);line-height:1.5;margin-top:3px}
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200}
 .drawer-overlay.open{display:block}
 .sb.drawer-mode{position:fixed;top:0;right:0;height:100vh;z-index:201;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 32px rgba(0,0,0,.22)}
@@ -242,7 +288,7 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
   <aside class="sb" id="mainSb">
     <button class="sb-close-btn" onclick="closeDrawer()">&#x2715; Close</button>
     <div class="sb-mode-bar"><span style="font-size:10px;font-weight:700;color:var(--text-hint);letter-spacing:.8px;margin-right:2px">VIEW</span><button class="sb-mode-btn active" id="btnModeTab" onclick="setSbMode('tab')">&#9776; Tabs</button><button class="sb-mode-btn" id="btnModeDrawer" onclick="setSbMode('drawer')">&#9654; Drawer</button></div>
-    <div class="sb-tab-pills"><div class="sb-tab active" id="tabInfo" onclick="switchTab('Info')">Project</div><div class="sb-tab" id="tabPhases" onclick="switchTab('Phases')">Phases</div><div class="sb-tab" id="tabDisplay" onclick="switchTab('Display')">Display</div><div class="sb-tab" id="tabTasks" onclick="switchTab('Tasks')">Tasks</div></div>
+    <div class="sb-tab-pills"><div class="sb-tab active" id="tabInfo" onclick="switchTab('Info')">Project</div><div class="sb-tab" id="tabPhases" onclick="switchTab('Phases')">Phases</div><div class="sb-tab" id="tabDisplay" onclick="switchTab('Display')">Display</div><div class="sb-tab" id="tabTasks" onclick="switchTab('Tasks')">Tasks</div><div class="sb-tab" id="tabDashboard" onclick="switchTab('Dashboard')">Dashboard</div></div>
 
     <div class="sb-tab-panel active" id="panelInfo">
     <div class="sec">
@@ -366,6 +412,9 @@ body.dark .mode-bar.actual-mode{background:#1E3A5F}
     </div>
 
     </div><!-- /panelTasks -->
+    <div class="sb-tab-panel" id="panelDashboard">
+      <div class="gdash" id="dashMount"><div class="gdash-loading">Loading project data…</div></div>
+    </div><!-- /panelDashboard -->
     <div class="actrow">
       <button class="btne" style="background:#EA4335" onclick="exportPDF()">&#8659; PDF</button>
       <button class="btne" style="background:#4285F4" onclick="exportXLSX()">&#8659; Excel</button>
@@ -486,6 +535,7 @@ function ganttInitFirebase() {
   if (projCode) document.getElementById('iRef').value = projCode;
   document.title = 'Gantt — ' + (projCode || projName || ganttProjectId);
   ganttLoadFromFirebase();
+  ganttLoadDashboard();   // read-only: fetch full blob, pick this project, render Dashboard tab
 }
 
 function ganttLoadFromFirebase() {
@@ -577,6 +627,195 @@ function ganttSaveToFirebase() {
 function ganttAutoSave() {
   clearTimeout(ganttAutoSaveTimer);
   ganttAutoSaveTimer = setTimeout(ganttSaveToFirebase, 1500);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Per-project dashboard — READ-ONLY snapshot.
+   Fetches the full app state via action=read (mirrors index.html's read
+   path — server reassembles chunks, single JSON.parse), finds THIS
+   project by id, computes a snapshot and renders it into the Dashboard
+   sidebar tab. No writes; the bridge URL/token and gantt read/write
+   paths are untouched. Compute logic ported verbatim from the validated
+   scratchpad/dashboard-logic.js. Uses gantt.html's own theme variables.
+   ══════════════════════════════════════════════════════════════════ */
+var DASH_TASK_PHASES = ['Design','CAPEX Approval','Pilot Mold','Commercial Mold','Machine (Auxiliary Equipment)','IML Development','Production Ramp-Up'];
+window.dashProject = null;
+
+function dashTodayStr(){ return new Date().toISOString().slice(0,10); }
+function dashDaysBetween(fromStr,toStr){ var a=Date.parse(fromStr+'T00:00:00Z'), b=Date.parse(toStr+'T00:00:00Z'); return Math.round((b-a)/86400000); }
+function dashIsActiveStatus(s){ return s==='inprogress'||s==='awaiting-reply'; }
+function dashEscape(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function dashFmtDate(s){ if(!s) return ''; var d=new Date(String(s)+'T00:00:00Z'); if(isNaN(d.getTime())) return dashEscape(s); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'}); }
+
+function dashTaskBreakdown(project,today){
+  var tasks=(project&&project.tasks)||[];
+  var out={total:tasks.length,completed:0,inProcess:0,notStarted:0,delayed:0,delayedInProcess:0,remaining:0};
+  for(var i=0;i<tasks.length;i++){ var t=tasks[i];
+    if(t.done===true){ out.completed++; continue; }
+    var overdue=!!(t.deadline&&t.deadline<today);
+    var active=dashIsActiveStatus(t.status);
+    if(overdue&&active) out.delayedInProcess++;
+    else if(overdue&&!active) out.delayed++;
+    else if(!overdue&&active) out.inProcess++;
+    else out.notStarted++;
+  }
+  out.remaining=out.total-out.completed; return out;
+}
+function dashCompletionPct(project){
+  var tasks=(project&&project.tasks)||[];
+  if(!tasks.length) return (project&&project.status==='completed')?100:0;
+  var done=0; for(var i=0;i<tasks.length;i++){ if(tasks[i].done===true) done++; }
+  return Math.round(done/tasks.length*100);
+}
+function dashDeliveryRunway(project,today){
+  var dd=project&&project.deliveryDate; if(!dd) return null;
+  var daysRemaining=dashDaysBetween(today,dd);
+  return { deliveryDate:dd, daysRemaining:daysRemaining, overdue:daysRemaining<0 };
+}
+function dashHealthVerdict(project,today){
+  var BEHIND_DELAY_RATIO=0.20;
+  var pct=dashCompletionPct(project);
+  if(pct===100) return { level:'complete', reason:'All tasks complete (100%).' };
+  var tb=dashTaskBreakdown(project,today);
+  var delayedCount=tb.delayed+tb.delayedInProcess;
+  var runway=dashDeliveryRunway(project,today);
+  var overdueDelivery=!!(runway&&runway.overdue);
+  var delayRatio=tb.total>0?(delayedCount/tb.total):0;
+  if(delayedCount>0||overdueDelivery){
+    if(overdueDelivery||delayRatio>BEHIND_DELAY_RATIO){
+      var parts=[];
+      if(overdueDelivery) parts.push('delivery date passed '+Math.abs(runway.daysRemaining)+'d ago');
+      if(delayedCount>0) parts.push(delayedCount+' of '+tb.total+' tasks overdue ('+Math.round(delayRatio*100)+'%)');
+      return { level:'behind', reason:parts.join('; ')+'.' };
+    }
+    return { level:'at-risk', reason:delayedCount+' of '+tb.total+' tasks overdue ('+Math.round(delayRatio*100)+'%).' };
+  }
+  return { level:'on-track', reason:pct+'% complete, no overdue tasks or delivery.' };
+}
+function dashWorkstreamByPhase(project){
+  var tasks=(project&&project.tasks)||[]; var rows=[];
+  DASH_TASK_PHASES.forEach(function(ph){
+    var inPhase=tasks.filter(function(t){ return (t.phase||'')===ph; });
+    if(inPhase.length){
+      var done=inPhase.filter(function(t){ return t.done===true; }).length;
+      rows.push({ phase:ph, done:done, total:inPhase.length, pct:Math.round(done/inPhase.length*100) });
+    }
+  });
+  var unassigned=tasks.filter(function(t){ return !t.phase; });
+  if(unassigned.length){
+    var d2=unassigned.filter(function(t){ return t.done===true; }).length;
+    rows.push({ phase:'Unassigned', done:d2, total:unassigned.length, pct:Math.round(d2/unassigned.length*100) });
+  }
+  return rows;
+}
+function dashBarColor(pct){ return pct>=70?'var(--teal)':pct>=30?'var(--gold)':'var(--red)'; }
+
+function dashShowError(msg){ var mount=document.getElementById('dashMount'); if(mount) mount.innerHTML='<div class="gdash-error">'+dashEscape(msg)+'</div>'; }
+
+/* Read-only loader — mirrors index.html action=read (GET, token in query). */
+function ganttLoadDashboard(){
+  var mount=document.getElementById('dashMount');
+  if(!ganttProjectId){ if(mount) mount.innerHTML='<div class="gdash-error">No project id in URL.</div>'; return; }
+  if(mount) mount.innerHTML='<div class="gdash-loading">Loading project data…</div>';
+  var url=SHEETS_BRIDGE_URL+'?action=read&token='+encodeURIComponent(SHEETS_BRIDGE_TOKEN);
+  fetch(url).then(function(r){ return r.json(); }).then(function(remote){
+    if(remote&&remote.error){ dashShowError("Couldn't load project data — "+remote.error); return; }
+    if(!remote||!remote._data){ dashShowError("Couldn't load project data."); return; }
+    var parsed;
+    try { parsed=JSON.parse(remote._data); }   // server already reassembled chunks — single parse, no client stitching
+    catch(e){ dashShowError("Couldn't read project data."); return; }
+    var projects=(parsed&&parsed.projects)||[];
+    var project=null;
+    for(var i=0;i<projects.length;i++){ if(projects[i]&&projects[i].id===ganttProjectId){ project=projects[i]; break; } }
+    if(!project){ dashShowError('No matching project found for this Gantt yet.'); return; }
+    window.dashProject=project;
+    renderDashboard(project);
+  }).catch(function(err){ console.error('Dashboard fetch error:',err); dashShowError("Couldn't load project data."); });
+}
+
+function renderDashboard(p){
+  var mount=document.getElementById('dashMount'); if(!mount) return;
+  if(!p){ mount.innerHTML='<div class="gdash-empty">No project data.</div>'; return; }
+  var today=dashTodayStr();
+  var tb=dashTaskBreakdown(p,today);
+  var pct=dashCompletionPct(p);
+  var hv=dashHealthVerdict(p,today);
+  var phases=dashWorkstreamByPhase(p);
+  var runway=dashDeliveryRunway(p,today);
+  var comments=(p.subStatuses||[]).filter(function(ss){ return ss.note&&String(ss.note).trim(); })
+    .slice().sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); });
+
+  var gaugeR=32, gaugeC=Math.round(2*Math.PI*gaugeR*10)/10;
+  var gaugeOffset=gaugeC-(pct/100)*gaugeC;
+  var ringColor=dashBarColor(pct);
+  var HM={
+    'on-track':{ label:'On Track', color:'var(--teal)', bg:'var(--teal-lt)' },
+    'at-risk': { label:'At Risk',  color:'var(--gold)', bg:'var(--gold-lt)' },
+    'behind':  { label:'Behind',   color:'var(--red)',  bg:'var(--red-lt)' },
+    'complete':{ label:'Complete', color:'var(--blue)', bg:'var(--blue-lt)' }
+  }[hv.level]||{ label:'—', color:'var(--text-hint)', bg:'var(--g100)' };
+
+  var runwayHtml;
+  if(runway){
+    var big, small, col;
+    if(runway.overdue){ big=Math.abs(runway.daysRemaining); small=(big===1?'day':'days')+' overdue'; col='var(--red)'; }
+    else { big=runway.daysRemaining; small=(big===1?'day':'days')+' remaining'; col='var(--teal)'; }
+    runwayHtml='<div class="gdash-runway"><span class="big" style="color:'+col+'">'+big+'</span>'
+      +'<span class="small">'+small+' · target '+dashEscape(dashFmtDate(runway.deliveryDate))+'</span></div>';
+  } else {
+    runwayHtml='<div class="gdash-empty" style="text-align:left;padding:2px 0">No delivery date set.</div>';
+  }
+
+  var phaseHtml = phases.length
+    ? '<div class="gdash-phase-list">'+phases.map(function(ph){
+        return '<div class="gdash-phase-row">'
+          +'<div class="gdash-phase-head">'
+          +'<span class="gdash-phase-name'+(ph.phase==='Unassigned'?' unassigned':'')+'">'+dashEscape(ph.phase)+'</span>'
+          +'<span class="gdash-phase-nums"><b>'+ph.done+'/'+ph.total+'</b> · '+ph.pct+'%</span>'
+          +'</div>'
+          +'<div class="gdash-phase-bar"><div class="gdash-phase-bar-fill" style="width:'+ph.pct+'%;background:'+dashBarColor(ph.pct)+';"></div></div>'
+          +'</div>';
+      }).join('')+'</div>'
+    : '<div class="gdash-empty" style="text-align:left;padding:2px 0">No tasks assigned to a phase yet. Set a Phase on each action in the main tracker.</div>';
+
+  var commentsHtml = comments.length
+    ? comments.map(function(c){
+        return '<div class="gdash-comment"><div class="gdash-comment-dot"></div><div class="gdash-comment-body">'
+          +'<div class="gdash-comment-top"><span class="gdash-comment-title">'+dashEscape(c.title||'Untitled')+'</span>'
+          +(c.date?'<span class="gdash-comment-date">'+dashEscape(dashFmtDate(c.date))+'</span>':'')+'</div>'
+          +'<div class="gdash-comment-note">'+dashEscape(c.note)+'</div></div></div>';
+      }).join('')
+    : '<div class="gdash-empty" style="text-align:left;padding:2px 0">No comments yet — sub-status notes appear here.</div>';
+
+  mount.innerHTML =
+    '<div class="gdash-title">Project Dashboard</div>'
+    +'<div class="gdash-card">'
+      +'<div class="gdash-gauge-wrap">'
+        +'<div class="gdash-ring">'
+          +'<svg viewBox="0 0 80 80">'
+            +'<circle class="gdash-ring-track" cx="40" cy="40" r="'+gaugeR+'"></circle>'
+            +'<circle class="gdash-ring-fill" cx="40" cy="40" r="'+gaugeR+'" stroke="'+ringColor+'" stroke-dasharray="'+gaugeC+'" stroke-dashoffset="'+gaugeOffset+'"></circle>'
+          +'</svg>'
+          +'<div class="gdash-ring-center"><div class="gdash-ring-pct">'+pct+'%</div><div class="gdash-ring-sub">COMPLETE</div></div>'
+        +'</div>'
+        +'<div class="gdash-gauge-meta"><span class="lab">Overall Completion</span><span class="val">'+tb.completed+'/'+tb.total+' tasks</span></div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="gdash-card">'
+      +'<span class="gdash-health" style="color:'+HM.color+';background:'+HM.bg+';">'+HM.label+'</span>'
+      +'<div class="gdash-health-reason">'+dashEscape(hv.reason)+'</div>'
+      +'<div class="gdash-tiles">'
+        +'<div class="gdash-tile t-blue"><div class="n">'+tb.total+'</div><div class="l">Total</div></div>'
+        +'<div class="gdash-tile"><div class="n">'+tb.notStarted+'</div><div class="l">Not Started</div></div>'
+        +'<div class="gdash-tile t-blue"><div class="n">'+tb.inProcess+'</div><div class="l">In Process</div></div>'
+        +'<div class="gdash-tile t-teal"><div class="n">'+tb.completed+'</div><div class="l">Completed</div></div>'
+        +'<div class="gdash-tile t-red"><div class="n">'+tb.delayed+'</div><div class="l">Delayed</div></div>'
+        +'<div class="gdash-tile t-red"><div class="n">'+tb.delayedInProcess+'</div><div class="l">Delayed In-Process</div></div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="gdash-card"><div class="gdash-slabel">Delivery Runway</div>'+runwayHtml+'</div>'
+    +'<div class="gdash-card"><div class="gdash-slabel">Workstream by Phase</div>'+phaseHtml+'</div>'
+    +'<div class="gdash-card"><div class="gdash-slabel">Comments <span style="font-weight:400;color:var(--text-hint)">('+comments.length+')</span></div>'+commentsHtml+'</div>';
 }
 
 window.onload = function(){
@@ -1952,7 +2191,7 @@ document.addEventListener('click',function(e){
 });
 
 var sbMode='tab';
-function switchTab(name){['Info','Phases','Display','Tasks'].forEach(function(t){var p2=document.getElementById('panel'+t),tb=document.getElementById('tab'+t);if(p2) p2.classList.toggle('active',t===name);if(tb) tb.classList.toggle('active',t===name);});}
+function switchTab(name){['Info','Phases','Display','Tasks','Dashboard'].forEach(function(t){var p2=document.getElementById('panel'+t),tb=document.getElementById('tab'+t);if(p2) p2.classList.toggle('active',t===name);if(tb) tb.classList.toggle('active',t===name);});}
 function setSbMode(mode){sbMode=mode;var sb=document.getElementById('mainSb'),handle=document.getElementById('drawerHandle'),ws=document.querySelector('.ws');document.getElementById('btnModeTab').classList.toggle('active',mode==='tab');document.getElementById('btnModeDrawer').classList.toggle('active',mode==='drawer');if(mode==='drawer'){sb.classList.add('drawer-mode');sb.classList.remove('open');handle.classList.add('visible');if(ws) ws.style.gridTemplateColumns='1fr';}else{sb.classList.remove('drawer-mode','open');handle.classList.remove('visible');document.getElementById('drawerOverlay').classList.remove('open');if(ws) ws.style.gridTemplateColumns='';}}
 function openDrawer(){document.getElementById('mainSb').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');}
 function closeDrawer(){document.getElementById('mainSb').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');}

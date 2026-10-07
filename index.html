@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V76.4</title>
+<title>NPD Tracker V76.5</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,9 +31,10 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.49.0/dist/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Excel library is only used by import/export buttons — defer so it never blocks page load -->
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <!-- Firebase SDK (compat version) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -302,6 +303,8 @@ textarea.finput{resize:vertical;min-height:64px;line-height:1.5;}
 .sbadge.open,.sbadge.OPEN{background:var(--blbg);color:var(--blue);}
 .sbadge.closed,.sbadge.CLOSED,.sbadge.CLOSE,.sbadge.close{background:var(--al);color:var(--accent);}
 .sbadge.on-hold,.sbadge.ON-HOLD{background:var(--ambg);color:var(--amber);}
+.sbadge.in-progress{background:var(--blbg);color:var(--blue);}
+.sbadge.completed{background:var(--gbg);color:var(--green);}
 .ppill{font-size:10px;color:var(--text3);font-family:var(--fm);}
 .chevron{font-size:15px;color:var(--text3);transition:transform .2s;flex-shrink:0;margin-top:2px;}
 .card.expanded .chevron{transform:rotate(180deg);}
@@ -620,7 +623,7 @@ html.dark-mode .c-niml{background:#0a2018;color:#30c060;}
 .cmd-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 8px;flex-wrap:wrap;margin:0 28px 12px;}
 .status-tabs{display:flex;gap:2px;flex-wrap:wrap;}
 .status-tab.ftab{padding:7px 11px;border:none;border-bottom:2px solid transparent;border-radius:0;background:none;}
-.status-tab.ftab.active{background:none;}
+.status-tab.ftab.active{background:none;color:var(--text);border-color:var(--text);}
 .status-tab.ftab[id="inqtab-OPEN"].active,.status-tab.ftab[id="proj-tab-active"].active{color:var(--accent);border-color:var(--accent);}
 .status-tab.ftab[id="inqtab-CLOSED"].active{color:var(--text2);border-color:var(--text2);}
 .status-tab.ftab[id="inqtab-ON-HOLD"].active{color:var(--amber);border-color:var(--amber);}
@@ -1456,6 +1459,8 @@ textarea.autogrow{overflow:hidden;resize:none;}
 .fn-logo{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;margin-right:2px;transition:transform .4s ease;}
 .fn-logo:hover{transform:rotate(360deg);}
 .fn-logo img{width:19px;height:auto;display:block;}
+/* Logo artwork is white — sit it on the dark brand disc so it shows on the light nav pill too */
+#floatingNav .fn-logo{background:var(--sidebar-bg);}
 
 .fn-items{display:flex;align-items:flex-end;gap:4px;flex-wrap:wrap;justify-content:center;max-width:70vw;}
 
@@ -1782,7 +1787,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V76.4</div>
+    <div class="login-logo">NPD Tracker V76.5</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -4352,7 +4357,10 @@ function getLastUpdated(p) {
   (p.subStatuses||[]).forEach(ss => { if (ss.createdAt) candidates.push(ss.createdAt); if (ss.date) candidates.push(ss.date); });
   (p.tasks||[]).forEach(t => { if (t.deadline) candidates.push(t.deadline); });
   if (p.date) candidates.push(p.date);
-  return candidates.length ? candidates.sort().reverse()[0] : '';
+  // Upcoming deadlines aren't updates — ignore future dates (was showing "-2d ago")
+  const today = todayStr();
+  const past = candidates.filter(d => d <= today);
+  return past.length ? past.sort().reverse()[0] : '';
 }
 
 function daysSince(dateStr) {

@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.1</title>
+<title>NPD Tracker V77.2</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -322,6 +322,8 @@ html.dark-mode .i-low{background:#1e2535;color:#8fa3bf;}
 .c-imp{background:#fff5e0;color:#d08010;}
 .c-mb{background:#f0e8ff;color:#7040c8;}
 .c-niml{background:#e0ffe8;color:#1a8a40;}
+.c-icu{background:#dcf5f2;color:#0f766e;}
+html.dark-mode .c-icu{background:#062a27;color:#2dd4bf;}
 html.dark-mode .c-nm{background:#0a1838;color:#3a8ef5;}
 html.dark-mode .c-imp{background:#2a1e08;color:#f5a623;}
 html.dark-mode .c-mb{background:#1a0a2e;color:#a06aee;}
@@ -1740,6 +1742,13 @@ html.touch-ui .trk-seg button{min-height:40px;padding:8px 16px;font-size:13px;}
 html.touch-ui .trk-link,html.touch-ui .trk-add{min-height:38px;font-size:13px;}
 html.touch-ui .sv-chip,html.touch-ui .sv-save{min-height:36px;font-size:12.5px;}
 
+.card.is-closed{opacity:.72;}
+.card.is-closed:hover{opacity:1;}
+.closed-sec{margin-top:18px;border-top:1px dashed var(--border2);padding-top:10px;}
+.closed-sec-head{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;font:700 12px var(--f);color:var(--text2);padding:6px 0;min-height:36px;}
+.closed-sec-head .closed-sec-note{font-weight:400;color:var(--text3);font-size:11px;}
+.closed-sec-body{margin-top:8px;}
+
 /* ══════════════════════════════════════════════
    TOUCH TABLET LAYER (html.touch-ui)
    Tuned for the Honor MagicPad 4 in landscape (~1500×860 CSS px in
@@ -1849,7 +1858,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.1</div>
+    <div class="login-logo">NPD Tracker V77.2</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -2075,6 +2084,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
       <button class="ftab status-tab" id="ftab-improvement" onclick="setProjFilter('improvement')">Improvement</button>
       <button class="ftab status-tab" id="ftab-masterbatch" onclick="setProjFilter('masterbatch')">Masterbatch</button>
       <button class="ftab status-tab" id="ftab-new-iml" onclick="setProjFilter('new-iml')">New IML</button>
+      <button class="ftab status-tab" id="ftab-icu" onclick="setProjFilter('icu')">ICU</button>
     </div>
     <div class="cmd-divider"></div>
     <div class="cmd-pop-wrap">
@@ -2888,7 +2898,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
       <div class="fg"><label class="flabel">Project Brief</label><textarea class="finput" id="proj-brief" rows="3" placeholder="Short description of what this project is about…"></textarea></div>
       <div class="frow2">
         <div class="fg"><label class="flabel">Classification</label>
-          <select class="finput" id="proj-class"><option value="new-mold">New Mold</option><option value="improvement">Improvement Project</option><option value="masterbatch">New Masterbatch</option><option value="new-iml">New IML</option></select>
+          <select class="finput" id="proj-class"><option value="new-mold">New Mold</option><option value="improvement">Improvement Project</option><option value="masterbatch">New Masterbatch</option><option value="new-iml">New IML</option><option value="icu">ICU</option></select>
         </div>
         <div class="fg"><label class="flabel">Factory</label>
           <select class="finput" id="proj-factory">
@@ -3696,7 +3706,7 @@ function importFromTrackerExport(wb, sheetNames) {
       if (!code) return;
 
       // Reverse-map classification label → key
-      const classMap = {'New Mold':'new-mold','Improvement':'improvement','Masterbatch':'masterbatch','New IML':'new-iml'};
+      const classMap = {'New Mold':'new-mold','Improvement':'improvement','Masterbatch':'masterbatch','New IML':'new-iml','ICU':'icu'};
       const statusMap = {'Not Started':'not-started','In Progress':'in-progress','Completed':'completed','On Hold':'on-hold'};
       const classRaw = String(r['Classification']||'').trim();
       const statusRaw = String(r['Status']||'').trim();
@@ -4045,8 +4055,8 @@ function uid() { return Date.now().toString(36)+Math.random().toString(36).slice
 function completion(tasks) { if(!tasks||!tasks.length)return 0; return Math.round(tasks.filter(t=>t.done).length/tasks.length*100); }
 function statusLabel(s) { return{'not-started':'Not Started','in-progress':'In Progress','completed':'Completed','on-hold':'On Hold','OPEN':'Open','CLOSED':'Closed','CLOSE':'Closed','ON-HOLD':'On Hold'}[s]||s; }
 function impLabel(i) { return{critical:'Critical',high:'High',medium:'Medium',low:'Low'}[i]||i; }
-function classLabel(c) { return{'new-mold':'New Mold','improvement':'Improvement','masterbatch':'Masterbatch','new-iml':'New IML'}[c]||''; }
-function classCSS(c) { return{'new-mold':'c-nm','improvement':'c-imp','masterbatch':'c-mb','new-iml':'c-niml'}[c]||''; }
+function classLabel(c) { return{'new-mold':'New Mold','improvement':'Improvement','masterbatch':'Masterbatch','new-iml':'New IML','icu':'ICU'}[c]||''; }
+function classCSS(c) { return{'new-mold':'c-nm','improvement':'c-imp','masterbatch':'c-mb','new-iml':'c-niml','icu':'c-icu'}[c]||''; }
 function pipeStatusCSS(s) {
   const sl = String(s||'').toLowerCase();
   if(sl==='done')return'ps-done';
@@ -4730,6 +4740,7 @@ function setInqSiteFilter(f) {
 function getFilteredInquiries() {
   let list = [...data.inquiries];
   if (inqFilter !== 'all') list = list.filter(x => (x.status||'').toUpperCase() === inqFilter.toUpperCase());
+  else if (!_closedSecBypass) list = list.filter(x => !isClosedInq(x)); // shown in the Closed section instead
   if (inqSiteFilter !== 'all') list = list.filter(x => x.factory === inqSiteFilter);
   if (inqActiveOnly) list = list.filter(x => !['CLOSED','CLOSE','Discarded'].includes(x.status));
   if (inqYearFilter)  list = list.filter(x => (x.date||'').startsWith(inqYearFilter));
@@ -4854,9 +4865,10 @@ function renderInquiryCard(item) {
   const bdPill = item.bdPerson ? `<span class="bd-pill">${item.bdPerson}</span>` : '';
   const priPill = priLabel ? `<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--ambg);color:${priColor};font-family:var(--fm);">P${item.priority} ${priLabel}</span>` : '';
 
-  const overdueClass = active.length ? 'has-overdue' : '';
+  const _closed = isClosedInq(item);
+  const overdueClass = (active.length && !_closed) ? 'has-overdue' : '';
   const doneFrac = tasks.length ? `${tasks.filter(t=>t.done).length}/${tasks.length}` : '';
-  const overdueBadge = active.length ? `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--rebg);color:var(--red);font-family:var(--fm);">⚠ ${active.length} overdue</span>` : '';
+  const overdueBadge = (active.length && !_closed) ? `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--rebg);color:var(--red);font-family:var(--fm);">⚠ ${active.length} overdue</span>` : '';
 
   // Delivery performance pill
   const delivThreshYellow = (data.settings?.deliveryThresholdYellow)||14;
@@ -4871,7 +4883,7 @@ function renderInquiryCard(item) {
   const delivColor = delivDays===null?'':delivDays>=delivThreshRed?'var(--red)':delivDays>=delivThreshYellow?'var(--amber)':'var(--accent)';
   const delivPill  = delivDays!==null ? `<span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;background:${delivDays>=delivThreshRed?'var(--rebg)':delivDays>=delivThreshYellow?'var(--ambg)':'var(--al)'};color:${delivColor};font-family:var(--fm);" title="Delivery performance">⏱ ${delivDays}d</span>` : '';
 
-  return `<div class="card ${exp} ${overdueClass}" id="card-${item.id}">
+  return `<div class="card ${exp} ${overdueClass} ${_closed ? 'is-closed' : ''}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard('${item.id}','inquiry')">
       <div class="card-hl">
         <div class="card-code">${item.code}${item.bdNum?' · BD#'+item.bdNum:''}</div>
@@ -4902,6 +4914,7 @@ function renderInquiryCard(item) {
 // ══════════════════════════════════════════════════════
 function getFilteredProjects() {
   let list = [...data.projects];
+  if (!_closedSecBypass) list = list.filter(p => !isClosedProj(p)); // shown in the Closed section instead
   if (projFilter !== 'all') list = list.filter(p => p.classification === projFilter);
   if (projSiteFilter !== 'all') list = list.filter(p => p.factory === projSiteFilter);
   if (projActiveOnly) list = list.filter(p => p.status === 'in-progress' || p.status === 'not-started');
@@ -4936,7 +4949,8 @@ function renderCard(item, type) {
   const future = tasks.filter(t => !t.done && t.deadline > today);
   const done   = tasks.filter(t => t.done);
   const exp = item.expanded ? 'expanded' : '';
-  const overdueClass = active.length ? 'has-overdue' : '';
+  const _closed = type === 'project' ? isClosedProj(item) : isClosedInq(item);
+  const overdueClass = (active.length && !_closed) ? 'has-overdue' : '';
   const clsBadge = type === 'project' && item.classification ? `<span class="cbadge ${classCSS(item.classification)}">${classLabel(item.classification)}</span>` : '';
   const factoryBadge = item.factory ? `<span class="factory-pill">${item.factory}</span>` : '';
   const aHTML = active.length ? `<div class="tsec"><div class="tsec-label"><i class="ti ti-flame" style="color:var(--red)"></i> Active / Overdue</div>${active.map(t=>renderTask(item,type,t)).join('')}</div>` : '';
@@ -4948,7 +4962,7 @@ function renderCard(item, type) {
   const staleTag = (type === 'project' && staleDays !== null)
     ? `<span class="stale-tag ${staleDays > 14 ? 'stale-warn' : staleDays > 7 ? 'stale-mid' : 'stale-ok'}" title="Last updated ${fmtDate(lastUpd)}"><i class="ti ti-clock" style="font-size:9px"></i> ${staleDays === 0 ? 'today' : staleDays + 'd ago'}</span>`
     : '';
-  const overdueChip = (type === 'project' && active.length)
+  const overdueChip = (type === 'project' && active.length && !_closed)
     ? `<span class="overdue-chip"><i class="ti ti-alert-circle" style="font-size:9px"></i> ${active.length} overdue</span>`
     : '';
 
@@ -4984,7 +4998,7 @@ function renderCard(item, type) {
 
   const kivClass = (type === 'project' && item.kiv) ? 'kiv-marked' : '';
   const kivBadge = (type === 'project' && item.kiv) ? `<span class="kiv-pill" title="${(item.kivComment||'').replace(/"/g,'&quot;')}"><i class="ti ti-flag-3" style="font-size:10px"></i> KIV</span>` : '';
-  return `<div class="card ${exp} ${overdueClass} ${kivClass}" id="card-${item.id}">
+  return `<div class="card ${exp} ${overdueClass} ${kivClass} ${_closed ? 'is-closed' : ''}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard('${item.id}','${type}')">
       <div class="card-hl">
         <div class="card-code">${item.code}${item.date?' · '+fmtDate(item.date):''}</div>
@@ -6192,6 +6206,7 @@ function collectNotifications() {
 
   // Inquiries tasks
   data.inquiries.forEach(item => {
+    if (isClosedInq(item)) return; // closed inquiry → its tasks are closed too
     (item.tasks||[]).filter(t => !t.done && taskVisible(t)).forEach(t => {
       const pic = t.pic || 'Adam';
       if (t.status === 'awaiting-reply') {
@@ -6206,6 +6221,7 @@ function collectNotifications() {
 
   // Projects tasks
   data.projects.forEach(item => {
+    if (isClosedProj(item)) return; // completed project → its tasks are closed too
     (item.tasks||[]).filter(t => !t.done && taskVisible(t)).forEach(t => {
       const pic = t.pic || 'Adam';
       if (t.status === 'awaiting-reply') {
@@ -8980,6 +8996,7 @@ function renderProjDetail() {
         <option value="improvement" ${p.classification==='improvement'?'selected':''}>Improvement</option>
         <option value="masterbatch" ${p.classification==='masterbatch'?'selected':''}>Masterbatch</option>
         <option value="new-iml" ${p.classification==='new-iml'?'selected':''}>New IML</option>
+        <option value="icu" ${p.classification==='icu'?'selected':''}>ICU</option>
       </select>
       <select onchange="saveProjField('${p.id}','factory',this.value)" style="font-size:11px;padding:2px 6px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--f);cursor:pointer;">
         <option value="">Factory…</option>
@@ -8997,7 +9014,7 @@ function renderProjDetail() {
   // ── Hero wash tinted by classification, actions tab badge ──
   const CLASS_TINT = {
     'new-mold': ['var(--accent)','var(--al)'], 'improvement': ['var(--amber)','var(--ambg)'],
-    'masterbatch': ['var(--purple)','var(--pubg)'], 'new-iml': ['var(--green)','var(--gbg)']
+    'masterbatch': ['var(--purple)','var(--pubg)'], 'new-iml': ['var(--green)','var(--gbg)'], 'icu': ['#0d9488','rgba(13,148,136,.12)']
   }[p.classification] || ['var(--purple)','var(--pubg)'];
   const headerEl = document.querySelector('#proj-detail-panel .proj-detail-header');
   if (headerEl) { headerEl.style.setProperty('--pdx-accent1', CLASS_TINT[0]); headerEl.style.setProperty('--pdx-accent2', 'var(--accent)'); }
@@ -11415,7 +11432,7 @@ function ballChip(item) {
 function outcomePill(item) {
   return item.outcome && OUTCOME_LABELS[item.outcome] ? `<span class="outcome-pill outcome-${item.outcome}" title="${_esc(item.outcomeReason||'')}">${OUTCOME_LABELS[item.outcome]}</span>` : '';
 }
-function trackChips(item) { return outcomePill(item) + ballChip(item); }
+function trackChips(item) { return outcomePill(item) + (isClosedInq(item) || isClosedProj(item) ? '' : ballChip(item)); }
 
 function inqEstValue(inq) { return (inq.products||[]).reduce((t, p) => t + (parseFloat(p.volume)||0) * (parseFloat(p.cost)||0), 0); }
 function fmtRM(n) { return 'RM ' + (n||0).toLocaleString('en-MY', {maximumFractionDigits:0}); }
@@ -11513,10 +11530,56 @@ function renderTrackPanel(item, type) {
 }
 
 // ══════════════════════════════════════════════════════
+//  CLOSED ITEMS — kept apart; their tasks count as closed
+// ══════════════════════════════════════════════════════
+var _closedSecBypass = false; // var: read by getFiltered*() before this line runs
+function isClosedInq(i) { return ['CLOSED','CLOSE','DISCARDED'].includes(String((i && i.status) || '').toUpperCase()); }
+function isClosedProj(p) { return !!p && p.status === 'completed'; }
+
+function _closedSecOpen(page) { try { return localStorage.getItem('npd_closed_open_' + page) === '1'; } catch(e) { return false; } }
+function toggleClosedSec(page) {
+  try { localStorage.setItem('npd_closed_open_' + page, _closedSecOpen(page) ? '0' : '1'); } catch(e) {}
+  page === 'inq' ? renderInquiries() : renderProjects();
+}
+function _closedRecords(page) {
+  // Same filters as the main list (site, year, type…), but only the closed ones
+  _closedSecBypass = true;
+  let list;
+  try { list = page === 'inq' ? getFilteredInquiries() : getFilteredProjects(); } finally { _closedSecBypass = false; }
+  list = list.filter(page === 'inq' ? isClosedInq : isClosedProj);
+  return list.sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1);
+}
+function appendClosedSection(page) {
+  if (page === 'inq' && inqFilter !== 'all') return; // a status tab is selected — show exactly that
+  const el = document.getElementById(page === 'inq' ? 'inquiries-list' : 'projects-list');
+  if (!el) return;
+  const list = _closedRecords(page);
+  if (!list.length) return;
+  const open = _closedSecOpen(page);
+  let body = '';
+  if (open) {
+    const card = x => { try { return page === 'inq' ? renderInquiryCard(x) : renderCard(x, 'project'); } catch(e) { return ''; } };
+    body = page === 'inq' && inqView === 'list'
+      ? `<div class="inq-list-wrap">${list.map(x => { try { return renderInquiryListRow(x); } catch(e) { return ''; } }).join('')}</div>`
+      : `<div class="cards-grid">${list.map(card).join('')}</div>`;
+  }
+  el.insertAdjacentHTML('beforeend', `<div class="closed-sec">
+    <button class="closed-sec-head" onclick="toggleClosedSec('${page}')"><i class="ti ti-chevron-${open ? 'down' : 'right'}"></i>
+      ${page === 'inq' ? 'Closed inquiries' : 'Completed projects'} <span class="sec-count">${list.length}</span>
+      <span class="closed-sec-note">— tasks inside these are treated as closed and never raise alerts</span></button>
+    ${open ? `<div class="closed-sec-body">${body}</div>` : ''}</div>`);
+  if (open) { try { applyDensity(); } catch(e) {} }
+}
+const _renderInquiriesBeforeClosed = renderInquiries;
+renderInquiries = function() { _renderInquiriesBeforeClosed.apply(this, arguments); try { appendClosedSection('inq'); } catch(e) { console.error('closed section:', e); } };
+const _renderProjectsBeforeClosed = renderProjects;
+renderProjects = function() { _renderProjectsBeforeClosed.apply(this, arguments); try { appendClosedSection('proj'); } catch(e) { console.error('closed section:', e); } };
+
+// ══════════════════════════════════════════════════════
 //  MY DAY — start-of-day overview
 // ══════════════════════════════════════════════════════
-function _isActiveInq(i) { return !i.outcome && !['CLOSED','CLOSE'].includes(String(i.status||'').toUpperCase()); }
-function _isActiveProj(p) { return p.status !== 'completed'; }
+function _isActiveInq(i) { return !i.outcome && !isClosedInq(i); }
+function _isActiveProj(p) { return !isClosedProj(p); }
 function _openItemJS(type, id) {
   return type === 'inquiry' ? `openInqDetail('${id}')` : type === 'project' ? `openProjDetail('${id}')` : `showPage('tasks')`;
 }

@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V76.5</title>
+<title>NPD Tracker V77.0</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1679,6 +1679,68 @@ body{padding-bottom:env(safe-area-inset-bottom);}
 }
 
 /* ══════════════════════════════════════════════
+   TRACKING (ball in court · outcome · links) + MY DAY
+   ══════════════════════════════════════════════ */
+.ball-chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--surface2);color:var(--text2);font-family:var(--fm);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;}
+.ball-chip.us{background:var(--blbg);color:var(--blue);}
+.ball-chip.warn{background:var(--ambg);color:var(--amber);}
+.ball-chip.late{background:var(--rebg);color:var(--red);}
+.outcome-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.outcome-won{background:var(--gbg);color:var(--green);}
+.outcome-lost{background:var(--rebg);color:var(--red);}
+.outcome-dropped{background:var(--surface2);color:var(--text3);}
+.trk-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin-bottom:12px;}
+.trk-row:last-child{margin-bottom:0;}
+.trk-k{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);}
+.trk-seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.trk-seg button{padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font:500 12px var(--f);cursor:pointer;}
+.trk-seg button.on{background:var(--text);color:var(--surface);border-color:var(--text);}
+.trk-seg button:disabled{cursor:default;opacity:.7;}
+.trk-since{font-size:11px;color:var(--text3);margin-left:4px;}
+.trk-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font:13px var(--f);color:var(--text);width:100%;box-sizing:border-box;}
+.trk-links{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.trk-link{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);font-size:12px;color:var(--accent);text-decoration:none;max-width:260px;}
+.trk-link span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.trk-link-x{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 0 0 2px;}
+.trk-add{padding:5px 11px;border-radius:999px;border:1px dashed var(--border2);background:none;color:var(--text3);font:500 12px var(--f);cursor:pointer;}
+.md-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 14px;}
+.md-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;}
+.md-tile-n{font:800 28px/1.1 var(--f);color:var(--text);}
+.md-tile-n.red{color:var(--red);} .md-tile-n.amber{color:var(--amber);}
+.md-tile-l{font-size:11px;color:var(--text3);margin-top:2px;}
+.md-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;padding-bottom:24px;}
+.md-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.md-panel-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;}
+.md-panel-head .sec-count{margin-left:auto;}
+.md-row{display:flex;width:100%;gap:10px;align-items:center;padding:9px 14px;border:none;border-bottom:1px solid var(--border);background:none;text-align:left;cursor:pointer;font-family:var(--f);color:var(--text);}
+.md-row:last-child{border-bottom:none;}
+.md-row:hover{background:var(--surface2);}
+.md-code{font:500 11px var(--fm);color:var(--text3);flex-shrink:0;min-width:92px;}
+.md-name{flex:1;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.md-name small{color:var(--text3);font-size:11px;margin-left:6px;}
+.md-meta{font:600 11px var(--fm);flex-shrink:0;color:var(--text3);}
+.md-meta.red{color:var(--red);} .md-meta.amber{color:var(--amber);}
+.md-empty{padding:14px;font-size:12px;color:var(--text3);}
+.md-more{padding:8px 14px;font-size:11px;color:var(--text3);}
+.wl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.wl-stat{background:var(--surface2);border-radius:8px;padding:8px 10px;}
+.wl-stat b{display:block;font-size:18px;}
+.wl-stat span{font-size:10px;color:var(--text3);}
+.fw-table{width:100%;border-collapse:collapse;font-size:12px;}
+.fw-table th{font-size:10px;color:var(--text3);font-weight:600;text-align:right;padding:4px 6px;font-family:var(--fm);}
+.fw-table th:first-child,.fw-table td:first-child{text-align:left;}
+.fw-table td{padding:6px;border-top:1px solid var(--border);text-align:right;}
+.sv-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 28px 10px;}
+.sv-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 11px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:500 11px var(--f);color:var(--text2);cursor:pointer;}
+.sv-chip .sv-x{border:none;background:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 3px;}
+.sv-save{padding:4px 11px;border-radius:999px;border:1px dashed var(--border2);background:none;color:var(--text3);font:500 11px var(--f);cursor:pointer;}
+@media (max-width:900px){.md-grid{grid-template-columns:1fr;}.md-tiles{grid-template-columns:1fr 1fr;}.trk-row{grid-template-columns:1fr;gap:6px;}}
+html.touch-ui .md-row{min-height:50px;}
+html.touch-ui .trk-seg button{min-height:40px;padding:8px 16px;font-size:13px;}
+html.touch-ui .trk-link,html.touch-ui .trk-add{min-height:38px;font-size:13px;}
+html.touch-ui .sv-chip,html.touch-ui .sv-save{min-height:36px;font-size:12.5px;}
+
+/* ══════════════════════════════════════════════
    TOUCH TABLET LAYER (html.touch-ui)
    Tuned for the Honor MagicPad 4 in landscape (~1500×860 CSS px in
    Chrome) but applies to any device whose primary input is a finger.
@@ -1787,7 +1849,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V76.5</div>
+    <div class="login-logo">NPD Tracker V77.0</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1846,7 +1908,8 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
   </div>
 
   <div class="fn-items fn-desktop-only">
-    <button class="fn-item active" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i><span class="fn-tooltip">Inquiries</span></button>
+    <button class="fn-item active" id="nav-myday" onclick="showPage('myday')"><i class="ti ti-sun"></i><span class="fn-tooltip">My Day</span></button>
+    <button class="fn-item" id="nav-inquiries" onclick="showPage('inquiries')"><i class="ti ti-file-description"></i><span class="fn-tooltip">Inquiries</span></button>
     <button class="fn-item" id="nav-projects" onclick="showPage('projects')"><i class="ti ti-folder"></i><span class="fn-tooltip">Projects</span></button>
     <button class="fn-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="fn-tooltip">Tasks</span><span class="fn-badge" id="tasks-viewall-badge" style="display:none"></span></button>
     <button class="fn-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="fn-tooltip">Notifications</span><span class="fn-badge" id="notif-nav-badge" style="display:none">0</span></button>
@@ -1881,6 +1944,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
   </button>
 
   <div class="fn-mobile-popover" id="pill-mobile-popover">
+    <button class="fn-more-item" onclick="showPage('myday');closeMobileMenu()"><i class="ti ti-sun"></i>My Day</button>
     <button class="fn-more-item" onclick="showPage('inquiries');closeMobileMenu()"><i class="ti ti-file-description"></i>Inquiries</button>
     <button class="fn-more-item" onclick="showPage('projects');closeMobileMenu()"><i class="ti ti-folder"></i>Projects</button>
     <button class="fn-more-item" onclick="showPage('tasks');closeMobileMenu()"><i class="ti ti-checkbox"></i>Tasks</button>
@@ -1918,7 +1982,11 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 </div>
 
 <!-- INQUIRIES PAGE -->
-<div class="page active" id="page-inquiries">
+<div class="page active" id="page-myday">
+  <div id="myday-body"></div>
+</div>
+
+<div class="page" id="page-inquiries">
   <div class="sec-head">
     <span class="sec-title">Inquiries</span>
     <div class="btn-row">
@@ -2169,6 +2237,14 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
       <div class="pm-panel-head"><span class="pm-panel-title">Workload</span></div>
       <div class="pm-legend"><span><span class="pm-legend-dot" style="background:#30c060"></span>Done</span><span><span class="pm-legend-dot" style="background:#3a8ef5"></span>Remaining</span><span><span class="pm-legend-dot" style="background:#f0445a"></span>Overdue</span></div>
       <div class="pm-panel-body" id="pm-workload-body"></div>
+    </div>
+    <div class="pm-panel" id="pm-winloss-panel">
+      <div class="pm-panel-head"><span class="pm-panel-title">Inquiry Win / Loss</span></div>
+      <div class="pm-panel-body" id="pm-winloss-body"></div>
+    </div>
+    <div class="pm-panel" id="pm-factory-panel" style="grid-column:span 2;">
+      <div class="pm-panel-head"><span class="pm-panel-title">Factory Workload</span></div>
+      <div class="pm-panel-body" id="pm-factory-body"></div>
     </div>
   </div>
 </div>
@@ -2738,6 +2814,20 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
         <div class="fg"><label class="flabel">Price Submission Date</label><input class="finput" id="inq-price-date" type="date"></div>
       </div>
       <div class="fg"><label class="flabel">Price Submission Remark</label><input class="finput" id="inq-price-remark" type="text" placeholder="Price notes…"></div>
+      <div class="fsection"><i class="ti ti-target-arrow"></i> Tracking &amp; Result</div>
+      <div class="frow2">
+        <div class="fg"><label class="flabel">Ball in court</label>
+          <select class="finput" id="inq-ball"><option value="">— Not set —</option><option value="us">Us</option><option value="customer">Customer</option><option value="factory">Factory</option><option value="supplier">Supplier</option></select>
+        </div>
+        <div class="fg"><label class="flabel">Mold / tooling cost (RM)</label><input class="finput" id="inq-moldcost" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="frow2">
+        <div class="fg"><label class="flabel">Outcome</label>
+          <select class="finput" id="inq-outcome"><option value="">Open — no result yet</option><option value="won">Won</option><option value="lost">Lost</option><option value="dropped">Dropped</option></select>
+        </div>
+        <div class="fg"><label class="flabel">Reason</label><input class="finput" id="inq-outcome-reason" type="text" placeholder="e.g. price too high, customer delayed launch"></div>
+      </div>
+      <div class="fg"><label class="flabel">Links <span style="font-weight:400;text-transform:none;letter-spacing:0;">— one per line, optional name first: Drive folder | https://…</span></label><textarea class="finput" id="inq-links" rows="2" placeholder="Drive folder | https://drive.google.com/…"></textarea></div>
       <div class="fsection"><i class="ti ti-list-check"></i> Quick Tasks</div>
       <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Select tasks to auto-create when this inquiry is saved:</div>
       <div class="autotask-card checked" id="autotask-card-t1" onclick="toggleAutoTask('t1')">
@@ -2815,6 +2905,11 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
         <div class="fg"><label class="flabel">Sales Person</label><input class="finput" id="proj-salesperson" type="text" placeholder="e.g. Adam"></div>
       </div>
       <div class="fg"><label class="flabel">Target Delivery Date</label><input class="finput" id="proj-delivery" type="date"></div>
+      <div class="fsection"><i class="ti ti-target-arrow"></i> Tracking</div>
+      <div class="fg"><label class="flabel">Ball in court</label>
+        <select class="finput" id="proj-ball"><option value="">— Not set —</option><option value="us">Us</option><option value="customer">Customer</option><option value="factory">Factory</option><option value="supplier">Supplier</option></select>
+      </div>
+      <div class="fg"><label class="flabel">Links <span style="font-weight:400;text-transform:none;letter-spacing:0;">— one per line, optional name first: Drawings | https://…</span></label><textarea class="finput" id="proj-links" rows="2" placeholder="Drive folder | https://drive.google.com/…"></textarea></div>
       <div class="fsection"><i class="ti ti-progress"></i> Status</div>
       <div class="fg"><label class="flabel">Overall Status</label>
         <select class="finput" id="proj-status"><option value="not-started">Not Started</option><option value="in-progress">In Progress</option><option value="completed">Completed</option><option value="on-hold">On Hold</option></select>
@@ -4787,7 +4882,7 @@ function renderInquiryCard(item) {
           ${priPill}${bdPill}${overdueBadge}
           ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
           <span class="ppill">${doneFrac||'—'}</span>
-          ${delivPill}
+          ${delivPill}${trackChips(item)}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
@@ -4894,7 +4989,7 @@ function renderCard(item, type) {
       <div class="card-hl">
         <div class="card-code">${item.code}${item.date?' · '+fmtDate(item.date):''}</div>
         <div class="card-name">${item.name}</div>
-        <div class="card-meta"><span class="sbadge ${item.status}">${statusLabel(item.status)}</span>${clsBadge}${factoryBadge}<span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>${staleTag}${overdueChip}${kivBadge}</div>
+        <div class="card-meta"><span class="sbadge ${item.status}">${statusLabel(item.status)}</span>${clsBadge}${factoryBadge}<span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>${staleTag}${overdueChip}${kivBadge}${trackChips(item)}</div>
       </div>
       <button class="card-open-btn" onclick="event.stopPropagation();openProjDetail('${item.id}')" title="Open detail view"><i class="ti ti-external-link"></i></button>
       <i class="ti ti-chevron-down chevron"></i>
@@ -5165,6 +5260,7 @@ function openModal(name) {
       const prodList = document.getElementById('inq-products-list');
       if (prodList) { prodList.innerHTML = ''; }
       document.getElementById('inq-factory').value = '';
+      fillTrackForm('inq', {});
     }
   }
   if (name === 'proj') {
@@ -5172,6 +5268,7 @@ function openModal(name) {
     if (!editingProjId) {
       document.getElementById('proj-code').value = '';
       document.getElementById('proj-name').value = '';
+      fillTrackForm('proj', {});
     }
     updateProjPreview();
   }
@@ -5223,6 +5320,8 @@ function submitInquiry() {
       priceSubmission:{ status: document.getElementById('inq-price-status').value, remark: document.getElementById('inq-price-remark').value.trim(), date: document.getElementById('inq-price-date').value }
     }
   };
+
+  Object.assign(inqObj, readTrackForm('inq', editingInqId ? data.inquiries.find(x => x.id === editingInqId) : null));
 
   const isEdit = !!editingInqId;
   if (isEdit) {
@@ -5373,6 +5472,7 @@ function openEditInquiry(id) {
   document.getElementById('inq-price-status').value = pr.status||'';
   document.getElementById('inq-price-remark').value = pr.remark||'';
   document.getElementById('inq-price-date').value = pr.date||'';
+  fillTrackForm('inq', item);
   document.getElementById('modal-inq').classList.add('open');
   setTimeout(() => { const mb = document.querySelector('#modal-inq .mbody'); if(mb) mb.scrollTop=0; }, 50);
 }
@@ -5490,6 +5590,8 @@ function _renderInqDetailInner() {
         </div>
       </div>`;
     }
+
+    html += renderTrackPanel(inq, 'inquiry');
 
     // Basic Info — inline editable
     html += `<div class="proj-detail-section">
@@ -5842,18 +5944,19 @@ function submitProject() {
     return;
   }
 
+  const track = readTrackForm('proj', editingProjId ? data.projects.find(x => x.id === editingProjId) : null);
   const isEditProj = !!editingProjId;
   if (editingProjId) {
     const idx = data.projects.findIndex(x => x.id === editingProjId);
     if (idx >= 0) {
       const p = data.projects[idx];
-      data.projects[idx] = {...p, code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate};
+      data.projects[idx] = {...p, code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate, ...track};
     }
     editingProjId = null;
     document.getElementById('proj-modal-title').textContent = 'New Project';
     document.getElementById('proj-submit-btn').textContent = 'Create';
   } else {
-    data.projects.unshift({id:uid(), code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate, subStatuses:[], tasks:[], milestones:[], pics:[], expanded:true});
+    data.projects.unshift({id:uid(), code, name, date, status, classification, brief, factory, customer, salesPerson, deliveryDate, ...track, subStatuses:[], tasks:[], milestones:[], pics:[], expanded:true});
   }
   appendChangelog({ type: isEditProj ? 'update' : 'create', icon: isEditProj ? 'pencil' : 'circle-plus', text: `${isEditProj ? 'Updated' : 'Created'} project: <strong>${name}</strong>`, section: 'projects' });
   save(); closeModal('proj'); renderAll();
@@ -5875,6 +5978,7 @@ function openEditProject(id) {
   document.getElementById('proj-customer').value = p.customer||'';
   document.getElementById('proj-salesperson').value = p.salesPerson||'';
   document.getElementById('proj-delivery').value = p.deliveryDate||'';
+  fillTrackForm('proj', p);
   document.getElementById('modal-proj').classList.add('open');
 }
 
@@ -7707,6 +7811,8 @@ function _renderPageHeaderForPage(name) {
       renderPageHeader('notifications', 'Notifications', today, ''); break;
     case 'dashboard':
       renderPageHeader('dashboard', 'Dashboard', today, ''); break;
+    case 'myday':
+      renderPageHeader('myday', 'My Day', today, ''); break;
     case 'pipeline':
       renderPageHeader('pipeline', 'NPD Pipeline', today,
         `<div style="display:flex;gap:6px;align-items:center;">
@@ -8993,6 +9099,8 @@ function renderProjDetail() {
       </div>
     </div>`;
 
+    html += renderTrackPanel(p, 'project');
+
     // Sub-Statuses with inline add/edit
     const subs = p.subStatuses||[];
     html += `<div class="proj-detail-section">
@@ -9963,6 +10071,7 @@ function showPage(name) {
   // Highlight the "More" pill when a secondary-menu page is active
   const moreToggle = document.getElementById('fn-more-toggle');
   if (moreToggle) moreToggle.classList.toggle('active', ['pipeline','calendar','scheduler','changelog','users'].includes(name));
+  if (name === 'myday') renderMyDay();
   // Settings topbar button highlight
   const stb = document.getElementById('settings-topbar-btn');
   if (stb) stb.classList.toggle('active', name === 'settings');
@@ -11238,6 +11347,354 @@ async function loadAppSettings() {
 // ══════════════════════════════════════════════════════
 //  OVERRIDE showPage TO HANDLE AUTH PAGES
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  TRACKING — ball in court · outcome · value · links
+// ══════════════════════════════════════════════════════
+const BALL_LABELS    = {us:'Us', customer:'Customer', factory:'Factory', supplier:'Supplier'};
+const OUTCOME_LABELS = {won:'Won', lost:'Lost', dropped:'Dropped'};
+const CHASE_DAYS = 3;   // waiting on others this long → amber "chase"
+const LATE_DAYS  = 7;   // …this long → red
+const STALE_PROJECT_DAYS = 14;
+
+function _esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function _normUrl(u) { u = (u||'').trim(); if (!u) return ''; return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
+function _linkLabelGuess(url) { try { const h = new URL(url).hostname.replace(/^www\./,''); return /drive\.google|docs\.google/.test(h) ? 'Google Drive' : h; } catch(e) { return url; } }
+
+function linksToText(links) { return (links||[]).map(l => l.label && l.label !== l.url ? `${l.label} | ${l.url}` : l.url).join('\n'); }
+function textToLinks(txt) {
+  return String(txt||'').split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+    const bar = line.lastIndexOf('|');
+    let label = bar > -1 ? line.slice(0, bar).trim() : '';
+    const url = _normUrl(bar > -1 ? line.slice(bar + 1) : line);
+    if (!label) label = _linkLabelGuess(url);
+    return { id: uid(), label, url };
+  }).filter(l => l.url);
+}
+
+function fillTrackForm(pfx, item) {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  set(pfx+'-ball', item.ballWith||'');
+  set(pfx+'-links', linksToText(item.links));
+  if (pfx === 'inq') {
+    set('inq-outcome', item.outcome||'');
+    set('inq-outcome-reason', item.outcomeReason||'');
+    set('inq-moldcost', item.moldCost||'');
+  }
+}
+
+function readTrackForm(pfx, prev) {
+  const val = id => (document.getElementById(id)?.value||'').trim();
+  const ballWith = val(pfx+'-ball');
+  const out = {
+    ballWith,
+    ballSince: ballWith ? (prev && prev.ballWith === ballWith && prev.ballSince ? prev.ballSince : todayStr()) : '',
+    links: textToLinks(document.getElementById(pfx+'-links')?.value)
+  };
+  if (pfx === 'inq') {
+    const outcome = val('inq-outcome');
+    out.outcome = outcome;
+    out.outcomeReason = outcome ? val('inq-outcome-reason') : '';
+    out.outcomeDate = outcome ? (prev && prev.outcome === outcome && prev.outcomeDate ? prev.outcomeDate : todayStr()) : '';
+    out.moldCost = parseFloat(val('inq-moldcost')) || 0;
+  }
+  return out;
+}
+
+function ballDays(item) { return item.ballSince ? Math.max(0, daysSince(item.ballSince)) : 0; }
+function ballChip(item) {
+  if (!item.ballWith || !BALL_LABELS[item.ballWith]) return '';
+  const d = ballDays(item);
+  const cls = item.ballWith === 'us' ? 'us' : d >= LATE_DAYS ? 'late' : d >= CHASE_DAYS ? 'warn' : '';
+  const who = item.ballWith === 'us' ? 'With us' : 'Waiting ' + BALL_LABELS[item.ballWith];
+  return `<span class="ball-chip ${cls}" title="Ball in court since ${fmtDate(item.ballSince)}"><i class="ti ti-arrow-big-right-line" style="font-size:10px"></i>${who} · ${d}d</span>`;
+}
+function outcomePill(item) {
+  return item.outcome && OUTCOME_LABELS[item.outcome] ? `<span class="outcome-pill outcome-${item.outcome}" title="${_esc(item.outcomeReason||'')}">${OUTCOME_LABELS[item.outcome]}</span>` : '';
+}
+function trackChips(item) { return outcomePill(item) + ballChip(item); }
+
+function inqEstValue(inq) { return (inq.products||[]).reduce((t, p) => t + (parseFloat(p.volume)||0) * (parseFloat(p.cost)||0), 0); }
+function fmtRM(n) { return 'RM ' + (n||0).toLocaleString('en-MY', {maximumFractionDigits:0}); }
+
+function _trackItem(type, id) { return (type === 'inquiry' ? data.inquiries : data.projects).find(x => x.id === id); }
+function _trackCanEdit(type) { return can(type === 'inquiry' ? 'inquiries' : 'projects', 'edit'); }
+function _trackLog(type, item, text) {
+  if (type === 'inquiry') appendInqLog(item.id, 'update', 'target-arrow', text);
+  else appendChangelog({ type:'update', icon:'target-arrow', text:`${text} — <strong>${_esc(item.name)}</strong>`, section:'projects' });
+}
+function _trackRefresh(type) {
+  if (type === 'inquiry') {
+    if (document.getElementById('inq-detail-overlay')?.classList.contains('open')) renderInqDetail();
+    renderInquiries();
+  } else {
+    if (document.getElementById('proj-detail-overlay')?.classList.contains('open')) renderProjDetail();
+    renderProjects();
+  }
+  if (document.getElementById('page-myday')?.classList.contains('active')) renderMyDay();
+}
+
+function setTrack(type, id, field, value) {
+  const item = _trackItem(type, id);
+  if (!item || !_trackCanEdit(type)) return;
+  if (field === 'ballWith') {
+    if ((item.ballWith||'') === value) return;
+    item.ballWith = value; item.ballSince = value ? todayStr() : '';
+    _trackLog(type, item, value ? `Ball in court → <strong>${BALL_LABELS[value]}</strong>` : 'Ball in court cleared');
+  } else if (field === 'outcome') {
+    if ((item.outcome||'') === value) return;
+    item.outcome = value; item.outcomeDate = value ? todayStr() : '';
+    if (!value) item.outcomeReason = '';
+    _trackLog(type, item, value ? `Outcome → <strong>${OUTCOME_LABELS[value]}</strong>` : 'Outcome reset to open');
+  } else if (field === 'moldCost') {
+    const n = parseFloat(value) || 0;
+    if ((item.moldCost||0) === n) return;
+    item.moldCost = n;
+    _trackLog(type, item, `Mold / tooling cost → <strong>${fmtRM(n)}</strong>`);
+  } else {
+    if ((item[field]||'') === value) return;
+    item[field] = value;
+  }
+  save(); _trackRefresh(type);
+}
+
+function addTrackLink(type, id) {
+  const item = _trackItem(type, id);
+  if (!item || !_trackCanEdit(type)) return;
+  const url = _normUrl(prompt('Paste the link (Drive folder, drawing, quote, photos…)') || '');
+  if (!url) return;
+  const label = (prompt('Name for this link (optional)', _linkLabelGuess(url)) || '').trim() || _linkLabelGuess(url);
+  item.links = item.links || [];
+  item.links.push({ id: uid(), label, url });
+  _trackLog(type, item, `Link added: <strong>${_esc(label)}</strong>`);
+  save(); _trackRefresh(type);
+}
+function removeTrackLink(type, id, linkId) {
+  const item = _trackItem(type, id);
+  if (!item || !_trackCanEdit(type)) return;
+  const l = (item.links||[]).find(x => x.id === linkId);
+  if (!l || !confirm(`Remove link "${l.label}"?`)) return;
+  item.links = item.links.filter(x => x.id !== linkId);
+  save(); _trackRefresh(type);
+}
+
+function renderTrackPanel(item, type) {
+  const canEdit = _trackCanEdit(type);
+  const q = s => `'${type}','${item.id}'`;
+  const seg = (field, opts, cur) => `<div class="trk-seg">${opts.map(([v, l]) =>
+    `<button class="${(cur||'') === v ? 'on' : ''}" ${canEdit ? `onclick="setTrack(${q()},'${field}','${v}')"` : 'disabled'}>${l}</button>`).join('')}</div>`;
+  let h = `<div class="proj-detail-section"><div class="proj-detail-slabel">Tracking</div>`;
+  h += `<div class="trk-row"><div class="trk-k">Ball in court</div><div class="trk-seg">
+      ${seg('ballWith', [['us','Us'],['customer','Customer'],['factory','Factory'],['supplier','Supplier'],['','—']], item.ballWith).replace(/^<div class="trk-seg">|<\/div>$/g,'')}
+      ${item.ballWith ? `<span class="trk-since">since ${fmtDate(item.ballSince)} · ${ballDays(item)}d</span>` : ''}
+    </div></div>`;
+  if (type === 'inquiry') {
+    const est = inqEstValue(item);
+    h += `<div class="trk-row"><div class="trk-k">Outcome</div>${seg('outcome', [['','Open'],['won','Won'],['lost','Lost'],['dropped','Dropped']], item.outcome)}</div>`;
+    if (item.outcome) h += `<div class="trk-row"><div class="trk-k">Reason</div>${canEdit
+      ? `<input class="trk-input" value="${_esc(item.outcomeReason||'')}" placeholder="Why? e.g. price too high" onblur="setTrack(${q()},'outcomeReason',this.value.trim())">`
+      : `<div>${_esc(item.outcomeReason||'—')}</div>`}</div>`;
+    h += `<div class="trk-row"><div class="trk-k">Value</div><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;">
+        <span>Est. revenue <strong>${est ? fmtRM(est) : '—'}</strong> <span style="color:var(--text3);font-size:11px;">(products × unit cost)</span></span>
+        <span style="display:flex;align-items:center;gap:6px;">Mold cost ${canEdit
+          ? `<input class="trk-input" type="number" min="0" step="0.01" style="width:120px" value="${item.moldCost||''}" placeholder="RM" onblur="setTrack(${q()},'moldCost',this.value)">`
+          : `<strong>${item.moldCost ? fmtRM(item.moldCost) : '—'}</strong>`}</span>
+      </div></div>`;
+  }
+  const links = item.links||[];
+  h += `<div class="trk-row"><div class="trk-k">Links</div><div class="trk-links">
+      ${links.map(l => `<span class="trk-link"><i class="ti ti-link" style="font-size:12px"></i><a href="${_esc(l.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;"><span>${_esc(l.label)}</span></a>${canEdit ? `<button class="trk-link-x" title="Remove" onclick="removeTrackLink(${q()},'${l.id}')"><i class="ti ti-x"></i></button>` : ''}</span>`).join('')}
+      ${canEdit ? `<button class="trk-add" onclick="addTrackLink(${q()})"><i class="ti ti-plus" style="font-size:11px"></i> Add link</button>` : (links.length ? '' : '<span style="color:var(--text3);font-size:12px;">—</span>')}
+    </div></div>`;
+  return h + `</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  MY DAY — start-of-day overview
+// ══════════════════════════════════════════════════════
+function _isActiveInq(i) { return !i.outcome && !['CLOSED','CLOSE'].includes(String(i.status||'').toUpperCase()); }
+function _isActiveProj(p) { return p.status !== 'completed'; }
+function _openItemJS(type, id) {
+  return type === 'inquiry' ? `openInqDetail('${id}')` : type === 'project' ? `openProjDetail('${id}')` : `showPage('tasks')`;
+}
+
+function renderMyDay() {
+  const el = document.getElementById('myday-body');
+  if (!el || !currentUserProfile) return;
+  const today = todayStr(), weekEnd = addDaysToStr(today, 7);
+  let notif = {missed:[], upcoming:[], awaiting:[]};
+  try { notif = collectNotifications(); } catch(e) {}
+
+  // Inquiry next actions aren't part of notifications — fold them in
+  const naOver = [], naWeek = [];
+  data.inquiries.filter(_isActiveInq).forEach(i => (i.nextActions||[]).forEach(na => {
+    if (na.done || !na.deadline) return;
+    const row = {type:'inquiry', parentId:i.id, parentCode:i.code, parentName:i.name, taskName:na.action, deadline:na.deadline, pic:na.pic};
+    if (na.deadline < today) naOver.push(row); else if (na.deadline <= weekEnd) naWeek.push(row);
+  }));
+  const overdue = [...notif.missed, ...naOver].sort((a,b) => a.deadline < b.deadline ? -1 : 1);
+  const thisWeek = [...notif.upcoming.filter(n => n.deadline <= weekEnd), ...naWeek].sort((a,b) => a.deadline < b.deadline ? -1 : 1);
+
+  const tracked = [
+    ...data.inquiries.filter(_isActiveInq).map(x => ({...x, _type:'inquiry'})),
+    ...data.projects.filter(_isActiveProj).map(x => ({...x, _type:'project'}))
+  ];
+  const waiting = tracked.filter(x => x.ballWith && x.ballWith !== 'us').sort((a,b) => ballDays(b) - ballDays(a));
+  const chase = waiting.filter(x => ballDays(x) >= CHASE_DAYS);
+  const withUs = tracked.filter(x => x.ballWith === 'us').sort((a,b) => ballDays(b) - ballDays(a));
+  const stale = data.projects.filter(_isActiveProj).map(p => ({p, d: getLastUpdated(p) ? daysSince(getLastUpdated(p)) : null}))
+    .filter(x => x.d !== null && x.d > STALE_PROJECT_DAYS).sort((a,b) => b.d - a.d);
+
+  const LIMIT = 12;
+  const rowsHTML = (list, rowFn, empty) => list.length
+    ? list.slice(0, LIMIT).map(rowFn).join('') + (list.length > LIMIT ? `<div class="md-more">+ ${list.length - LIMIT} more</div>` : '')
+    : `<div class="md-empty">${empty}</div>`;
+  const dueRow = n => {
+    const days = Math.round((new Date(n.deadline+'T00:00:00') - new Date(today+'T00:00:00')) / 86400000);
+    const meta = days < 0 ? `${-days}d late` : days === 0 ? 'today' : fmtDate(n.deadline);
+    return `<button class="md-row" onclick="${_openItemJS(n.type, n.parentId)}"><span class="md-code">${_esc(n.parentCode||'TASK')}</span><span class="md-name">${_esc(n.taskName || n.parentName || 'Untitled action')}${n.pic ? `<small>${_esc(n.pic)}</small>` : ''}</span><span class="md-meta ${days < 0 ? 'red' : days === 0 ? 'amber' : ''}">${meta}</span></button>`;
+  };
+  const ballRow = x => {
+    const d = ballDays(x);
+    return `<button class="md-row" onclick="${_openItemJS(x._type, x.id)}"><span class="md-code">${_esc(x.code||'')}</span><span class="md-name">${_esc(x.name)}<small>${x.ballWith === 'us' ? '' : BALL_LABELS[x.ballWith]}${x.customer ? ' · ' + _esc(x.customer) : ''}</small></span><span class="md-meta ${x.ballWith !== 'us' && d >= LATE_DAYS ? 'red' : x.ballWith !== 'us' && d >= CHASE_DAYS ? 'amber' : ''}">${d}d${x.ballWith !== 'us' && d >= CHASE_DAYS ? ' · chase' : ''}</span></button>`;
+  };
+  const staleRow = ({p, d}) => `<button class="md-row" onclick="openProjDetail('${p.id}')"><span class="md-code">${_esc(p.code||'')}</span><span class="md-name">${_esc(p.name)}${p.factory ? `<small>${_esc(p.factory)}</small>` : ''}</span><span class="md-meta ${d > 30 ? 'red' : 'amber'}">${d}d no update</span></button>`;
+  const awaitRow = n => `<button class="md-row" onclick="${_openItemJS(n.type, n.parentId)}"><span class="md-code">${_esc(n.parentCode||'TASK')}</span><span class="md-name">${_esc(n.taskName)}</span><span class="md-meta amber">${n.reminder ? 'remind ' + fmtDate(n.reminder) : 'awaiting'}</span></button>`;
+  const panel = (icon, color, title, count, body) => `<div class="md-panel"><div class="md-panel-head"><i class="ti ti-${icon}" style="color:${color};font-size:15px"></i>${title}<span class="sec-count">${count}</span></div>${body}</div>`;
+  const tile = (n, label, cls) => `<div class="md-tile"><div class="md-tile-n ${n ? cls : ''}">${n}</div><div class="md-tile-l">${label}</div></div>`;
+
+  el.innerHTML = `
+    <div class="md-tiles">
+      ${tile(overdue.length, 'Overdue', 'red')}
+      ${tile(thisWeek.length, 'Due in the next 7 days', 'amber')}
+      ${tile(chase.length, `To chase (waiting ${CHASE_DAYS}+ days)`, 'amber')}
+      ${tile(stale.length, `Projects with no update in ${STALE_PROJECT_DAYS}+ days`, 'amber')}
+    </div>
+    <div class="md-grid">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${panel('alert-circle', 'var(--red)', 'Overdue', overdue.length, rowsHTML(overdue, dueRow, 'Nothing overdue — nice.'))}
+        ${panel('calendar-event', 'var(--amber)', 'Due in the next 7 days', thisWeek.length, rowsHTML(thisWeek, dueRow, 'Nothing due this week.'))}
+        ${notif.awaiting.length ? panel('clock-pause', 'var(--amber)', 'Awaiting reply', notif.awaiting.length, rowsHTML(notif.awaiting, awaitRow, '')) : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${panel('arrow-big-right-line', 'var(--amber)', 'Waiting on others', waiting.length, rowsHTML(waiting, ballRow, 'Nothing waiting on customers, factories or suppliers. Set "Ball in court" on an inquiry or project to track it here.'))}
+        ${panel('hand-finger', 'var(--blue)', 'Ball in our court', withUs.length, rowsHTML(withUs, ballRow, 'Nothing marked as waiting on us.'))}
+        ${panel('zzz', 'var(--text3)', 'Stale projects', stale.length, rowsHTML(stale, staleRow, `Every active project was updated in the last ${STALE_PROJECT_DAYS} days.`))}
+      </div>
+    </div>`;
+}
+
+// Keep My Day fresh whenever the app re-renders (data load, cloud sync, edits)
+const _renderAllBeforeMyDay = renderAll;
+renderAll = function() {
+  _renderAllBeforeMyDay.apply(this, arguments);
+  try { if (document.getElementById('page-myday')?.classList.contains('active')) renderMyDay(); } catch(e) { console.error('renderMyDay error:', e); }
+  try { renderSavedViews('inq'); renderSavedViews('proj'); } catch(e) {}
+};
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD — win / loss + factory workload panels
+// ══════════════════════════════════════════════════════
+function renderWinLossPanel() {
+  const body = document.getElementById('pm-winloss-body');
+  if (!body) return;
+  const decided = data.inquiries.filter(i => i.outcome);
+  const won = decided.filter(i => i.outcome === 'won'), lost = decided.filter(i => i.outcome === 'lost'), dropped = decided.filter(i => i.outcome === 'dropped');
+  const rate = decided.length ? Math.round(won.length / decided.length * 100) : null;
+  const sum = list => list.reduce((t, i) => t + inqEstValue(i), 0);
+  const openVal = sum(data.inquiries.filter(_isActiveInq));
+  const reasons = {};
+  [...lost, ...dropped].forEach(i => { const r = (i.outcomeReason||'No reason given').trim(); reasons[r] = (reasons[r]||0) + 1; });
+  const topReasons = Object.entries(reasons).sort((a,b) => b[1] - a[1]).slice(0, 4);
+  body.innerHTML = decided.length ? `
+    <div class="wl-stats">
+      <div class="wl-stat"><b style="color:var(--green)">${rate}%</b><span>Win rate (${won.length} of ${decided.length})</span></div>
+      <div class="wl-stat"><b>${fmtRM(sum(won))}</b><span>Won est. revenue</span></div>
+      <div class="wl-stat"><b>${fmtRM(openVal)}</b><span>Open pipeline</span></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Won ${won.length} · Lost ${lost.length} (${fmtRM(sum(lost))}) · Dropped ${dropped.length}</div>
+    ${topReasons.length ? `<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:10px 0 4px;">Top lost / dropped reasons</div>
+      ${topReasons.map(([r, n]) => `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;"><span>${_esc(r)}</span><strong>${n}</strong></div>`).join('')}` : ''}`
+    : `<div style="font-size:12px;color:var(--text3);line-height:1.6;">No results recorded yet. Set <strong>Outcome</strong> (Won / Lost / Dropped) on an inquiry to see win rate and value here.<br>Open pipeline: <strong>${fmtRM(openVal)}</strong></div>`;
+}
+
+function renderFactoryPanel() {
+  const body = document.getElementById('pm-factory-body');
+  if (!body) return;
+  const today = todayStr();
+  const names = [...new Set(['Combi-Pack','Super Uniart','Reachpac', ...data.inquiries.map(i => i.factory), ...data.projects.map(p => p.factory)].filter(Boolean))];
+  const rows = names.map(f => {
+    const inqs = data.inquiries.filter(i => i.factory === f && _isActiveInq(i));
+    const projs = data.projects.filter(p => p.factory === f && _isActiveProj(p));
+    const overdue = [...inqs, ...projs].reduce((t, x) => t + (x.tasks||[]).filter(k => !k.done && k.deadline && k.deadline < today).length
+      + (x.nextActions||[]).filter(na => !na.done && na.deadline && na.deadline < today).length, 0);
+    const waitingOnFactory = [...inqs, ...projs].filter(x => x.ballWith === 'factory').length;
+    return {f, inqs: inqs.length, projs: projs.length, overdue, waitingOnFactory};
+  });
+  body.innerHTML = `<table class="fw-table"><thead><tr><th>Factory</th><th>Active inquiries</th><th>Active projects</th><th>Overdue actions</th><th>Waiting on factory</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td><strong>${_esc(r.f)}</strong></td><td>${r.inqs}</td><td>${r.projs}</td><td style="color:${r.overdue ? 'var(--red)' : 'inherit'};font-weight:${r.overdue ? 700 : 400}">${r.overdue}</td><td>${r.waitingOnFactory}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+const _renderDashboardBeforeWL = renderDashboard;
+renderDashboard = function() {
+  try { _renderDashboardBeforeWL.apply(this, arguments); } catch(e) { console.error('renderDashboard error:', e); }
+  try { renderWinLossPanel(); renderFactoryPanel(); } catch(e) { console.error('dashboard panels error:', e); }
+};
+
+// ══════════════════════════════════════════════════════
+//  SAVED VIEWS — one-tap filter combos for Inquiries / Projects
+//  Stored in data.savedViews so they sync across devices.
+// ══════════════════════════════════════════════════════
+function _currentView(type) {
+  return type === 'inq'
+    ? {filter: inqFilter, site: inqSiteFilter, year: inqYearFilter, month: inqMonthFilter, sort: inqSort, active: inqActiveOnly}
+    : {filter: projFilter, site: projSiteFilter, sort: projSort, active: projActiveOnly, kiv: projKivOnly};
+}
+function saveCurrentView(type) {
+  const name = (prompt('Name this view (e.g. "Combi-Pack open")') || '').trim();
+  if (!name) return;
+  data.savedViews = data.savedViews || {};
+  data.savedViews[type] = (data.savedViews[type] || []).filter(v => v.name !== name);
+  data.savedViews[type].push({ id: uid(), name, v: _currentView(type) });
+  save(); renderSavedViews(type);
+}
+function deleteSavedView(type, id) {
+  const list = (data.savedViews && data.savedViews[type]) || [];
+  const v = list.find(x => x.id === id);
+  if (!v || !confirm(`Delete saved view "${v.name}"?`)) return;
+  data.savedViews[type] = list.filter(x => x.id !== id);
+  save(); renderSavedViews(type);
+}
+function applySavedView(type, id) {
+  const sv = ((data.savedViews && data.savedViews[type]) || []).find(x => x.id === id);
+  if (!sv) return;
+  const v = sv.v || {};
+  const safe = fn => { try { fn(); } catch(e) { console.warn('saved view:', e); } };
+  if (type === 'inq') {
+    safe(() => setInqFilter(v.filter || 'all'));
+    safe(() => setInqSiteFilter(v.site || 'all'));
+    safe(() => { document.getElementById('inq-year-select').value = v.year || ''; document.getElementById('inq-month-select').value = v.month || ''; onInqDateFilter(); });
+    safe(() => setInqSort(v.sort || 'date-desc'));
+    if (!!v.active !== inqActiveOnly) safe(() => toggleActiveFilter('inq'));
+  } else {
+    safe(() => setProjFilter(v.filter || 'all'));
+    safe(() => setProjSiteFilter(v.site || 'all'));
+    safe(() => setProjSort(v.sort || 'date-desc'));
+    if (!!v.active !== projActiveOnly) safe(() => toggleActiveFilter('proj'));
+    if (!!v.kiv !== projKivOnly) safe(() => toggleProjKivFilter());
+  }
+}
+function renderSavedViews(type) {
+  const panel = document.getElementById(type === 'inq' ? 'inq-filter-panel' : 'proj-filter-panel');
+  if (!panel) return;
+  let row = document.getElementById(type + '-saved-views');
+  if (!row) { row = document.createElement('div'); row.id = type + '-saved-views'; row.className = 'sv-row'; panel.insertAdjacentElement('afterend', row); }
+  const list = (data.savedViews && data.savedViews[type]) || [];
+  row.innerHTML = `<i class="ti ti-bookmark" style="color:var(--text3);font-size:14px;"></i>
+    ${list.map(v => `<span class="sv-chip" onclick="applySavedView('${type}','${v.id}')">${_esc(v.name)}<button class="sv-x" title="Delete view" onclick="event.stopPropagation();deleteSavedView('${type}','${v.id}')"><i class="ti ti-x"></i></button></span>`).join('')}
+    <button class="sv-save" onclick="saveCurrentView('${type}')"><i class="ti ti-plus" style="font-size:11px"></i> Save current filters</button>`;
+}
+
 const _origShowPage = showPage;
 showPage = function(name) {
   _origShowPage(name);

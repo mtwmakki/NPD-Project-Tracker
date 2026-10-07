@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V76.3</title>
+<title>NPD Tracker V76.4</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1782,7 +1782,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V76.3</div>
+    <div class="login-logo">NPD Tracker V76.4</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1900,7 +1900,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
   <div class="notif-banner" style="position:relative;">
     <i class="ti ti-alert-circle"></i>
     <div><div class="notif-title">Missed deadlines</div><div id="notif-list"></div></div>
-    <button class="notif-dismiss-btn" onclick="dismissGlobalBanner()" title="Dismiss for this session"><i class="ti ti-x"></i></button>
+    <button class="notif-dismiss-btn" onclick="dismissGlobalBanner()" title="Dismiss — shows again tomorrow"><i class="ti ti-x"></i></button>
   </div>
 </div>
 
@@ -3077,6 +3077,20 @@ function persistCollapsedYears() {
   try { localStorage.setItem('pm_collapsed_years', JSON.stringify(collapsedYears)); } catch(e) {}
 }
 let globalBannerDismissed = false; // session-only dismiss for the top red banner
+// The red "Missed deadlines" banner pops up once per day per device — on the
+// first open of the day. Refreshes / later visits that day skip it; the full
+// list is always on the Notifications page.
+const BANNER_DAY_KEY = 'npd_missed_banner_day';
+let bannerShowThisSession = null; // null = not decided yet this page load
+function missedBannerAllowed() {
+  if (bannerShowThisSession !== null) return bannerShowThisSession;
+  const today = todayStr();
+  let lastShown = null;
+  try { lastShown = localStorage.getItem(BANNER_DAY_KEY); } catch(e) {}
+  bannerShowThisSession = lastShown !== today;
+  if (bannerShowThisSession) { try { localStorage.setItem(BANNER_DAY_KEY, today); } catch(e) {} }
+  return bannerShowThisSession;
+}
 let sidebarCollapsed = false;
 let taskView = 'card';
 let calSize = 'm';
@@ -6125,12 +6139,12 @@ function showNotifications() {
   }
 
   const area = document.getElementById('notif-area');
-  if (missed.length && !globalBannerDismissed) {
+  if (missed.length && !globalBannerDismissed && missedBannerAllowed()) {
     area.style.display = 'block';
     document.getElementById('notif-list').innerHTML = missed.map(n =>
       `<div class="notif-item"><strong>${n.taskName}</strong> · ${n.parentCode}${n.pic?' · <span style="color:var(--purple);font-family:var(--fm);font-size:9px;">'+n.pic+'</span>':''} · due ${fmtDate(n.deadline)}</div>`
     ).join('');
-  } else if (!missed.length) {
+  } else {
     area.style.display = 'none';
   }
 

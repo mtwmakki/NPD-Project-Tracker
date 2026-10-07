@@ -3,7 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>NPD Tracker V76.2</title>
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>
+// Touch-tablet mode: on when the primary input is a finger (tablets/phones),
+// off for mouse/trackpad desktops — even touchscreen laptops, whose primary
+// pointer is still fine. Drives every html.touch-ui rule in the stylesheet.
+(function(){
+  var mq = window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)');
+  function apply(){ document.documentElement.classList.toggle('touch-ui', !!(mq && mq.matches)); }
+  apply();
+  if (mq && mq.addEventListener) mq.addEventListener('change', apply);
+})();
+// "Install app" support (Chrome → ⋮ → Install app / Add to home screen)
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+<title>NPD Tracker V76.3</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1653,6 +1673,108 @@ body{padding-bottom:env(safe-area-inset-bottom);}
   .login-card{padding:20px 14px;}
 }
 
+/* ══════════════════════════════════════════════
+   TOUCH TABLET LAYER (html.touch-ui)
+   Tuned for the Honor MagicPad 4 in landscape (~1500×860 CSS px in
+   Chrome) but applies to any device whose primary input is a finger.
+   The class is set by the detection script in <head> only when the
+   primary pointer is coarse and can't hover, so desktop/mouse users
+   never see any of this. Phone-width rules above still stack on top.
+   ══════════════════════════════════════════════ */
+
+/* Actions that were only revealed on mouse hover — always show them */
+html.touch-ui .inq-list-acts,
+html.touch-ui .nrow-acts,
+html.touch-ui .mtask-acts{opacity:1;}
+html.touch-ui .zoom-tooltip{display:none;}
+
+/* Task cards: the action toolbar floated over the title on hover — on touch,
+   dock it as a footer row inside the card instead */
+html.touch-ui .mtask-acts{position:static;justify-content:flex-end;gap:2px;background:none;border:none;border-top:1px solid var(--border);border-radius:0;padding:0 6px;}
+
+/* Nav pill: icons + labels instead of hover-only tooltips */
+html.touch-ui #floatingNav{padding:4px 8px;}
+html.touch-ui .fn-items{gap:2px;max-width:none;flex-wrap:nowrap;}
+html.touch-ui #floatingNav .fn-item{width:auto !important;height:44px !important;padding:0 14px;border-radius:999px;gap:7px;}
+html.touch-ui #floatingNav .fn-item i{font-size:18px !important;}
+html.touch-ui #floatingNav .fn-item .fn-tooltip{position:static;opacity:1;transform:none;background:none;border:none;padding:0;font-size:13px;color:inherit;}
+html.touch-ui #floatingNav .fn-badge{position:static;order:3;margin-left:-2px;font-size:10px;padding:1px 6px;}
+html.touch-ui .fn-logo{width:44px;height:44px;}
+html.touch-ui .fn-user{min-height:44px;}
+html.touch-ui .fn-more-item,html.touch-ui .fn-user-menu button{padding:12px 14px;font-size:14px;}
+
+/* Command / filter bars */
+html.touch-ui .cmd-row{padding:6px 10px;gap:8px;}
+html.touch-ui .cmd-select,
+html.touch-ui .cmd-pop-trigger{min-height:40px;padding:8px 12px;font-size:13px;}
+html.touch-ui .cmd-icon-btn{width:40px;height:40px;font-size:17px;}
+html.touch-ui .cmd-pop button,html.touch-ui .cmd-more-pop button,
+html.touch-ui .cmd-pop > *,html.touch-ui .cmd-more-pop > *{min-height:40px;font-size:13px;}
+html.touch-ui .view-tbtn,html.touch-ui .notif-vtbtn{min-height:36px;padding:6px 12px;font-size:12px;}
+html.touch-ui .view-tbtn i,html.touch-ui .notif-vtbtn i{font-size:16px;}
+html.touch-ui .ftab,html.touch-ui .sort-chip,html.touch-ui .notif-filter-chip,
+html.touch-ui .cal-size-chip,html.touch-ui .filter-toggle-btn,html.touch-ui .kiv-flag-btn{min-height:36px;padding:7px 14px;font-size:12.5px;display:inline-flex;align-items:center;}
+html.touch-ui .zoom-slider-wrap input[type=range]{height:8px;}
+html.touch-ui .zoom-slider-wrap input[type=range]::-webkit-slider-thumb{width:28px;height:28px;}
+
+/* Checkboxes — bigger boxes, easier to tick with a finger */
+html.touch-ui .tchk,html.touch-ui .rap-chk,html.touch-ui .mtask-chk,html.touch-ui .mtask-list-chk,
+html.touch-ui .na-chk,html.touch-ui .ip-check,
+html.touch-ui .card-a .ca-chk,html.touch-ui .card-b .cb-chk,html.touch-ui .card-c .cc-chk{width:24px;height:24px;border-radius:6px;}
+html.touch-ui .tchk i,html.touch-ui .mtask-chk i,html.touch-ui .mtask-list-chk i,html.touch-ui .na-chk i,
+html.touch-ui .card-a .ca-chk i,html.touch-ui .card-b .cb-chk i,html.touch-ui .card-c .cc-chk i{font-size:14px;}
+
+/* Small icon buttons — grow the tap area */
+html.touch-ui .tact-btn,html.touch-ui .mtask-act,html.touch-ui .card-open-btn,
+html.touch-ui .na-delete-btn,html.touch-ui .notif-dismiss-btn{min-width:40px;min-height:40px;padding:8px;font-size:17px;display:inline-flex;align-items:center;justify-content:center;}
+html.touch-ui .cact-icon{width:40px;height:40px;}
+html.touch-ui .nrow-btn,html.touch-ui .notif-act-btn,html.touch-ui .dupe-act-btn{min-height:34px;padding:6px 12px;font-size:12px;}
+html.touch-ui .btn-primary,html.touch-ui .modal-submit-btn,
+html.touch-ui .btn-secondary,html.touch-ui .modal-cancel-btn,html.touch-ui .btn-danger{min-height:44px;padding:11px 22px;font-size:14px;}
+html.touch-ui .modal-close-btn{padding:12px;font-size:20px;}
+html.touch-ui .proj-detail-close{padding:10px;margin:-8px -8px -8px 0;font-size:22px;}
+html.touch-ui .card-head{padding:14px 15px;}
+
+/* Forms — larger fields for typing with the keyboard cover or on-screen keyboard */
+html.touch-ui .finput{min-height:44px;padding:11px 13px;font-size:15px;}
+html.touch-ui textarea.finput{min-height:88px;}
+html.touch-ui .flabel{font-size:11px;}
+html.touch-ui .modal{max-width:640px;}
+html.touch-ui .mbody{padding:20px 24px;}
+
+/* Project / inquiry detail window: centred and wider; no mouse drag on touch */
+html.touch-ui .proj-detail{
+  width:min(90vw,1120px) !important;
+  left:calc((100vw - min(90vw,1120px)) / 2) !important;
+  top:max(16px, env(safe-area-inset-top)) !important;
+  max-height:calc(100dvh - 32px) !important;
+}
+html.touch-ui .proj-drag-handle,html.touch-ui .proj-clip-btn{display:none;}
+html.touch-ui .proj-detail-header button:not(.proj-detail-close){min-height:40px;padding:8px 14px !important;font-size:13px !important;border-radius:10px !important;}
+html.touch-ui .pd-tab,html.touch-ui #proj-detail-panel #pd-tabs .pd-tab{padding:12px 16px;font-size:13px;}
+
+/* Tiny labels (6–9px) are hard to read at arm's length — lift them */
+html.touch-ui .tsec-label,html.touch-ui .ms-badge,html.touch-ui .ms-category,html.touch-ui .inline-form .flabel,
+html.touch-ui .pipe-label,html.touch-ui .pipe-date,html.touch-ui .rmk-label,html.touch-ui .cal-dlabel,
+html.touch-ui .task-ss-link,html.touch-ui .stale-tag,html.touch-ui .overdue-chip,html.touch-ui .pm-health-table th,
+html.touch-ui .pm-prog-pct,html.touch-ui .pm-legend,html.touch-ui .bin-code,html.touch-ui .density-label,
+html.touch-ui .sort-bar-label,html.touch-ui .inq-list-month-header,html.touch-ui .month-header,
+html.touch-ui .nrow-urgency,html.touch-ui .notif-exp-urgency,html.touch-ui .notif-page-banner-label,
+html.touch-ui .proj-detail-slabel,html.touch-ui .pd-stat-label,html.touch-ui .pd-info-k,html.touch-ui .pic-role,
+html.touch-ui .rap-pic-pill,html.touch-ui .proj-brief-label,html.touch-ui .proj-mainstatus-label,
+html.touch-ui .proj-mainstatus-auto,html.touch-ui .proj-substatus-head,html.touch-ui .substatus-sbadge,
+html.touch-ui .pdx-tab-badge,html.touch-ui .pdx-ring-sub,html.touch-ui .pdx-substat-mini .l,html.touch-ui .pdx-avchip,
+html.touch-ui .followup-chain,html.touch-ui .card-c .cc-dl,html.touch-ui .mtask-section-label,
+html.touch-ui .mtask-section-count,html.touch-ui .user-role-badge,html.touch-ui .cl-user-pill,html.touch-ui .ip-added,
+html.touch-ui .search-section-label,html.touch-ui .pipeline-linked-badge,html.touch-ui .pipeline-tl-month,
+html.touch-ui .gantt-week-label,html.touch-ui .gantt-seg-badge,html.touch-ui .cal-upcoming-head,
+html.touch-ui .substatus-item.older .substatus-sbadge,html.touch-ui .substatus-item.older .substatus-date{font-size:10.5px;}
+
+/* Scrolling: momentum + no rubber-band bleed into the page behind sheets */
+html.touch-ui .main-content,html.touch-ui .mbody,html.touch-ui .proj-detail{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+/* No sticky :hover lift after a tap */
+html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform:none;box-shadow:none;}
+
 </style>
 </head>
 <body>
@@ -1660,7 +1782,7 @@ body{padding-bottom:env(safe-area-inset-bottom);}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V76.2</div>
+    <div class="login-logo">NPD Tracker V76.3</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -4913,7 +5035,8 @@ document.addEventListener('click', function(e) {
 // ── Floating nav magnification dock — vanilla port, spring-lerp mimics framer-motion ──
 (function initNavDock() {
   const dockRow = document.querySelector('#floatingNav .fn-items');
-  if (!dockRow) return;
+  // Mouse-only effect: skip on touch tablets (saves an endless rAF loop)
+  if (!dockRow || document.documentElement.classList.contains('touch-ui')) return;
   const BASE = 40, MAX = 58, DISTANCE = 120;
   let items = [], targets = [], current = [];
 

@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.0</title>
+<title>NPD Tracker V77.1</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1849,7 +1849,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.0</div>
+    <div class="login-logo">NPD Tracker V77.1</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -5414,6 +5414,9 @@ function addNextActionRow(na) {
 function gatherNextActionRows(inqId) {
   const rows = document.querySelectorAll('#inq-next-actions-list .na-input-row');
   const result = [];
+  // The form only edits pic/action/deadline — carry everything else (done,
+  // completedAt, …) over from the saved action so editing doesn't un-tick it.
+  const existing = inqId ? ((data.inquiries.find(x => x.id === inqId) || {}).nextActions || []) : [];
   rows.forEach(row => {
     const pic         = row.querySelector('.na-pic-sel')?.value||'';
     const action      = (row.querySelector('.na-action-inp')?.value||'').trim();
@@ -5426,7 +5429,8 @@ function gatherNextActionRows(inqId) {
       if (inqId && origDl && deadline && origDl !== deadline) {
         appendInqLog(inqId, 'update', 'calendar', `Deadline changed for action "<strong>${action}</strong>": ${fmtDate(origDl)} → ${fmtDate(deadline)}`);
       }
-      result.push({id, pic, action, deadline, dateAdded});
+      const prev = existing.find(n => n.id === id) || {};
+      result.push({...prev, id, pic, action, deadline, dateAdded});
     }
   });
   return result;

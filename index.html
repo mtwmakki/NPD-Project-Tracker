@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.2</title>
+<title>NPD Tracker V77.3</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1742,6 +1742,8 @@ html.touch-ui .trk-seg button{min-height:40px;padding:8px 16px;font-size:13px;}
 html.touch-ui .trk-link,html.touch-ui .trk-add{min-height:38px;font-size:13px;}
 html.touch-ui .sv-chip,html.touch-ui .sv-save{min-height:36px;font-size:12.5px;}
 
+.new-task-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--al);color:var(--accent);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;}
+.ra-strip{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);margin:4px 0 14px;overflow:hidden;}
 .card.is-closed{opacity:.72;}
 .card.is-closed:hover{opacity:1;}
 .closed-sec{margin-top:18px;border-top:1px dashed var(--border2);padding-top:10px;}
@@ -1858,7 +1860,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.2</div>
+    <div class="login-logo">NPD Tracker V77.3</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -11432,7 +11434,99 @@ function ballChip(item) {
 function outcomePill(item) {
   return item.outcome && OUTCOME_LABELS[item.outcome] ? `<span class="outcome-pill outcome-${item.outcome}" title="${_esc(item.outcomeReason||'')}">${OUTCOME_LABELS[item.outcome]}</span>` : '';
 }
-function trackChips(item) { return outcomePill(item) + (isClosedInq(item) || isClosedProj(item) ? '' : ballChip(item)); }
+function trackChips(item) { return outcomePill(item) + (isClosedInq(item) || isClosedProj(item) ? '' : newTaskChip(item) + ballChip(item)); }
+
+// ══════════════════════════════════════════════════════
+//  NEW TASKS ON OLDER ITEMS — so a task added to a project/inquiry from
+//  months or years back doesn't stay buried under its original date.
+//  Every task / next action gets an `addedOn` date when first saved.
+// ══════════════════════════════════════════════════════
+const NEW_TASK_DAYS = 14;  // "recently added" window
+const NEW_CHIP_DAYS = 7;   // card chip window
+const BURIED_DAYS   = 30;  // item dated older than this counts as "buried"
+
+function _stampTaskDates() {
+  if (!data) return;
+  const all = [...(data.inquiries||[]), ...(data.projects||[])];
+  if (!data._addedOnInit) {
+    // One-time: tasks that existed before this feature have no known add date
+    all.forEach(x => {
+      (x.tasks||[]).forEach(t => { if (t.addedOn === undefined) t.addedOn = ''; });
+      (x.nextActions||[]).forEach(n => { if (n.addedOn === undefined) n.addedOn = n.dateAdded || ''; });
+    });
+    if (all.length) data._addedOnInit = true;
+    return;
+  }
+  const today = todayStr();
+  all.forEach(x => {
+    (x.tasks||[]).forEach(t => { if (t.addedOn === undefined) t.addedOn = today; });
+    (x.nextActions||[]).forEach(n => { if (n.addedOn === undefined) n.addedOn = n.dateAdded || today; });
+  });
+}
+const _saveBeforeStamp = save;
+save = function() { try { _stampTaskDates(); } catch(e) { console.error('stamp tasks:', e); } return _saveBeforeStamp.apply(this, arguments); };
+
+function recentTasks(item, days) {
+  const out = [];
+  (item.tasks||[]).forEach(t => { if (!t.done && t.addedOn && daysSince(t.addedOn) <= days) out.push({name: t.name, addedOn: t.addedOn, deadline: t.deadline}); });
+  (item.nextActions||[]).forEach(n => { if (!n.done && n.addedOn && daysSince(n.addedOn) <= days) out.push({name: n.action, addedOn: n.addedOn, deadline: n.deadline}); });
+  return out.sort((a, b) => (b.addedOn > a.addedOn ? 1 : -1));
+}
+function newTaskChip(item) {
+  const r = recentTasks(item, NEW_CHIP_DAYS);
+  if (!r.length) return '';
+  const d = Math.max(0, daysSince(r[0].addedOn));
+  return `<span class="new-task-chip" title="${_esc(r.map(x => x.name).join(' · '))}"><i class="ti ti-sparkles" style="font-size:10px"></i>${r.length > 1 ? r.length + ' new tasks' : 'New task'} · ${d === 0 ? 'today' : d + 'd'}</span>`;
+}
+function _monthLabel(dateStr) {
+  try { return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {month:'short', year:'numeric'}); } catch(e) { return dateStr || ''; }
+}
+/** Older (buried) open items that recently got a new task — newest task first */
+function recentlyActiveItems(type, list) {
+  const isClosed = type === 'inquiry' ? isClosedInq : isClosedProj;
+  return list.filter(x => !isClosed(x) && x.date && daysSince(x.date) > BURIED_DAYS)
+    .map(x => ({item: x, type, recent: recentTasks(x, NEW_TASK_DAYS)}))
+    .filter(x => x.recent.length)
+    .sort((a, b) => (b.recent[0].addedOn > a.recent[0].addedOn ? 1 : -1));
+}
+function recentlyActiveRow(r) {
+  const x = r.item, t = r.recent[0], d = Math.max(0, daysSince(t.addedOn));
+  return `<button class="md-row" onclick="${_openItemJS(r.type, x.id)}"><span class="md-code">${_esc(x.code||'')}</span>
+    <span class="md-name">${_esc(x.name)}<small>from ${_monthLabel(x.date)}</small></span>
+    <span class="md-meta" style="color:var(--accent);max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">New: ${_esc(t.name || 'task')}${r.recent.length > 1 ? ` +${r.recent.length - 1}` : ''} · ${d === 0 ? 'today' : d + 'd ago'}</span></button>`;
+}
+function prependRecentlyActive(page) {
+  const el = document.getElementById(page === 'inq' ? 'inquiries-list' : 'projects-list');
+  if (!el) return;
+  const list = recentlyActiveItems(page === 'inq' ? 'inquiry' : 'project', page === 'inq' ? getFilteredInquiries() : getFilteredProjects());
+  if (!list.length) return;
+  el.insertAdjacentHTML('afterbegin', `<div class="ra-strip">
+    <div class="md-panel-head"><i class="ti ti-sparkles" style="color:var(--accent);font-size:15px"></i>Recently active — older ${page === 'inq' ? 'inquiries' : 'projects'} with new tasks
+      <span style="font-weight:400;color:var(--text3);font-size:11px;">(also listed under their original date)</span><span class="sec-count">${list.length}</span></div>
+    ${list.map(recentlyActiveRow).join('')}</div>`);
+}
+// Edits made inside a detail window (new task, ball in court…) only re-render the
+// window itself — refresh the list and My Day when the window closes.
+(function watchDetailClose() {
+  const hook = (id, fn) => {
+    const el = document.getElementById(id);
+    if (!el || typeof MutationObserver === 'undefined') return;
+    let wasOpen = el.classList.contains('open');
+    new MutationObserver(() => {
+      const open = el.classList.contains('open');
+      if (wasOpen && !open) {
+        try { fn(); if (document.getElementById('page-myday')?.classList.contains('active')) renderMyDay(); } catch(e) { console.error('refresh after close:', e); }
+      }
+      wasOpen = open;
+    }).observe(el, { attributes: true, attributeFilter: ['class'] });
+  };
+  hook('inq-detail-overlay', () => renderInquiries());
+  hook('proj-detail-overlay', () => renderProjects());
+})();
+const _renderInquiriesBeforeRA = renderInquiries;
+renderInquiries = function() { _renderInquiriesBeforeRA.apply(this, arguments); try { prependRecentlyActive('inq'); } catch(e) { console.error('recently active:', e); } };
+const _renderProjectsBeforeRA = renderProjects;
+renderProjects = function() { _renderProjectsBeforeRA.apply(this, arguments); try { prependRecentlyActive('proj'); } catch(e) { console.error('recently active:', e); } };
 
 function inqEstValue(inq) { return (inq.products||[]).reduce((t, p) => t + (parseFloat(p.volume)||0) * (parseFloat(p.cost)||0), 0); }
 function fmtRM(n) { return 'RM ' + (n||0).toLocaleString('en-MY', {maximumFractionDigits:0}); }
@@ -11611,6 +11705,10 @@ function renderMyDay() {
   const stale = data.projects.filter(_isActiveProj).map(p => ({p, d: getLastUpdated(p) ? daysSince(getLastUpdated(p)) : null}))
     .filter(x => x.d !== null && x.d > STALE_PROJECT_DAYS).sort((a,b) => b.d - a.d);
 
+  const recentOld = [
+    ...recentlyActiveItems('inquiry', data.inquiries),
+    ...recentlyActiveItems('project', data.projects)
+  ].sort((a, b) => (b.recent[0].addedOn > a.recent[0].addedOn ? 1 : -1));
   const LIMIT = 12;
   const rowsHTML = (list, rowFn, empty) => list.length
     ? list.slice(0, LIMIT).map(rowFn).join('') + (list.length > LIMIT ? `<div class="md-more">+ ${list.length - LIMIT} more</div>` : '')
@@ -11643,6 +11741,7 @@ function renderMyDay() {
         ${notif.awaiting.length ? panel('clock-pause', 'var(--amber)', 'Awaiting reply', notif.awaiting.length, rowsHTML(notif.awaiting, awaitRow, '')) : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
+        ${recentOld.length ? panel('sparkles', 'var(--accent)', 'New tasks on older items', recentOld.length, rowsHTML(recentOld, recentlyActiveRow, '')) : ''}
         ${panel('arrow-big-right-line', 'var(--amber)', 'Waiting on others', waiting.length, rowsHTML(waiting, ballRow, 'Nothing waiting on customers, factories or suppliers. Set "Ball in court" on an inquiry or project to track it here.'))}
         ${panel('hand-finger', 'var(--blue)', 'Ball in our court', withUs.length, rowsHTML(withUs, ballRow, 'Nothing marked as waiting on us.'))}
         ${panel('zzz', 'var(--text3)', 'Stale projects', stale.length, rowsHTML(stale, staleRow, `Every active project was updated in the last ${STALE_PROJECT_DAYS} days.`))}
@@ -11653,6 +11752,7 @@ function renderMyDay() {
 // Keep My Day fresh whenever the app re-renders (data load, cloud sync, edits)
 const _renderAllBeforeMyDay = renderAll;
 renderAll = function() {
+  try { _stampTaskDates(); } catch(e) {}
   _renderAllBeforeMyDay.apply(this, arguments);
   try { if (document.getElementById('page-myday')?.classList.contains('active')) renderMyDay(); } catch(e) { console.error('renderMyDay error:', e); }
   try { renderSavedViews('inq'); renderSavedViews('proj'); } catch(e) {}

@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.6</title>
+<title>NPD Tracker V77.7</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1189,6 +1189,10 @@ html{scroll-behavior:smooth;}
 .login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;margin-top:6px;transition:opacity .15s;}
 .login-btn:hover{opacity:.9;}
 .login-btn:disabled{opacity:.5;cursor:not-allowed;}
+.login-keep{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin:2px 0 14px;cursor:pointer;user-select:none;}
+.login-keep input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
+html.touch-ui .login-keep{font-size:14px;min-height:40px;}
+html.touch-ui .login-keep input{width:22px;height:22px;}
 .login-error{font-size:11px;color:var(--red);margin-top:8px;text-align:center;min-height:16px;}
 .login-forgot{font-size:11px;color:var(--accent);cursor:pointer;text-align:right;margin-top:6px;display:block;}
 .login-user-info{display:flex;align-items:center;gap:8px;}
@@ -1876,7 +1880,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.6</div>
+    <div class="login-logo">NPD Tracker V77.7</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1886,6 +1890,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
       <label>Password</label>
       <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
+    <label class="login-keep"><input type="checkbox" id="login-keep"> Keep me signed in on this device</label>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
     <span class="login-forgot" onclick="doForgotPassword()">Forgot password?</span>
     <div class="login-error" id="login-error"></div>
@@ -10916,7 +10921,11 @@ async function doLogin() {
     // SESSION persistence: the login survives a page refresh but is cleared
     // when the tab is closed. Keeps the original "don't stay signed in after
     // closing" intent without logging the user out on every reload.
-    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    // "Keep me signed in" (remembered per device) → LOCAL persistence: survives
+    // closing the tab/app, which Android does on its own when switching apps.
+    const keep = !!document.getElementById('login-keep')?.checked;
+    try { localStorage.setItem('npd_keep_signed_in', keep ? '1' : '0'); } catch(e) {}
+    await firebase.auth().setPersistence(keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
     await firebase.auth().signInWithEmailAndPassword(email, pw);
     // onAuthStateChanged will handle the rest
   } catch(e) {
@@ -11091,9 +11100,19 @@ function applyPermissionUI() {
 //  INACTIVITY TIMER
 // ══════════════════════════════════════════════════════
 const INACTIVITY_EVENTS = ['mousemove','keydown','click','scroll','touchstart'];
+(function initKeepSignedIn() {
+  const box = document.getElementById('login-keep');
+  if (!box) return;
+  let saved = null;
+  try { saved = localStorage.getItem('npd_keep_signed_in'); } catch(e) {}
+  box.checked = saved === null ? document.documentElement.classList.contains('touch-ui') : saved === '1';
+})();
 
+function _keepSignedIn() { try { return localStorage.getItem('npd_keep_signed_in') === '1'; } catch(e) { return false; } }
 function startInactivityTimer() {
   clearInactivityTimer();
+  // A device the user chose to stay signed in on skips the idle sign-out too
+  if (_keepSignedIn()) return;
   INACTIVITY_EVENTS.forEach(e => document.addEventListener(e, resetInactivityTimer, { passive:true }));
   scheduleInactivityTimeout();
   // Session is cleared on tab close by SESSION auth persistence (set in doLogin),

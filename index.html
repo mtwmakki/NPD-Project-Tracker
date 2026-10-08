@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.7</title>
+<title>NPD Tracker V77.8</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1880,7 +1880,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.7</div>
+    <div class="login-logo">NPD Tracker V77.8</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -3425,6 +3425,9 @@ async function pollSheetsOnce() {
       } catch(e) {
         console.error('Sheets bridge parse error:', e);
       }
+      // Fresh cloud data is in memory now — safe point for one-time additions
+      _cloudDataLoaded = true;
+      try { applyProjectSeeds(); } catch(e) { console.error('project seeds:', e); }
     }
   } catch(err) {
     console.error('Sheets bridge fetch error:', err);
@@ -12049,6 +12052,52 @@ function renderSavedViews(type) {
     ${list.map(v => `<span class="sv-chip" onclick="applySavedView('${type}','${v.id}')">${_esc(v.name)}<button class="sv-x" title="Delete view" onclick="event.stopPropagation();deleteSavedView('${type}','${v.id}')"><i class="ti ti-x"></i></button></span>`).join('')}
     <button class="sv-save" onclick="saveCurrentView('${type}')"><i class="ti ti-plus" style="font-size:11px"></i> Save current filters</button>`;
 }
+
+// ══════════════════════════════════════════════════════
+//  ONE-TIME PROJECT ADDITIONS (requested by Adam, 8 Oct 2026)
+//  Added automatically the first time the tracker loads fresh cloud data
+//  while signed in. Never re-added: skipped if the id/code already exists,
+//  is in the Bin, or this batch was applied before (data._appliedSeeds).
+// ══════════════════════════════════════════════════════
+var _cloudDataLoaded = false;
+const PROJECT_SEEDS = {
+  batch: 'projects-2026-10-08',
+  date: '2026-10-08',
+  items: [
+    ['seed261008a','PENDING-01','ISO 9001 Certification','improvement','','','ISO 9001 quality management certification.'],
+    ['seed261008b','PENDING-02','Lactel - 130g','new-mold','Combi-Pack','Lactel',''],
+    ['seed261008c','PENDING-03','Adabi - 180g','new-mold','Combi-Pack','Adabi',''],
+    ['seed261008d','PENDING-04','NIMS - 480 Mold Repair','improvement','Combi-Pack','NIMS','Repair of the NIMS 480 mold.'],
+    ['seed261008e','PENDING-05','NIMS - 581 Mold Repair','improvement','Combi-Pack','NIMS','Repair of the NIMS 581 mold.'],
+    ['seed261008f','PENDING-06','Farm Fresh - Split Tub','new-mold','Combi-Pack','Farm Fresh',''],
+    ['seed261008g','PENDING-07','Aman Machinery','improvement','','',''],
+    ['seed261008h','PENDING-08','1kg Tub - Add Rib','improvement','Combi-Pack','','Add a rib to the 1kg tub.']
+  ]
+};
+function applyProjectSeeds() {
+  if (!_cloudDataLoaded || !currentUserProfile || !can('projects','add') || !data || !Array.isArray(data.projects)) return;
+  data._appliedSeeds = data._appliedSeeds || [];
+  if (data._appliedSeeds.includes(PROJECT_SEEDS.batch)) return;
+  const binIds = new Set((data.bin||[]).map(b => (b.item && b.item.id) || b.id));
+  const added = [];
+  PROJECT_SEEDS.items.forEach(([id, code, name, classification, factory, customer, brief]) => {
+    if (binIds.has(id) || data.projects.some(p => p.id === id || p.code === code)) return;
+    data.projects.unshift({id, code, name, date: PROJECT_SEEDS.date, status: 'in-progress', classification, brief, factory, customer,
+      salesPerson: '', deliveryDate: '', subStatuses: [], tasks: [], milestones: [], pics: [], expanded: false});
+    added.push(name);
+  });
+  data._appliedSeeds.push(PROJECT_SEEDS.batch);
+  if (added.length) appendChangelog({ type:'create', icon:'circle-plus', text:`Added ${added.length} projects: <strong>${added.join(', ')}</strong>`, section:'projects' });
+  save(); renderAll();
+  if (added.length) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:9999;background:var(--text);color:var(--surface);padding:12px 18px;border-radius:12px;font:600 13px var(--f);box-shadow:0 8px 28px rgba(0,0,0,.3);max-width:90vw;';
+    t.textContent = `✓ ${added.length} new projects added to your tracker`;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 7000);
+  }
+}
+const _renderAllBeforeSeeds = renderAll;
+renderAll = function() { _renderAllBeforeSeeds.apply(this, arguments); try { applyProjectSeeds(); } catch(e) { console.error('project seeds:', e); } };
 
 const _origShowPage = showPage;
 showPage = function(name) {

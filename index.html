@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.3</title>
+<title>NPD Tracker V77.4</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1744,6 +1744,15 @@ html.touch-ui .sv-chip,html.touch-ui .sv-save{min-height:36px;font-size:12.5px;}
 
 .new-task-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--al);color:var(--accent);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;}
 .ra-strip{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);margin:4px 0 14px;overflow:hidden;}
+.card-pin-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:3px 4px;font-size:14px;flex-shrink:0;opacity:.55;}
+.card-pin-btn:hover{opacity:1;color:var(--accent);}
+.card-pin-btn.on{opacity:1;color:var(--accent);}
+.pin-sec{background:var(--al);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px 12px;margin:4px 0 14px;}
+.pin-sec-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;}
+.trk-pin{padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font:600 11px var(--f);cursor:pointer;text-transform:none;letter-spacing:0;display:inline-flex;align-items:center;gap:5px;}
+.trk-pin.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+html.touch-ui .card-pin-btn{min-width:40px;min-height:40px;font-size:17px;opacity:.8;display:inline-flex;align-items:center;justify-content:center;}
+html.touch-ui .trk-pin{min-height:38px;font-size:13px;}
 .card.is-closed{opacity:.72;}
 .card.is-closed:hover{opacity:1;}
 .closed-sec{margin-top:18px;border-top:1px dashed var(--border2);padding-top:10px;}
@@ -1860,7 +1869,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.3</div>
+    <div class="login-logo">NPD Tracker V77.4</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -4743,6 +4752,7 @@ function getFilteredInquiries() {
   let list = [...data.inquiries];
   if (inqFilter !== 'all') list = list.filter(x => (x.status||'').toUpperCase() === inqFilter.toUpperCase());
   else if (!_closedSecBypass) list = list.filter(x => !isClosedInq(x)); // shown in the Closed section instead
+  if (!_closedSecBypass) list = list.filter(x => !x.pinned);              // shown in the Pinned section instead
   if (inqSiteFilter !== 'all') list = list.filter(x => x.factory === inqSiteFilter);
   if (inqActiveOnly) list = list.filter(x => !['CLOSED','CLOSE','Discarded'].includes(x.status));
   if (inqYearFilter)  list = list.filter(x => (x.date||'').startsWith(inqYearFilter));
@@ -4900,6 +4910,7 @@ function renderInquiryCard(item) {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        ${pinBtn(item, 'inquiry')}
         <button class="cact-icon" onclick="event.stopPropagation();openInqDetail('${item.id}')" title="Full View" style="width:26px;height:26px;font-size:12px;"><i class="ti ti-layout-sidebar-right"></i></button>
         <i class="ti ti-chevron-down chevron"></i>
       </div>
@@ -4916,7 +4927,7 @@ function renderInquiryCard(item) {
 // ══════════════════════════════════════════════════════
 function getFilteredProjects() {
   let list = [...data.projects];
-  if (!_closedSecBypass) list = list.filter(p => !isClosedProj(p)); // shown in the Closed section instead
+  if (!_closedSecBypass) list = list.filter(p => !isClosedProj(p) && !p.pinned); // shown in the Closed / Pinned section instead
   if (projFilter !== 'all') list = list.filter(p => p.classification === projFilter);
   if (projSiteFilter !== 'all') list = list.filter(p => p.factory === projSiteFilter);
   if (projActiveOnly) list = list.filter(p => p.status === 'in-progress' || p.status === 'not-started');
@@ -5007,6 +5018,7 @@ function renderCard(item, type) {
         <div class="card-name">${item.name}</div>
         <div class="card-meta"><span class="sbadge ${item.status}">${statusLabel(item.status)}</span>${clsBadge}${factoryBadge}<span class="ppill">${rate}%${doneFrac?' · '+doneFrac:''}</span>${staleTag}${overdueChip}${kivBadge}${trackChips(item)}</div>
       </div>
+      ${pinBtn(item, type)}
       <button class="card-open-btn" onclick="event.stopPropagation();openProjDetail('${item.id}')" title="Open detail view"><i class="ti ti-external-link"></i></button>
       <i class="ti ti-chevron-down chevron"></i>
     </div>
@@ -11523,10 +11535,42 @@ function prependRecentlyActive(page) {
   hook('inq-detail-overlay', () => renderInquiries());
   hook('proj-detail-overlay', () => renderProjects());
 })();
+// ── PIN TO TOP — keep chosen items above everything until unpinned ──
+function pinBtn(item, type) {
+  return `<button class="card-pin-btn ${item.pinned ? 'on' : ''}" onclick="event.stopPropagation();togglePin('${type}','${item.id}')" title="${item.pinned ? 'Unpin' : 'Pin to top'}"><i class="ti ti-pin${item.pinned ? 'ned' : ''}"></i></button>`;
+}
+function togglePin(type, id) {
+  const item = (type === 'inquiry' ? data.inquiries : data.projects).find(x => x.id === id);
+  if (!item) return;
+  item.pinned = !item.pinned;
+  item.pinnedAt = item.pinned ? new Date().toISOString() : '';
+  save();
+  type === 'inquiry' ? renderInquiries() : renderProjects();
+  if (type === 'inquiry' && document.getElementById('inq-detail-overlay')?.classList.contains('open')) renderInqDetail();
+  if (type === 'project' && document.getElementById('proj-detail-overlay')?.classList.contains('open')) renderProjDetail();
+  if (document.getElementById('page-myday')?.classList.contains('active')) renderMyDay();
+}
+function _pinnedRecords(page) {
+  _closedSecBypass = true;
+  let list;
+  try { list = page === 'inq' ? getFilteredInquiries() : getFilteredProjects(); } finally { _closedSecBypass = false; }
+  return list.filter(x => x.pinned).sort((a, b) => (b.pinnedAt || '') > (a.pinnedAt || '') ? 1 : -1);
+}
+function prependPinned(page) {
+  const el = document.getElementById(page === 'inq' ? 'inquiries-list' : 'projects-list');
+  if (!el) return;
+  const list = _pinnedRecords(page);
+  if (!list.length) return;
+  const card = x => { try { return page === 'inq' ? renderInquiryCard(x) : renderCard(x, 'project'); } catch(e) { return ''; } };
+  const body = page === 'inq' && inqView === 'list'
+    ? `<div class="inq-list-wrap">${list.map(x => { try { return renderInquiryListRow(x); } catch(e) { return ''; } }).join('')}</div>`
+    : `<div class="cards-grid">${list.map(card).join('')}</div>`;
+  el.insertAdjacentHTML('afterbegin', `<div class="pin-sec"><div class="pin-sec-head"><i class="ti ti-pinned"></i> Pinned <span class="sec-count">${list.length}</span></div>${body}</div>`);
+}
 const _renderInquiriesBeforeRA = renderInquiries;
-renderInquiries = function() { _renderInquiriesBeforeRA.apply(this, arguments); try { prependRecentlyActive('inq'); } catch(e) { console.error('recently active:', e); } };
+renderInquiries = function() { _renderInquiriesBeforeRA.apply(this, arguments); try { prependRecentlyActive('inq'); prependPinned('inq'); } catch(e) { console.error('recently active / pinned:', e); } };
 const _renderProjectsBeforeRA = renderProjects;
-renderProjects = function() { _renderProjectsBeforeRA.apply(this, arguments); try { prependRecentlyActive('proj'); } catch(e) { console.error('recently active:', e); } };
+renderProjects = function() { _renderProjectsBeforeRA.apply(this, arguments); try { prependRecentlyActive('proj'); prependPinned('proj'); } catch(e) { console.error('recently active / pinned:', e); } };
 
 function inqEstValue(inq) { return (inq.products||[]).reduce((t, p) => t + (parseFloat(p.volume)||0) * (parseFloat(p.cost)||0), 0); }
 function fmtRM(n) { return 'RM ' + (n||0).toLocaleString('en-MY', {maximumFractionDigits:0}); }
@@ -11597,7 +11641,8 @@ function renderTrackPanel(item, type) {
   const q = s => `'${type}','${item.id}'`;
   const seg = (field, opts, cur) => `<div class="trk-seg">${opts.map(([v, l]) =>
     `<button class="${(cur||'') === v ? 'on' : ''}" ${canEdit ? `onclick="setTrack(${q()},'${field}','${v}')"` : 'disabled'}>${l}</button>`).join('')}</div>`;
-  let h = `<div class="proj-detail-section"><div class="proj-detail-slabel">Tracking</div>`;
+  let h = `<div class="proj-detail-section"><div class="proj-detail-slabel" style="display:flex;align-items:center;justify-content:space-between;">Tracking
+      <button class="trk-pin ${item.pinned ? 'on' : ''}" onclick="togglePin('${type}','${item.id}')"><i class="ti ti-pin${item.pinned ? 'ned' : ''}"></i> ${item.pinned ? 'Pinned to top' : 'Pin to top'}</button></div>`;
   h += `<div class="trk-row"><div class="trk-k">Ball in court</div><div class="trk-seg">
       ${seg('ballWith', [['us','Us'],['customer','Customer'],['factory','Factory'],['supplier','Supplier'],['','—']], item.ballWith).replace(/^<div class="trk-seg">|<\/div>$/g,'')}
       ${item.ballWith ? `<span class="trk-since">since ${fmtDate(item.ballSince)} · ${ballDays(item)}d</span>` : ''}
@@ -11640,7 +11685,7 @@ function _closedRecords(page) {
   _closedSecBypass = true;
   let list;
   try { list = page === 'inq' ? getFilteredInquiries() : getFilteredProjects(); } finally { _closedSecBypass = false; }
-  list = list.filter(page === 'inq' ? isClosedInq : isClosedProj);
+  list = list.filter(x => !x.pinned && (page === 'inq' ? isClosedInq(x) : isClosedProj(x)));
   return list.sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1);
 }
 function appendClosedSection(page) {
@@ -11709,6 +11754,10 @@ function renderMyDay() {
     ...recentlyActiveItems('inquiry', data.inquiries),
     ...recentlyActiveItems('project', data.projects)
   ].sort((a, b) => (b.recent[0].addedOn > a.recent[0].addedOn ? 1 : -1));
+  const pinned = [
+    ...data.inquiries.filter(x => x.pinned).map(x => ({...x, _type:'inquiry'})),
+    ...data.projects.filter(x => x.pinned).map(x => ({...x, _type:'project'}))
+  ].sort((a, b) => (b.pinnedAt || '') > (a.pinnedAt || '') ? 1 : -1);
   const LIMIT = 12;
   const rowsHTML = (list, rowFn, empty) => list.length
     ? list.slice(0, LIMIT).map(rowFn).join('') + (list.length > LIMIT ? `<div class="md-more">+ ${list.length - LIMIT} more</div>` : '')
@@ -11721,6 +11770,11 @@ function renderMyDay() {
   const ballRow = x => {
     const d = ballDays(x);
     return `<button class="md-row" onclick="${_openItemJS(x._type, x.id)}"><span class="md-code">${_esc(x.code||'')}</span><span class="md-name">${_esc(x.name)}<small>${x.ballWith === 'us' ? '' : BALL_LABELS[x.ballWith]}${x.customer ? ' · ' + _esc(x.customer) : ''}</small></span><span class="md-meta ${x.ballWith !== 'us' && d >= LATE_DAYS ? 'red' : x.ballWith !== 'us' && d >= CHASE_DAYS ? 'amber' : ''}">${d}d${x.ballWith !== 'us' && d >= CHASE_DAYS ? ' · chase' : ''}</span></button>`;
+  };
+  const pinRow = x => {
+    const open = [...(x.tasks||[]).filter(t => !t.done).map(t => ({n: t.name, d: t.deadline})), ...(x.nextActions||[]).filter(n => !n.done).map(n => ({n: n.action, d: n.deadline}))]
+      .sort((a, b) => (a.d || '9999') < (b.d || '9999') ? -1 : 1)[0];
+    return `<button class="md-row" onclick="${_openItemJS(x._type, x.id)}"><span class="md-code">${_esc(x.code||'')}</span><span class="md-name">${_esc(x.name)}${x.customer ? `<small>${_esc(x.customer)}</small>` : ''}</span><span class="md-meta">${open ? 'Next: ' + _esc(open.n || 'task') + (open.d ? ' · ' + fmtDate(open.d) : '') : 'no open tasks'}</span></button>`;
   };
   const staleRow = ({p, d}) => `<button class="md-row" onclick="openProjDetail('${p.id}')"><span class="md-code">${_esc(p.code||'')}</span><span class="md-name">${_esc(p.name)}${p.factory ? `<small>${_esc(p.factory)}</small>` : ''}</span><span class="md-meta ${d > 30 ? 'red' : 'amber'}">${d}d no update</span></button>`;
   const awaitRow = n => `<button class="md-row" onclick="${_openItemJS(n.type, n.parentId)}"><span class="md-code">${_esc(n.parentCode||'TASK')}</span><span class="md-name">${_esc(n.taskName)}</span><span class="md-meta amber">${n.reminder ? 'remind ' + fmtDate(n.reminder) : 'awaiting'}</span></button>`;
@@ -11736,6 +11790,7 @@ function renderMyDay() {
     </div>
     <div class="md-grid">
       <div style="display:flex;flex-direction:column;gap:12px;">
+        ${pinned.length ? panel('pinned', 'var(--accent)', 'Pinned', pinned.length, rowsHTML(pinned, pinRow, '')) : ''}
         ${panel('alert-circle', 'var(--red)', 'Overdue', overdue.length, rowsHTML(overdue, dueRow, 'Nothing overdue — nice.'))}
         ${panel('calendar-event', 'var(--amber)', 'Due in the next 7 days', thisWeek.length, rowsHTML(thisWeek, dueRow, 'Nothing due this week.'))}
         ${notif.awaiting.length ? panel('clock-pause', 'var(--amber)', 'Awaiting reply', notif.awaiting.length, rowsHTML(notif.awaiting, awaitRow, '')) : ''}

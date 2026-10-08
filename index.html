@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.4</title>
+<title>NPD Tracker V77.5</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1753,6 +1753,13 @@ html.touch-ui .sv-chip,html.touch-ui .sv-save{min-height:36px;font-size:12.5px;}
 .trk-pin.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 html.touch-ui .card-pin-btn{min-width:40px;min-height:40px;font-size:17px;opacity:.8;display:inline-flex;align-items:center;justify-content:center;}
 html.touch-ui .trk-pin{min-height:38px;font-size:13px;}
+.sla-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--surface2);color:var(--text2);white-space:nowrap;display:inline-flex;align-items:center;gap:3px;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+.sla-chip.ok{background:var(--gbg);color:var(--green);}
+.sla-chip.risk,.sla-chip.stalled{background:var(--ambg);color:var(--amber);}
+.sla-chip.overdue{background:var(--rebg);color:var(--red);}
+.sla-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.sla-row:last-child{border-bottom:none;}
+.sla-due{font-size:11px;color:var(--text3);font-family:var(--fm);}
 .card.is-closed{opacity:.72;}
 .card.is-closed:hover{opacity:1;}
 .closed-sec{margin-top:18px;border-top:1px dashed var(--border2);padding-top:10px;}
@@ -1869,7 +1876,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.4</div>
+    <div class="login-logo">NPD Tracker V77.5</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -2870,8 +2877,8 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
       <div class="autotask-card checked" id="autotask-card-t3" onclick="toggleAutoTask('t3')">
         <div class="autotask-check"><i class="ti ti-check"></i></div>
         <div class="autotask-info">
-          <div class="autotask-name">Compile NPD Input</div>
-          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +4 days from inquiry date</div>
+          <div class="autotask-name">NPD Input Compiled / Sent to Finance</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due by day 5 (SLA)</div>
         </div>
         <input type="checkbox" id="inq-t3" checked style="display:none;">
       </div>
@@ -4906,7 +4913,7 @@ function renderInquiryCard(item) {
           ${priPill}${bdPill}${overdueBadge}
           ${item.factory ? `<span class="factory-pill">${item.factory}</span>` : ''}
           <span class="ppill">${doneFrac||'—'}</span>
-          ${delivPill}${trackChips(item)}
+          ${delivPill}${trackChips(item)}${slaChip(item)}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
@@ -5362,7 +5369,7 @@ function submitInquiry() {
     const tasks = [];
     if (document.getElementById('inq-t1').checked) tasks.push({id:uid(),name:'Send Mold Inquiry',deadline:addDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
     if (document.getElementById('inq-t2').checked) tasks.push({id:uid(),name:'Send IML Inquiry',deadline:addDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
-    if (document.getElementById('inq-t3').checked) tasks.push({id:uid(),name:'Compile NPD Input',deadline:addDays(date,4),done:false,pic:currentUserProfile?.name||'Adam'});
+    if (document.getElementById('inq-t3').checked) tasks.push({id:uid(),name:'NPD Input Compiled / Sent to Finance',deadline:addDays(date,5),done:false,pic:currentUserProfile?.name||'Adam'});
     inqObj.tasks = tasks;
     inqObj.expanded = true;
     inqObj.activityLog = [];
@@ -5623,6 +5630,7 @@ function _renderInqDetailInner() {
       </div>`;
     }
 
+    html += renderSLAPanel(inq);
     html += renderTrackPanel(inq, 'inquiry');
 
     // Basic Info — inline editable
@@ -11470,6 +11478,16 @@ function _stampTaskDates() {
     return;
   }
   const today = todayStr();
+  if (!data._completedAtInit) {
+    // One-time: tasks already done before completion dates were recorded
+    all.forEach(x => (x.tasks||[]).forEach(t => { if (t.done && t.completedAt === undefined) t.completedAt = ''; }));
+    if (all.length) data._completedAtInit = true;
+  } else {
+    all.forEach(x => (x.tasks||[]).forEach(t => {
+      if (t.done && t.completedAt === undefined) t.completedAt = today;
+      else if (!t.done && t.completedAt !== undefined) delete t.completedAt;
+    }));
+  }
   all.forEach(x => {
     (x.tasks||[]).forEach(t => { if (t.addedOn === undefined) t.addedOn = today; });
     (x.nextActions||[]).forEach(n => { if (n.addedOn === undefined) n.addedOn = n.dateAdded || today; });
@@ -11535,6 +11553,82 @@ function prependRecentlyActive(page) {
   hook('inq-detail-overlay', () => renderInquiries());
   hook('proj-detail-overlay', () => renderProjects());
 })();
+// ══════════════════════════════════════════════════════
+//  INQUIRY 5-DAY SLA — same rules as the Wally SLA skill
+//  Day 0 = inquiry date. Stages: Send Mold Inquiry (by day 2) · Send IML
+//  Inquiry (only if that task exists, by day 2) · NPD Input Compiled / Sent
+//  to Finance (2 days after mold inquiry sent, and never later than day 5).
+//  Only OPEN inquiries without an outcome are tracked. Calendar days.
+// ══════════════════════════════════════════════════════
+const SLA_DAYS = 5, SLA_RISK_DAYS = 1; // at risk = step due today or tomorrow
+const _isMoldTask = t => /mold\s*(inquiry|request)/i.test(t.name||'') && !/^follow/i.test(t.name||'');
+const _isImlTask  = t => /\biml\b/i.test(t.name||'') && !/^follow/i.test(t.name||'');
+const _isNpdTask  = t => /npd\s*input/i.test(t.name||'') && !/^follow/i.test(t.name||'');
+function _dayDiff(a, b) { return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / 86400000); }
+
+function inquirySLA(inq) {
+  if (!inq || !inq.date || String(inq.status||'').toUpperCase() !== 'OPEN' || inq.outcome) return null;
+  const today = todayStr(), day0 = inq.date, tasks = inq.tasks||[], pipe = inq.pipeline||{};
+  const elapsed = Math.max(0, _dayDiff(day0, today));
+  const moldT = tasks.find(_isMoldTask), imlT = tasks.find(_isImlTask), npdT = tasks.find(_isNpdTask);
+  const moldPipeDone = /^done$/i.test(pipe.moldInquiry?.status||'');
+  const moldDone = !!(moldT && moldT.done) || moldPipeDone;
+  const moldOn = (moldT && moldT.done && moldT.completedAt) || (moldPipeDone ? pipe.moldInquiry.date : '') || '';
+  const costSt = pipe.costing?.status||'';
+  const npdDone = !!(npdT && npdT.done) || /^(ongoing|done)$/i.test(costSt);
+  const npdOn = (npdT && npdT.done && npdT.completedAt) || (/^(ongoing|done)$/i.test(costSt) ? pipe.costing.date : '') || '';
+  const lastDay = addDays(day0, SLA_DAYS);
+  let npdDue = lastDay;
+  if (moldDone && moldOn) { const d = addDays(moldOn, 2); if (d < npdDue) npdDue = d; }
+  const stages = [{key:'mold', label:'Send Mold Inquiry', due: addDays(day0, 2), done: moldDone, doneOn: moldOn}];
+  if (imlT) stages.push({key:'iml', label:'Send IML Inquiry', due: addDays(day0, 2), done: !!imlT.done, doneOn: imlT.completedAt||''});
+  stages.push({key:'npd', label:'NPD Input → Finance', due: npdDue, done: npdDone, doneOn: npdOn});
+  const rank = {overdue:3, risk:2, ok:1, done:0};
+  stages.forEach(st => {
+    if (st.done) { st.state = 'done'; return; }
+    const left = _dayDiff(today, st.due);
+    st.state = left < 0 ? 'overdue' : left <= SLA_RISK_DAYS ? 'risk' : 'ok';
+  });
+  const allTasksDone = tasks.length > 0 && tasks.every(t => t.done) && !(inq.nextActions||[]).some(n => !n.done);
+  const res = {elapsed, stages, stalled: allTasksDone, complete: npdDone};
+  if (npdDone) {
+    res.took = npdOn ? Math.max(0, _dayDiff(day0, npdOn)) : null;
+    res.met = res.took === null ? null : res.took <= SLA_DAYS;
+    res.state = 'done';
+  } else {
+    res.current = stages.find(st => !st.done) || stages[stages.length - 1];
+    res.state = elapsed > SLA_DAYS ? 'overdue' : stages.reduce((m, st) => rank[st.state] > rank[m] ? st.state : m, 'ok');
+  }
+  return res;
+}
+
+function slaChip(inq) {
+  const s = inquirySLA(inq);
+  if (!s) return '';
+  if (s.stalled) return `<span class="sla-chip stalled" title="All tasks done but the inquiry is still open">Stalled · needs next action or closing</span>`;
+  if (s.complete) {
+    if (s.took === null || daysSince(addDays(inq.date, s.took)) > 14) return '';
+    return `<span class="sla-chip ${s.met ? 'ok' : 'overdue'}" title="Inquiry → NPD input sent to Finance">SLA ${s.met ? 'met' : 'missed'} · ${s.took}d</span>`;
+  }
+  const lbl = {overdue:'overdue', risk:'at risk', ok:'on track'}[s.state];
+  return `<span class="sla-chip ${s.state}" title="5-day SLA — current step: ${_esc(s.current.label)} (due ${fmtDate(s.current.due)})">SLA day ${s.elapsed}/${SLA_DAYS} · ${_esc(s.current.label)} · ${lbl}</span>`;
+}
+
+function renderSLAPanel(inq) {
+  const s = inquirySLA(inq);
+  if (!s) return '';
+  const pill = st => st.state === 'done'
+    ? `<span class="sla-chip ok">Done${st.doneOn ? ' · ' + fmtDate(st.doneOn) : ''}</span>`
+    : `<span class="sla-chip ${st.state}">${{overdue:'Overdue', risk:'At risk', ok:'On track'}[st.state]}</span>`;
+  const head = s.complete
+    ? (s.took === null ? 'NPD input sent to Finance' : `NPD input sent in ${s.took} day${s.took === 1 ? '' : 's'} — SLA ${s.met ? 'met' : 'missed'}`)
+    : `Day ${s.elapsed} of ${SLA_DAYS}`;
+  return `<div class="proj-detail-section"><div class="proj-detail-slabel" style="display:flex;justify-content:space-between;align-items:center;">5-Day SLA <span style="text-transform:none;letter-spacing:0;font-weight:600;color:${s.state === 'overdue' ? 'var(--red)' : s.state === 'risk' ? 'var(--amber)' : 'var(--text2)'}">${head}</span></div>
+    ${s.stalled ? `<div style="font-size:12px;color:var(--amber);margin-bottom:8px;"><i class="ti ti-alert-triangle"></i> All tasks are done but the inquiry is still open — add the next action or close it.</div>` : ''}
+    ${s.stages.map(st => `<div class="sla-row"><span>${_esc(st.label)}</span><span class="sla-due">due ${fmtDate(st.due)}</span>${pill(st)}</div>`).join('')}
+  </div>`;
+}
+
 // ── PIN TO TOP — keep chosen items above everything until unpinned ──
 function pinBtn(item, type) {
   return `<button class="card-pin-btn ${item.pinned ? 'on' : ''}" onclick="event.stopPropagation();togglePin('${type}','${item.id}')" title="${item.pinned ? 'Unpin' : 'Pin to top'}"><i class="ti ti-pin${item.pinned ? 'ned' : ''}"></i></button>`;
@@ -11754,6 +11848,13 @@ function renderMyDay() {
     ...recentlyActiveItems('inquiry', data.inquiries),
     ...recentlyActiveItems('project', data.projects)
   ].sort((a, b) => (b.recent[0].addedOn > a.recent[0].addedOn ? 1 : -1));
+  const slaList = data.inquiries.map(i => ({i, s: inquirySLA(i)}))
+    .filter(x => x.s && (x.s.stalled || (!x.s.complete && x.s.state !== 'ok')))
+    .sort((a, b) => {
+      const r = x => x.s.stalled ? 1 : x.s.state === 'risk' ? 2 : 3;
+      return r(b) - r(a) || b.s.elapsed - a.s.elapsed;
+    });
+  const slaRow = ({i, s}) => `<button class="md-row" onclick="openInqDetail('${i.id}')"><span class="md-code">${_esc(i.code||'')}</span><span class="md-name">${_esc(i.name)}${i.customer ? `<small>${_esc(i.customer)}</small>` : ''}</span><span class="md-meta ${s.stalled ? 'amber' : s.state === 'overdue' ? 'red' : 'amber'}">${s.stalled ? 'stalled' : `day ${s.elapsed} · ${_esc(s.current.label)} · ${s.state === 'overdue' ? 'overdue' : 'at risk'}`}</span></button>`;
   const pinned = [
     ...data.inquiries.filter(x => x.pinned).map(x => ({...x, _type:'inquiry'})),
     ...data.projects.filter(x => x.pinned).map(x => ({...x, _type:'project'}))
@@ -11791,6 +11892,7 @@ function renderMyDay() {
     <div class="md-grid">
       <div style="display:flex;flex-direction:column;gap:12px;">
         ${pinned.length ? panel('pinned', 'var(--accent)', 'Pinned', pinned.length, rowsHTML(pinned, pinRow, '')) : ''}
+        ${slaList.length ? panel('stopwatch', 'var(--red)', 'Inquiry 5-day SLA — overdue, at risk & stalled', slaList.length, rowsHTML(slaList, slaRow, '')) : ''}
         ${panel('alert-circle', 'var(--red)', 'Overdue', overdue.length, rowsHTML(overdue, dueRow, 'Nothing overdue — nice.'))}
         ${panel('calendar-event', 'var(--amber)', 'Due in the next 7 days', thisWeek.length, rowsHTML(thisWeek, dueRow, 'Nothing due this week.'))}
         ${notif.awaiting.length ? panel('clock-pause', 'var(--amber)', 'Awaiting reply', notif.awaiting.length, rowsHTML(notif.awaiting, awaitRow, '')) : ''}

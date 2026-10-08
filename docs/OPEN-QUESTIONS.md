@@ -3,7 +3,7 @@
 Questions waiting on Adam before the related features can be built.
 Tick a box and write the answer underneath when decided.
 
-_Last updated: 8 Oct 2026_
+_Last updated: 8 Oct 2026 (V77.5)_
 
 ---
 
@@ -26,21 +26,22 @@ progress and Gantt finish vs target delivery. No copying Gantt tasks into the tr
       - New IML: ?
       - ICU: ?
 
-## 2. Inquiry 5-day SLA
+## 2. Inquiry 5-day SLA — built in V77.5 (same rules as the Wally SLA skill)
 
-Known so far: SLA = 5 days.
-1. Send mold request — 1–2 days after inquiry received
-2. Compile NPD input — 1–2 days after mold request sent
-3. Send NPD input — by day 5 after inquiry received
+Decided / built: day 0 = inquiry date; Send Mold Inquiry by day 2; Send IML Inquiry
+by day 2 only if that task exists; NPD Input Compiled / Sent to Finance 2 days after
+the mold inquiry is sent and never later than day 5; applies to all OPEN inquiries
+without an outcome; "stalled" = all tasks done but still open. New inquiries get the
+harmonised task names automatically.
 
-- [ ] **2.1 Replace the auto-created inquiry tasks** (currently: Send Mold Inquiry,
-      Send IML Inquiry, Compile NPD Input) with the 3 steps above?
-      Should "Send IML Inquiry" stay?
-- [ ] **2.2 Calendar days or working days?** Do weekends / public holidays count?
-- [ ] **2.3 Card display OK?** e.g. "Day 3 of 5 · Compiling NPD Input" —
-      amber on day 4, red after day 5.
-- [ ] **2.4 Apply to inquiries that are already open,** or only new ones?
-- [ ] **2.5 Any target after NPD input is sent** (costing → price submission)?
+Still to confirm:
+- [ ] **2.1 "At risk" threshold.** The tracker flags a step as at risk when it's due
+      **today or tomorrow**. The Wally skill says **within 2 days** — on a 5-day SLA
+      that makes almost every new inquiry amber on day 0. Keep 1 day, or match Wally (2)?
+- [ ] **2.2 Calendar or working days?** Currently calendar days (weekends count).
+- [ ] **2.3 "Send IML Inquiry" auto-task** is ticked by default on new inquiries.
+      Untick by default (only needed when the product has a label)?
+- [ ] **2.4 Any target after NPD input is sent** (costing → price submission)?
 
 ## 3. Postponed — needs Google Apps Script (Code.gs) changes
 

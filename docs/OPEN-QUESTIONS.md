@@ -3,7 +3,7 @@
 Questions waiting on Adam before the related features can be built.
 Tick a box and write the answer underneath when decided.
 
-_Last updated: 8 Oct 2026 (V77.5)_
+_Last updated: 8 Oct 2026 (V77.6)_
 
 ---
 
@@ -34,11 +34,13 @@ the mold inquiry is sent and never later than day 5; applies to all OPEN inquiri
 without an outcome; "stalled" = all tasks done but still open. New inquiries get the
 harmonised task names automatically.
 
+Decided (8 Oct): at risk = step due **today or the next working day**;
+SLA counts **working days** (Mon–Fri). Built in V77.6.
+
 Still to confirm:
-- [ ] **2.1 "At risk" threshold.** The tracker flags a step as at risk when it's due
-      **today or tomorrow**. The Wally skill says **within 2 days** — on a 5-day SLA
-      that makes almost every new inquiry amber on day 0. Keep 1 day, or match Wally (2)?
-- [ ] **2.2 Calendar or working days?** Currently calendar days (weekends count).
+- [ ] **2.1 Weekend days.** Currently Saturday + Sunday are skipped. Correct for your
+      office? (Johor/Kedah/Kelantan/Terengganu use Fri–Sat.)
+- [ ] **2.2 Public holidays.** Not excluded yet — add a holiday list in Settings?
 - [ ] **2.3 "Send IML Inquiry" auto-task** is ticked by default on new inquiries.
       Untick by default (only needed when the product has a label)?
 - [ ] **2.4 Any target after NPD input is sent** (costing → price submission)?

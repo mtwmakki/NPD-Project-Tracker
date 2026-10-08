@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.5</title>
+<title>NPD Tracker V77.6</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1876,7 +1876,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.5</div>
+    <div class="login-logo">NPD Tracker V77.6</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -2862,7 +2862,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
         <div class="autotask-check"><i class="ti ti-check"></i></div>
         <div class="autotask-info">
           <div class="autotask-name">Send Mold Inquiry</div>
-          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 days from inquiry date</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 working days from inquiry date</div>
         </div>
         <input type="checkbox" id="inq-t1" checked style="display:none;">
       </div>
@@ -2870,7 +2870,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
         <div class="autotask-check"><i class="ti ti-check"></i></div>
         <div class="autotask-info">
           <div class="autotask-name">Send IML Inquiry</div>
-          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 days from inquiry date</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due in +2 working days from inquiry date</div>
         </div>
         <input type="checkbox" id="inq-t2" checked style="display:none;">
       </div>
@@ -2878,7 +2878,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
         <div class="autotask-check"><i class="ti ti-check"></i></div>
         <div class="autotask-info">
           <div class="autotask-name">NPD Input Compiled / Sent to Finance</div>
-          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due by day 5 (SLA)</div>
+          <div class="autotask-dl"><i class="ti ti-calendar" style="font-size:9px;"></i> Due by working day 5 (SLA)</div>
         </div>
         <input type="checkbox" id="inq-t3" checked style="display:none;">
       </div>
@@ -5367,9 +5367,9 @@ function submitInquiry() {
     document.getElementById('inq-submit-btn').textContent = 'Create';
   } else {
     const tasks = [];
-    if (document.getElementById('inq-t1').checked) tasks.push({id:uid(),name:'Send Mold Inquiry',deadline:addDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
-    if (document.getElementById('inq-t2').checked) tasks.push({id:uid(),name:'Send IML Inquiry',deadline:addDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
-    if (document.getElementById('inq-t3').checked) tasks.push({id:uid(),name:'NPD Input Compiled / Sent to Finance',deadline:addDays(date,5),done:false,pic:currentUserProfile?.name||'Adam'});
+    if (document.getElementById('inq-t1').checked) tasks.push({id:uid(),name:'Send Mold Inquiry',deadline:addWorkDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
+    if (document.getElementById('inq-t2').checked) tasks.push({id:uid(),name:'Send IML Inquiry',deadline:addWorkDays(date,2),done:false,pic:currentUserProfile?.name||'Adam'});
+    if (document.getElementById('inq-t3').checked) tasks.push({id:uid(),name:'NPD Input Compiled / Sent to Finance',deadline:addWorkDays(date,5),done:false,pic:currentUserProfile?.name||'Adam'});
     inqObj.tasks = tasks;
     inqObj.expanded = true;
     inqObj.activityLog = [];
@@ -11558,18 +11558,30 @@ function prependRecentlyActive(page) {
 //  Day 0 = inquiry date. Stages: Send Mold Inquiry (by day 2) · Send IML
 //  Inquiry (only if that task exists, by day 2) · NPD Input Compiled / Sent
 //  to Finance (2 days after mold inquiry sent, and never later than day 5).
-//  Only OPEN inquiries without an outcome are tracked. Calendar days.
+//  Only OPEN inquiries without an outcome are tracked. WORKING days
+//  (Mon–Fri; Saturday/Sunday don't count — public holidays not excluded yet).
 // ══════════════════════════════════════════════════════
 const SLA_DAYS = 5, SLA_RISK_DAYS = 1; // at risk = step due today or tomorrow
 const _isMoldTask = t => /mold\s*(inquiry|request)/i.test(t.name||'') && !/^follow/i.test(t.name||'');
 const _isImlTask  = t => /\biml\b/i.test(t.name||'') && !/^follow/i.test(t.name||'');
 const _isNpdTask  = t => /npd\s*input/i.test(t.name||'') && !/^follow/i.test(t.name||'');
 function _dayDiff(a, b) { return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / 86400000); }
+function _isWorkDay(ds) { const d = new Date(ds+'T00:00:00').getDay(); return d !== 0 && d !== 6; }
+/** date + n working days (n ≥ 0) */
+function addWorkDays(ds, n) { let d = ds; while (n > 0) { d = addDays(d, 1); if (_isWorkDay(d)) n--; } return d; }
+/** working days from a to b: counts days in (a, b]; negative if b is before a */
+function workDaysBetween(a, b) {
+  if (a === b) return 0;
+  const sign = b > a ? 1 : -1, [lo, hi] = sign > 0 ? [a, b] : [b, a];
+  let n = 0, d = lo;
+  while (d < hi) { d = addDays(d, 1); if (_isWorkDay(d)) n++; }
+  return sign * n;
+}
 
 function inquirySLA(inq) {
   if (!inq || !inq.date || String(inq.status||'').toUpperCase() !== 'OPEN' || inq.outcome) return null;
   const today = todayStr(), day0 = inq.date, tasks = inq.tasks||[], pipe = inq.pipeline||{};
-  const elapsed = Math.max(0, _dayDiff(day0, today));
+  const elapsed = Math.max(0, workDaysBetween(day0, today));
   const moldT = tasks.find(_isMoldTask), imlT = tasks.find(_isImlTask), npdT = tasks.find(_isNpdTask);
   const moldPipeDone = /^done$/i.test(pipe.moldInquiry?.status||'');
   const moldDone = !!(moldT && moldT.done) || moldPipeDone;
@@ -11577,22 +11589,22 @@ function inquirySLA(inq) {
   const costSt = pipe.costing?.status||'';
   const npdDone = !!(npdT && npdT.done) || /^(ongoing|done)$/i.test(costSt);
   const npdOn = (npdT && npdT.done && npdT.completedAt) || (/^(ongoing|done)$/i.test(costSt) ? pipe.costing.date : '') || '';
-  const lastDay = addDays(day0, SLA_DAYS);
+  const lastDay = addWorkDays(day0, SLA_DAYS);
   let npdDue = lastDay;
-  if (moldDone && moldOn) { const d = addDays(moldOn, 2); if (d < npdDue) npdDue = d; }
-  const stages = [{key:'mold', label:'Send Mold Inquiry', due: addDays(day0, 2), done: moldDone, doneOn: moldOn}];
-  if (imlT) stages.push({key:'iml', label:'Send IML Inquiry', due: addDays(day0, 2), done: !!imlT.done, doneOn: imlT.completedAt||''});
+  if (moldDone && moldOn) { const d = addWorkDays(moldOn, 2); if (d < npdDue) npdDue = d; }
+  const stages = [{key:'mold', label:'Send Mold Inquiry', due: addWorkDays(day0, 2), done: moldDone, doneOn: moldOn}];
+  if (imlT) stages.push({key:'iml', label:'Send IML Inquiry', due: addWorkDays(day0, 2), done: !!imlT.done, doneOn: imlT.completedAt||''});
   stages.push({key:'npd', label:'NPD Input → Finance', due: npdDue, done: npdDone, doneOn: npdOn});
   const rank = {overdue:3, risk:2, ok:1, done:0};
   stages.forEach(st => {
     if (st.done) { st.state = 'done'; return; }
-    const left = _dayDiff(today, st.due);
-    st.state = left < 0 ? 'overdue' : left <= SLA_RISK_DAYS ? 'risk' : 'ok';
+    const left = workDaysBetween(today, st.due); // working days left
+    st.state = st.due < today ? 'overdue' : left <= SLA_RISK_DAYS ? 'risk' : 'ok';
   });
   const allTasksDone = tasks.length > 0 && tasks.every(t => t.done) && !(inq.nextActions||[]).some(n => !n.done);
   const res = {elapsed, stages, stalled: allTasksDone, complete: npdDone};
   if (npdDone) {
-    res.took = npdOn ? Math.max(0, _dayDiff(day0, npdOn)) : null;
+    res.took = npdOn ? Math.max(0, workDaysBetween(day0, npdOn)) : null;
     res.met = res.took === null ? null : res.took <= SLA_DAYS;
     res.state = 'done';
   } else {
@@ -11607,11 +11619,11 @@ function slaChip(inq) {
   if (!s) return '';
   if (s.stalled) return `<span class="sla-chip stalled" title="All tasks done but the inquiry is still open">Stalled · needs next action or closing</span>`;
   if (s.complete) {
-    if (s.took === null || daysSince(addDays(inq.date, s.took)) > 14) return '';
-    return `<span class="sla-chip ${s.met ? 'ok' : 'overdue'}" title="Inquiry → NPD input sent to Finance">SLA ${s.met ? 'met' : 'missed'} · ${s.took}d</span>`;
+    if (s.took === null || daysSince(s.stages[s.stages.length - 1].doneOn) > 14) return '';
+    return `<span class="sla-chip ${s.met ? 'ok' : 'overdue'}" title="Inquiry → NPD input sent to Finance, in working days">SLA ${s.met ? 'met' : 'missed'} · ${s.took} working day${s.took === 1 ? '' : 's'}</span>`;
   }
   const lbl = {overdue:'overdue', risk:'at risk', ok:'on track'}[s.state];
-  return `<span class="sla-chip ${s.state}" title="5-day SLA — current step: ${_esc(s.current.label)} (due ${fmtDate(s.current.due)})">SLA day ${s.elapsed}/${SLA_DAYS} · ${_esc(s.current.label)} · ${lbl}</span>`;
+  return `<span class="sla-chip ${s.state}" title="5-working-day SLA — current step: ${_esc(s.current.label)} (due ${fmtDate(s.current.due)})">SLA day ${s.elapsed}/${SLA_DAYS} · ${_esc(s.current.label)} · ${lbl}</span>`;
 }
 
 function renderSLAPanel(inq) {
@@ -11621,9 +11633,9 @@ function renderSLAPanel(inq) {
     ? `<span class="sla-chip ok">Done${st.doneOn ? ' · ' + fmtDate(st.doneOn) : ''}</span>`
     : `<span class="sla-chip ${st.state}">${{overdue:'Overdue', risk:'At risk', ok:'On track'}[st.state]}</span>`;
   const head = s.complete
-    ? (s.took === null ? 'NPD input sent to Finance' : `NPD input sent in ${s.took} day${s.took === 1 ? '' : 's'} — SLA ${s.met ? 'met' : 'missed'}`)
-    : `Day ${s.elapsed} of ${SLA_DAYS}`;
-  return `<div class="proj-detail-section"><div class="proj-detail-slabel" style="display:flex;justify-content:space-between;align-items:center;">5-Day SLA <span style="text-transform:none;letter-spacing:0;font-weight:600;color:${s.state === 'overdue' ? 'var(--red)' : s.state === 'risk' ? 'var(--amber)' : 'var(--text2)'}">${head}</span></div>
+    ? (s.took === null ? 'NPD input sent to Finance' : `NPD input sent in ${s.took} working day${s.took === 1 ? '' : 's'} — SLA ${s.met ? 'met' : 'missed'}`)
+    : `Working day ${s.elapsed} of ${SLA_DAYS}`;
+  return `<div class="proj-detail-section"><div class="proj-detail-slabel" style="display:flex;justify-content:space-between;align-items:center;">5-Day SLA <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3);">(working days)</span> <span style="text-transform:none;letter-spacing:0;font-weight:600;color:${s.state === 'overdue' ? 'var(--red)' : s.state === 'risk' ? 'var(--amber)' : 'var(--text2)'}">${head}</span></div>
     ${s.stalled ? `<div style="font-size:12px;color:var(--amber);margin-bottom:8px;"><i class="ti ti-alert-triangle"></i> All tasks are done but the inquiry is still open — add the next action or close it.</div>` : ''}
     ${s.stages.map(st => `<div class="sla-row"><span>${_esc(st.label)}</span><span class="sla-due">due ${fmtDate(st.due)}</span>${pill(st)}</div>`).join('')}
   </div>`;

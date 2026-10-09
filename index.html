@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.9</title>
+<title>NPD Tracker V77.10</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1497,6 +1497,12 @@ textarea.autogrow{overflow:hidden;resize:none;}
 .fn-more-menu.open{display:flex;}
 .fn-more-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:none;background:none;color:var(--text2);font-size:12px;font-family:var(--f);font-weight:500;cursor:pointer;text-align:left;width:100%;}
 .fn-more-item:hover{background:var(--surface2);color:var(--text);}
+/* V77.10 — "Try V2" shortcut in Studio's gradient */
+#floatingNav .fn-item.fn-v2{background:linear-gradient(115deg,#FFA25C,#C3BDBF 52%,#7FA7CF) !important;color:#14191F !important;width:auto !important;padding:0 13px;gap:6px;border-radius:999px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;}
+#floatingNav .fn-item.fn-v2:hover{filter:brightness(1.06);color:#14191F !important;}
+html.touch-ui #floatingNav .fn-item.fn-v2 .fn-tooltip{display:none;}
+.fn-more-item.fn-v2m{background:linear-gradient(115deg,rgba(255,162,92,.18),rgba(127,167,207,.22));color:var(--text);font-weight:700;}
+.login-v2{display:block;text-align:center;margin-top:10px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;}
 .fn-more-item.active{background:var(--al);color:var(--accent);}
 .fn-more-item i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
 
@@ -1880,7 +1886,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.9</div>
+    <div class="login-logo">NPD Tracker V77.10</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -1893,6 +1899,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
     <label class="login-keep"><input type="checkbox" id="login-keep"> Keep me signed in on this device</label>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
     <span class="login-forgot" onclick="doForgotPassword()">Forgot password?</span>
+    <a class="login-v2" href="v2/">✨ Try the new V2 design →</a>
     <div class="login-error" id="login-error"></div>
     <div id="login-sdk-status" style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px;"></div>
   </div>
@@ -1946,6 +1953,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
     <button class="fn-item" id="nav-tasks" onclick="showPage('tasks')"><i class="ti ti-checkbox"></i><span class="fn-tooltip">Tasks</span><span class="fn-badge" id="tasks-viewall-badge" style="display:none"></span></button>
     <button class="fn-item" id="nav-notifications" onclick="showPage('notifications')"><i class="ti ti-bell"></i><span class="fn-tooltip">Notifications</span><span class="fn-badge" id="notif-nav-badge" style="display:none">0</span></button>
     <button class="fn-item" id="nav-dashboard" onclick="showPage('dashboard')"><i class="ti ti-chart-bar"></i><span class="fn-tooltip">Dashboard</span></button>
+    <button class="fn-item fn-v2" id="nav-try-v2" onclick="location.href='v2/'" title="Open the new V2 design (same data)"><i class="ti ti-sparkles"></i><span class="fn-v2-lbl">Try V2</span><span class="fn-tooltip">New design · same data</span></button>
     <div class="fn-more-wrap">
       <button class="fn-item" id="fn-more-toggle" onclick="toggleMoreMenu(event)"><i class="ti ti-dots"></i><span class="fn-tooltip">More</span></button>
       <div class="fn-more-menu" id="pill-more-menu">
@@ -1976,6 +1984,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
   </button>
 
   <div class="fn-mobile-popover" id="pill-mobile-popover">
+    <button class="fn-more-item fn-v2m" onclick="location.href='v2/'"><i class="ti ti-sparkles"></i>Try V2 · new design</button>
     <button class="fn-more-item" onclick="showPage('myday');closeMobileMenu()"><i class="ti ti-sun"></i>My Day</button>
     <button class="fn-more-item" onclick="showPage('inquiries');closeMobileMenu()"><i class="ti ti-file-description"></i>Inquiries</button>
     <button class="fn-more-item" onclick="showPage('projects');closeMobileMenu()"><i class="ti ti-folder"></i>Projects</button>

@@ -896,8 +896,119 @@ body{padding:0}
 :root[data-look="I"] .seg.acc button{padding:11px 14px;font-size:14px}
 .row .meta2 .stp{display:none}
 @media (max-width:1180px){.row .meta2 .stp{display:inline-flex}}
+/* ───────── add / edit ───────── */
+.tb-new{margin-left:auto}
+.toolbar .search+.tb-new{margin-left:0}
+.tap{cursor:pointer}
+.addrow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px dashed var(--line-2);background:none;color:var(--mu);font:600 13.5px var(--fb);cursor:pointer;transition:border-color .2s,color .2s,background .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.addrow:hover{border-color:var(--ac);color:var(--tx);background:color-mix(in srgb,var(--ac) 7%,transparent)}
+.addrow:active{transform:scale(.98)}
+.tabbody .addrow{margin:2px 0 6px}
+.task .ed{width:32px;height:32px;border-radius:50%;border:1px solid transparent;background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;opacity:.55;transition:opacity .2s,border-color .2s,color .2s}
+.task:hover .ed,.task .ed:focus-visible{opacity:1;border-color:var(--line-2);color:var(--tx)}
+@media (hover:none){.task .ed{opacity:.8}}
+@media (max-width:720px){.task .ed{display:none}}
+.shsec .task.slim{grid-template-columns:auto minmax(0,1fr) auto auto}
+.pill.pedit{cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.pill.pedit:hover{border-color:var(--ac)}
+.sh-foot{align-items:center}
+.sh-v1{margin-right:auto;font-size:12.5px}
+.rail-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.rail-act{display:flex;justify-content:flex-end;margin-top:6px}
+.ph7.tap{border-radius:12px;padding:4px 2px;transition:background .2s}
+.ph7.tap:hover{background:var(--hover)}
+.mslist{display:grid;gap:8px}
+.msrow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line);transition:border-color .2s}
+.msrow.tap:hover,.upd .u.tap:hover{border-color:var(--line-2)}
+.msrow .node{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line-2);color:var(--on-ac)}
+.msrow.reached .node{background:var(--ok);border-color:var(--ok)}
+.msrow.cancelled{opacity:.6}.msrow.cancelled b{text-decoration:line-through}
+.msrow.late .node{border-color:var(--bad)}.msrow.late small{color:var(--bad)}
+.msrow b{font-size:14.5px;font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msrow small{display:block;font-size:12.5px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* dialog */
+#fscrim{position:fixed;inset:0;z-index:65;background:var(--scrim);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity calc(300ms*var(--k))}
+#fscrim.on{opacity:1;pointer-events:auto}
+#form{position:fixed;inset:0;z-index:66;display:grid;place-items:center;padding:24px 16px;pointer-events:none;visibility:hidden}
+#form.open{visibility:visible}
+.fm-card{pointer-events:auto;width:min(620px,100%);max-height:min(860px,calc(100dvh - 48px));display:flex;flex-direction:column;border-radius:var(--r-card);background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);box-shadow:0 40px 90px -30px rgba(0,0,0,.6);overflow:hidden;overflow:clip;
+  opacity:0;transform:translateY(18px) scale(.97);transition:opacity calc(220ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring)}
+#form.open .fm-card{opacity:1;transform:none}
+.fm-card.shake{animation:shake calc(450ms*var(--k)) var(--ease-out)}
+.fm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:22px 24px 12px}
+.fm-head h2{margin:0;font:var(--h-w) 26px/1.15 var(--fd);letter-spacing:var(--h-ls)}
+.fm-eye{display:block;font:500 12px var(--fm);color:var(--mu);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fm-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:6px 24px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px 14px;align-content:start}
+.ff{grid-column:1/-1;display:grid;gap:6px;min-width:0}
+.ff.half{grid-column:span 1}
+.ff.hide,.fm-sec.hide{display:none}
+.ff>label{font-size:12.5px;color:var(--mu);font-weight:600}
+.ff>label .req{color:var(--bad);font-style:normal}
+.ff small{font-size:12px;color:var(--mu)}
+.fm-err{font-style:normal;font-size:12.5px;color:var(--bad);min-height:0}
+.fm-err:empty{display:none}
+.ff input:not([type=checkbox]),.ff textarea,.ff select,.fm-prod input{width:100%;min-width:0;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--hover);color:var(--tx);font:500 15px var(--fb);transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
+.ff textarea{resize:vertical;min-height:48px;line-height:1.45}
+.ff input:focus,.ff textarea:focus,.ff select:focus,.fm-prod input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 18%,transparent)}
+.ff.bad input,.ff.bad textarea,.ff.bad select{border-color:var(--bad)}
+.fm-sel{position:relative}
+.fm-sel select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer}
+.fm-sel::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;border-right:1.8px solid var(--mu);border-bottom:1.8px solid var(--mu);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.fm-chips{display:flex;flex-wrap:wrap;gap:6px}
+.fm-chips button{padding:9px 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:none;color:var(--mu);font:600 13.5px var(--fb);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.fm-chips button:hover{color:var(--tx)}
+.fm-chips button:active{transform:scale(.94)}
+.fm-chips button.on{background:var(--ac-grad);border-color:transparent;color:var(--on-ac)}
+.fm-sec{grid-column:1/-1;font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu);padding-top:10px;border-top:1px solid var(--line);margin-top:4px}
+.fm-tog{display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:600;font-size:14.5px;user-select:none}
+.fm-tog input{position:absolute;opacity:0;pointer-events:none}
+.fm-tog i{width:44px;height:26px;border-radius:99px;background:var(--line-2);position:relative;flex:none;transition:background .25s}
+.fm-tog i::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.fm-tog input:checked+i{background:var(--warn)}
+.fm-tog input:checked+i::after{transform:translateX(18px)}
+.fm-tog input:focus-visible+i{box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 25%,transparent)}
+.fm-checks{display:grid;gap:8px}
+.fm-ck{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--hover);cursor:pointer;font-size:14px;font-weight:600}
+.fm-ck input{position:absolute;opacity:0;pointer-events:none}
+.fm-ck i{width:24px;height:24px;border-radius:8px;border:1.8px solid var(--line-2);display:grid;place-items:center;color:transparent;transition:background .2s,border-color .2s,color .2s}
+.fm-ck input:checked+i{background:var(--ok);border-color:var(--ok);color:var(--on-ac)}
+.fm-ck input:focus-visible+i{box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 25%,transparent)}
+.fm-ck small{display:block;font-weight:500;font-size:12px;color:var(--mu)}
+.fm-prods{display:grid;gap:8px}
+.fm-prods:empty{display:none}
+.fm-prod{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:center}
+.fm-prod input{padding:10px 12px;font-size:14px}
+.fm-prod .ibtn{width:34px;height:34px}
+.fm-addp{justify-self:start;margin-top:2px}
+.fm-rev{font:600 12.5px var(--fm);color:var(--ok)}
+.fm-rev:empty{display:none}
+.fm-foot{display:flex;align-items:center;gap:8px;padding:14px 24px 18px;border-top:1px solid var(--line)}
+.fm-msg{flex:1;min-width:0;font-size:12.5px;color:var(--mu)}
+.fm-msg.bad{color:var(--bad)}
+.fm-del{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line-2))}
+.fm-del.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
+@media (max-width:720px){
+  #form{place-items:end stretch;padding:8px}
+  .fm-card{width:100%;max-height:calc(100dvh - 40px);border-radius:28px;transform:translateY(40px)}
+  .fm-head{padding:18px 18px 8px}.fm-head h2{font-size:22px}
+  .fm-body{padding:4px 18px 16px}
+  .fm-foot{padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px));flex-wrap:wrap}
+  .fm-foot .fm-msg{flex-basis:100%;order:-1}
+  .fm-foot .b1{flex:1;justify-content:center}
+}
+@media (max-width:560px){
+  .ff.half{grid-column:1/-1}
+  .fm-prod{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;}
+  .fm-prod input[data-pf="name"]{grid-column:1/-1}
+  .fm-del span{display:none}
+  .tb-new span{display:none}.tb-new{padding:12px}
+}
 
-#view.quiet *,#sheet.quiet *{animation:none!important}
+/* "New" lives in the top bar on wide screens, in the toolbar where the top bar hides it */
+#topx .top-new{padding:12px 18px}
+:root[data-look="I"] #topx .top-new{padding:14px 22px}
+.toolbar .tb-new{display:none}
+@media (max-width:1040px){.toolbar .tb-new{display:inline-flex}}
 </style>
 
 </head>
@@ -973,6 +1084,8 @@ body{padding:0}
   <div class="cmd-in"><span data-ico="search"></span><input id="cmd-q" placeholder="Search inquiries, projects, pages…" autocomplete="off"><span class="mono">Esc</span></div>
   <div class="cmd-list" id="cmd-list"></div></div></div>
 <div id="pop" role="dialog" aria-label="Style and motion"></div>
+<div id="fscrim"></div>
+<div id="form" aria-hidden="true"></div>
 <div id="toasts" aria-live="polite"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="rs" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.2" height="5" fill="#ffffff" fill-opacity=".32"/></pattern><linearGradient id="pgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--ok)"/><stop offset="1" style="stop-color:var(--ac)"/></linearGradient></defs></svg>
 <script>
@@ -1016,6 +1129,7 @@ const P = {
   trophy:'M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8', arrowup:'M7 17 17 7M8 7h9v9', file:'M7 3h7l4 4v14H7zM14 3v4h4', user:'M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM4 21a8 8 0 0 1 16 0',
   logout:'M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 8l-4 4 4 4M6 12h10', msg:'M4 5h16v11H8l-4 4z', pin:'M9 4h6l-1 6 4 3H6l4-3zM12 13v7', link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   refresh:'M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4', snooze:'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16zM10 9h4l-4 6h4',
+  pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
 function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => { if (!el.firstChild) el.innerHTML = ico(el.dataset.ico, el.closest('.tabbar') ? 20 : 18); }); }
@@ -1057,11 +1171,15 @@ const _isImlTask  = t => /\biml\b/i.test(t.name||'') && !/^follow/i.test(t.name|
 const _isNpdTask  = t => /npd\s*input/i.test(t.name||'') && !/^follow/i.test(t.name||'');
 function _isWorkDay(ds){ const d = new Date(ds + 'T00:00:00').getDay(); return d !== 0 && d !== 6; }
 function addWorkDays(ds, n){ let d = ds; while (n > 0){ d = addDays(d, 1); if (_isWorkDay(d)) n--; } return d; }
+/* working days in (a, b], negative when b is before a. Same result as V1's day-by-day loop,
+   but counted with arithmetic, so long-open inquiries no longer slow the page down. */
+const _WD_PREFIX = [0, 1, 2, 2, 2, 3, 4];   // blocks of 7 days start on a Thursday (1 Jan 1970)
+function _dayNo(s){ const t = new Date(String(s).slice(0,10) + 'T00:00:00'); return isNaN(t) ? NaN : Math.round(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) + 7e5; }
+const _wdUpTo = x => Math.floor((x + 1) / 7) * 5 + _WD_PREFIX[(x + 1) % 7];
 function workDaysBetween(a, b){
   if (a === b) return 0;
-  const sign = b > a ? 1 : -1, [lo, hi] = sign > 0 ? [a, b] : [b, a];
-  let n = 0, d = lo; while (d < hi){ d = addDays(d, 1); if (_isWorkDay(d)) n++; }
-  return sign * n;
+  const x = _dayNo(a), y = _dayNo(b); if (isNaN(x) || isNaN(y)) return 0;
+  return y >= x ? _wdUpTo(y) - _wdUpTo(x) : -(_wdUpTo(x) - _wdUpTo(y));
 }
 function inquirySLA(inq){
   if (!inq || !inq.date || String(inq.status||'').toUpperCase() !== 'OPEN' || inq.outcome) return null;
@@ -1106,7 +1224,7 @@ function fmtRMShort(n){ n = n||0; return n >= 1e6 ? 'RM ' + (n/1e6).toFixed(2) +
 const BALL_LABELS    = {us:'Us', customer:'Customer', factory:'Factory', supplier:'Supplier'};
 const OUTCOME_LABELS = {won:'Won', lost:'Lost', dropped:'Dropped'};
 const STATUS_LABELS  = {'not-started':'Not started','in-progress':'In progress','completed':'Completed','on-hold':'On hold','OPEN':'Open','CLOSED':'Closed','CLOSE':'Closed','ON-HOLD':'On hold','DISCARDED':'Discarded'};
-const CLASS_LABELS   = {'new-mold':'New mold','improvement':'Improvement','masterbatch':'Masterbatch','icu':'ICU'};
+const CLASS_LABELS   = {'new-mold':'New mold','improvement':'Improvement','masterbatch':'Masterbatch','new-iml':'New IML','icu':'ICU'};
 const TYPE_LABELS    = {CUST:'Custom',STD:'Standard',PET:'PET',PP:'PP',IMP:'Improvement'};
 const statusLabel = s => STATUS_LABELS[s] || s || '—';
 function ballDays(item){ return item.ballSince ? Math.max(0, daysSince(item.ballSince)) : 0; }
@@ -1206,9 +1324,29 @@ async function pull(opts = {}){
   }
 }
 /* mutate: apply now (optimistic), queue the same patch for the merge-safe save */
+/* Three kinds of patch, all safe to replay on top of the latest Sheet data:
+   {coll, id, fn}        change one record (fn gets the record)
+   {coll, add, at}       insert a new record (skipped if its id already exists)
+   {coll, remove, bin}   remove a record; with bin:{id, kind} a copy goes to V1's Recycle Bin */
+function applyOp(d, op){
+  const list = d[op.coll] = d[op.coll] || [];
+  if (op.add){
+    if (list.some(x => x.id === op.add.id)) return true;
+    const rec = JSON.parse(JSON.stringify(op.add));
+    op.at === 'end' ? list.push(rec) : list.unshift(rec); return true;
+  }
+  if (op.remove){
+    const ix = list.findIndex(x => x.id === op.remove); if (ix < 0) return false;
+    const rec = list[ix];
+    if (op.bin){ d.bin = d.bin || []; if (!d.bin.some(b => b.id === op.bin.id)) d.bin.push({id: op.bin.id, kind: op.bin.kind, code: rec.code, name: rec.name, item: JSON.parse(JSON.stringify(rec)), deletedAt: todayStr()}); }
+    list.splice(ix, 1); return true;
+  }
+  const r = list.find(x => x.id === op.id); if (!r) return false;
+  op.fn(r); return true;
+}
 function mutate(ops, opts = {}){
   if (!DB.data) return false;
-  ops.forEach(op => { const r = findRec(DB.data, op.coll, op.id); if (r) op.fn(r); });
+  ops.forEach(op => applyOp(DB.data, op));
   DB.ops.push(...ops);
   clearTimeout(DB.timer); DB.timer = setTimeout(commit, SAVE_DEBOUNCE_MS);
   setSync('saving');
@@ -1227,7 +1365,7 @@ async function commit(){
     const fresh = normalize(JSON.parse(j._data));
     const otherSaved = j._updatedAt && j._updatedAt !== DB.ts;
     let missing = 0;
-    ops.forEach(op => { const r = findRec(fresh, op.coll, op.id); if (r) op.fn(r); else missing++; });   // 2. our patches only
+    ops.forEach(op => { if (!applyOp(fresh, op) && !op.remove) missing++; });   // 2. our patches only
     const ts = new Date().toISOString();
     const resp = await fetch(SHEETS_BRIDGE_URL, { method: 'POST', body: JSON.stringify({
       token: SHEETS_BRIDGE_TOKEN, _data: JSON.stringify(fresh), _updatedAt: ts, _updatedBy: meName() + ' (V2)' }) });
@@ -1237,7 +1375,7 @@ async function commit(){
       throw new Error(res.error);
     }
     DB.data = fresh; DB.ts = ts; DB.by = meName() + ' (V2)'; DB.source = 'live'; DB.retry = 0;
-    DB.ops.forEach(op => { const r = findRec(DB.data, op.coll, op.id); if (r) op.fn(r); });   // edits made while saving
+    DB.ops.forEach(op => applyOp(DB.data, op));   // edits made while saving
     setSync('saved');
     if (otherSaved) toast('Merged with changes saved meanwhile in V1', {icon:'refresh'});
     if (missing) toast(`${missing} change${missing > 1 ? 's' : ''} skipped: the item was removed in V1`, {icon:'x'});
@@ -1353,6 +1491,217 @@ function completeNotif(n, done = true){
   if (n.type === 'inquiry') return setInqTaskDone(n.parentId, n.taskId, done);
   if (n.type === 'project') return setProjTaskDone(n.parentId, n.taskId, done);
   return setMTaskDone(n.parentId, done);
+}
+
+/* ══════════ CREATE · EDIT · DELETE (same record shapes as V1) ══════════ */
+const clone = o => JSON.parse(JSON.stringify(o));
+/* sub-items are found by id; very old V1 items without an id are found by position ("#3") */
+const subKey = (x, i) => x.id || '#' + i;
+function subOf(list, key){ if (!list || key == null) return null; return key[0] === '#' ? list[+key.slice(1)] || null : list.find(x => x.id === key) || null; }
+function subIdx(list, key){ const it = subOf(list, key); return it ? list.indexOf(it) : -1; }
+const strong = s => `<strong>${esc(s)}</strong>`;
+const logFor = c => c === 'inquiries' ? inqLog : projLog;
+
+/* V1's changelog page (Firestore) — same entry shape, fire and forget */
+function changelog(entry){
+  try {
+    if (!AUTH.db || !AUTH.profile) return;
+    const p = AUTH.db.collection('changelog').add({ ...entry, uid: (AUTH.user && AUTH.user.uid) || '', userName: meName(), role: AUTH.profile.role || 'member',
+      ts: new Date().toISOString(), date: todayStr(), time: nowHM() });
+    if (p && p.catch) p.catch(e => console.warn('changelog', e));
+  } catch(e){ console.warn('changelog', e); }
+}
+
+/* people for PIC pickers: the user list from Firestore (like V1), plus anyone already named in the data */
+let USERS = [];
+async function loadUsers(){
+  try { const snap = await AUTH.db.collection('users').get(); USERS = snap.docs.map(d => d.data().name).filter(Boolean); } catch(e){ USERS = []; }
+}
+function people(extra){
+  const set = new Set([...USERS, meName(), ...(extra ? [extra] : [])]);
+  if (USERS.length < 2 && DB.data){ DB.data.projects.forEach(p => (p.tasks||[]).forEach(t => t.pic && set.add(t.pic))); DB.data.inquiries.forEach(i => (i.tasks||[]).forEach(t => t.pic && set.add(t.pic))); }
+  if (set.size < 2){ set.add('Adam'); set.add("Muti'ah"); }
+  return [...set].filter(Boolean).sort((a,b) => a.localeCompare(b));
+}
+
+/* ── project actions (V1 "Rolling Action Plan") ── */
+function addProjTask(projId, v){
+  const id = uid(), today = todayStr(), done = v.status === 'done';
+  const t = {id, name: v.name, deadline: v.deadline || '', pic: v.pic || meName(), status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', done, linkedSubStatus: v.linkedSubStatus || ''};
+  if (done) t.completedAt = today;
+  mutate([{coll:'projects', id: projId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t));
+    projLog(r, 'add', 'circle-plus', `Added action: ${strong(t.name)}${t.deadline ? ' · due ' + fmtDate(t.deadline) : ''}`); }}]);
+  return id;
+}
+function editProjTask(projId, key, patch){
+  const today = todayStr();
+  return mutate([{coll:'projects', id: projId, fn: r => {
+    const t = subOf(r.tasks, key); if (!t) return;
+    const oldDl = t.deadline || '';
+    Object.assign(t, clone(patch));
+    if ('status' in patch){ const done = patch.status === 'done'; if (done && !t.done) t.completedAt = today; if (!done) delete t.completedAt; t.done = done; if (patch.status !== 'awaiting-reply') t.reminder = ''; }
+    if ('deadline' in patch && oldDl && patch.deadline && oldDl !== patch.deadline) projLog(r, 'edit', 'calendar', `Deadline changed for ${strong(t.name)}: ${fmtDate(oldDl)} → ${fmtDate(patch.deadline)}`);
+    else projLog(r, 'edit', 'pencil', `Updated action: ${strong(t.name)}`);
+  }}]);
+}
+function deleteProjTask(projId, key){
+  const p = findRec(DB.data, 'projects', projId), t = p && subOf(p.tasks, key); if (!t) return null;
+  const binId = uid(), copy = clone(t), at = p.tasks.indexOf(t);
+  mutate([{coll:'projects', id: projId, fn: r => { const ix = subIdx(r.tasks, key); if (ix < 0) return; r.tasks.splice(ix, 1); projLog(r, 'delete', 'trash', `Deleted action: ${strong(copy.name)}`); }},
+          {coll:'bin', at:'end', add:{id: binId, kind:'task', parentCode: p.code, parentName: p.name, parentId: p.id, parentType:'project', task: copy, deletedAt: todayStr()}}]);
+  return () => mutate([{coll:'projects', id: projId, fn: r => { r.tasks = r.tasks || []; if (copy.id && r.tasks.some(x => x.id === copy.id)) return; r.tasks.splice(Math.min(at, r.tasks.length), 0, clone(copy)); projLog(r, 'add', 'refresh', `Restored action: ${strong(copy.name)}`); }},
+                       {coll:'bin', remove: binId}]);
+}
+
+/* ── inquiry tasks + next actions ── */
+function addInqTask(inqId, v){
+  const id = uid();
+  const t = {id, name: v.name, deadline: v.deadline || '', done: false, pic: v.pic || meName(), owner: meName()};
+  mutate([{coll:'inquiries', id: inqId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t)); inqLog(r, 'create', 'circle-plus', `Added task: ${strong(t.name)}`); }}]);
+  return id;
+}
+function editInqTask(inqId, key, patch){
+  return mutate([{coll:'inquiries', id: inqId, fn: r => {
+    const t = subOf(r.tasks, key); if (!t) return; const oldDl = t.deadline || '';
+    Object.assign(t, clone(patch));
+    if ('deadline' in patch && oldDl && patch.deadline && oldDl !== patch.deadline) inqLog(r, 'update', 'calendar', `Deadline changed for ${strong(t.name)}: ${fmtDate(oldDl)} → ${fmtDate(patch.deadline)}`);
+    else inqLog(r, 'update', 'pencil', `Updated task: ${strong(t.name)}`);
+  }}]);
+}
+function deleteInqTask(inqId, key){
+  const i = findRec(DB.data, 'inquiries', inqId), t = i && subOf(i.tasks, key); if (!t) return null;
+  const binId = uid(), copy = clone(t), at = i.tasks.indexOf(t);
+  mutate([{coll:'inquiries', id: inqId, fn: r => { const ix = subIdx(r.tasks, key); if (ix < 0) return; r.tasks.splice(ix, 1); inqLog(r, 'delete', 'trash', `Deleted task: ${strong(copy.name)}`); }},
+          {coll:'bin', at:'end', add:{id: binId, kind:'task', parentCode: i.code, parentName: i.name, parentId: i.id, parentType:'inquiry', task: copy, deletedAt: todayStr()}}]);
+  return () => mutate([{coll:'inquiries', id: inqId, fn: r => { r.tasks = r.tasks || []; if (copy.id && r.tasks.some(x => x.id === copy.id)) return; r.tasks.splice(Math.min(at, r.tasks.length), 0, clone(copy)); inqLog(r, 'create', 'refresh', `Restored task: ${strong(copy.name)}`); }},
+                       {coll:'bin', remove: binId}]);
+}
+function addInqNA(inqId, v){
+  const id = uid(), today = todayStr();
+  const na = {id, pic: v.pic || meName(), action: v.action, deadline: v.deadline || '', dateAdded: today, addedOn: today};
+  mutate([{coll:'inquiries', id: inqId, fn: r => { r.nextActions = r.nextActions || []; if (r.nextActions.some(x => x.id === id)) return; r.nextActions.push(clone(na)); inqLog(r, 'create', 'circle-plus', `Next action added: ${strong(na.action)}`); }}]);
+  return id;
+}
+function editInqNA(inqId, key, patch){
+  return mutate([{coll:'inquiries', id: inqId, fn: r => {
+    const na = subOf(r.nextActions, key); if (!na) return; const oldDl = na.deadline || '';
+    Object.assign(na, clone(patch));
+    if ('deadline' in patch && oldDl && patch.deadline && oldDl !== patch.deadline) inqLog(r, 'update', 'calendar', `Deadline changed for action ${strong(na.action)}: ${fmtDate(oldDl)} → ${fmtDate(patch.deadline)}`);
+  }}]);
+}
+function setInqNADone(inqId, key, done){
+  const today = todayStr();
+  return mutate([{coll:'inquiries', id: inqId, fn: r => {
+    const na = subOf(r.nextActions, key); if (!na || !!na.done === done) return;
+    na.done = done; if (done){ na.completedAt = today; inqLog(r, 'update', 'circle-check', `Next action completed: "${strong(na.action || '(untitled)')}"`); } else delete na.completedAt;
+  }}]);
+}
+function deleteInqNA(inqId, key){
+  const i = findRec(DB.data, 'inquiries', inqId), na = i && subOf(i.nextActions, key); if (!na) return null;
+  const copy = clone(na), at = i.nextActions.indexOf(na);
+  mutate([{coll:'inquiries', id: inqId, fn: r => { const ix = subIdx(r.nextActions, key); if (ix >= 0) r.nextActions.splice(ix, 1); }}]);
+  return () => mutate([{coll:'inquiries', id: inqId, fn: r => { r.nextActions = r.nextActions || []; if (copy.id && r.nextActions.some(x => x.id === copy.id)) return; r.nextActions.splice(Math.min(at, r.nextActions.length), 0, clone(copy)); }}]);
+}
+
+/* ── project updates (sub-statuses) + milestones ── */
+function addSubStatus(projId, v){
+  const id = uid(), today = todayStr();
+  const ss = {id, title: v.title, status: v.status || 'ongoing', date: v.date || today, note: v.note || '', createdAt: today};
+  mutate([{coll:'projects', id: projId, fn: r => { r.subStatuses = r.subStatuses || []; if (r.subStatuses.some(x => x.id === id)) return; r.subStatuses.unshift(clone(ss)); projLog(r, 'add', 'message', `Added update: ${strong(ss.title)}`); }}]);
+  return id;
+}
+function editSubStatus(projId, key, patch){
+  return mutate([{coll:'projects', id: projId, fn: r => { const ss = subOf(r.subStatuses, key); if (!ss) return; Object.assign(ss, clone(patch)); projLog(r, 'edit', 'pencil', `Updated update: ${strong(ss.title)}`); }}]);
+}
+function deleteSubStatus(projId, key){
+  const p = findRec(DB.data, 'projects', projId), ss = p && subOf(p.subStatuses, key); if (!ss) return null;
+  const copy = clone(ss), at = p.subStatuses.indexOf(ss);
+  mutate([{coll:'projects', id: projId, fn: r => { const ix = subIdx(r.subStatuses, key); if (ix < 0) return; r.subStatuses.splice(ix, 1); projLog(r, 'delete', 'trash', `Removed update: ${strong(copy.title)}`); }}]);
+  return () => mutate([{coll:'projects', id: projId, fn: r => { r.subStatuses = r.subStatuses || []; if (copy.id && r.subStatuses.some(x => x.id === copy.id)) return; r.subStatuses.splice(Math.min(at, r.subStatuses.length), 0, clone(copy)); }}]);
+}
+const MS_CATEGORIES = ['General','Design','Tooling','Sampling','Approval','Production','Delivery','Other'];
+function addMilestone(projId, v){
+  const id = uid();
+  const ms = {id, title: v.title, date: v.date || '', category: v.category || 'General', status: v.status || 'upcoming', note: v.note || '', createdAt: todayStr()};
+  mutate([{coll:'projects', id: projId, fn: r => { r.milestones = r.milestones || []; if (r.milestones.some(x => x.id === id)) return; r.milestones.push(clone(ms)); projLog(r, 'add', 'flag', `Added milestone: ${strong(ms.title)}${ms.date ? ' · ' + fmtDate(ms.date) : ''}`); }}]);
+  return id;
+}
+function editMilestone(projId, key, patch){
+  return mutate([{coll:'projects', id: projId, fn: r => {
+    const ms = subOf(r.milestones, key); if (!ms) return; const was = ms.status;
+    Object.assign(ms, clone(patch));
+    const reached = was !== ms.status && ms.status === 'reached';
+    projLog(r, reached ? 'done' : 'edit', reached ? 'flag-check' : 'flag', `${reached ? 'Milestone reached' : 'Updated milestone'}: ${strong(ms.title)}`);
+  }}]);
+}
+function deleteMilestone(projId, key){
+  const p = findRec(DB.data, 'projects', projId), ms = p && subOf(p.milestones, key); if (!ms) return null;
+  const copy = clone(ms), at = p.milestones.indexOf(ms);
+  mutate([{coll:'projects', id: projId, fn: r => { const ix = subIdx(r.milestones, key); if (ix < 0) return; r.milestones.splice(ix, 1); projLog(r, 'delete', 'trash', `Removed milestone: ${strong(copy.title)}`); }}]);
+  return () => mutate([{coll:'projects', id: projId, fn: r => { r.milestones = r.milestones || []; if (copy.id && r.milestones.some(x => x.id === copy.id)) return; r.milestones.splice(Math.min(at, r.milestones.length), 0, clone(copy)); }}]);
+}
+
+/* ── inquiries + projects: create, edit only the changed fields, delete to the Recycle Bin ── */
+const DEFAULT_INQ_TASKS = [['mold','Send Mold Inquiry',2],['iml','Send IML Inquiry',2],['npd','NPD Input Compiled / Sent to Finance',5]];
+function createInquiry(v, defaults){
+  const today = todayStr(), me = meName(), id = uid();
+  const inq = { id, code: v.code, name: v.name, customer: v.customer || '', bdPerson: v.bdPerson || '', bdNum: v.bdNum || '', date: v.date, status: v.status || 'OPEN',
+    type: v.type || 'CUST', priority: v.priority || '2', material: v.material || '', remark: v.remark || '', remarkDate: v.remarkDate || '', factory: v.factory || '',
+    products: v.products || [], nextActions: [], nextAction: '',
+    pipeline: { moldInquiry:{status:'', remark:'', date:''}, costing:{status:'', remark:'', date:''}, priceSubmission:{status:'', remark:'', date:''} },
+    ballWith: '', ballSince: '', links: v.links || [], outcome: '', outcomeReason: '', outcomeDate: '', moldCost: 0,
+    tasks: DEFAULT_INQ_TASKS.filter(([k]) => defaults.includes(k)).map(([, n, wd]) => ({id: uid(), name: n, deadline: addWorkDays(v.date, wd), done: false, pic: me})),
+    expanded: true, activityLog: [{id: uid(), type:'create', icon:'pencil', text:`Inquiry created: ${strong(v.name)}`, by: me, date: today, time: nowHM()}] };
+  mutate([{coll:'inquiries', add: inq, at:'start'}]);
+  changelog({type:'create', icon:'circle-plus', text:`Created inquiry: ${strong(v.name)}`, section:'inquiries'});
+  return id;
+}
+function editInquiry(id, patch){
+  const today = todayStr();
+  mutate([{coll:'inquiries', id, fn: r => {
+    const oldStatus = r.status;
+    Object.entries(clone(patch)).forEach(([k, val]) => {
+      if (k === 'pipeline'){ r.pipeline = r.pipeline || {}; Object.entries(val).forEach(([ph, f]) => { r.pipeline[ph] = {...(r.pipeline[ph] || {}), ...f}; }); }
+      else r[k] = val;
+    });
+    if ('outcome' in patch){ r.outcomeDate = patch.outcome ? today : ''; if (!patch.outcome) r.outcomeReason = ''; }
+    if ('status' in patch && oldStatus !== patch.status) inqLog(r, 'status', 'refresh', `Status changed: ${strong(statusLabel(oldStatus))} → ${strong(statusLabel(patch.status))}`);
+    inqLog(r, 'update', 'pencil', 'Inquiry info updated');
+  }}]);
+  const r = findRec(DB.data, 'inquiries', id);
+  changelog({type:'update', icon:'pencil', text:`Updated inquiry: ${strong(r ? r.name : '')}`, section:'inquiries'});
+}
+function createProject(v){
+  const id = uid(), today = todayStr();
+  const p = { id, code: v.code, name: v.name, date: v.date, status: v.status || 'not-started', classification: v.classification || 'new-mold', brief: v.brief || '', factory: v.factory || '',
+    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', ballWith: '', ballSince: '', links: v.links || [],
+    subStatuses: [], tasks: [], milestones: [], pics: [], expanded: true,
+    activityLog: [{id: uid(), type:'add', icon:'circle-plus', text:`Project created: ${strong(v.name)}`, by: meName(), date: today, time: nowHM()}] };
+  if (v.kiv){ p.kiv = true; p.kivComment = v.kivComment || ''; p.kivDate = today; }
+  mutate([{coll:'projects', add: p, at:'start'}]);
+  changelog({type:'create', icon:'circle-plus', text:`Created project: ${strong(v.name)}`, section:'projects'});
+  return id;
+}
+function editProject(id, patch){
+  const today = todayStr(), before = findRec(DB.data, 'projects', id), wasKiv = !!(before && before.kiv);
+  mutate([{coll:'projects', id, fn: r => {
+    const oldStatus = r.status, hadKiv = !!r.kiv;
+    Object.assign(r, clone(patch));
+    if ('kiv' in patch && patch.kiv && !hadKiv) r.kivDate = today;
+    if ('status' in patch && oldStatus !== patch.status) projLog(r, 'status', 'refresh', `Status changed: ${strong(statusLabel(oldStatus))} → ${strong(statusLabel(patch.status))}`);
+    projLog(r, 'edit', 'pencil', 'Project details updated');
+  }}]);
+  const r = findRec(DB.data, 'projects', id), nm = r ? r.name : '';
+  changelog({type:'update', icon:'pencil', text:`Updated project: ${strong(nm)}`, section:'projects'});
+  if ('kiv' in patch && patch.kiv !== wasKiv) changelog({type:'update', icon:'flag-3', text: patch.kiv ? `Marked project ${strong(nm)} as ${strong('KIV')}${r && r.kivComment ? ': ' + esc(r.kivComment) : ''}` : `Removed KIV from project ${strong(nm)}`, section:'projects'});
+}
+function deleteRecord(collName, id){
+  const rec = findRec(DB.data, collName, id); if (!rec) return null;
+  const kind = collName === 'inquiries' ? 'inquiry' : 'project', binId = uid(), copy = clone(rec);
+  mutate([{coll: collName, remove: id, bin: {id: binId, kind}}]);
+  changelog({type:'delete', icon:'trash', text:`Deleted ${kind}: ${strong(copy.name)}`, section: collName});
+  return () => { mutate([{coll: collName, add: copy, at:'start'}, {coll:'bin', remove: binId}]);
+    changelog({type:'update', icon:'refresh', text:`Restored ${kind}: ${strong(copy.name)}`, section: collName}); };
 }
 
 /* ══════════ MOTION + UI HELPERS (from the approved prototype) ══════════ */
@@ -1627,14 +1976,15 @@ function inqRows(){
 function pageInquiries(){
   const c = inqCounts();
   return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('fseg', INQ_FILTERS.map(([k,l]) => [k, l, c[k]]), S.filter)}
-    <label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label></div>
+    <label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
     <div class="rows st" style="--i:1" id="rows">${inqRows()}</div>`;
 }
 
 /* ── Inquiry detail sheet ── */
 let sheetId = null;
 function sheetHTML(i){
-  const st = inqState(i), sla = st.sla, canE = can('inquiries','edit'), canT = canE || can('actions','complete');
+  const st = inqState(i), sla = st.sla, canE = can('inquiries','edit'), canT = canE || can('actions','complete'), canAddT = canE || can('inquiries','add');
+  const tk = t => subKey(t, (i.tasks||[]).indexOf(t)), nas = (i.nextActions||[]).map((a, k) => ({...a, _k: subKey(a, k)}));
   const tasks = [...(i.tasks||[])].sort((a,b) => (!!a.done - !!b.done) || ((a.deadline||'9') < (b.deadline||'9') ? -1 : 1));
   const today = todayStr();
   let n = 0;
@@ -1647,11 +1997,15 @@ function sheetHTML(i){
         <div class="wd5" style="--c:${sla.state === 'done' ? 'var(--ok)' : ST_COLOR[st.k] || 'var(--ok)'}">${[1,2,3,4,5,6,7].map(dd => `<i class="${dd > sla.elapsed ? 'off' : ''} ${dd === 5 ? 'lim' : ''}" style="--i:${dd}"></i>`).join('')}</div></div>
       ${sla.stages.map(s => `<div class="slarow ${s.state}"><div class="node">${s.state === 'done' ? ico('check',13) : ''}</div><div style="min-width:0"><div class="nm">${esc(s.label)}</div><div class="when">${s.state === 'done' ? 'Done' + (s.doneOn ? ' ' + fmtDate(s.doneOn) : '') : `Due ${fmtDate(s.due)} · ${{overdue:'overdue', risk:'at risk', ok:'on track'}[s.state]}`}</div></div>
         ${s.state !== 'done' && s.task && canT ? `<button class="b1 sm" type="button" data-itask="${esc(s.task.id)}" data-done="1">${ico('check',14)} Mark done</button>` : ''}</div>`).join('')}
-      ${st.k === 'stalled' ? `<div class="banner warn">All tasks are done but the inquiry is still open. Add the next step or close it in V1.</div>` : ''}</section>` : ''}
+      ${st.k === 'stalled' ? `<div class="banner warn">All tasks are done but the inquiry is still open. Add a next action below, or close it from Edit details.</div>` : ''}</section>` : ''}
     <section class="shsec" style="--i:${n++}"><h3>Tasks <span>${tasks.filter(t => t.done).length}/${tasks.length} done</span></h3>
+      ${canAddT ? `<button type="button" class="addrow" data-fm="itask">${ico('plus',16)}<span>Add task</span></button>` : ''}
       ${tasks.length ? tasks.map(t => `<div class="task slim ${t.done ? 'done' : ''}" data-itask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-itask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-        <div style="min-width:0"><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span></div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
-    ${(i.nextActions||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Next actions</h3><div class="nalist">${i.nextActions.map(a => `<div class="na">${esc(a.action || a.text || '')}<small>${esc([a.pic, a.deadline ? 'by ' + fmtDate(a.deadline) : '', a.dateAdded ? 'added ' + fmtDate(a.dateAdded) : ''].filter(Boolean).join(' · '))}</small></div>`).join('')}</div></section>` : ''}
+        <div style="min-width:0" ${canE ? `data-fm="itask|${esc(tk(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="itask|${esc(tk(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : ''}</div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
+    ${nas.length || canE ? `<section class="shsec" style="--i:${n++}"><h3>Next actions ${nas.length ? `<span>${nas.filter(a => a.done).length}/${nas.length} done</span>` : ''}</h3>
+      ${canE ? `<button type="button" class="addrow" data-fm="na">${ico('plus',16)}<span>Add next action</span></button>` : ''}
+      ${[...nas].sort((a,b) => (!!a.done - !!b.done) || ((a.deadline||'9') < (b.deadline||'9') ? -1 : 1)).map(a => `<div class="task slim ${a.done ? 'done' : ''}"><button type="button" class="cb" ${canE ? `data-na="${esc(a._k)}" data-done="${a.done ? 0 : 1}"` : 'disabled'} aria-label="${a.done ? 'Reopen' : 'Complete'}: ${esc(a.action || '')}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
+        <div style="min-width:0" ${canE ? `data-fm="na|${esc(a._k)}" class="tap"` : ''}><div class="tt">${esc(a.action || a.text || '(untitled)')}</div><div class="who"><span>${esc(a.pic || '')}</span>${a.done && a.completedAt ? `<span>done ${fmtDate(a.completedAt)}</span>` : a.dateAdded ? `<span>added ${fmtDate(a.dateAdded)}</span>` : ''}</div></div><span class="due ${!a.done && a.deadline && a.deadline < today ? 'late' : ''}">${a.deadline ? fmtDate(a.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="na|${esc(a._k)}" aria-label="Edit">${ico('pencil',15)}</button>` : ''}</div>`).join('')}</section>` : ''}
     <section class="shsec" style="--i:${n++}"><h3>Ball in court ${i.ballWith ? `<span>since ${fmtDate(i.ballSince)} · ${ballDays(i)}d</span>` : ''}</h3>
       ${canE ? segHTML('ibseg', [['us','Us'],['customer','Customer'],['factory','Factory'],['supplier','Supplier'],['','—']], i.ballWith || '', true) : `<div class="ro">${esc(BALL_LABELS[i.ballWith] || 'Not set')}</div>`}</section>
     <section class="shsec" style="--i:${n++}"><h3>Outcome ${i.outcomeDate ? `<span>${fmtDate(i.outcomeDate)}</span>` : ''}</h3>
@@ -1666,7 +2020,7 @@ function sheetHTML(i){
     ${(i.links||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Links</h3><div class="links">${i.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div></section>` : ''}
     ${(i.activityLog||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Activity <span>latest ${Math.min(10, i.activityLog.length)}</span></h3><div class="hist">${[...i.activityLog].reverse().slice(0,10).map((a,k) => `<div class="h" style="--i:${k}"><i style="--c:${a.type === 'done' ? 'var(--ok)' : a.type === 'create' ? 'var(--ac)' : 'var(--info)'}"></i><div><b>${richText(a.text)}</b><span>${esc(a.by || '')}</span></div><span class="due">${fmtDate(a.date)}${a.time ? ' ' + esc(a.time) : ''}</span></div>`).join('')}</div></section>` : ''}
   </div>
-  <div class="sh-foot"><a class="btn" href="${V1_URL}" target="_blank" rel="noopener">Edit in V1</a><button class="b1" type="button" data-act="closesheet">Done</button></div>`;
+  <div class="sh-foot"><a class="lnk sh-v1" href="${V1_URL}" target="_blank" rel="noopener">Open in V1</a>${canE ? `<button class="btn" type="button" data-fm="inq|${esc(i.id)}">${ico('pencil',15)} Edit details</button>` : ''}<button class="b1" type="button" data-act="closesheet">Done</button></div>`;
 }
 function openSheet(id){
   const i = findRec(DB.data, 'inquiries', id); if (!i) return; sheetId = id;
@@ -1677,10 +2031,9 @@ function refreshSheet(){
   const sh = $('#sheet'); if (!sheetId || !sh.classList.contains('open')) return;
   const i = findRec(DB.data, 'inquiries', sheetId); if (!i){ closeSheet(); return; }
   const body = sh.querySelector('.sh-body'), top = body ? body.scrollTop : 0;
-  sh.classList.add('quiet'); sh.innerHTML = sheetHTML(i); wireSheetDrag();
+  sh.innerHTML = sheetHTML(i); settleAnims(sh); wireSheetDrag();
   const nb = sh.querySelector('.sh-body'); if (nb) nb.scrollTop = top;
   $$('#sheet .seg').forEach(s => placeInd(s, false));
-  requestAnimationFrame(() => requestAnimationFrame(() => sh.classList.remove('quiet')));
 }
 function closeSheet(){ const sh = $('#sheet'); if (!sh.classList.contains('open')) return; sh.classList.remove('open'); sh.style.setProperty('--drag','0px'); $('#scrim').classList.remove('on'); sheetId = null; }
 function wireSheetDrag(){
@@ -1711,7 +2064,7 @@ function projCard(p, n, anim, cls = 'pcard'){
     <div class="pfoot">${avs(p)}<span class="due ${nt && nt.deadline < today ? 'late' : ''}">${nt ? 'Next ' + fmtDate(nt.deadline) : p.deliveryDate ? 'Delivery ' + fmtDate(p.deliveryDate) : ''}</span></div></button>`;
 }
 function pageProjects(){
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}<span class="muted" style="font-size:13.5px">${S.pview === 'board' ? 'One row per status: not started, in progress, completed.' : 'Grouped by what needs you first.'}</span></div><div id="pbody">${projBody(true)}</div>`;
+  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}<span class="muted" style="font-size:13.5px">${S.pview === 'board' ? 'One row per status: not started, in progress, completed.' : 'Grouped by what needs you first.'}</span>${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
 }
 function projBody(anim){
   const all = DB.data.projects.filter(facMatch); let n = 0;
@@ -1735,29 +2088,36 @@ function projBody(anim){
 
 /* ── Project detail ── */
 function railHTML(p){
-  const ms = [...(p.milestones||[])].filter(m => m.date || m.title).sort((a,b) => (a.date||'') < (b.date||'') ? -1 : 1);
-  if (!ms.length) return `<section class="card st" style="--i:1"><div class="rail-empty">No milestones yet. Add them in V1 and they appear here as a timeline.</div></section>`;
+  const canE = can('projects','edit');
+  const ms = (p.milestones||[]).map((m, i) => ({...m, _k: subKey(m, i)})).filter(m => (m.date || m.title) && m.status !== 'cancelled').sort((a,b) => (a.date||'') < (b.date||'') ? -1 : 1);
+  if (!ms.length) return `<section class="card st" style="--i:1"><div class="rail-empty"><span>No milestones yet. Add the key dates (T1 trial, approval, delivery) to see this project as a timeline.</span>${canE ? `<button class="btn sm" type="button" data-fm="ms">${ico('flag',15)} Add milestone</button>` : ''}</div></section>`;
   let list = ms; const ci = ms.findIndex(m => m.status !== 'reached');
   if (ms.length > 8){ const c = ci < 0 ? ms.length - 1 : ci; const s = Math.max(0, Math.min(ms.length - 8, c - 4)); list = ms.slice(s, s + 8); }
   const cur = list.findIndex(m => m.status !== 'reached'), nn = list.length, reachedN = list.filter(m => m.status === 'reached').length;
   const fillPct = nn > 1 ? Math.max(0, Math.min(1, (cur < 0 ? nn - 1 : cur) / (nn - 1))) * 100 : 100;
   return `<section class="card rail st" style="--i:1"><div class="rail-in" style="grid-template-columns:repeat(${nn},minmax(0,1fr))"><div class="rail-line" style="left:calc(100%/${nn*2});right:calc(100%/${nn*2})"><i style="--p:${fillPct}%"></i></div>
-    ${list.map((m,i) => { const cls = m.status === 'reached' ? 'd' : i === cur ? 'c' : ''; return `<div class="ph7 ${cls}" style="--i:${i}"><div class="nd">${cls === 'd' ? ico('check',14) : ''}</div><span>${esc(m.title || 'Milestone')}</span><span class="dt">${fmtDate(m.date)}</span></div>`; }).join('')}</div>
-    <div class="rail-cap">${reachedN} of ${nn} milestones reached${cur >= 0 ? ` · next <b>${esc(list[cur].title)}</b> ${fmtDate(list[cur].date)}` : ''}</div></section>`;
+    ${list.map((m,i) => { const cls = m.status === 'reached' ? 'd' : i === cur ? 'c' : ''; return `<div class="ph7 ${cls}${canE ? ' tap' : ''}" style="--i:${i}" ${canE ? `data-fm="ms|${esc(m._k)}" role="button" tabindex="0" title="Edit milestone"` : ''}><div class="nd">${cls === 'd' ? ico('check',14) : ''}</div><span>${esc(m.title || 'Milestone')}</span><span class="dt">${fmtDate(m.date)}</span></div>`; }).join('')}</div>
+    <div class="rail-cap">${reachedN} of ${nn} milestones reached${cur >= 0 ? ` · next <b>${esc(list[cur].title)}</b> ${fmtDate(list[cur].date)}` : ''}</div>${canE ? `<div class="rail-act"><button class="lnk" type="button" data-fm="ms">+ Milestone</button></div>` : ''}</section>`;
 }
 function tasksHTML(p){
-  const today = todayStr(), canT = can('actions','complete');
+  const today = todayStr(), canT = can('actions','complete'), canEd = can('actions','edit');
+  const keyOf = t => subKey(t, (p.tasks||[]).indexOf(t));
   const open = (p.tasks||[]).filter(t => !t.done).sort((a,b) => (a.deadline||'9') < (b.deadline||'9') ? -1 : 1), done = (p.tasks||[]).filter(t => t.done);
   const row = t => `<div class="task ${t.done ? 'done' : ''}" style="--n:t-${esc(String(t.id).replace(/[^\w-]/g,''))}" data-ptask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-ptask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-    <div style="min-width:0"><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.classification && t.classification !== 'General' ? `<span>${esc(t.classification)}</span>` : ''}${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span><span></span></div>`;
-  return `<div class="tgroup"><span>Open · ${open.length}</span><span>${canT ? '' : 'view only'}</span></div>${open.length ? open.map(row).join('') : '<div class="empty" style="padding:18px">No open actions.</div>'}
+    <div style="min-width:0" ${canEd ? `data-fm="ptask|${esc(keyOf(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.classification && t.classification !== 'General' ? `<span>${esc(t.classification)}</span>` : ''}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !t.done ? '<span class="pill warn">In progress</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canEd ? `<button type="button" class="ed" data-fm="ptask|${esc(keyOf(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
+  return `${can('actions','add') ? `<button type="button" class="addrow" data-fm="ptask">${ico('plus',16)}<span>Add action</span></button>` : ''}<div class="tgroup"><span>Open · ${open.length}</span><span>${canT ? '' : 'view only'}</span></div>${open.length ? open.map(row).join('') : '<div class="empty" style="padding:18px">No open actions.</div>'}
     ${done.length ? `<div class="tgroup"><span>Done · ${done.length}</span></div>${done.map(row).join('')}` : ''}`;
 }
 function tabBody(p){
   if (S.tab === 'actions') return tasksHTML(p);
   if (S.tab === 'updates'){
-    const ss = [...(p.subStatuses||[])].sort((a,b) => (b.date||b.createdAt||'') < (a.date||a.createdAt||'') ? -1 : 1);
-    return ss.length ? `<div class="upd">${ss.map(u => `<div class="u"><div class="top3"><b>${esc(u.title)}</b><span class="pill ${u.status === 'completed' ? 'done' : u.status === 'ongoing' ? 'warn' : u.status === 'cancelled' ? 'cancel' : ''}">${esc(u.status ? u.status[0].toUpperCase() + u.status.slice(1).replace('-',' ') : '—')}</span></div>${u.note ? `<p>${esc(u.note)}</p>` : ''}<span class="due">${fmtDate(u.date || u.createdAt)}${u.classification ? ' · ' + esc(u.classification) : ''}</span></div>`).join('')}</div>` : '<div class="empty" style="padding:18px">No updates yet.</div>';
+    const canE = can('projects','edit'), today = todayStr();
+    const ss = (p.subStatuses||[]).map((u, i) => ({...u, _k: subKey(u, i)})).sort((a,b) => (b.date||b.createdAt||'') < (a.date||a.createdAt||'') ? -1 : 1);
+    const ms = (p.milestones||[]).map((m, i) => ({...m, _k: subKey(m, i)})).sort((a,b) => (a.date||'9') < (b.date||'9') ? -1 : 1);
+    const msRow = m => `<div class="msrow ${m.status || 'upcoming'} ${m.status !== 'reached' && m.status !== 'cancelled' && m.date && m.date < today ? 'late' : ''}${canE ? ' tap' : ''}" ${canE ? `data-fm="ms|${esc(m._k)}" role="button" tabindex="0"` : ''}><i class="node">${m.status === 'reached' ? ico('check',13) : m.status === 'cancelled' ? ico('x',12) : ''}</i><div style="min-width:0"><b>${esc(m.title || 'Milestone')}</b><small>${esc([m.category && m.category !== 'General' ? m.category : '', m.status === 'reached' ? 'Reached' : m.status === 'cancelled' ? 'Cancelled' : m.date && m.date < today ? 'Overdue' : '', m.note].filter(Boolean).join(' · '))}</small></div><span class="due">${fmtDate(m.date)}</span></div>`;
+    return `<div class="tgroup"><span>Milestones · ${ms.length}</span></div>${canE ? `<button type="button" class="addrow" data-fm="ms">${ico('flag',16)}<span>Add milestone</span></button>` : ''}${ms.length ? `<div class="mslist">${ms.map(msRow).join('')}</div>` : ''}
+      <div class="tgroup" style="margin-top:8px"><span>Status updates · ${ss.length}</span></div>${canE ? `<button type="button" class="addrow" data-fm="ss">${ico('msg',16)}<span>Post an update</span></button>` : ''}`
+      + (ss.length ? `<div class="upd">${ss.map(u => `<div class="u${canE ? ' tap' : ''}" ${canE ? `data-fm="ss|${esc(u._k)}" role="button" tabindex="0"` : ''}><div class="top3"><b>${esc(u.title)}</b><span class="pill ${u.status === 'completed' ? 'done' : u.status === 'ongoing' ? 'warn' : u.status === 'cancelled' ? 'cancel' : ''}">${esc(u.status ? u.status[0].toUpperCase() + u.status.slice(1).replace('-',' ') : '—')}</span></div>${u.note ? `<p>${esc(u.note)}</p>` : ''}<span class="due">${fmtDate(u.date || u.createdAt)}${u.classification ? ' · ' + esc(u.classification) : ''}</span></div>`).join('')}</div>` : '<div class="empty" style="padding:18px">No updates yet.</div>');
   }
   if (S.tab === 'overview'){
     return `${p.brief ? `<div class="remark">${esc(p.brief)}</div>` : ''}<div class="facts">
@@ -1766,7 +2126,8 @@ function tabBody(p){
       <div><span>Factory</span><b>${esc(facOf(p) || '—')}</b></div><div><span>Customer</span><b>${esc(p.customer || '—')}</b></div>
       <div><span>Sales</span><b>${esc(p.salesPerson || '—')}</b></div><div><span>People</span><b>${esc((p.pics||[]).map(x => x.name + (x.role ? ' (' + x.role + ')' : '')).join(', ') || '—')}</b></div>
       ${p.kiv ? `<div><span>KIV</span><b>${esc(p.kivComment || 'Yes')}</b></div>` : ''}</div>
-      ${(p.links||[]).length ? `<div class="links" style="margin-top:12px">${p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}`;
+      ${(p.links||[]).length ? `<div class="links" style="margin-top:12px">${p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
+      ${can('projects','edit') ? `<div class="more" style="justify-content:flex-start"><button class="btn" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit details</button></div>` : ''}`;
   }
   const H = [...(p.activityLog||[])].reverse().slice(0, 40);
   return H.length ? `<div class="hist">${H.map((a,i) => `<div class="h" style="--i:${Math.min(i,12)}"><i style="--c:${a.type === 'done' ? 'var(--ok)' : a.type === 'delete' ? 'var(--bad)' : a.type === 'add' ? 'var(--ac)' : 'var(--info)'}"></i><div><b>${richText(a.text)}</b><span>${esc(a.by || '')}</span></div><span class="due">${fmtDate(a.date)}${a.time ? ' ' + esc(a.time) : ''}</span></div>`).join('')}</div>` : '<div class="empty" style="padding:18px">No history yet.</div>';
@@ -1781,8 +2142,8 @@ function pageProject(){
       <div style="min-width:0"><button type="button" class="backlink" data-go="projects">${ico('back',16)} All projects</button>
         <h2 class="dh-title" style="view-transition-name:hero">${esc(p.name)}</h2>
         <div class="meta" style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span><span class="pill">${esc(statusLabel(p.status))}</span>${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}<span class="pill"><span class="mono">${esc(p.code || '')}</span></span>
-          ${canE ? `<button class="pill" type="button" data-act="pin-proj" style="cursor:pointer;${p.pinned ? 'color:#F5C518' : ''}">${p.pinned ? '★ Pinned' : '☆ Pin'}</button>` : ''}</div></div>
-      <div class="pring"><svg viewBox="0 0 118 118" aria-hidden="true"><circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="pfg" cx="59" cy="59" r="50" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg><div class="c"><b><span id="ppct">${pct}</span>%</b><span>actions done</span></div></div>
+          ${canE ? `<button class="pill" type="button" data-act="pin-proj" style="cursor:pointer;${p.pinned ? 'color:#F5C518' : ''}">${p.pinned ? '★ Pinned' : '☆ Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}</div></div>
+      <div class="pring"><svg viewBox="0 0 118 118" aria-hidden="true"><circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="pfg" cx="59" cy="59" r="50" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-(RING[p.id] || 0)/100)).toFixed(1)}"/></svg><div class="c"><b><span id="ppct">${pct}</span>%</b><span>actions done</span></div></div>
     </section>
     ${railHTML(p)}
     <section class="dgrid">
@@ -1796,7 +2157,8 @@ function pageProject(){
       </div>
     </section></div>`;
 }
-function setRing(pct){ const fg = $('#pfg'); if (!fg) return; const C = 2*Math.PI*50; requestAnimationFrame(() => fg.style.strokeDashoffset = (C*(1-pct/100)).toFixed(1)); const el = $('#ppct'); if (el) el.textContent = pct; }
+const RING = {};   // last % drawn per project, so a refresh only animates the change
+function setRing(pct){ const fg = $('#pfg'); if (!fg) return; const C = 2*Math.PI*50; RING[S.proj] = pct; requestAnimationFrame(() => fg.style.strokeDashoffset = (C*(1-pct/100)).toFixed(1)); const el = $('#ppct'); if (el) el.textContent = pct; }
 
 /* ── Notifications ── */
 let NOTI = [];
@@ -1857,7 +2219,9 @@ function render(opts = {}){
   const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
   $('#ttl').innerHTML = `<h1>${t}</h1>${pr ? `<span class="sub">All projects › ${esc(pr.name)}</span>` : sub ? `<span class="sub">${sub}</span>` : ''}`;
-  $('#topx').innerHTML = S.page === 'dashboard' && DB.data ? segHTML('rseg', Object.entries(RANGE), S.range) : '';
+  const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
+  $('#topx').innerHTML = !DB.data ? '' : S.page === 'dashboard' ? segHTML('rseg', Object.entries(RANGE), S.range)
+    : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
   v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, notifications: pageNotifications, styles: pageStyles })[S.page]();
   if (!opts.keep) v.scrollTop = 0;
@@ -1871,12 +2235,15 @@ function render(opts = {}){
     if (S.page === 'project'){ const p = findRec(DB.data, 'projects', S.proj); if (p) setRing(projPct(p)); }
   });
 }
+/* a data refresh re-draws the page; jump its entrance animations to the end so nothing fades in again */
+function settleAnims(el){
+  try { el.getAnimations({subtree:true}).forEach(a => { const t = a.effect && a.effect.getTiming(); if (t && t.iterations !== Infinity && a.playState !== 'finished') a.finish(); }); } catch(e){}
+}
 function softRender(first){
   if (!AUTH.user) return;
   if (first){ render(); return; }
   const v = $('#view'), top = v.scrollTop;
-  v.classList.add('quiet'); render({keep:true}); v.scrollTop = top;
-  requestAnimationFrame(() => requestAnimationFrame(() => v.classList.remove('quiet')));
+  render({keep:true}); settleAnims(v); v.scrollTop = top;
   refreshSheet();
 }
 function go(page, o = {}){
@@ -1890,7 +2257,7 @@ function go(page, o = {}){
   if (o.src){ const tt = o.src.querySelector('.t'); if (tt) tt.style.viewTransitionName = 'hero'; if (o.src.matches('.pcard,.bcard')) o.src.style.viewTransitionName = 'herobox'; }
   const prevProj = S.proj;
   return vt(() => {
-    S.page = page; if (o.proj) S.proj = o.proj; if (page === 'project' && !o.keepTab) S.tab = 'actions';
+    S.page = page; if (o.proj){ S.proj = o.proj; delete RING[o.proj]; } if (page === 'project' && !o.keepTab) S.tab = 'actions';
     render();
     if (type === 'morphback'){ const c = $(`.pcard[data-proj="${CSS.escape(prevProj||'')}"],.bcard[data-proj="${CSS.escape(prevProj||'')}"]`); if (c){ c.style.viewTransitionName = 'herobox'; const tt = c.querySelector('.t'); if (tt) tt.style.viewTransitionName = 'hero'; c.scrollIntoView({block:'center'}); } }
   }, type).then(() => { $$('[style*="view-transition-name"]').forEach(el => { if (!el.matches('.dh,.dh-title')) el.style.viewTransitionName = ''; }); });
@@ -1919,6 +2286,323 @@ function toggleInqTask(taskId, done, btn){
     const s = inquirySLA(findRec(DB.data, 'inquiries', i.id));
     toast(done && s && s.state === 'done' && _isNpdTask(t) ? `NPD input sent · SLA ${s.met === false ? 'missed' : 'met'}` : `“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqTaskDone(i.id, taskId, !done)});
   }, S.motion === 'off' ? 0 : 380);
+}
+
+function toggleNA(key, done, btn){
+  const i = findRec(DB.data, 'inquiries', sheetId); const na = i && subOf(i.nextActions, key); if (!na) return;
+  tickFeedback(btn, done);
+  setTimeout(() => { setInqNADone(i.id, key, done); toast(`“${esc(na.action || 'Next action')}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqNADone(i.id, key, !done)}); }, S.motion === 'off' ? 0 : 380);
+}
+
+/* ══════════ FORMS: one dialog for every add / edit ══════════
+   field: {k, label, type, value, req, ph, half, hint, options:[[v,l]], show: vals => bool}
+   types: text · textarea · date · number · select · chips · check · checks · products · sec */
+const FM = { cfg: null, init: '', armed: false };
+const formOpen = () => $('#form').classList.contains('open');
+function fieldHTML(f){
+  const id = 'fm-' + f.k, v = f.value == null ? '' : f.value;
+  const lab = f.label ? `<label for="${id}">${esc(f.label)}${f.req ? ' <i class="req">*</i>' : ''}</label>` : '';
+  let ctl = '';
+  if (f.type === 'sec') return `<div class="fm-sec" data-fk="${f.k}">${esc(f.label)}</div>`;
+  if (f.type === 'textarea') ctl = `<textarea id="${id}" data-k="${f.k}" rows="${f.rows || 3}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>`;
+  else if (f.type === 'select') ctl = `<div class="fm-sel"><select id="${id}" data-k="${f.k}">${f.options.map(([o, l]) => `<option value="${esc(o)}" ${String(o) === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
+  else if (f.type === 'chips') ctl = `<div class="fm-chips" role="radiogroup" data-k="${f.k}" data-chips>${f.options.map(([o, l]) => `<button type="button" role="radio" data-v="${esc(o)}" class="${String(o) === String(v) ? 'on' : ''}" aria-checked="${String(o) === String(v)}">${esc(l)}</button>`).join('')}</div>`;
+  else if (f.type === 'check') return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}"><label class="fm-tog"><input type="checkbox" id="${id}" data-k="${f.k}" ${v ? 'checked' : ''}><i></i><span>${esc(f.label)}</span></label>${f.hint ? `<small>${esc(f.hint)}</small>` : ''}</div>`;
+  else if (f.type === 'checks') ctl = `<div class="fm-checks" data-k="${f.k}" data-checks>${f.options.map(([o, l, sub]) => `<label class="fm-ck"><input type="checkbox" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><i>${ico('check',13)}</i><span>${esc(l)}${sub ? `<small>${esc(sub)}</small>` : ''}</span></label>`).join('')}</div>`;
+  else if (f.type === 'products') ctl = `<div class="fm-prods" data-k="${f.k}" data-prods>${(v || []).map(prodRow).join('')}</div><button type="button" class="lnk fm-addp" data-addprod>+ Add product</button><div class="fm-rev" data-rev></div>`;
+  else ctl = `<input id="${id}" data-k="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" placeholder="${esc(f.ph || '')}" ${f.type === 'number' ? 'min="0" step="any" inputmode="decimal"' : ''} autocomplete="off">`;
+  return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}">${lab}${ctl}${f.hint ? `<small>${esc(f.hint)}</small>` : ''}<em class="fm-err"></em></div>`;
+}
+const prodRow = p => `<div class="fm-prod" data-id="${esc(p.id || uid())}"><input data-pf="name" placeholder="Product name / size" value="${esc(p.name || '')}"><input data-pf="volume" type="number" min="0" inputmode="numeric" placeholder="Volume / yr" value="${p.volume || ''}"><input data-pf="cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="RM / pc" value="${p.cost || ''}"><button type="button" class="ibtn" data-delprod aria-label="Remove product">${ico('x',15)}</button></div>`;
+function readForm(){
+  const out = {};
+  FM.cfg.fields.forEach(f => {
+    if (f.type === 'sec') return;
+    const box = $(`#form [data-fk="${f.k}"]`); if (!box) return;
+    if (f.type === 'chips'){ const on = $('[data-chips] button.on', box); out[f.k] = on ? on.dataset.v : ''; }
+    else if (f.type === 'check') out[f.k] = $('input', box).checked;
+    else if (f.type === 'checks') out[f.k] = $$('input:checked', box).map(x => x.value);
+    else if (f.type === 'products') out[f.k] = $$('.fm-prod', box).map(r => ({id: r.dataset.id, name: $('[data-pf="name"]', r).value.trim(), volume: parseFloat($('[data-pf="volume"]', r).value) || 0, cost: parseFloat($('[data-pf="cost"]', r).value) || 0})).filter(p => p.name);
+    else { const el = $('[data-k]', box); out[f.k] = f.type === 'textarea' ? el.value.trim() : String(el.value).trim(); }
+  });
+  return out;
+}
+function formSync(){
+  if (!FM.cfg) return;
+  const vals = readForm();
+  FM.cfg.fields.forEach(f => { if (!f.show) return; const box = $(`#form [data-fk="${f.k}"]`); if (box) box.classList.toggle('hide', !f.show(vals)); });
+  const rev = $('#form [data-rev]');
+  if (rev){ const t = (vals.products || []).reduce((s, p) => s + p.volume * p.cost, 0); rev.textContent = t > 0 ? 'Est. revenue ' + fmtRM(t) + ' / yr' : ''; }
+}
+function openForm(cfg){
+  FM.cfg = cfg; FM.armed = false;
+  const f = $('#form');
+  f.innerHTML = `<div class="fm-card" role="dialog" aria-modal="true" aria-labelledby="fm-title">
+    <div class="fm-head"><div style="min-width:0">${cfg.eyebrow ? `<span class="fm-eye">${esc(cfg.eyebrow)}</span>` : ''}<h2 id="fm-title">${esc(cfg.title)}</h2></div><button type="button" class="ibtn" data-fmx="cancel" aria-label="Close">${ico('x',18)}</button></div>
+    <form class="fm-body" novalidate autocomplete="off">${cfg.fields.map(fieldHTML).join('')}<button type="submit" hidden></button></form>
+    <div class="fm-foot">${cfg.del ? `<button type="button" class="btn fm-del" data-fmx="del">${ico('trash',15)}<span>${esc(cfg.del.label || 'Delete')}</span></button>` : ''}<span class="fm-msg" id="fm-msg"></span>
+      <button type="button" class="btn" data-fmx="cancel">Cancel</button><button type="button" class="b1" data-fmx="ok">${esc(cfg.submit || 'Save')}</button></div></div>`;
+  hydrateIcons(f); formSync(); FM.init = JSON.stringify(readForm());
+  $('#fscrim').classList.add('on'); f.classList.add('open'); f.setAttribute('aria-hidden', 'false');
+  if (finePointer){ const first = $('.fm-body input:not([type=checkbox]),.fm-body textarea', f); if (first) setTimeout(() => { first.focus(); try { first.setSelectionRange(first.value.length, first.value.length); } catch(e){} }, 60); }
+}
+function closeForm(force){
+  const f = $('#form'); if (!formOpen()) return true;
+  if (!force && FM.cfg && JSON.stringify(readForm()) !== FM.init && !FM.leave){
+    FM.leave = true; formMsg('Unsaved changes. Press Esc again or Cancel to discard.'); nudge(); setTimeout(() => FM.leave = false, 3000); return false;
+  }
+  FM.leave = false; f.classList.remove('open'); f.setAttribute('aria-hidden', 'true'); $('#fscrim').classList.remove('on'); FM.cfg = null;
+  setTimeout(() => { if (!formOpen()) f.innerHTML = ''; }, 400);
+  return true;
+}
+function formMsg(m, bad){ const e = $('#fm-msg'); if (e){ e.textContent = m || ''; e.classList.toggle('bad', !!bad); } }
+function nudge(){ const c = $('#form .fm-card'); if (!c) return; c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+function fieldErr(k, msg){ const box = $(`#form [data-fk="${k}"]`); if (!box) return; box.classList.add('bad'); $('.fm-err', box).textContent = msg; }
+function submitForm(){
+  if (!FM.cfg) return;
+  $$('#form .ff.bad').forEach(b => { b.classList.remove('bad'); $('.fm-err', b).textContent = ''; }); formMsg('');
+  const vals = readForm(), cfg = FM.cfg;
+  const visible = f => !f.show || f.show(vals);
+  const miss = cfg.fields.filter(f => f.req && visible(f) && !vals[f.k]);
+  if (miss.length){ miss.forEach(f => fieldErr(f.k, 'Required')); nudge(); const el = $(`#form [data-fk="${miss[0].k}"] [data-k]`); if (el) el.focus(); return; }
+  const init = JSON.parse(FM.init), changed = {};
+  Object.keys(vals).forEach(k => { if (JSON.stringify(vals[k]) !== JSON.stringify(init[k])) changed[k] = vals[k]; });
+  const res = cfg.onSubmit(vals, changed);
+  if (res && typeof res === 'object'){ Object.entries(res).forEach(([k, m]) => k === '_' ? formMsg(m, true) : fieldErr(k, m)); nudge(); return; }
+  if (res === false) return;
+  closeForm(true);
+}
+document.addEventListener('click', e => {
+  const t = e.target; if (!t.closest('#form')) return;
+  const x = t.closest('[data-fmx]');
+  if (x){ const a = x.dataset.fmx;
+    if (a === 'cancel') closeForm(true);
+    else if (a === 'ok') submitForm();
+    else if (a === 'del'){ if (!FM.armed){ FM.armed = true; x.classList.add('armed'); $('span', x).textContent = 'Tap again to delete'; setTimeout(() => { FM.armed = false; if (x.isConnected){ x.classList.remove('armed'); $('span', x).textContent = FM.cfg && FM.cfg.del ? FM.cfg.del.label || 'Delete' : 'Delete'; } }, 3500); }
+      else { const run = FM.cfg.del.run; closeForm(true); run(); } }
+    return; }
+  const ch = t.closest('[data-chips] button'); if (ch){ $$('button', ch.parentElement).forEach(b => { b.classList.toggle('on', b === ch); b.setAttribute('aria-checked', b === ch); }); formSync(); return; }
+  if (t.closest('[data-addprod]')){ const box = $('#form [data-prods]'); box.insertAdjacentHTML('beforeend', prodRow({})); hydrateIcons(box); $('.fm-prod:last-child input', box).focus(); formSync(); return; }
+  const dp = t.closest('[data-delprod]'); if (dp){ dp.closest('.fm-prod').remove(); formSync(); return; }
+});
+document.addEventListener('input', e => { if (e.target.closest('#form')) formSync(); });
+document.addEventListener('change', e => { if (e.target.closest('#form')) formSync(); });
+document.addEventListener('submit', e => { if (e.target.closest('#form')){ e.preventDefault(); submitForm(); } });
+document.addEventListener('keydown', e => {
+  if (!formOpen()) return;
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); submitForm(); }
+}, true);
+
+/* ── option lists (same values V1 saves) ── */
+const peopleOpts = (cur, blank) => [...(blank ? [['', blank]] : []), ...people(cur).map(n => [n, n])];
+function factoryOpts(cur){ const s = new Set(Object.keys(FAC_COLORS)); if (DB.data) [...DB.data.inquiries, ...DB.data.projects].forEach(x => facOf(x) && s.add(facOf(x))); if (cur) s.add(cur); return [['', '— Not set —'], ...[...s].map(f => [f, f])]; }
+const TASK_ST = [['todo','To do'],['inprogress','In progress'],['awaiting-reply','Awaiting reply'],['done','Done']];
+const SS_ST = [['not-started','Not started'],['ongoing','Ongoing'],['pending','Pending'],['completed','Completed'],['blocked','Blocked']];
+const MS_ST = [['upcoming','Upcoming'],['reached','Reached'],['cancelled','Cancelled']];
+const INQ_ST = [['OPEN','Open'],['ON-HOLD','On hold'],['CLOSED','Closed']];
+const INQ_TYPES = [['CUST','Custom (CUST)'],['STD','Standard (STD)'],['IMP','Improvement (IMP)'],['PP','PP'],['PET','PET']];
+const PRIO_OPTS = [['3','High'],['2','Medium'],['1','Low']];
+const PROJ_ST = [['not-started','Not started'],['in-progress','In progress'],['on-hold','On hold'],['completed','Completed']];
+const PROJ_CLASS = [['new-mold','New mold'],['improvement','Improvement project'],['masterbatch','New masterbatch'],['new-iml','New IML'],['icu','ICU']];
+const PIPE_ST = [['','—'],['Not Started','Not started'],['Ongoing','Ongoing'],['Done','Done'],['Pending / Constrained','Pending / constrained'],['Discarded','Discarded'],['N/A','N/A']];
+const withCur = (opts, cur) => cur && !opts.some(o => String(o[0]) === String(cur)) ? [...opts, [cur, cur]] : opts;
+function linksToText(links){ return (links || []).map(l => l.label && l.label !== l.url ? `${l.label} | ${l.url}` : l.url).join('\n'); }
+function textToLinks(txt){
+  return String(txt || '').split('\n').map(x => x.trim()).filter(Boolean).map(line => {
+    const bar = line.lastIndexOf('|'); let label = bar > -1 ? line.slice(0, bar).trim() : '';
+    let url = (bar > -1 ? line.slice(bar + 1) : line).trim(); if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    if (!label){ try { const h = new URL(url).hostname.replace(/^www\./, ''); label = /drive\.google|docs\.google/.test(h) ? 'Google Drive' : h; } catch(e){ label = url; } }
+    return {id: uid(), label, url};
+  }).filter(l => l.url);
+}
+const sameLinks = (a, b) => linksToText(a) === linksToText(b);
+const done1 = (msg, undo, icon) => toast(msg, undo ? {undo, icon: icon || 'check'} : {icon: icon || 'check'});
+
+/* ── project action ── */
+function formProjTask(projId, key){
+  const p = findRec(DB.data, 'projects', projId); if (!p) return;
+  const t = key ? subOf(p.tasks, key) : null; if (key && !t) return;
+  const subs = p.subStatuses || [];
+  openForm({ eyebrow: p.code || p.name, title: t ? 'Edit action' : 'New action', submit: t ? 'Save' : 'Add action',
+    fields: [
+      {k:'name', label:'Action', req:true, value: t ? t.name : '', ph:'e.g. Send drawing to factory for review'},
+      {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : todayStr()},
+      {k:'status', label:'Status', type:'chips', value: t ? t.status || (t.done ? 'done' : 'todo') : 'todo', options: TASK_ST},
+      {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
+      ...(subs.length ? [{k:'linkedSubStatus', label:'Linked update', type:'select', value: t ? t.linkedSubStatus || '' : '', options: withCur([['', '— None —'], ...subs.map((s, i) => [s.id || String(i), s.title + (s.date ? ' (' + fmtDate(s.date) + ')' : '')])], t && t.linkedSubStatus)}] : []),
+    ],
+    del: t && can('actions','delete') ? {label:'Delete', run: () => { const u = deleteProjTask(projId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => {
+      if (!t){ addProjTask(projId, v); done1(`Action added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
+      if (!Object.keys(ch).length) return;
+      if ('status' in ch && v.status === 'awaiting-reply') ch.reminder = v.reminder;
+      editProjTask(projId, key, ch); done1('Action saved');
+    } });
+}
+/* ── inquiry task ── */
+function formInqTask(inqId, key){
+  const i = findRec(DB.data, 'inquiries', inqId); if (!i) return;
+  const t = key ? subOf(i.tasks, key) : null; if (key && !t) return;
+  openForm({ eyebrow: i.code || i.name, title: t ? 'Edit task' : 'New task', submit: t ? 'Save' : 'Add task',
+    fields: [
+      {k:'name', label:'Task', req:true, value: t ? t.name : '', ph:'e.g. Follow up mold quote'},
+      {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : addWorkDays(todayStr(), 2)},
+    ],
+    del: t ? {label:'Delete', run: () => { const u = deleteInqTask(inqId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => { if (!t){ addInqTask(inqId, v); done1('Task added'); return; } if (Object.keys(ch).length){ editInqTask(inqId, key, ch); done1('Task saved'); } } });
+}
+/* ── inquiry next action ── */
+function formInqNA(inqId, key){
+  const i = findRec(DB.data, 'inquiries', inqId); if (!i) return;
+  const na = key ? subOf(i.nextActions, key) : null; if (key && !na) return;
+  openForm({ eyebrow: i.code || i.name, title: na ? 'Edit next action' : 'New next action', submit: na ? 'Save' : 'Add',
+    fields: [
+      {k:'action', label:'Next action', req:true, value: na ? na.action || na.text || '' : '', ph:'e.g. Chase customer for artwork'},
+      {k:'pic', label:'Person in charge', type:'select', half:true, value: na ? na.pic || meName() : meName(), options: peopleOpts(na && na.pic)},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: na ? na.deadline || '' : ''},
+    ],
+    del: na ? {label:'Delete', run: () => { const u = deleteInqNA(inqId, key); done1('Next action removed', u, 'trash'); }} : null,
+    onSubmit: (v, ch) => { if (!na){ addInqNA(inqId, v); done1('Next action added'); return; } if (Object.keys(ch).length){ editInqNA(inqId, key, ch); done1('Next action saved'); } } });
+}
+/* ── project update (sub-status) ── */
+function formSubStatus(projId, key){
+  const p = findRec(DB.data, 'projects', projId); if (!p) return;
+  const ss = key ? subOf(p.subStatuses, key) : null; if (key && !ss) return;
+  openForm({ eyebrow: p.code || p.name, title: ss ? 'Edit update' : 'New update', submit: ss ? 'Save' : 'Add update',
+    fields: [
+      {k:'title', label:'Update', req:true, value: ss ? ss.title : '', ph:'e.g. T1 samples received'},
+      {k:'status', label:'Status', type:'chips', value: ss ? ss.status || 'ongoing' : 'ongoing', options: withCur(SS_ST, ss && ss.status)},
+      {k:'date', label:'Date', type:'date', half:true, value: ss ? ss.date || '' : todayStr()},
+      {k:'note', label:'Note', type:'textarea', rows:2, value: ss ? ss.note || '' : '', ph:'Optional context'},
+    ],
+    del: ss ? {label:'Delete', run: () => { const u = deleteSubStatus(projId, key); done1('Update removed', u, 'trash'); }} : null,
+    onSubmit: (v, ch) => { if (!ss){ addSubStatus(projId, v); done1('Update added'); return; } if (Object.keys(ch).length){ editSubStatus(projId, key, ch); done1('Update saved'); } } });
+}
+/* ── milestone ── */
+function formMilestone(projId, key){
+  const p = findRec(DB.data, 'projects', projId); if (!p) return;
+  const ms = key ? subOf(p.milestones, key) : null; if (key && !ms) return;
+  openForm({ eyebrow: p.code || p.name, title: ms ? 'Edit milestone' : 'New milestone', submit: ms ? 'Save' : 'Add milestone',
+    fields: [
+      {k:'title', label:'Milestone', req:true, value: ms ? ms.title : '', ph:'e.g. T1 trial'},
+      {k:'date', label:'Target date', type:'date', half:true, value: ms ? ms.date || '' : todayStr()},
+      {k:'category', label:'Category', type:'select', half:true, value: ms ? ms.category || 'General' : 'General', options: withCur(MS_CATEGORIES.map(c => [c, c]), ms && ms.category)},
+      {k:'status', label:'Status', type:'chips', value: ms ? ms.status || 'upcoming' : 'upcoming', options: MS_ST},
+      {k:'note', label:'Note', type:'textarea', rows:2, value: ms ? ms.note || '' : '', ph:'Optional'},
+    ],
+    del: ms ? {label:'Delete', run: () => { const u = deleteMilestone(projId, key); done1('Milestone removed', u, 'trash'); }} : null,
+    onSubmit: (v, ch) => {
+      if (!ms){ addMilestone(projId, v); done1('Milestone added', null, 'flag'); return; }
+      if (!Object.keys(ch).length) return;
+      editMilestone(projId, key, ch);
+      if (ch.status === 'reached' && S.motion === 'full') burst(innerWidth/2, innerHeight/3, 40, 200);
+      done1(ch.status === 'reached' ? `Milestone reached: ${esc(v.title)}` : 'Milestone saved', null, 'flag');
+    } });
+}
+/* ── inquiry: new + edit ── */
+function formInquiry(id){
+  const i = id ? findRec(DB.data, 'inquiries', id) : null; if (id && !i) return;
+  const pipe = (i && i.pipeline) || {}, pv = (ph, f) => ((pipe[ph] || {})[f]) || '';
+  const today = todayStr();
+  const fields = [
+    {k:'code', label:'NPD code', req:true, half:true, value: i ? i.code : '', ph:'EQC-2510-01'},
+    {k:'bdNum', label:'BD project #', half:true, value: i ? i.bdNum || '' : '', ph:'106'},
+    {k:'name', label:'Product / project name', req:true, value: i ? i.name : '', ph:'e.g. 500g TE container'},
+    {k:'customer', label:'Customer', half:true, value: i ? i.customer || '' : ''},
+    {k:'bdPerson', label:'BD person', type:'select', half:true, value: i ? i.bdPerson || '' : '', options: withCur([...peopleOpts(null, '— Not set —'), ['Other','Other']], i && i.bdPerson)},
+    {k:'date', label:'Inquiry date', type:'date', req:true, half:true, value: i ? i.date || '' : today, hint: i ? '' : 'Day 0 of the 5-working-day SLA.'},
+    {k:'factory', label:'Factory', type:'select', half:true, value: i ? i.factory || '' : '', options: factoryOpts(i && i.factory)},
+    {k:'type', label:'Type', type:'select', half:true, value: i ? i.type || 'CUST' : 'CUST', options: withCur(INQ_TYPES, i && i.type)},
+    {k:'material', label:'Material', half:true, value: i ? i.material || '' : '', ph:'PP / HDPE / PET'},
+    {k:'priority', label:'Priority', type:'chips', half:true, value: i ? String(i.priority || '2') : '2', options: PRIO_OPTS},
+    {k:'status', label:'Status', type:'chips', half:true, value: i ? (String(i.status || 'OPEN').toUpperCase() === 'CLOSE' ? 'CLOSED' : String(i.status || 'OPEN').toUpperCase()) : 'OPEN', options: withCur(INQ_ST, i && String(i.status || '').toUpperCase() === 'DISCARDED' ? 'DISCARDED' : '')},
+    {k:'remark', label:'Brief / current status', type:'textarea', rows:3, value: i ? i.remark || '' : '', ph:'What is this inquiry about, where does it stand?'},
+    {k:'remarkDate', label:'Brief date', type:'date', half:true, value: i ? i.remarkDate || '' : '', show: v => !!v.remark},
+    {k:'products', label:'Products & volume', type:'products', value: i ? clone(i.products || []) : []},
+    {k:'links', label:'Links', type:'textarea', rows:2, value: i ? linksToText(i.links) : '', ph:'Drive folder | https://drive.google.com/…', hint:'One per line. Optional name first, then a | and the link.'},
+  ];
+  if (i){
+    fields.push({k:'s1', type:'sec', label:'Pipeline'},
+      {k:'mold', label:'Mold inquiry', type:'select', half:true, value: pv('moldInquiry','status'), options: withCur(PIPE_ST, pv('moldInquiry','status'))},
+      {k:'moldDate', label:'Mold inquiry date', type:'date', half:true, value: pv('moldInquiry','date')},
+      {k:'cost', label:'Costing', type:'select', half:true, value: pv('costing','status'), options: withCur(PIPE_ST, pv('costing','status'))},
+      {k:'costDate', label:'Costing date', type:'date', half:true, value: pv('costing','date')},
+      {k:'price', label:'Price submission', type:'select', half:true, value: pv('priceSubmission','status'), options: withCur(PIPE_ST, pv('priceSubmission','status'))},
+      {k:'priceDate', label:'Price submission date', type:'date', half:true, value: pv('priceSubmission','date')},
+      {k:'s2', type:'sec', label:'Result'},
+      {k:'moldCost', label:'Mold / tooling cost (RM)', type:'number', half:true, value: i.moldCost || ''},
+      {k:'outcomeReason', label:'Outcome reason', half:true, value: i.outcomeReason || '', ph:'e.g. price too high', show: () => !!i.outcome});
+  } else {
+    fields.push({k:'defaults', label:'Start with these tasks', type:'checks', value:['mold','iml','npd'], options: DEFAULT_INQ_TASKS.map(([k, n, wd]) => [k, n, `due ${wd} working days after the inquiry date`])});
+  }
+  openForm({ eyebrow: i ? i.code : 'Inquiries', title: i ? 'Edit inquiry' : 'New inquiry', submit: i ? 'Save changes' : 'Create inquiry', fields,
+    del: i && can('inquiries','delete') ? {label:'Delete inquiry', run: () => { closeSheet(); const u = deleteRecord('inquiries', i.id); done1(`Deleted ${esc(i.code || i.name)}. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => {
+      const dupe = DB.data.inquiries.find(x => x.id !== (i && i.id) && String(x.code || '').trim().toLowerCase() === v.code.toLowerCase());
+      if (dupe && (!i || 'code' in ch) && FM.dupeOk !== v.code){ FM.dupeOk = v.code; return {code: `Already used by “${dupe.name}”. Press ${i ? 'Save' : 'Create'} again to keep it.`}; }
+      FM.dupeOk = null;
+      if (!i){
+        const nid = createInquiry({...v, links: textToLinks(v.links)}, v.defaults || []);
+        setTimeout(() => { if (S.page !== 'inquiries'){ S.filter = 'open'; go('inquiries').then(() => openSheet(nid)); } else openSheet(nid); }, 60);
+        done1(`Inquiry ${esc(v.code)} created${(v.defaults || []).length ? ` with ${v.defaults.length} task${v.defaults.length > 1 ? 's' : ''}` : ''}`, null, 'inbox');
+        return;
+      }
+      const patch = {};
+      ['code','bdNum','name','customer','bdPerson','date','factory','type','material','priority','status','remark','remarkDate','products','outcomeReason'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
+      if ('remark' in ch && !('remarkDate' in ch) && v.remark) patch.remarkDate = today;
+      if ('links' in ch && !sameLinks(textToLinks(v.links), i.links)) patch.links = textToLinks(v.links);
+      if ('moldCost' in ch) patch.moldCost = parseFloat(v.moldCost) || 0;
+      const pp = {};
+      [['mold','moldDate','moldInquiry'],['cost','costDate','costing'],['price','priceDate','priceSubmission']].forEach(([s, d, ph]) => {
+        if (s in ch || d in ch){ pp[ph] = {}; if (s in ch) pp[ph].status = v[s]; if (d in ch) pp[ph].date = v[d]; if (s in ch && v[s] && !(d in ch) && !v[d]) pp[ph].date = today; } });
+      if (Object.keys(pp).length) patch.pipeline = pp;
+      if (!Object.keys(patch).length) return;
+      editInquiry(i.id, patch); done1('Inquiry saved');
+    } });
+}
+/* ── project: new + edit ── */
+function formProject(id){
+  const p = id ? findRec(DB.data, 'projects', id) : null; if (id && !p) return;
+  openForm({ eyebrow: p ? p.code : 'Projects', title: p ? 'Edit project' : 'New project', submit: p ? 'Save changes' : 'Create project',
+    fields: [
+      {k:'code', label:'Project code', req:true, half:true, value: p ? p.code || '' : '', ph:'PRJ-2026-001'},
+      {k:'date', label:'Date started', type:'date', req:true, half:true, value: p ? p.date || '' : todayStr()},
+      {k:'name', label:'Project name', req:true, value: p ? p.name : '', ph:'e.g. Acme – Lid type A production'},
+      {k:'brief', label:'Brief', type:'textarea', rows:3, value: p ? p.brief || '' : '', ph:'What is this project about?'},
+      {k:'classification', label:'Classification', type:'select', half:true, value: p ? p.classification || 'new-mold' : 'new-mold', options: withCur(PROJ_CLASS, p && p.classification)},
+      {k:'factory', label:'Factory', type:'select', half:true, value: p ? p.factory || '' : '', options: factoryOpts(p && p.factory)},
+      {k:'customer', label:'Customer', half:true, value: p ? p.customer || '' : ''},
+      {k:'salesPerson', label:'Sales person', half:true, value: p ? p.salesPerson || '' : ''},
+      {k:'deliveryDate', label:'Target delivery', type:'date', half:true, value: p ? p.deliveryDate || '' : ''},
+      {k:'status', label:'Status', type:'select', half:true, value: p ? p.status || 'not-started' : 'not-started', options: withCur(PROJ_ST, p && p.status)},
+      {k:'links', label:'Links', type:'textarea', rows:2, value: p ? linksToText(p.links) : '', ph:'Drawings | https://drive.google.com/…', hint:'One per line. Optional name first, then a | and the link.'},
+      {k:'kiv', label:'Keep in view (KIV)', type:'check', value: p ? !!p.kiv : false, hint:'Parked for now. It stays visible with a KIV tag.'},
+      {k:'kivComment', label:'KIV reason', type:'textarea', rows:2, value: p ? p.kivComment || '' : '', ph:'Why is this project on KIV?', show: v => v.kiv},
+    ],
+    del: p && can('projects','delete') ? {label:'Delete project', run: () => { const u = deleteRecord('projects', p.id); if (S.page === 'project') go('projects'); done1(`Deleted ${esc(p.code || p.name)}. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => {
+      if (!p){ const nid = createProject({...v, links: textToLinks(v.links)}); done1(`Project ${esc(v.code)} created`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
+      const patch = {};
+      ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
+      if ('links' in ch && !sameLinks(textToLinks(v.links), p.links)) patch.links = textToLinks(v.links);
+      if (!Object.keys(patch).length) return;
+      editProject(p.id, patch);
+      if (patch.status === 'completed' && S.motion === 'full') burst(innerWidth/2, innerHeight/3, 50, 220);
+      done1('Project saved');
+    } });
+}
+/* one entry point for every data-fm button: "kind" or "kind|key" */
+function openFormFor(spec){
+  const [kind, key] = spec.split('|');
+  if (kind === 'ptask') return formProjTask(S.proj, key || null);
+  if (kind === 'ss') return formSubStatus(S.proj, key || null);
+  if (kind === 'ms') return formMilestone(S.proj, key || null);
+  if (kind === 'proj') return formProject(key || null);
+  if (kind === 'itask') return formInqTask(sheetId, key || null);
+  if (kind === 'na') return formInqNA(sheetId, key || null);
+  if (kind === 'inq') return formInquiry(key || null);
 }
 
 /* ── notification swipe: right = done, left = snooze until tomorrow ── */
@@ -1969,6 +2653,8 @@ function cmdBuild(q){
   q = q.trim().toLowerCase();
   const pages = ORDER.filter(p => p !== 'styles').map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',notifications:'bell'}[p]}));
   const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'},{g:'Actions', t:'Open V1', run:() => { location.href = V1_URL; }, ic:'arrowup'}];
+  if (DB.data && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
+  if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   const d = DB.data || {inquiries:[], projects:[]};
   const inq = d.inquiries.filter(i => !q ? !isClosedInq(i) : true).map(i => ({g:'Inquiries', t:i.name, k:i.code, s:[i.customer, i.factory].join(' '), run:() => openSheet(i.id), ic:'inbox'}));
   const pr = d.projects.map(p => ({g:'Projects', t:p.name, k:p.code, s:[p.customer, p.factory].join(' '), run:() => go('project', {proj:p.id}), ic:'folder'}));
@@ -2075,13 +2761,13 @@ async function onSignedIn(user){
   const isMaster = user.email === MASTER_EMAIL;
   AUTH.profile = profile || { uid: user.uid, email: user.email, name: isMaster ? 'Adam' : (user.displayName || String(user.email).split('@')[0]), role: isMaster ? 'master' : 'member' };
   if (isMaster) AUTH.profile.role = 'master';
-  setMe();
+  setMe(); loadUsers();
   if (!DB.data) loadV1Cache();
   enterApp();
   pull({first:true});
 }
 function onSignedOut(){
-  AUTH.user = null; AUTH.profile = null; DB.data = null; DB.ts = ''; DB.source = ''; closeSheet(); closePop();
+  AUTH.user = null; AUTH.profile = null; DB.data = null; DB.ts = ''; DB.source = ''; closeForm(true); closeSheet(); closePop();
   showLogin();
 }
 function signOut(){
@@ -2092,6 +2778,9 @@ function signOut(){
 /* ══════════ EVENTS ══════════ */
 document.addEventListener('click', e => {
   const t = e.target;
+  if (t.closest('#form')) return;
+  const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
+  const nad = t.closest('[data-na]'); if (nad){ toggleNA(nad.dataset.na, nad.dataset.done === '1', nad); return; }
   const g = t.closest('[data-go]'); if (g && !t.closest('#pop')){ go(g.dataset.go); return; }
   const o = t.closest('[data-open]'); if (o){ openSheet(o.dataset.open); return; }
   const pj = t.closest('[data-proj]'); if (pj){ go('project', {proj: pj.dataset.proj, src: pj.matches('.pcard,.bcard,.li') ? pj : null}); return; }
@@ -2132,11 +2821,14 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (!AUTH.user) return;
+  if (formOpen()){ if (e.key === 'Escape'){ e.preventDefault(); closeForm(); } return; }
+  if (e.key === 'Enter' && e.target.matches('[data-fm][tabindex]')){ e.preventDefault(); e.target.click(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); $('#cmdk').classList.contains('open') ? closeCmd() : openCmd(); }
   if (e.key === 'Escape'){ closeCmd(); closeSheet(); closePop(); }
   if (e.key === 'Enter' && e.target.matches('.kpi')) e.target.click();
 });
 $('#scrim').addEventListener('click', closeSheet);
+$('#fscrim').addEventListener('click', () => closeForm());
 document.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; clearTimeout(S._qt); S._qt = setTimeout(() => vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'), 160); } });
 addEventListener('resize', () => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); wireScroll(); });
 $('#totop').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>`;
@@ -2152,7 +2844,7 @@ if (!window.firebase || !firebase.initializeApp){
   try { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); AUTH.db = firebase.firestore(); } catch(e){ console.error(e); }
   firebase.auth().onAuthStateChanged(u => { if (u) onSignedIn(u); else onSignedOut(); });
 }
-window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render };
+window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render, openFormFor, closeForm };
 })();
 
 </script>

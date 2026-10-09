@@ -9,15 +9,25 @@ Live at `https://mtwmakki.github.io/NPD-Project-Tracker/v2/` — V1 stays at the
 
 ## Merge-safe saving (V1 V77.9 + V2)
 Both apps re-read the Sheet right before saving. If someone else saved in between:
-- V2 applies only its own small changes (task done, ball in court, outcome, pin) on top of the latest data.
+- V2 applies only its own changes on top of the latest data. An edit form sends only the fields you
+  actually changed, so a different field changed in V1 at the same moment is kept.
 - V1 keeps every item changed elsewhere and writes only the items changed in V1.
 The only remaining window is the ~1 second between the re-read and the write.
 
-## What V2 can change (first release)
-- Tick inquiry tasks (including the 5-day SLA steps) and project actions done / reopen
-- Ball in court (inquiries and projects), inquiry outcome (won / lost / dropped), pin / unpin
-- Complete tasks from Notifications; snooze is device-only
-Everything else (creating, editing text, deleting, Gantt) still happens in V1 — every detail view has an "Edit in V1" link.
+## What V2 can change
+- Projects: new project, edit details (code, name, brief, classification, factory, customer, sales
+  person, delivery date, status, links, KIV + reason), delete
+- Project actions: add, edit (name, person in charge, deadline, status incl. awaiting reply + chase
+  date, linked update), delete, tick done / reopen
+- Project updates (sub-statuses) and milestones: add, edit, delete; mark a milestone reached
+- Inquiries: new inquiry (with the 3 default SLA tasks, same deadlines as V1), edit details (incl.
+  products, links, pipeline statuses, mold cost, outcome reason), delete
+- Inquiry tasks and next actions: add, edit, delete, tick done
+- Ball in court, inquiry outcome, pin / unpin; complete tasks from Notifications (snooze is device-only)
+
+Deletes go to V1's Recycle Bin in the same format V1 uses, and every delete has an Undo.
+Each change is written to the item's history and to V1's Changelog page, like V1 does.
+Still V1-only: Gantt, standalone tasks, Calendar, Bin restore, users, settings, import/export.
 
 ## How V2 maps your data
 - Projects have no phase field, so the board groups by status (not started / in progress / completed)

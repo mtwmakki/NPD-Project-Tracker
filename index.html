@@ -23,7 +23,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.8</title>
+<title>NPD Tracker V77.9</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1880,7 +1880,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.8</div>
+    <div class="login-logo">NPD Tracker V77.9</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>
@@ -3383,6 +3383,35 @@ function setFBStatus(state, msg) {
 const SHEETS_BRIDGE_URL = 'https://script.google.com/macros/s/AKfycbylUhW_qEb3yR7qkSuevviQCsB6nmgqbWzPa8HJvKeKi8fde0gnPRMWgl-goC0_ynI8JA/exec';
 const SHEETS_BRIDGE_TOKEN = 'NzO8Z4aB3VME3sMFyLlo-U4uk0OmIX25';
 let sheetsPollTimer = null;
+// ── Merge-safe saving (V77.9): V1 and V2 share the same Sheet. Before saving, V1 re-reads it;
+//    if someone else saved since V1 last loaded, only the items changed here are written over theirs.
+let _v1Base = null, _v1BaseTs = '';
+function _mergeV1(base, local, remote) {
+  const out = {}, stats = { kept: 0, conflicts: 0 };
+  const isList = v => Array.isArray(v) && v.every(x => x && typeof x === 'object' && 'id' in x);
+  new Set([...Object.keys(remote || {}), ...Object.keys(local || {})]).forEach(k => {
+    const L = local[k], B = base ? base[k] : undefined, R = remote[k];
+    if (isList(L) && (R === undefined || isList(R))) {
+      const bm = new Map((B || []).map(x => [x.id, JSON.stringify(x)]));
+      const rm = new Map((R || []).map(x => [x.id, x]));
+      const lm = new Map(L.map(x => [x.id, x]));
+      const res = [];
+      (R || []).forEach(x => { if (!lm.has(x.id) && !bm.has(x.id)) { res.push(x); stats.kept++; } }); // added elsewhere
+      L.forEach(x => {
+        const bs = bm.get(x.id), ls = JSON.stringify(x);
+        if (bs === undefined || bs !== ls) {                       // added or changed here → ours
+          if (bs !== undefined && rm.has(x.id) && JSON.stringify(rm.get(x.id)) !== bs) stats.conflicts++;
+          res.push(x);
+        } else if (rm.has(x.id)) {                                  // untouched here → take theirs
+          const r = rm.get(x.id); if (JSON.stringify(r) !== ls) stats.kept++; res.push(r);
+        } else stats.kept++;                                        // deleted elsewhere, untouched here
+      });
+      out[k] = res;                                                 // deleted here stays deleted
+    } else if (L === undefined) out[k] = R;
+    else out[k] = JSON.stringify(L) !== JSON.stringify(B) ? L : (R === undefined ? L : R);
+  });
+  return { merged: out, stats };
+}
 
 function startFirebaseListener() {
   // Renamed conceptually to "start data sync" but kept function name so
@@ -3414,6 +3443,7 @@ async function pollSheetsOnce() {
         const remoteTs = remote._updatedAt || '';
         const localTs  = localStorage.getItem('npd_last_saved') || '';
         if (remoteTs >= localTs || !localTs) {
+          _v1Base = JSON.parse(remote._data); _v1BaseTs = remoteTs;
           data = parsed;
           data.bin = data.bin||[];
           data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
@@ -3440,12 +3470,27 @@ async function saveToFirebase() {
   fbSaving = true;
   setFBStatus('saving', 'Saving…');
   try {
+    let mergedNote = '';
+    if (_v1Base) {
+      try {
+        const latest = await (await fetch(SHEETS_BRIDGE_URL + '?action=read&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN) + '&_=' + Date.now(), { cache: 'no-store' })).json();
+        if (latest && latest._data && latest._updatedAt && latest._updatedAt !== _v1BaseTs) {
+          const { merged, stats } = _mergeV1(_v1Base, data, JSON.parse(latest._data));
+          data = merged;
+          data.bin = data.bin||[]; data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];
+          saveLocal();
+          mergedNote = stats.kept ? ' (kept ' + stats.kept + ' change' + (stats.kept === 1 ? '' : 's') + ' from ' + String(latest._updatedBy || 'another device') + ')' : '';
+          setTimeout(() => { try { renderAll(); } catch(e) {} }, 0);
+        }
+      } catch (e) { console.warn('merge check skipped:', e); }
+    }
     const ts = new Date().toISOString();
+    const payload = JSON.stringify(data);
     const resp = await fetch(SHEETS_BRIDGE_URL, {
       method: 'POST',
       body: JSON.stringify({
         token: SHEETS_BRIDGE_TOKEN,
-        _data: JSON.stringify(data),
+        _data: payload,
         _updatedAt: ts,
         _updatedBy: currentUser
       })
@@ -3460,7 +3505,8 @@ async function saveToFirebase() {
       return;
     }
     localStorage.setItem('npd_last_saved', ts);
-    setFBStatus('saved', 'Saved ✓');
+    _v1Base = JSON.parse(payload); _v1BaseTs = ts;
+    setFBStatus('saved', 'Saved ✓' + mergedNote);
     setTimeout(() => { fbSaving = false; }, 3000);
   } catch(e) {
     console.error('Sheets bridge save error:', e);
@@ -3572,6 +3618,7 @@ function forceRefreshFromCloud() {
     if (remote && remote._data) {
       try {
         const parsed = JSON.parse(remote._data);
+        _v1Base = JSON.parse(remote._data); _v1BaseTs = remote._updatedAt || '';
         data = parsed;
         data.bin = data.bin||[];
         data.schedule = data.schedule||{}; data.mtasks = data.mtasks||[];

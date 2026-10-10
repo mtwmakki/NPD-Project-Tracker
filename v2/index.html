@@ -1024,6 +1024,67 @@ body{padding:0}
 }
 
 .collapse{animation-duration:calc(260ms*var(--k))}
+
+/* ── date picker ── */
+.fm-dwrap{position:relative;display:flex;min-width:0}
+.fm-date{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--hover);color:var(--tx);font:500 15px var(--fb);cursor:pointer;text-align:left;transition:border-color .2s,box-shadow .2s}
+.fm-date.clr{padding-right:44px}
+.fm-date .i{color:var(--mu);flex:none}
+.fm-date .dl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fm-date .dr{font:500 11.5px var(--fm);color:var(--mu);white-space:nowrap}
+.fm-date.empty .dl{color:var(--mu)}
+.fm-date:hover{border-color:var(--line-2)}
+.fm-date:focus-visible,.fm-date[aria-expanded="true"]{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 18%,transparent)}
+.fm-date[aria-expanded="true"] .i{color:var(--ac)}
+.ff.bad .fm-date{border-color:var(--bad)}
+.fm-dclr{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:0;background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s}
+.fm-dclr:hover{background:var(--line);color:var(--tx)}
+.ff.half .fm-date .dr{display:none}
+#dp{position:fixed;z-index:72;width:332px;padding:14px;border-radius:calc(var(--r-sm) + 8px);background:color-mix(in srgb,var(--surf-solid) 97%,transparent);border:1px solid var(--line-2);box-shadow:0 30px 70px -20px rgba(0,0,0,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:var(--tx);
+  opacity:0;transform:translateY(-8px) scale(.97);transform-origin:top left;transition:opacity calc(160ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring)}
+#dp.up{transform-origin:bottom left;transform:translateY(8px) scale(.97)}
+#dp.open{opacity:1;transform:none}
+.dp-head{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.dp-title{flex:1;border:0;background:none;color:var(--tx);font:var(--ph-w) 17px/1 var(--fd);letter-spacing:-.01em;padding:10px 8px;border-radius:12px;cursor:pointer;transition:background .2s}
+.dp-title span{color:var(--mu)}
+.dp-title:hover{background:var(--hover)}
+.dp-nav{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--tx);display:grid;place-items:center;cursor:pointer;flex:none;transition:background .2s,border-color .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.dp-nav:hover{background:var(--hover);border-color:var(--line-2)}.dp-nav:active{transform:scale(.9)}
+.dp-quick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.dp-quick button{grid-column:span 2}.dp-quick button:nth-child(n+4){grid-column:span 3}
+.dp-quick button{padding:8px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:var(--r-pill);border:1px solid var(--line-2);background:none;color:var(--mu);font:600 12.5px var(--fb);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.dp-quick button:hover{color:var(--tx);border-color:var(--ac)}.dp-quick button:active{transform:scale(.94)}
+.dp-quick button.on{background:var(--ac-grad);color:var(--on-ac);border-color:transparent}
+.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.dp-wk{font:600 11px/1 var(--fb);letter-spacing:.06em;color:var(--mu);text-align:center;padding:4px 0 8px}
+.dp-wk.we{opacity:.5}
+.dp-d{aspect-ratio:1;min-height:36px;border:0;background:none;border-radius:50%;color:var(--tx);font:500 14px/1 var(--fb);cursor:pointer;display:grid;place-items:center;position:relative;transition:background .15s,color .15s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.dp-d:hover{background:var(--hover)}
+.dp-d:active{transform:scale(.88)}
+.dp-d.we{color:var(--mu);opacity:.7}
+.dp-d.out{opacity:.3}
+.dp-d.today::after{content:"";position:absolute;bottom:5px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--ac)}
+.dp-d.sel{background:var(--ac-grad);color:var(--on-ac);opacity:1;font-weight:700;box-shadow:var(--glow)}
+.dp-d.sel::after{background:var(--on-ac)}
+.dp-d:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.dp-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dp-months button{padding:16px 0;border-radius:var(--r-sm);border:1px solid var(--line);background:none;color:var(--tx);font:600 14px var(--fb);cursor:pointer;transition:background .2s,border-color .2s}
+.dp-months button:hover{background:var(--hover);border-color:var(--line-2)}
+.dp-months button.now{border-color:var(--ac)}
+.dp-months button.sel{background:var(--ac-grad);color:var(--on-ac);border-color:transparent}
+.dp-body.sl{animation:dpsl calc(260ms*var(--k)) var(--ease-out)}
+.dp-body.sr{animation:dpsr calc(260ms*var(--k)) var(--ease-out)}
+@keyframes dpsl{from{opacity:0;transform:translateX(22px)}}
+@keyframes dpsr{from{opacity:0;transform:translateX(-22px)}}
+.dp-grab,.dp-cap{display:none}
+#dpscrim{position:fixed;inset:0;z-index:71;background:var(--scrim);opacity:0;transition:opacity calc(220ms*var(--k))}
+#dpscrim.on{opacity:1}
+#dp.sheet{left:8px;right:8px;bottom:8px;top:auto;width:auto;max-width:520px;margin:0 auto;padding:8px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:28px;transform:translateY(60px);opacity:0}
+#dp.sheet.open{transform:none;opacity:1}
+#dp.sheet .dp-grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line-2);margin:4px auto 10px}
+#dp.sheet .dp-cap{display:block;font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu);text-align:center;margin-bottom:6px}
+#dp.sheet .dp-d{font-size:16px;min-height:42px}
+#dp.sheet .dp-quick button{padding:11px 4px;font-size:13.5px}
 </style>
 
 </head>
@@ -1144,7 +1205,7 @@ const P = {
   trophy:'M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8', arrowup:'M7 17 17 7M8 7h9v9', file:'M7 3h7l4 4v14H7zM14 3v4h4', user:'M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM4 21a8 8 0 0 1 16 0',
   logout:'M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 8l-4 4 4 4M6 12h10', msg:'M4 5h16v11H8l-4 4z', pin:'M9 4h6l-1 6 4 3H6l4-3zM12 13v7', link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   refresh:'M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4', snooze:'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16zM10 9h4l-4 6h4',
-  pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+  pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
 function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => { if (!el.firstChild) el.innerHTML = ico(el.dataset.ico, el.closest('.tabbar') ? 20 : 18); }); }
@@ -2323,6 +2384,135 @@ function toggleNA(key, done, btn){
   setTimeout(() => { setInqNADone(i.id, key, done); toast(`“${esc(na.action || 'Next action')}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqNADone(i.id, key, !done)}); }, S.motion === 'off' ? 0 : 220);
 }
 
+/* ══════════ DATE PICKER — V2's own calendar, never the system date input ══════════
+   Drop-down under the field on wide screens, a bottom sheet on phones. Weeks start on
+   Monday; weekends are dimmed but can still be picked. */
+const DP = { el: null, scrim: null, field: null, view: 'days', y: 0, m: 0, focus: '', swallow: false };
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WKDAYS = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+const dParse = s => { if (!s) return null; const t = new Date(String(s).slice(0,10) + 'T00:00:00'); return isNaN(t) ? null : t; };
+const dpOpen = () => !!DP.el;
+function dateLabel(s){ const t = dParse(s); return t ? t.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'}) : ''; }
+function dateRel(s){
+  const t = dParse(s); if (!t) return '';
+  const n = Math.round((t - dParse(todayStr())) / 86400000);
+  return n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : n === -1 ? 'Yesterday' : n > 1 && n <= 60 ? `in ${n} days` : n < -1 && n >= -60 ? `${-n} days ago` : '';
+}
+function dateFieldHTML(f, id){
+  const v = f.value || '', clr = !f.req;
+  return `<div class="fm-dwrap"><button type="button" class="fm-date${v ? '' : ' empty'}${clr && v ? ' clr' : ''}" id="${id}" data-k="${f.k}" data-v="${esc(v)}" aria-haspopup="dialog" aria-expanded="false">${ico('cal',17)}<span class="dl">${v ? esc(dateLabel(v)) : 'Pick a date'}</span><span class="dr">${esc(dateRel(v))}</span></button>${clr ? `<button type="button" class="fm-dclr" data-dclr aria-label="Clear ${esc(f.label || 'date')}" ${v ? '' : 'hidden'}>${ico('x',14)}</button>` : ''}</div>`;
+}
+function setDateField(btn, v){
+  btn.dataset.v = v || ''; btn.classList.toggle('empty', !v);
+  $('.dl', btn).textContent = v ? dateLabel(v) : 'Pick a date'; $('.dr', btn).textContent = dateRel(v);
+  const c = btn.parentElement.querySelector('.fm-dclr'); if (c){ c.hidden = !v; btn.classList.toggle('clr', !!v); }
+  const box = btn.closest('.ff'); if (box && v){ box.classList.remove('bad'); const e = $('.fm-err', box); if (e) e.textContent = ''; }
+  if (FM.cfg) formSync();
+}
+function dpQuick(){
+  const t = todayStr(), dow = (new Date(t + 'T00:00:00').getDay() + 6) % 7;
+  return [['Today', t], ['Tomorrow', addDays(t, 1)], ['+2 work days', addWorkDays(t, 2)], ['+5 work days', addWorkDays(t, 5)], ['Next Monday', addDays(t, 7 - dow)]];
+}
+function dpBody(){
+  const sel = DP.field.dataset.v, today = todayStr();
+  if (DP.view === 'months'){
+    const sd = dParse(sel), td = dParse(today);
+    return `<div class="dp-months">${MONTHS.map((n, i) => `<button type="button" data-dpm="${i}" class="${sd && sd.getFullYear() === DP.y && sd.getMonth() === i ? 'sel' : ''}${td.getFullYear() === DP.y && td.getMonth() === i ? ' now' : ''}">${n.slice(0,3)}</button>`).join('')}</div>`;
+  }
+  const first = new Date(DP.y, DP.m, 1), lead = (first.getDay() + 6) % 7;
+  let cells = '';
+  for (let i = 0; i < 42; i++){
+    const d = new Date(DP.y, DP.m, 1 - lead + i), ds = dstr(d), wd = (d.getDay() + 6) % 7;
+    const cls = ['dp-d', d.getMonth() !== DP.m ? 'out' : '', wd > 4 ? 'we' : '', ds === today ? 'today' : '', ds === sel ? 'sel' : ''].filter(Boolean).join(' ');
+    cells += `<button type="button" class="${cls}" data-dpset="${ds}" tabindex="${ds === DP.focus ? 0 : -1}" aria-pressed="${ds === sel}" aria-label="${d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}${ds === today ? ' (today)' : ''}">${d.getDate()}</button>`;
+  }
+  return `<div class="dp-quick">${dpQuick().map(([l, d]) => `<button type="button" data-dpset="${d}" class="${d === sel ? 'on' : ''}" title="${esc(dateLabel(d))}">${l}</button>`).join('')}</div>
+    <div class="dp-grid" role="grid">${WKDAYS.map((w, i) => `<span class="dp-wk${i > 4 ? ' we' : ''}">${w}</span>`).join('')}${cells}</div>`;
+}
+function dpRender(dir){
+  const el = DP.el; if (!el) return;
+  const lab = DP.field.closest('.ff') && $('label', DP.field.closest('.ff'));
+  el.dataset.ym = DP.y + '-' + pad2(DP.m + 1);
+  el.innerHTML = `${el.classList.contains('sheet') ? `<div class="dp-grab"></div><div class="dp-cap">${esc(lab ? lab.textContent.replace('*', '').trim() : 'Date')}</div>` : ''}
+    <div class="dp-head"><button type="button" class="dp-nav" data-dpnav="-1" aria-label="${DP.view === 'days' ? 'Previous month' : 'Previous year'}">${ico('back',16)}</button>
+      <button type="button" class="dp-title" data-dpview aria-label="Choose month and year">${DP.view === 'days' ? `${MONTHS[DP.m]} <span>${DP.y}</span>` : `<span>${DP.y}</span>`}</button>
+      <button type="button" class="dp-nav" data-dpnav="1" aria-label="${DP.view === 'days' ? 'Next month' : 'Next year'}">${ico('chev',16)}</button></div>
+    <div class="dp-body${dir ? (dir > 0 ? ' sl' : ' sr') : ''}">${dpBody()}</div>`;
+}
+function dpPlace(){
+  const el = DP.el; if (!el || el.classList.contains('sheet')) return;
+  const r = DP.field.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
+  const left = Math.max(8, Math.min(r.left, innerWidth - w - 8));
+  let top = r.bottom + 8, up = false;
+  if (top + h > innerHeight - 8 && r.top - h - 8 >= 8){ top = r.top - h - 8; up = true; }
+  else if (top + h > innerHeight - 8) top = Math.max(8, innerHeight - h - 8);
+  el.style.left = left + 'px'; el.style.top = top + 'px'; el.classList.toggle('up', up);
+}
+function openDP(btn){
+  closeDP(false);
+  const v = btn.dataset.v, base = dParse(v) || dParse(todayStr());
+  Object.assign(DP, { field: btn, y: base.getFullYear(), m: base.getMonth(), view: 'days', focus: v || todayStr() });
+  const sheet = innerWidth <= 720;
+  const el = document.createElement('div'); el.id = 'dp'; el.className = sheet ? 'sheet' : ''; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Choose a date');
+  if (sheet){ DP.scrim = document.createElement('div'); DP.scrim.id = 'dpscrim'; document.body.appendChild(DP.scrim); }
+  document.body.appendChild(el); DP.el = el; dpRender(); dpPlace();
+  btn.setAttribute('aria-expanded', 'true');
+  requestAnimationFrame(() => { el.classList.add('open'); if (DP.scrim) DP.scrim.classList.add('on'); });
+  if (finePointer) dpFocus();
+}
+function closeDP(refocus){
+  if (!DP.el) return;
+  const el = DP.el, sc = DP.scrim, f = DP.field;
+  DP.el = null; DP.scrim = null;
+  el.classList.remove('open'); if (sc) sc.classList.remove('on');
+  setTimeout(() => { el.remove(); if (sc) sc.remove(); }, 260);
+  if (f){ f.setAttribute('aria-expanded', 'false'); if (refocus && f.isConnected) f.focus({preventScroll: true}); }
+}
+function dpFocus(){ const b = DP.el && $(`.dp-d[data-dpset="${DP.focus}"]`, DP.el); if (b) b.focus({preventScroll: true}); }
+function dpShift(n){
+  if (DP.view === 'days'){ const d = new Date(DP.y, DP.m + n, 1); DP.y = d.getFullYear(); DP.m = d.getMonth(); }
+  else DP.y += n;
+  dpRender(n); dpPlace();
+}
+function dpPick(ds){
+  const f = DP.field; closeDP(true); setDateField(f, ds);
+}
+document.addEventListener('click', e => {
+  const t = e.target;
+  const fd = t.closest('.fm-date'); if (fd){ e.stopPropagation(); if (DP.el && DP.field === fd) closeDP(false); else openDP(fd); return; }
+  const cl = t.closest('[data-dclr]'); if (cl){ e.stopPropagation(); const b = cl.parentElement.querySelector('.fm-date'); closeDP(false); setDateField(b, ''); b.focus({preventScroll: true}); return; }
+  if (!DP.el || !DP.el.contains(t)) return;
+  e.stopPropagation();
+  const nv = t.closest('[data-dpnav]'); if (nv){ dpShift(+nv.dataset.dpnav); return; }
+  if (t.closest('[data-dpview]')){ DP.view = DP.view === 'days' ? 'months' : 'days'; dpRender(); dpPlace(); return; }
+  const mo = t.closest('[data-dpm]'); if (mo){ DP.m = +mo.dataset.dpm; DP.view = 'days'; dpRender(); dpPlace(); return; }
+  const st = t.closest('[data-dpset]'); if (st){ dpPick(st.dataset.dpset); return; }
+}, true);
+/* tapping outside closes the calendar without also triggering what was underneath */
+addEventListener('pointerdown', e => {
+  if (!DP.el || DP.el.contains(e.target) || DP.field.contains(e.target)) return;
+  const other = e.target.closest && e.target.closest('.fm-date,[data-dclr]');
+  closeDP(false); if (!other) DP.swallow = true;
+}, true);
+addEventListener('click', e => { if (DP.swallow){ DP.swallow = false; e.stopPropagation(); e.preventDefault(); } }, true);
+addEventListener('keydown', e => {
+  if (!DP.el) return;
+  if (e.key === 'Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeDP(true); return; }
+  if (DP.view !== 'days') return;
+  const step = {ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7}[e.key];
+  if (step || e.key === 'PageUp' || e.key === 'PageDown'){
+    e.preventDefault(); e.stopImmediatePropagation();
+    const cur = dParse(DP.focus) || dParse(todayStr());
+    const nd = step ? addDays(dstr(cur), step) : dstr(new Date(cur.getFullYear(), cur.getMonth() + (e.key === 'PageDown' ? 1 : -1), Math.min(cur.getDate(), 28)));
+    const t = dParse(nd), dir = t.getFullYear() * 12 + t.getMonth() - (DP.y * 12 + DP.m);
+    DP.focus = nd; if (dir){ DP.y = t.getFullYear(); DP.m = t.getMonth(); dpRender(dir); dpPlace(); }
+    else $$('.dp-d', DP.el).forEach(b => b.tabIndex = b.dataset.dpset === nd ? 0 : -1);
+    dpFocus();
+  }
+}, true);
+addEventListener('resize', () => { if (DP.el && !DP.el.classList.contains('sheet')) closeDP(false); });
+document.addEventListener('scroll', e => { if (DP.el && !DP.el.classList.contains('sheet') && !DP.el.contains(e.target)) dpPlace(); }, true);
+
 /* ══════════ FORMS: one dialog for every add / edit ══════════
    field: {k, label, type, value, req, ph, half, hint, options:[[v,l]], show: vals => bool}
    types: text · textarea · date · number · select · chips · check · checks · products · sec */
@@ -2338,6 +2528,7 @@ function fieldHTML(f){
   else if (f.type === 'chips') ctl = `<div class="fm-chips" role="radiogroup" data-k="${f.k}" data-chips>${f.options.map(([o, l]) => `<button type="button" role="radio" data-v="${esc(o)}" class="${String(o) === String(v) ? 'on' : ''}" aria-checked="${String(o) === String(v)}">${esc(l)}</button>`).join('')}</div>`;
   else if (f.type === 'check') return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}"><label class="fm-tog"><input type="checkbox" id="${id}" data-k="${f.k}" ${v ? 'checked' : ''}><i></i><span>${esc(f.label)}</span></label>${f.hint ? `<small>${esc(f.hint)}</small>` : ''}</div>`;
   else if (f.type === 'checks') ctl = `<div class="fm-checks" data-k="${f.k}" data-checks>${f.options.map(([o, l, sub]) => `<label class="fm-ck"><input type="checkbox" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><i>${ico('check',13)}</i><span>${esc(l)}${sub ? `<small>${esc(sub)}</small>` : ''}</span></label>`).join('')}</div>`;
+  else if (f.type === 'date') ctl = dateFieldHTML(f, id);
   else if (f.type === 'products') ctl = `<div class="fm-prods" data-k="${f.k}" data-prods>${(v || []).map(prodRow).join('')}</div><button type="button" class="lnk fm-addp" data-addprod>+ Add product</button><div class="fm-rev" data-rev></div>`;
   else ctl = `<input id="${id}" data-k="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" placeholder="${esc(f.ph || '')}" ${f.type === 'number' ? 'min="0" step="any" inputmode="decimal"' : ''} autocomplete="off">`;
   return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}">${lab}${ctl}${f.hint ? `<small>${esc(f.hint)}</small>` : ''}<em class="fm-err"></em></div>`;
@@ -2351,6 +2542,7 @@ function readForm(){
     if (f.type === 'chips'){ const on = $('[data-chips] button.on', box); out[f.k] = on ? on.dataset.v : ''; }
     else if (f.type === 'check') out[f.k] = $('input', box).checked;
     else if (f.type === 'checks') out[f.k] = $$('input:checked', box).map(x => x.value);
+    else if (f.type === 'date') out[f.k] = $('.fm-date', box).dataset.v || '';
     else if (f.type === 'products') out[f.k] = $$('.fm-prod', box).map(r => ({id: r.dataset.id, name: $('[data-pf="name"]', r).value.trim(), volume: parseFloat($('[data-pf="volume"]', r).value) || 0, cost: parseFloat($('[data-pf="cost"]', r).value) || 0})).filter(p => p.name);
     else { const el = $('[data-k]', box); out[f.k] = f.type === 'textarea' ? el.value.trim() : String(el.value).trim(); }
   });
@@ -2377,6 +2569,7 @@ function openForm(cfg){
 }
 function closeForm(force){
   const f = $('#form'); if (!formOpen()) return true;
+  closeDP(false);
   if (!force && FM.cfg && JSON.stringify(readForm()) !== FM.init && !FM.leave){
     FM.leave = true; formMsg('Unsaved changes. Press Esc again or Cancel to discard.'); nudge(); setTimeout(() => FM.leave = false, 3000); return false;
   }
@@ -2393,7 +2586,7 @@ function submitForm(){
   const vals = readForm(), cfg = FM.cfg;
   const visible = f => !f.show || f.show(vals);
   const miss = cfg.fields.filter(f => f.req && visible(f) && !vals[f.k]);
-  if (miss.length){ miss.forEach(f => fieldErr(f.k, 'Required')); nudge(); const el = $(`#form [data-fk="${miss[0].k}"] [data-k]`); if (el) el.focus(); return; }
+  if (miss.length){ miss.forEach(f => fieldErr(f.k, 'Required')); nudge(); const el = $(`#form [data-fk="${miss[0].k}"] [data-k]`); if (el){ el.focus(); if (el.classList.contains('fm-date')) openDP(el); } return; }
   const init = JSON.parse(FM.init), changed = {};
   Object.keys(vals).forEach(k => { if (JSON.stringify(vals[k]) !== JSON.stringify(init[k])) changed[k] = vals[k]; });
   const res = cfg.onSubmit(vals, changed);

@@ -25,6 +25,10 @@ The only remaining window is the ~1 second between the re-read and the write.
 - Inquiry tasks and next actions: add, edit, delete, tick done
 - Ball in court, inquiry outcome, pin / unpin; complete tasks from Notifications (snooze is device-only)
 
+Every date is picked from V2's own calendar (never the phone's or Windows' date box): weeks start
+on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next
+Monday. Optional dates have a small × to clear them.
+
 Deletes go to V1's Recycle Bin in the same format V1 uses, and every delete has an Undo.
 Each change is written to the item's history and to V1's Changelog page, like V1 does.
 Still V1-only: Gantt, standalone tasks, Calendar, Bin restore, users, settings, import/export.

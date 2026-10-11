@@ -1126,6 +1126,22 @@ body{padding:0}
 /* selection circle sits exactly where the tick box sits, in every look */
 :root[data-look="I"] .task .selc{order:9;width:34px;height:34px}
 @media (max-width:720px){.task .selc{grid-area:c;align-self:start}}
+
+/* ── Projects-only focus ── */
+:root[data-focus="projects"] #nav [data-go="inquiries"],:root[data-focus="projects"] #tabbar [data-go="inquiries"]{display:none}
+.pop-note{margin:8px 2px 0;font-size:12px;color:var(--mu);line-height:1.4}
+#focusseg{width:100%}#focusseg button{flex:1;justify-content:center}
+/* ── pin buttons ── */
+.ptop{display:inline-flex;align-items:center;gap:6px}
+.pinb{width:30px;height:30px;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;flex:none;transition:color .2s,border-color .2s,background .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
+.pinb:hover{color:var(--tx);border-color:var(--tx)}
+.pinb:active{transform:scale(.88)}
+.pinb.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 22%,transparent)}
+.pinb[disabled]{cursor:default}
+.pinpill{cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.pinpill.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 18%,transparent)}
+[data-proj][role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.pill.plink{text-decoration:none;color:inherit}
 </style>
 
 </head>
@@ -1257,8 +1273,9 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'I', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false,
-  tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
-function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; }
+  focus: store.get('npd2-focus', 'all'), tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
+function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus; }
+const inqOn = () => S.focus !== 'projects';
 applyPrefs();
 
 /* springs as CSS linear() easings, simulated once */
@@ -1585,7 +1602,7 @@ function collectNotifications(scope){
   const sn = snoozed();
   const missed = [], upcoming = [], awaiting = [];
   const push = (n, list) => { n.key = `${n.type}:${n.parentId}:${n.taskId}`; if (sn[n.key] && sn[n.key] > today) return; list.push(n); };
-  d.inquiries.forEach(item => { if (isClosedInq(item)) return;
+  if (inqOn()) d.inquiries.forEach(item => { if (isClosedInq(item)) return;
     (item.tasks||[]).filter(t => !t.done && vis(t)).forEach(t => {
       const n = {type:'inquiry', coll:'inquiries', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, pic:t.pic||'Adam', fac: facOf(item)};
       if (t.status === 'awaiting-reply'){ if (!t.reminder || t.reminder <= today) push(n, awaiting); return; }
@@ -1593,7 +1610,7 @@ function collectNotifications(scope){
       if (t.deadline < today) push(n, missed); else if (t.deadline <= addDays(today, TASK_UPCOMING_DAYS)) push(n, upcoming);
     });
   });
-  d.inquiries.forEach(item => { if (isClosedInq(item) || item.outcome) return;
+  if (inqOn()) d.inquiries.forEach(item => { if (isClosedInq(item) || item.outcome) return;
     (item.nextActions||[]).forEach((na, i) => { if (na.done || !na.deadline || !vis(na)) return;
       const n = {type:'na', coll:'inquiries', parentId:item.id, taskId: subKey(na, i), parentCode:item.code, parentName:item.name, taskName: na.action || 'Next action', deadline:na.deadline, pic:na.pic||'Adam', fac: facOf(item)};
       if (na.deadline < today) push(n, missed); else if (na.deadline <= addDays(today, TASK_UPCOMING_DAYS)) push(n, upcoming);
@@ -2030,10 +2047,10 @@ function counts(){
   $('#c-task').textContent = myT || '';
   const N = d ? collectNotifications('mine') : {missed:[], awaiting:[]};
   const u = N.missed.length + N.awaiting.length; $('#c-noti').textContent = u || ''; $('#c-noti').style.display = u ? '' : 'none';
-  const activeOf = f => d ? openInq.filter(i => facOf(i) === f).length + d.projects.filter(p => !isClosedProj(p) && facOf(p) === f).length : '';
+  const activeOf = f => d ? (inqOn() ? openInq.filter(i => facOf(i) === f).length : 0) + d.projects.filter(p => !isClosedProj(p) && facOf(p) === f).length : '';
   $('#facs').innerHTML = [['all','All factories','var(--mu)'], ...factories().map(f => [f, f, facColor(f)])].map(([k,l,c]) =>
-    `<button type="button" class="fac ${S.fac===k?'on':''}" data-fac="${esc(k)}" title="${esc(l)}"><i class="dot" style="--dc:${c}"></i>${esc(l)}<span class="cnt">${k==='all' ? (d ? openInq.length + d.projects.filter(p => !isClosedProj(p)).length : '') : activeOf(k)}</span></button>`).join('');
-  const pins = d ? [...d.projects.filter(p => p.pinned).map(p => ({p, k:'proj'})), ...d.inquiries.filter(i => i.pinned).map(p => ({p, k:'inq'}))].sort((a,b) => (b.p.pinnedAt||'') < (a.p.pinnedAt||'') ? -1 : 1).slice(0, 8) : [];
+    `<button type="button" class="fac ${S.fac===k?'on':''}" data-fac="${esc(k)}" title="${esc(l)}"><i class="dot" style="--dc:${c}"></i>${esc(l)}<span class="cnt">${k==='all' ? (d ? (inqOn() ? openInq.length : 0) + d.projects.filter(p => !isClosedProj(p)).length : '') : activeOf(k)}</span></button>`).join('');
+  const pins = d ? [...d.projects.filter(p => p.pinned).map(p => ({p, k:'proj'})), ...(inqOn() ? d.inquiries.filter(i => i.pinned) : []).map(p => ({p, k:'inq'}))].sort((a,b) => (b.p.pinnedAt||'') < (a.p.pinnedAt||'') ? -1 : 1).slice(0, 8) : [];
   $('#pins').innerHTML = pins.length ? pins.map(({p,k}) => { const h = k === 'proj' ? projHealth(p) : inqState(p).k;
     const c = ['over'].includes(h) ? 'var(--bad)' : h === 'risk' ? 'var(--warn)' : 'var(--c1)';
     return `<button type="button" class="pin" ${k==='proj' ? `data-proj="${esc(p.id)}"` : `data-open="${esc(p.id)}"`} title="${esc(p.name)}"><i class="ring2" style="--dc:${c}"></i><span class="nm">${esc(p.name)}</span><span class="star" aria-label="Pinned">★</span></button>`; }).join('')
@@ -2063,6 +2080,7 @@ function staleBanner(){ return DB.source === 'cache' ? `<div class="banner">${ic
 /* ── Dashboard ── */
 let CHART = null;
 function pageDashboard(){
+  if (!inqOn()) return pageDashboardProjects();
   const d = DB.data, today = todayStr();
   const inqs = d.inquiries.filter(facMatch), open = inqs.filter(i => String(i.status||'').toUpperCase() === 'OPEN');
   const sts = open.map(i => ({i, st: inqState(i)}));
@@ -2296,6 +2314,58 @@ function missedBannerToday(){
   return BANNER_TODAY;
 }
 
+/* ── Dashboard in "Projects only" focus: no inquiry numbers at all ── */
+function pageDashboardProjects(){
+  const d = DB.data, today = todayStr(), wk = addDays(today, 7), mo = addDays(today, 30);
+  const projs = d.projects.filter(facMatch), active = projs.filter(p => !isClosedProj(p));
+  const ph = active.map(p => ({p, h: projHealth(p)})), late = ph.filter(x => x.h === 'over'), prisk = ph.filter(x => x.h === 'risk');
+  const N = collectNotifications('mine'), pMissed = N.missed.filter(n => n.type === 'project'), pSoon = N.upcoming.filter(n => n.type === 'project');
+  const acts = active.flatMap(p => (p.tasks||[]).filter(t => !t.done && t.deadline).map(t => ({p, t})));
+  const overdueActs = acts.filter(x => x.t.deadline < today).sort((a,b) => a.t.deadline < b.t.deadline ? -1 : 1);
+  const weekActs = acts.filter(x => x.t.deadline >= today && x.t.deadline <= wk).sort((a,b) => a.t.deadline < b.t.deadline ? -1 : 1);
+  const msUp = active.flatMap(p => (p.milestones||[]).filter(m => m.status !== 'reached' && m.status !== 'cancelled' && m.date && m.date <= mo).map(m => ({p, m}))).sort((a,b) => a.m.date < b.m.date ? -1 : 1);
+  const msLate = msUp.filter(x => x.m.date < today);
+  const deliveries = active.filter(p => p.deliveryDate && p.deliveryDate >= today && p.deliveryDate <= mo).sort((a,b) => a.deliveryDate < b.deliveryDate ? -1 : 1);
+  const waiting = active.filter(p => p.ballWith && p.ballWith !== 'us').sort((a,b) => ballDays(b) - ballDays(a));
+  const stale = active.map(p => ({p, d: lastUpdated(p) ? daysSince(lastUpdated(p)) : null})).filter(y => y.d !== null && y.d > STALE_PROJECT_DAYS).sort((a,b) => b.d - a.d);
+  const facs = factories().filter(f => S.fac === 'all' || f === S.fac);
+  const inProg = active.filter(p => p.status === 'in-progress').length;
+  const nextMs = msUp.find(x => x.m.date >= today);
+  const msg = late.length ? `<b>${late.length}</b> project${late.length === 1 ? ' is' : 's are'} late and <b>${overdueActs.length}</b> action${overdueActs.length === 1 ? ' is' : 's are'} overdue.${nextMs ? ` Next milestone: <b>${esc(nextMs.m.title)}</b> on ${esc(nextMs.p.name)}, ${fmtDate(nextMs.m.date)}.` : ''}`
+    : overdueActs.length ? `No late projects. <b>${overdueActs.length}</b> project action${overdueActs.length === 1 ? ' is' : 's are'} overdue.` : `All ${active.length} active projects are on track.${nextMs ? ` Next milestone: <b>${esc(nextMs.m.title)}</b>, ${fmtDate(nextMs.m.date)}.` : ''}`;
+  const lead = late[0] || prisk[0];
+  const more = (l, m) => l.length > m ? `<div class="ro" style="padding:6px 8px">+ ${l.length - m} more</div>` : '';
+  const panel = (title, sub, list, row, empty, i, m = 6) => `<div class="card panel st" style="--i:${i}"><div class="ph"><h3>${title}</h3><span>${sub}</span></div><div class="list">${list.length ? list.slice(0, m).map(row).join('') + more(list, m) : `<div class="empty" style="padding:20px 8px">${empty}</div>`}</div></div>`;
+  const li = (p, sev, t, s, right, cls = 'muted') => `<button type="button" class="li" data-proj="${esc(p.id)}"><i class="sev" style="--c:${sev}"></i><div style="min-width:0"><div class="t">${esc(t)}</div><div class="s">${esc(s)}</div></div><span class="mono ${cls}">${right}</span></button>`;
+  const needs = [...late.map(x => ({p: x.p, s:'var(--bad)', t: x.p.name, sub: x.p.deliveryDate && x.p.deliveryDate < today ? `Delivery was due ${fmtDate(x.p.deliveryDate)}` : 'Has overdue actions', r: x.p.code || ''})),
+    ...prisk.map(x => ({p: x.p, s:'var(--warn)', t: x.p.name, sub: x.p.deliveryDate && x.p.deliveryDate <= addDays(today, 14) ? `Delivery ${fmtDate(x.p.deliveryDate)}` : 'Action due within 3 days', r: x.p.code || ''}))];
+  let n = 0;
+  return `${staleBanner()}<div class="dash">
+    <section class="card hero st" style="--i:${n++}">
+      <div><div class="eyebrow">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})} · Projects focus${S.fac !== 'all' ? ' · ' + esc(S.fac) : ''}</div>
+        <h2>${words(`${greet()}, <em>${esc(meName().split(' ')[0])}.</em>`)}</h2><p>${msg}</p></div>
+      <div class="cta"><button class="btn" type="button" data-go="projects">All projects</button>${lead ? `<button class="b1" type="button" data-proj="${esc(lead.p.id)}">Open ${esc(lead.p.name.split(' ').slice(0,3).join(' '))} ${ico('arrow',16)}</button>` : ''}</div>
+    </section>
+    <section class="kpis">
+      <div class="card kpi st" style="--i:${n++}" data-go="projects" role="button" tabindex="0"><div class="lab">Active projects</div><div class="val"><span data-count="${active.length}">${active.length}</span></div><div class="sub">${inProg} in progress · ${active.length - inProg} not started / on hold</div></div>
+      <div class="card kpi ${late.length ? 'alert' : ''} st" style="--i:${n++}" data-go="projects" role="button" tabindex="0"><div class="lab">Needing attention</div><div class="val"><span data-count="${late.length + prisk.length}">${late.length + prisk.length}</span><small>/ ${active.length}</small></div><div class="sub">${late.length} late · ${prisk.length} at risk</div></div>
+      <div class="card kpi st" style="--i:${n++}" data-go="notifications" role="button" tabindex="0"><div class="lab">Overdue actions</div><div class="val"><span data-count="${overdueActs.length}">${overdueActs.length}</span></div><div class="sub"><span class="pill ${weekActs.length ? 'warn' : ''}">${weekActs.length} due this week</span>${pMissed.length} yours</div></div>
+      <div class="card kpi st" style="--i:${n++}" role="button" tabindex="0"><div class="lab">Milestones · next 30 days</div><div class="val"><span data-count="${msUp.length - msLate.length}">${msUp.length - msLate.length}</span></div><div class="sub">${msLate.length ? `<span class="pill bad">${msLate.length} overdue</span>` : ''}${deliveries.length} deliveries due</div></div>
+    </section>
+    <section class="grid3">
+      ${panel('Needs you', 'late and at-risk projects', needs, x => li(x.p, x.s, x.t, x.sub, esc(x.r)), 'No late or at-risk projects.', n++)}
+      ${panel('Upcoming milestones', 'next 30 days', msUp, ({p, m}) => li(p, m.date < today ? 'var(--bad)' : m.date <= wk ? 'var(--warn)' : 'var(--ok)', m.title || 'Milestone', p.name, fmtDate(m.date), m.date < today ? 'late' : 'muted'), 'No milestones in the next 30 days. Add key dates on each project to see them here.', n++)}
+      ${panel('Actions this week', 'overdue first', [...overdueActs, ...weekActs], ({p, t}) => li(p, t.deadline < today ? 'var(--bad)' : 'var(--warn)', t.name, `${p.name}${t.pic ? ' · ' + t.pic : ''}`, t.deadline < today ? fmtDate(t.deadline) : fmtDate(t.deadline), t.deadline < today ? 'late' : 'muted'), 'Nothing due in the next 7 days.', n++, 8)}
+    </section>
+    <section class="grid3">
+      ${panel('Waiting on others', `chase after ${CHASE_DAYS} days`, waiting, p => { const dd = ballDays(p); return li(p, dd >= LATE_DAYS ? 'var(--bad)' : dd >= CHASE_DAYS ? 'var(--warn)' : 'var(--ok)', p.name, `${BALL_LABELS[p.ballWith] || p.ballWith}${p.customer ? ' · ' + p.customer : ''}`, `${dd}d${dd >= CHASE_DAYS ? ' · chase' : ''}`, dd >= LATE_DAYS ? 'late' : 'muted'); }, 'Nothing waiting on customers, factories or suppliers.', n++)}
+      ${panel('Stale projects', `no update in ${STALE_PROJECT_DAYS}+ days`, stale, ({p, d: dd}) => li(p, dd > 30 ? 'var(--bad)' : 'var(--warn)', p.name, facOf(p) || p.customer || '', `${dd}d`, dd > 30 ? 'late' : 'muted'), `Every active project was updated in the last ${STALE_PROJECT_DAYS} days.`, n++)}
+      <div class="card panel st" style="--i:${n++}"><div class="ph"><h3>Factory load</h3><span>active projects</span></div>
+        <div class="fload">${facs.map((f, fi) => { const its = ph.filter(x => facOf(x.p) === f); const o = its.filter(x => x.h === 'over').length, r = its.filter(x => x.h === 'risk').length, g = its.length - o - r;
+          return `<div class="r"><div class="top2"><span>${esc(f)}</span><span class="muted">${its.length} project${its.length === 1 ? '' : 's'}</span></div><div class="stack">${its.length ? [[g,'var(--ok)'],[r,'var(--warn)'],[o,'var(--bad)']].filter(x => x[0]).map(([v,c],j) => `<i style="flex:${v};background:${c};--i:${fi*3+j}"></i>`).join('') : '<i style="flex:1;background:var(--track)"></i>'}</div></div>`; }).join('')}</div></div>
+    </section></div>`;
+}
+
 /* ── Projects ── */
 const AVC = ['#38BDF8','#A78BFA','#F472B6','#34D399','#FBBF24','#FB7185'];
 const initials = t => String(t||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase() || '?';
@@ -2307,13 +2377,14 @@ function avs(p){
 function nextOpenTask(p){ return (p.tasks||[]).filter(t => !t.done && t.deadline).sort((a,b) => a.deadline < b.deadline ? -1 : 1)[0]; }
 function projCard(p, n, anim, cls = 'pcard'){
   const h = projHealth(p), pct = projPct(p), tasks = p.tasks||[], nt = nextOpenTask(p), today = todayStr();
-  return `<button type="button" class="card ${cls}${anim ? ' st' : ''}" style="--i:${Math.min(n, 12)};--n:p-${esc(String(p.id).replace(/[^\w-]/g,''))}" data-proj="${esc(p.id)}">
-    <div class="pfoot"><span class="mono">${esc(p.code || '')}</span><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span></div>
-    <h3 class="t">${p.pinned ? '<span style="color:#F5C518">★</span> ' : ''}${esc(p.name)}</h3>
+  const canPin = can('projects','edit');
+  return `<div role="button" tabindex="0" class="card ${cls}${anim ? ' st' : ''}" style="--i:${Math.min(n, 12)};--n:p-${esc(String(p.id).replace(/[^\w-]/g,''))}" data-proj="${esc(p.id)}">
+    <div class="pfoot"><span class="mono">${esc(p.code || '')}</span><span class="ptop"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span>${canPin || p.pinned ? `<button type="button" class="pinb${p.pinned ? ' on' : ''}" ${canPin ? `data-pinp="${esc(p.id)}"` : 'disabled'} aria-pressed="${!!p.pinned}" aria-label="${p.pinned ? 'Unpin' : 'Pin'} ${esc(p.name)}" title="${p.pinned ? 'Pinned · tap to unpin' : 'Pin to the sidebar'}">${ico('pin',15)}</button>` : ''}</span></div>
+    <h3 class="t">${esc(p.name)}</h3>
     ${p.brief ? `<div class="brief">${esc(p.brief)}</div>` : ''}
     <div class="meta">${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}${p.status === 'not-started' ? '<span class="pill">Not started</span>' : ''}</div>
     <div class="prog"><div class="lab"><span>Actions <b>${tasks.filter(t => t.done).length}/${tasks.length}</b></span><span>${pct}%</span></div><div class="pbar"><i style="width:${pct}%;--c:${h === 'ok' || h === 'done' ? 'var(--prog)' : ST_COLOR[h]}"></i></div></div>
-    <div class="pfoot">${avs(p)}<span class="due ${nt && nt.deadline < today ? 'late' : ''}">${nt ? 'Next ' + fmtDate(nt.deadline) : p.deliveryDate ? 'Delivery ' + fmtDate(p.deliveryDate) : ''}</span></div></button>`;
+    <div class="pfoot">${avs(p)}<span class="due ${nt && nt.deadline < today ? 'late' : ''}">${nt ? 'Next ' + fmtDate(nt.deadline) : p.deliveryDate ? 'Delivery ' + fmtDate(p.deliveryDate) : ''}</span></div></div>`;
 }
 function pageProjects(){
   return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}<span class="muted" style="font-size:13.5px">${S.pview === 'board' ? 'One row per status: not started, in progress, completed.' : 'Grouped by what needs you first.'}</span>${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
@@ -2397,7 +2468,7 @@ function pageProject(){
       <div style="min-width:0"><button type="button" class="backlink" data-go="projects">${ico('back',16)} All projects</button>
         <h2 class="dh-title" style="view-transition-name:hero">${esc(p.name)}</h2>
         <div class="meta" style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span><span class="pill">${esc(statusLabel(p.status))}</span>${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}<span class="pill"><span class="mono">${esc(p.code || '')}</span></span>
-          ${canE ? `<button class="pill" type="button" data-act="pin-proj" style="cursor:pointer;${p.pinned ? 'color:#F5C518' : ''}">${p.pinned ? '★ Pinned' : '☆ Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}<a class="pill pedit plink" href="../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}" target="_blank" rel="noopener">${ico('gantt',13)} Gantt</a></div></div>
+          ${canE ? `<button class="pill pinpill${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',13)} ${p.pinned ? 'Pinned' : 'Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}<a class="pill pedit plink" href="../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}" target="_blank" rel="noopener">${ico('gantt',13)} Gantt</a></div></div>
       <div class="pring"><svg viewBox="0 0 118 118" aria-hidden="true"><circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="pfg" cx="59" cy="59" r="50" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-(RING[p.id] || 0)/100)).toFixed(1)}"/></svg><div class="c"><b><span id="ppct">${pct}</span>%</b><span>actions done</span></div></div>
     </section>
     ${railHTML(p)}
@@ -2476,11 +2547,11 @@ function pageStyles(){
 /* ══════════ RENDER + NAVIGATION ══════════ */
 const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles'];
 function render(opts = {}){
-  const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
+  const [t, sub0] = TITLES[S.page] || ['NPD Tracker',''], sub = S.page === 'dashboard' && !inqOn() ? 'Track your projects' : sub0;
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
   $('#ttl').innerHTML = `<h1>${t}</h1>${pr ? `<span class="sub">All projects › ${esc(pr.name)}</span>` : sub ? `<span class="sub">${sub}</span>` : ''}`;
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
-  $('#topx').innerHTML = !DB.data ? '' : S.page === 'dashboard' ? segHTML('rseg', Object.entries(RANGE), S.range)
+  $('#topx').innerHTML = !DB.data ? '' : S.page === 'dashboard' ? (inqOn() ? segHTML('rseg', Object.entries(RANGE), S.range) : '')
     : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'tasks' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
   v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, tasks: pageTasks, notifications: pageNotifications, styles: pageStyles })[S.page]();
@@ -3142,13 +3213,13 @@ document.addEventListener('pointerup', swipeEnd); document.addEventListener('poi
 let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
-  const pages = ORDER.filter(p => p !== 'styles').map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
+  const pages = ORDER.filter(p => p !== 'styles' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
   const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'},{g:'Actions', t:'Open V1', run:() => { location.href = V1_URL; }, ic:'arrowup'}];
-  if (DB.data && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
+  if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
   const d = DB.data || {inquiries:[], projects:[]};
-  const inq = d.inquiries.filter(i => !q ? !isClosedInq(i) : true).map(i => ({g:'Inquiries', t:i.name, k:i.code, s:[i.customer, i.factory].join(' '), run:() => openSheet(i.id), ic:'inbox'}));
+  const inq = (inqOn() ? d.inquiries : []).filter(i => !q ? !isClosedInq(i) : true).map(i => ({g:'Inquiries', t:i.name, k:i.code, s:[i.customer, i.factory].join(' '), run:() => openSheet(i.id), ic:'inbox'}));
   const pr = d.projects.map(p => ({g:'Projects', t:p.name, k:p.code, s:[p.customer, p.factory].join(' '), run:() => go('project', {proj:p.id}), ic:'folder'}));
   const mts = q ? (d.mtasks||[]).filter(t => !t.archived && (isLead() || (t.owner || 'Adam') === meName())).map(t => ({g:'Tasks', t:t.title, k: t.deadline ? fmtDate(t.deadline) : '', s: t.description || '', run:() => formMTask(t.id), ic:'tasks'})) : [];
   cmdItems = [...pages, ...acts, ...inq, ...pr, ...mts].filter(x => !q || [x.t, x.k, x.s, x.g].join(' ').toLowerCase().includes(q)).slice(0, 16);
@@ -3167,6 +3238,7 @@ $('#cmdk').addEventListener('click', e => { const b = e.target.closest('.cmd-ite
 
 /* ── settings popover ── */
 function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([k,n,g]) => `<button type="button" class="${S.look===k?'on':''}" data-look="${k}"><i style="background:${g}"></i>${n}</button>`).join('')}</div></div>
+  <div><h4>Focus</h4>${segHTML('focusseg', [['all','Inquiries + projects'],['projects','Projects only']], S.focus)}<p class="pop-note">Projects only hides inquiries everywhere: menu, Dashboard, alerts and search. Only on this device.</p></div>
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button><a class="btn" href="${V1_URL}" style="flex:1;justify-content:center;text-decoration:none">Open V1</a></div>`; }
@@ -3282,6 +3354,7 @@ document.addEventListener('click', e => {
     openDP(rs, d => { const was = n.kind === 'awaiting' ? n.reminder : n.deadline; rescheduleNotif(n, d); toast(`“${esc(n.taskName)}” moved to ${fmtDate(d)}`, {icon:'clock', undo: () => rescheduleNotif(n, was || '')}); }); return; }
   const g = t.closest('[data-go]'); if (g && !t.closest('#pop')){ go(g.dataset.go); return; }
   const o = t.closest('[data-open]'); if (o){ openSheet(o.dataset.open); return; }
+  const pb = t.closest('[data-pinp]'); if (pb){ const p = findRec(DB.data, 'projects', pb.dataset.pinp); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? `Pinned ${esc(p.name)} to the sidebar` : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } return; }
   const pj = t.closest('[data-proj]'); if (pj){ go('project', {proj: pj.dataset.proj, src: pj.matches('.pcard,.bcard,.li') ? pj : null}); return; }
   const ap = t.closest('[data-apply]'); if (ap){ const k = ap.dataset.apply; setLook(k);
     if (k === 'I' && S.theme === 'dark') setTimeout(() => toast('Studio is designed light-first', {icon:'sun', label:'Switch to light', undo: () => toggleTheme()}), 500);
@@ -3308,6 +3381,8 @@ document.addEventListener('click', e => {
     else if (seg.id === 'nwhen'){ S.nwhen = v; vt(() => refresh(), 'list'); }
     else if (seg.id === 'tcat'){ S.tcat = v; vt(() => refresh(), 'list'); }
     else if (seg.id === 'tscope'){ S.tscope = v; if (S.tsel) S.tsel.clear(); vt(() => refresh(), 'list'); }
+    else if (seg.id === 'focusseg'){ S.focus = v; store.set('npd2-focus', v); applyPrefs(); closeSheet(); if (S.page === 'inquiries' && v === 'projects') S.page = 'dashboard';
+      vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
     else if (seg.id === 'motionseg'){ S.motion = v; store.set('npd2-motion', v); applyPrefs(); toast(`Motion: ${sb.textContent}`, {icon:'spark'}); }
     return; }
@@ -3337,6 +3412,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (!AUTH.user) return;
   if (formOpen()){ if (e.key === 'Escape'){ e.preventDefault(); closeForm(); } return; }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-proj][role=button]')){ e.preventDefault(); e.target.click(); return; }
   if (e.key === 'Enter' && e.target.matches('[data-fm][tabindex],[data-mtsel]')){ e.preventDefault(); e.target.click(); return; }
   if (e.key === 'Escape' && S.tsel && S.page === 'tasks'){ S.tsel = null; refresh(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); $('#cmdk').classList.contains('open') ? closeCmd() : openCmd(); }

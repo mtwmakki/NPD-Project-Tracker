@@ -32,6 +32,10 @@ The only remaining window is the ~1 second between the re-read and the write.
 - After ticking anything done, the confirmation offers "Follow up", which opens a prefilled follow-up task
 - Notifications include inquiry next actions, filter by person and by next 7 / 30 days, and every row has a
   calendar button to move its deadline (or the chase date of an awaiting reply)
+- Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, alerts, search) on that
+  device; the Dashboard switches to a projects view (late/at-risk, upcoming milestones, this week's actions,
+  waiting on others, stale projects, factory load)
+- Pin button on every project card and on the project page
 - Dashboard: V1's My Day panels (waiting on others, stale projects, new tasks on older items) and the
   once-a-day overdue banner
 

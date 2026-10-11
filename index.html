@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// V77.11: V2 is now the main app. The plain address goes straight to V2 (before any V1 code runs);
+// V1 stays available at ?v1 for what V2 doesn't have yet (Gantt, Bin, Users, Settings…).
+(function(){ if (!/[?&]v1(?:[=&]|$)/.test(location.search)) location.replace('v2/'); })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="mobile-web-app-capable" content="yes">
@@ -23,7 +28,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
-<title>NPD Tracker V77.10</title>
+<title>NPD Tracker V77.11</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1886,7 +1891,7 @@ html.touch-ui .btn-primary:hover,html.touch-ui .modal-submit-btn:hover{transform
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">NPD Tracker V77.10</div>
+    <div class="login-logo">NPD Tracker V77.11</div>
     <div class="login-sub">TPAC Packaging — Sign in to continue</div>
     <div class="login-field">
       <label>Email</label>

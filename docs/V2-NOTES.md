@@ -1,6 +1,8 @@
 # NPD Tracker V2 (beta)
 
-Live at `https://mtwmakki.github.io/NPD-Project-Tracker/v2/` — V1 stays at the usual address.
+The usual address `https://mtwmakki.github.io/NPD-Project-Tracker/` now opens V2 directly
+(V2 itself lives at `…/v2/`). V1 is still available at `https://mtwmakki.github.io/NPD-Project-Tracker/?v1`
+for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
 
 ## Same data, same account
 - Signs in with the same Firebase account as V1 (signing in or out in one also affects the other on that device).

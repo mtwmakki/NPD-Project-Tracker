@@ -13,7 +13,7 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 
 ## Still only in V1
 
-### Wave 1 — daily work (~3–4 days)
+### Wave 1 — daily work ✅ done (Oct 2026)
 | Feature | Size |
 |---|---|
 | Standalone Tasks page: create / edit / duplicate / archive / bulk actions, categories, "all users" view for master | L |
@@ -39,7 +39,7 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 | Project report → PDF | M |
 | Delivery Matrix tab + yellow / red day thresholds setting | M |
 | Dashboard: project health table, workload per person, status / trend charts | M |
-| Scheduler (weekly activity log) + weekly Excel export | M |
+| Scheduler (weekly activity log) + weekly Excel export — confirmed needed | M |
 
 ### Wave 4 — safety and housekeeping (~2 days)
 | Feature | Size |
@@ -55,10 +55,16 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 | Feature | Size |
 |---|---|
 | Users & permissions admin (better done server-side, see the security fix) | L |
-| Excel import (tracker's own format) | M |
+| Excel import (tracker's own format) — confirmed needed | M |
 | Duplicate-detection cleaner | M |
-| NPD Pipeline page (kanban, stages, yearly targets) — only if used | L |
-| Project "Current Activities" — only if used | M |
+| ~~NPD Pipeline page~~ — not used, dropped | — |
+| ~~Project "Current Activities"~~ — not used, dropped | — |
+
+## Decisions (Oct 2026)
+- My Day is not coming back as a page: its useful sections (overdue next actions, waiting on others,
+  stale projects, new tasks on older items) are now on the V2 Dashboard and in Notifications.
+- Gantt stays a separate page (linked from each project in V2); its UI gets reworked later.
+- Reports in use: Inquiry report, Project report, full Excel export. Excel import is still needed.
 
 ## Drop instead of porting
 One-time PROJECT_SEEDS block; OneDrive code and the OneDrive daily backup (never runs); the hidden inline

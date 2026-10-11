@@ -1085,6 +1085,47 @@ body{padding:0}
 #dp.sheet .dp-cap{display:block;font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu);text-align:center;margin-bottom:6px}
 #dp.sheet .dp-d{font-size:16px;min-height:42px}
 #dp.sheet .dp-quick button{padding:11px 4px;font-size:13.5px}
+
+/* ── wave 1 ── */
+.dbanner{align-items:center}
+.dbanner>span{flex:1;min-width:0}
+.dbanner .ibtn{width:32px;height:32px}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}
+.chiprow button{padding:7px 12px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:none;color:var(--mu);font:600 12.5px var(--fb);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.chiprow button span{opacity:.7;font-weight:500;margin-left:2px}
+.chiprow button:hover{color:var(--tx)}
+.chiprow button.on{background:var(--ac-grad);color:var(--on-ac);border-color:transparent}
+.resched{display:inline-grid;place-items:center;width:28px;height:28px;margin-left:6px;vertical-align:middle;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--mu);cursor:pointer;transition:color .2s,border-color .2s}
+.resched:hover,.resched[aria-expanded="true"]{color:var(--ac);border-color:var(--ac)}
+.nr .due{display:inline-flex;align-items:center}
+.tb-gap{flex:1}
+.btn.sm.on{border-color:var(--ac);color:var(--ac)}
+.mtlist{padding:14px}
+.task.mt .who{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.task.mt .who .desc{flex-basis:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+.task.mt[data-mtsel]{cursor:pointer}
+.task .selc{width:26px;height:26px;border-radius:50%;border:1.8px solid var(--line-2);display:grid;place-items:center;color:transparent;transition:background .2s,border-color .2s,color .2s}
+.task.picked{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,var(--hover))}
+.task.picked .selc{background:var(--ac-grad);border-color:transparent;color:var(--on-ac)}
+.selbar{position:sticky;bottom:12px;z-index:5;margin:12px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);box-shadow:0 18px 40px -16px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);animation:rise calc(300ms*var(--k)) var(--ease-out) backwards}
+.selbar b{font-size:14px;margin-right:4px}
+.selbar .fm-del.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
+.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:6px}
+.picrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line);min-width:0;transition:border-color .2s}
+.picrow.tap:hover{border-color:var(--line-2)}
+.picrow>i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px var(--fb);font-style:normal;flex:none}
+.picrow b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picrow small{display:block;font-size:12px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{--tms:5s}
+.li .late{color:var(--bad)}
+@media (max-width:720px){.ntip{display:none}.selbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
+.toast .tbar{animation-duration:var(--tms)}
+.ttools{margin-top:-4px}
+.btn.on{border-color:var(--ac);color:var(--ac)}
+@media (max-width:560px){.ttools .tb-gap{display:none}}
+/* selection circle sits exactly where the tick box sits, in every look */
+:root[data-look="I"] .task .selc{order:9;width:34px;height:34px}
+@media (max-width:720px){.task .selc{grid-area:c;align-self:start}}
 </style>
 
 </head>
@@ -1122,6 +1163,7 @@ body{padding:0}
       <button type="button" data-go="dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
       <button type="button" data-go="inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
       <button type="button" data-go="projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
+      <button type="button" data-go="tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
       <button type="button" data-go="notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
     </nav>
     <div class="sec">Factories</div>
@@ -1150,6 +1192,7 @@ body{padding:0}
     <button type="button" data-go="dashboard"><span data-ico="grid"></span>Home</button>
     <button type="button" data-go="inquiries"><span data-ico="inbox"></span>Inquiries</button>
     <button type="button" data-go="projects"><span data-ico="folder"></span>Projects</button>
+    <button type="button" data-go="tasks"><span data-ico="tasks"></span>Tasks</button>
     <button type="button" data-go="notifications"><span data-ico="bell"></span>Alerts</button>
   </nav>
 </div>
@@ -1205,7 +1248,7 @@ const P = {
   trophy:'M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8', arrowup:'M7 17 17 7M8 7h9v9', file:'M7 3h7l4 4v14H7zM14 3v4h4', user:'M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM4 21a8 8 0 0 1 16 0',
   logout:'M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 8l-4 4 4 4M6 12h10', msg:'M4 5h16v11H8l-4 4z', pin:'M9 4h6l-1 6 4 3H6l4-3zM12 13v7', link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   refresh:'M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4', snooze:'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16zM10 9h4l-4 6h4',
-  pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+  pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', tasks:'M4 5h4v4H4zM4 15h4v4H4zM11 7h9M11 17h9', gantt:'M4 6h9M7 12h11M10 18h10M4 3v18', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
 function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => { if (!el.firstChild) el.innerHTML = ico(el.dataset.ico, el.closest('.tabbar') ? 20 : 18); }); }
@@ -1213,7 +1256,8 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 /* ── prefs ── */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'I', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
-  page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false };
+  page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false,
+  tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; }
 applyPrefs();
 
@@ -1420,7 +1464,7 @@ function applyOp(d, op){
   if (op.remove){
     const ix = list.findIndex(x => x.id === op.remove); if (ix < 0) return false;
     const rec = list[ix];
-    if (op.bin){ d.bin = d.bin || []; if (!d.bin.some(b => b.id === op.bin.id)) d.bin.push({id: op.bin.id, kind: op.bin.kind, code: rec.code, name: rec.name, item: JSON.parse(JSON.stringify(rec)), deletedAt: todayStr()}); }
+    if (op.bin){ d.bin = d.bin || []; if (!d.bin.some(b => b.id === op.bin.id)) d.bin.push({id: op.bin.id, kind: op.bin.kind, code: rec.code, name: op.bin.name || rec.name, item: JSON.parse(JSON.stringify(rec)), deletedAt: todayStr()}); }
     list.splice(ix, 1); return true;
   }
   const r = list.find(x => x.id === op.id); if (!r) return false;
@@ -1549,6 +1593,12 @@ function collectNotifications(scope){
       if (t.deadline < today) push(n, missed); else if (t.deadline <= addDays(today, TASK_UPCOMING_DAYS)) push(n, upcoming);
     });
   });
+  d.inquiries.forEach(item => { if (isClosedInq(item) || item.outcome) return;
+    (item.nextActions||[]).forEach((na, i) => { if (na.done || !na.deadline || !vis(na)) return;
+      const n = {type:'na', coll:'inquiries', parentId:item.id, taskId: subKey(na, i), parentCode:item.code, parentName:item.name, taskName: na.action || 'Next action', deadline:na.deadline, pic:na.pic||'Adam', fac: facOf(item)};
+      if (na.deadline < today) push(n, missed); else if (na.deadline <= addDays(today, TASK_UPCOMING_DAYS)) push(n, upcoming);
+    });
+  });
   d.projects.forEach(item => { if (isClosedProj(item)) return;
     (item.tasks||[]).filter(t => !t.done && vis(t)).forEach(t => {
       const n = {type:'project', coll:'projects', parentId:item.id, taskId:t.id, parentCode:item.code, parentName:item.name, taskName:t.name, deadline:t.deadline, reminder:t.reminder, pic:t.pic||'Adam', fac: facOf(item)};
@@ -1557,7 +1607,7 @@ function collectNotifications(scope){
       if (t.deadline < today) push(n, missed); else if (t.deadline <= addDays(today, PROJECT_UPCOMING_DAYS)) push(n, upcoming);
     });
   });
-  (d.mtasks||[]).filter(t => t.status !== 'done' && (all || (t.owner || 'Adam') === me)).forEach(t => {
+  (d.mtasks||[]).filter(t => t.status !== 'done' && !t.archived && (all || (t.owner || 'Adam') === me)).forEach(t => {
     const n = {type:'mtask', coll:'mtasks', parentId:t.id, taskId:t.id, parentCode:'TASK', parentName:t.title, taskName:t.title, deadline:t.deadline, reminder:t.reminder, pic:t.owner||'Adam', fac:''};
     if (t.status === 'awaiting-reply'){ if (!t.reminder || t.reminder <= today) push(n, awaiting); return; }
     if (!t.deadline) return;
@@ -1568,8 +1618,10 @@ function collectNotifications(scope){
   awaiting.sort((a,b) => (a.reminder||'') < (b.reminder||'') ? -1 : 1);
   return {missed, upcoming, awaiting};
 }
-function canCompleteNotif(n){ return n.type === 'project' ? can('actions','complete') : n.type === 'mtask' ? can('tasks','complete') : can('inquiries','edit') || can('actions','complete'); }
+function canCompleteNotif(n){ return n.type === 'project' ? can('actions','complete') : n.type === 'mtask' ? can('tasks','complete') : n.type === 'na' ? can('inquiries','edit') : can('inquiries','edit') || can('actions','complete'); }
+function canEditNotif(n){ return n.type === 'project' ? can('actions','edit') : n.type === 'mtask' ? can('tasks','edit') : can('inquiries','edit'); }
 function completeNotif(n, done = true){
+  if (n.type === 'na') return setInqNADone(n.parentId, n.taskId, done);
   if (n.type === 'inquiry') return setInqTaskDone(n.parentId, n.taskId, done);
   if (n.type === 'project') return setProjTaskDone(n.parentId, n.taskId, done);
   return setMTaskDone(n.parentId, done);
@@ -1609,8 +1661,9 @@ function people(extra){
 /* ── project actions (V1 "Rolling Action Plan") ── */
 function addProjTask(projId, v){
   const id = uid(), today = todayStr(), done = v.status === 'done';
-  const t = {id, name: v.name, deadline: v.deadline || '', pic: v.pic || meName(), status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', done, linkedSubStatus: v.linkedSubStatus || ''};
+  const t = {id, name: v.name, deadline: v.deadline || '', pic: v.pic || meName(), status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', done, linkedSubStatus: v.linkedSubStatus || '', addedOn: today};
   if (done) t.completedAt = today;
+  if (v.followupOf) t.followupOf = v.followupOf;
   mutate([{coll:'projects', id: projId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t));
     projLog(r, 'add', 'circle-plus', `Added action: ${strong(t.name)}${t.deadline ? ' · due ' + fmtDate(t.deadline) : ''}`); }}]);
   return id;
@@ -1638,7 +1691,8 @@ function deleteProjTask(projId, key){
 /* ── inquiry tasks + next actions ── */
 function addInqTask(inqId, v){
   const id = uid();
-  const t = {id, name: v.name, deadline: v.deadline || '', done: false, pic: v.pic || meName(), owner: meName()};
+  const t = {id, name: v.name, deadline: v.deadline || '', done: false, pic: v.pic || meName(), owner: meName(), addedOn: todayStr()};
+  if (v.followupOf) t.followupOf = v.followupOf;
   mutate([{coll:'inquiries', id: inqId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t)); inqLog(r, 'create', 'circle-plus', `Added task: ${strong(t.name)}`); }}]);
   return id;
 }
@@ -1786,6 +1840,89 @@ function deleteRecord(collName, id){
     changelog({type:'update', icon:'refresh', text:`Restored ${kind}: ${strong(copy.name)}`, section: collName}); };
 }
 
+/* ── standalone tasks (data.mtasks, V1's Tasks page) ── */
+const MT_CATS = [['general','General'],['admin','Admin'],['meeting','Meeting'],['followup','Follow-up'],['urgent','Urgent']];
+const MT_PRIO = [['high','High'],['medium','Medium'],['low','Low']];
+function createMTask(v){
+  const id = uid(), today = todayStr();
+  const t = {id, title: v.title, description: v.description || '', category: v.category || 'general', priority: v.priority || 'medium', deadline: v.deadline || '',
+    status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', owner: meName(), createdAt: today};
+  if (t.status === 'done') t.completedAt = today;
+  if (v.followupOf) t.followupOf = v.followupOf;
+  mutate([{coll:'mtasks', add: t, at:'start'}]);
+  return id;
+}
+function editMTask(id, patch){
+  const today = todayStr();
+  return mutate([{coll:'mtasks', id, fn: r => {
+    const was = r.status; Object.assign(r, clone(patch));
+    if ('status' in patch){ if (patch.status === 'done' && was !== 'done') r.completedAt = today; if (patch.status !== 'done') delete r.completedAt; if (patch.status !== 'awaiting-reply') r.reminder = ''; }
+  }}]);
+}
+function duplicateMTask(id){
+  const o = findRec(DB.data, 'mtasks', id); if (!o) return null;
+  const c = clone(o); c.id = uid(); c.title = o.title + ' (Copy)'; c.status = 'todo'; c.createdAt = todayStr(); delete c.completedAt; delete c.archived; delete c.followupOf;
+  mutate([{coll:'mtasks', add: c, at:'start'}]);
+  return c.id;
+}
+/* V1's Sheet guard refuses a save that drops inquiries + projects + tasks below 30% — check first */
+function deleteWouldBeBlocked(n){ const d = DB.data, before = d.inquiries.length + d.projects.length + (d.mtasks||[]).length; return before >= 5 && before - n < before * 0.3; }
+function deleteMTasks(ids){
+  const recs = ids.map(id => findRec(DB.data, 'mtasks', id)).filter(Boolean); if (!recs.length) return null;
+  const items = recs.map(t => ({copy: clone(t), binId: uid()}));
+  mutate(items.map(({copy, binId}) => ({coll:'mtasks', remove: copy.id, bin: {id: binId, kind:'mtask', name: copy.title}})));
+  return () => mutate(items.flatMap(({copy, binId}) => [{coll:'mtasks', add: copy, at:'start'}, {coll:'bin', remove: binId}]));
+}
+/* archive hides finished tasks everywhere; only done tasks can be archived (same rule as V1) */
+function archiveMTasks(ids, on){
+  return mutate(ids.map(id => ({coll:'mtasks', id, fn: r => { if (on){ if (r.status === 'done') r.archived = true; } else delete r.archived; }})));
+}
+
+/* ── project people (PICs: name + role, no id in V1) ── */
+function picAt(r, key, orig){
+  const list = r.pics || [], i = +String(key).slice(1);
+  if (list[i] && (!orig || list[i].name === orig.name)) return i;
+  return orig ? list.findIndex(x => x.name === orig.name && (x.role || '') === (orig.role || '')) : -1;
+}
+function addPIC(projId, v){
+  return mutate([{coll:'projects', id: projId, fn: r => { r.pics = r.pics || []; if (r.pics.some(x => x.name === v.name && (x.role || '') === (v.role || ''))) return;
+    r.pics.push({name: v.name, role: v.role || ''}); projLog(r, 'add', 'user-plus', `Added person: ${strong(v.name)}${v.role ? ' (' + esc(v.role) + ')' : ''}`); }}]);
+}
+function editPIC(projId, key, orig, v){
+  return mutate([{coll:'projects', id: projId, fn: r => { const i = picAt(r, key, orig); if (i < 0) return; r.pics[i] = {...r.pics[i], name: v.name, role: v.role || ''}; projLog(r, 'edit', 'user', `Updated person: ${strong(v.name)}`); }}]);
+}
+function deletePIC(projId, key, orig){
+  mutate([{coll:'projects', id: projId, fn: r => { const i = picAt(r, key, orig); if (i < 0) return; r.pics.splice(i, 1); projLog(r, 'delete', 'user-minus', `Removed person: ${strong(orig.name)}`); }}]);
+  return () => addPIC(projId, orig);
+}
+
+/* ── move a deadline (or the chase date of an awaiting reply) straight from Notifications ── */
+function rescheduleNotif(n, date){
+  const f = n.kind === 'awaiting' ? 'reminder' : 'deadline', patch = {[f]: date};
+  if (n.type === 'project') return editProjTask(n.parentId, n.taskId, patch);
+  if (n.type === 'inquiry') return editInqTask(n.parentId, n.taskId, patch);
+  if (n.type === 'na') return editInqNA(n.parentId, n.taskId, patch);
+  return editMTask(n.parentId, patch);
+}
+
+/* ── My Day rules (V1): waiting on others, stale projects, new tasks on older items ── */
+const CHASE_DAYS = 3, LATE_DAYS = 7, STALE_PROJECT_DAYS = 14, NEW_TASK_DAYS = 14, BURIED_DAYS = 30;
+function lastUpdated(p){
+  const today = todayStr(), c = [];
+  if (p.statusDate) c.push(p.statusDate);
+  (p.subStatuses||[]).forEach(s => { if (s.createdAt) c.push(s.createdAt); if (s.date) c.push(s.date); });
+  (p.tasks||[]).forEach(t => { if (t.deadline) c.push(t.deadline); });
+  if (p.date) c.push(p.date);
+  const past = c.filter(d => d <= today).sort();
+  return past.length ? past[past.length - 1] : '';
+}
+function recentTasks(x){
+  const out = [];
+  (x.tasks||[]).forEach(t => { if (!t.done && t.addedOn && daysSince(t.addedOn) <= NEW_TASK_DAYS) out.push({name: t.name, addedOn: t.addedOn}); });
+  (x.nextActions||[]).forEach(n => { if (!n.done && n.addedOn && daysSince(n.addedOn) <= NEW_TASK_DAYS) out.push({name: n.action, addedOn: n.addedOn}); });
+  return out.sort((a, b) => b.addedOn > a.addedOn ? 1 : -1);
+}
+
 /* ══════════ MOTION + UI HELPERS (from the approved prototype) ══════════ */
 const TOUCH = matchMedia('(hover: none) and (pointer: coarse)').matches;
 function vt(fn, type){
@@ -1826,11 +1963,13 @@ function burst(x, y, n = 18, spread = 120){
 }
 function toast(msg, opts = {}){
   const t = document.createElement('div'); t.className = 'toast';
-  t.innerHTML = `<i class="ti">${ico(opts.icon || 'check', 16)}</i><span>${msg}</span>${opts.undo ? `<button type="button">${opts.label || 'Undo'}</button>` : ''}<i class="tbar"></i>`;
+  const acts = [...(opts.undo ? [{label: opts.label || 'Undo', run: opts.undo}] : []), ...(opts.actions || [])];
+  t.innerHTML = `<i class="ti">${ico(opts.icon || 'check', 16)}</i><span>${msg}</span>${acts.map(a => `<button type="button">${esc(a.label)}</button>`).join('')}<i class="tbar"></i>`;
+  if (acts.length > 1) t.style.setProperty('--tms', ((opts.ms || 7000) / 1000) + 's');
   $('#toasts').appendChild(t); requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('in')));
   const kill = () => { t.classList.remove('in'); t.classList.add('out'); setTimeout(() => t.remove(), 400); };
-  const tm = setTimeout(kill, opts.ms || 5000);
-  if (opts.undo) t.querySelector('button').onclick = () => { clearTimeout(tm); opts.undo(); kill(); };
+  const tm = setTimeout(kill, opts.ms || (acts.length > 1 ? 7000 : 5000));
+  $$('button', t).forEach((b, i) => b.onclick = () => { clearTimeout(tm); kill(); acts[i].run(); });
   if ($$('.toast').length > 3) $$('.toast')[0].remove();
 }
 function countUp(scope){
@@ -1887,6 +2026,8 @@ function counts(){
   const openInq = d ? d.inquiries.filter(i => String(i.status||'').toUpperCase() === 'OPEN') : [];
   $('#c-inq').textContent = d ? openInq.filter(facMatch).length : '';
   $('#c-proj').textContent = d ? d.projects.filter(p => !isClosedProj(p)).filter(facMatch).length : '';
+  const myT = d ? (d.mtasks||[]).filter(t => t.status !== 'done' && !t.archived && (t.owner || 'Adam') === meName()).length : 0;
+  $('#c-task').textContent = myT || '';
   const N = d ? collectNotifications('mine') : {missed:[], awaiting:[]};
   const u = N.missed.length + N.awaiting.length; $('#c-noti').textContent = u || ''; $('#c-noti').style.display = u ? '' : 'none';
   const activeOf = f => d ? openInq.filter(i => facOf(i) === f).length + d.projects.filter(p => !isClosedProj(p) && facOf(p) === f).length : '';
@@ -1905,7 +2046,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard','Track your inquiries and projects'], inquiries:['Inquiries','5-day SLA · working days'], projects:['Projects','all NPD projects'], project:['Projects',''], notifications:['Notifications','your actions'], styles:['Styles','10 looks · same app'] };
+const TITLES = { dashboard:['Dashboard','Track your inquiries and projects'], inquiries:['Inquiries','5-day SLA · working days'], projects:['Projects','all NPD projects'], project:['Projects',''], tasks:['Tasks','your own to-dos'], notifications:['Notifications','your actions'], styles:['Styles','10 looks · same app'] };
 const RANGE = {today:'Today', week:'This week', month:'This month', year:'This year'};
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function words(str){ let i = 0; return str.replace(/(<em>.*?<\/em>|[^\s<]+)/g, w => `<span class="w"><span style="--i:${i++}">${w}</span></span>`); }
@@ -1938,7 +2079,7 @@ function pageDashboard(){
   const wk = Array.from({length:8}, (_, k) => { const a = addDays(today, -7*(8-k)), b = addDays(a, 7); return inqs.filter(i => i.date >= a && i.date < b).length; });
   const needs = [
     ...over.map(x => ({k:'inq', id:x.i.id, s:'over', t:x.i.name, sub:`${x.st.sla.current.label} · working day ${x.st.sla.elapsed} of ${SLA_DAYS}`, code:x.i.code})),
-    ...N.missed.slice(0, 6).map(n => ({k: n.type === 'project' ? 'proj' : n.type === 'inquiry' ? 'inq' : 'task', id:n.parentId, s:'over', t:n.taskName, sub:`${n.parentName} · was due ${fmtDate(n.deadline)}`, code:n.parentCode})),
+    ...N.missed.slice(0, 6).map(n => ({k: n.type === 'project' ? 'proj' : n.type === 'inquiry' || n.type === 'na' ? 'inq' : 'task', id:n.parentId, s:'over', t:n.taskName, sub:`${n.parentName} · was due ${fmtDate(n.deadline)}`, code:n.parentCode})),
     ...risk.map(x => ({k:'inq', id:x.i.id, s:'risk', t:x.i.name, sub:`${x.st.sla.current.label} due ${fmtDate(x.st.sla.current.due)}`, code:x.i.code})),
     ...late.map(x => ({k:'proj', id:x.p.id, s:'over', t:x.p.name, sub:x.p.deliveryDate && x.p.deliveryDate < today ? `Delivery was due ${fmtDate(x.p.deliveryDate)}` : 'Has overdue actions', code:x.p.code})),
   ].filter((n, i, a) => a.findIndex(m => m.k === n.k && m.id === n.id && m.t === n.t) === i).slice(0, 6);
@@ -1963,8 +2104,17 @@ function pageDashboard(){
   const holdN = inqs.filter(i => String(i.status||'').toUpperCase() === 'ON-HOLD').length; if (holdN) wait['On hold'] = holdN;
   const waitE = Object.entries(wait), wmx = Math.max(1, ...waitE.map(x => x[1]));
   const facs = factories().filter(f => S.fac === 'all' || f === S.fac);
+  // from V1's My Day
+  const tracked = [...inqs.filter(i => !i.outcome && !isClosedInq(i)).map(x => ({x, k:'inq'})), ...active.map(x => ({x, k:'proj'}))];
+  const waiting = tracked.filter(({x}) => x.ballWith && x.ballWith !== 'us').sort((a,b) => ballDays(b.x) - ballDays(a.x));
+  const stale = active.map(p => ({p, d: lastUpdated(p) ? daysSince(lastUpdated(p)) : null})).filter(y => y.d !== null && y.d > STALE_PROJECT_DAYS).sort((a,b) => b.d - a.d);
+  const newOld = tracked.filter(({x}) => x.date && daysSince(x.date) > BURIED_DAYS).map(y => ({...y, r: recentTasks(y.x)})).filter(y => y.r.length).sort((a,b) => b.r[0].addedOn > a.r[0].addedOn ? 1 : -1);
+  const goAttr = (k, id) => k === 'inq' ? `data-open="${esc(id)}"` : `data-proj="${esc(id)}"`;
+  const more = (l, m) => l.length > m ? `<div class="ro" style="padding:6px 8px">+ ${l.length - m} more</div>` : '';
+  const mdPanel = (title, sub, list, row, empty, i) => `<div class="card panel st" style="--i:${i}"><div class="ph"><h3>${title}</h3><span>${sub}</span></div><div class="list">${list.length ? list.slice(0, 6).map(row).join('') + more(list, 6) : `<div class="empty" style="padding:20px 8px">${empty}</div>`}</div></div>`;
+  const showBanner = N.missed.length && missedBannerToday();
   let n = 0;
-  return `${staleBanner()}<div class="dash">
+  return `${staleBanner()}${showBanner ? `<div class="banner warn dbanner st" style="--i:0">${ico('clock',16)}<span><b>${N.missed.length} overdue action${N.missed.length === 1 ? '' : 's'}</b> · ${N.missed.slice(0, 3).map(m => esc(m.taskName)).join(' · ')}${N.missed.length > 3 ? ' …' : ''}</span><button class="btn sm" type="button" data-go="notifications">Review</button><button class="ibtn" type="button" data-act="dismiss-banner" aria-label="Hide until tomorrow">${ico('x',15)}</button></div>` : ''}<div class="dash">
     <section class="card hero st" style="--i:${n++}">
       <div><div class="eyebrow">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${S.fac !== 'all' ? ' · ' + esc(S.fac) : ''}</div>
         <h2>${words(`${greet()}, <em>${esc(meName().split(' ')[0])}.</em>`)}</h2><p>${msg}</p></div>
@@ -1986,7 +2136,7 @@ function pageDashboard(){
           <div class="lg2"><span><i style="background:var(--c1)"></i>Won</span><span><i style="background:var(--c2)"></i>Lost / dropped</span></div><div class="chartwrap" id="cw">${areaSVG(wonM, lostM, CHART.labels)}<div class="tip" id="tip"></div></div>`
         : `<div class="empty" style="padding:24px 8px"><b>No outcomes yet</b>Set Won, Lost or Dropped in an inquiry's panel and it shows up here.</div>`}</div>
       <div class="card panel st" style="--i:${n++}"><div class="ph"><h3>Needs you</h3><span>most urgent</span><button class="ibtn ph-act" type="button" data-go="notifications" aria-label="Open notifications">${ico('arrowup',17)}</button></div>
-        <div class="list">${needs.length ? needs.map(x => `<button type="button" class="li" ${x.k==='inq'?`data-open="${esc(x.id)}"`:x.k==='proj'?`data-proj="${esc(x.id)}"`:'data-go="notifications"'}><i class="sev" style="--c:${ST_COLOR[x.s]}"></i><div style="min-width:0"><div class="t">${esc(x.t)}</div><div class="s">${esc(x.sub)}</div></div><span class="mono muted">${esc(x.code||'')}</span></button>`).join('')
+        <div class="list">${needs.length ? needs.map(x => `<button type="button" class="li" ${x.k==='inq'?`data-open="${esc(x.id)}"`:x.k==='proj'?`data-proj="${esc(x.id)}"`:'data-go="tasks"'}><i class="sev" style="--c:${ST_COLOR[x.s]}"></i><div style="min-width:0"><div class="t">${esc(x.t)}</div><div class="s">${esc(x.sub)}</div></div><span class="mono muted">${esc(x.code||'')}</span></button>`).join('')
           : `<div class="empty" style="padding:24px 8px"><b>All clear</b>No overdue SLAs or actions.</div>`}</div></div>
     </section>
     <section class="grid2">
@@ -1997,6 +2147,11 @@ function pageDashboard(){
           const o = its.filter(x => x.h === 'over').length, r = its.filter(x => x.h === 'risk').length, g = its.length - o - r;
           return `<div class="r"><div class="top2"><span>${esc(f)}</span><span class="muted">${its.length} item${its.length === 1 ? '' : 's'}</span></div><div class="stack">${its.length ? [[g,'var(--ok)'],[r,'var(--warn)'],[o,'var(--bad)']].filter(x=>x[0]).map(([v,c],j)=>`<i style="flex:${v};background:${c};--i:${fi*3+j}"></i>`).join('') : '<i style="flex:1;background:var(--track)"></i>'}</div></div>`; }).join('')}
           ${open.filter(i => !facOf(i)).length ? `<div class="ro">${open.filter(i => !facOf(i)).length} open inquiries have no factory set.</div>` : ''}</div></div>
+    </section>
+    <section class="grid3">
+      ${mdPanel('Waiting on others', `chase after ${CHASE_DAYS} days`, waiting, ({x, k}) => { const dd = ballDays(x); return `<button type="button" class="li" ${goAttr(k, x.id)}><i class="sev" style="--c:${dd >= LATE_DAYS ? 'var(--bad)' : dd >= CHASE_DAYS ? 'var(--warn)' : 'var(--ok)'}"></i><div style="min-width:0"><div class="t">${esc(x.name)}</div><div class="s">${esc(BALL_LABELS[x.ballWith] || x.ballWith)}${x.customer ? ' · ' + esc(x.customer) : ''}</div></div><span class="mono ${dd >= LATE_DAYS ? 'late' : 'muted'}">${dd}d${dd >= CHASE_DAYS ? ' · chase' : ''}</span></button>`; }, 'Nothing waiting on customers, factories or suppliers.', n++)}
+      ${mdPanel('Stale projects', `no update in ${STALE_PROJECT_DAYS}+ days`, stale, ({p, d: dd}) => `<button type="button" class="li" data-proj="${esc(p.id)}"><i class="sev" style="--c:${dd > 30 ? 'var(--bad)' : 'var(--warn)'}"></i><div style="min-width:0"><div class="t">${esc(p.name)}</div><div class="s">${esc(facOf(p) || p.customer || '')}</div></div><span class="mono ${dd > 30 ? 'late' : 'muted'}">${dd}d</span></button>`, `Every active project was updated in the last ${STALE_PROJECT_DAYS} days.`, n++)}
+      ${mdPanel('New tasks on older items', `added in the last ${NEW_TASK_DAYS} days`, newOld, ({x, k, r}) => `<button type="button" class="li" ${goAttr(k, x.id)}><i class="sev" style="--c:var(--info)"></i><div style="min-width:0"><div class="t">${esc(x.name)}</div><div class="s">New: ${esc(r[0].name || 'task')}${r.length > 1 ? ` +${r.length - 1}` : ''}</div></div><span class="mono muted">${fmtDate(x.date)}</span></button>`, 'No new tasks on items older than a month.', n++)}
     </section></div>`;
 }
 function areaSVG(A, B, labels){
@@ -2134,6 +2289,13 @@ function wireSheetDrag(){
   h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
 }
 
+/* V1 showed the overdue banner on the first visit of the day only */
+let BANNER_TODAY = null;
+function missedBannerToday(){
+  if (BANNER_TODAY === null){ const t = todayStr(); BANNER_TODAY = store.get('npd2-missed-day', '') !== t; if (BANNER_TODAY) store.set('npd2-missed-day', t); }
+  return BANNER_TODAY;
+}
+
 /* ── Projects ── */
 const AVC = ['#38BDF8','#A78BFA','#F472B6','#34D399','#FBBF24','#FB7185'];
 const initials = t => String(t||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase() || '?';
@@ -2214,9 +2376,12 @@ function tabBody(p){
       <div><span>Status</span><b>${esc(statusLabel(p.status))}</b></div><div><span>Started</span><b>${fmtDate(p.date, true) || '—'}</b></div>
       <div><span>Delivery date</span><b>${fmtDate(p.deliveryDate, true) || '—'}</b></div><div><span>Type</span><b>${esc(CLASS_LABELS[p.classification] || p.classification || '—')}</b></div>
       <div><span>Factory</span><b>${esc(facOf(p) || '—')}</b></div><div><span>Customer</span><b>${esc(p.customer || '—')}</b></div>
-      <div><span>Sales</span><b>${esc(p.salesPerson || '—')}</b></div><div><span>People</span><b>${esc((p.pics||[]).map(x => x.name + (x.role ? ' (' + x.role + ')' : '')).join(', ') || '—')}</b></div>
+      <div><span>Sales</span><b>${esc(p.salesPerson || '—')}</b></div>
       ${p.kiv ? `<div><span>KIV</span><b>${esc(p.kivComment || 'Yes')}</b></div>` : ''}</div>
       ${(p.links||[]).length ? `<div class="links" style="margin-top:12px">${p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
+      <div class="tgroup" style="margin-top:14px"><span>People · ${(p.pics||[]).length}</span></div>
+      ${can('projects','edit') ? `<button type="button" class="addrow" data-fm="pic">${ico('user',16)}<span>Add person</span></button>` : ''}
+      ${(p.pics||[]).length ? `<div class="pics">${p.pics.map((x, i) => `<div class="picrow${can('projects','edit') ? ' tap' : ''}" ${can('projects','edit') ? `data-fm="pic|#${i}" role="button" tabindex="0"` : ''}><i style="background:${AVC[(String(x.name||'').length + i) % AVC.length]}">${initials(x.name)}</i><div style="min-width:0"><b>${esc(x.name)}</b><small>${esc(x.role || 'No role set')}</small></div></div>`).join('')}</div>` : (can('projects','edit') ? '' : '<div class="ro">No people added.</div>')}
       ${can('projects','edit') ? `<div class="more" style="justify-content:flex-start"><button class="btn" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit details</button></div>` : ''}`;
   }
   const H = [...(p.activityLog||[])].reverse().slice(0, 40);
@@ -2232,7 +2397,7 @@ function pageProject(){
       <div style="min-width:0"><button type="button" class="backlink" data-go="projects">${ico('back',16)} All projects</button>
         <h2 class="dh-title" style="view-transition-name:hero">${esc(p.name)}</h2>
         <div class="meta" style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span><span class="pill">${esc(statusLabel(p.status))}</span>${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}<span class="pill"><span class="mono">${esc(p.code || '')}</span></span>
-          ${canE ? `<button class="pill" type="button" data-act="pin-proj" style="cursor:pointer;${p.pinned ? 'color:#F5C518' : ''}">${p.pinned ? '★ Pinned' : '☆ Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}</div></div>
+          ${canE ? `<button class="pill" type="button" data-act="pin-proj" style="cursor:pointer;${p.pinned ? 'color:#F5C518' : ''}">${p.pinned ? '★ Pinned' : '☆ Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}<a class="pill pedit plink" href="../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}" target="_blank" rel="noopener">${ico('gantt',13)} Gantt</a></div></div>
       <div class="pring"><svg viewBox="0 0 118 118" aria-hidden="true"><circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="pfg" cx="59" cy="59" r="50" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-(RING[p.id] || 0)/100)).toFixed(1)}"/></svg><div class="c"><b><span id="ppct">${pct}</span>%</b><span>actions done</span></div></div>
     </section>
     ${railHTML(p)}
@@ -2254,19 +2419,24 @@ function setRing(pct){ const fg = $('#pfg'); if (!fg) return; const C = 2*Math.P
 let NOTI = [];
 function pageNotifications(){
   const N = collectNotifications(S.nscope);
-  NOTI = [...N.missed.map(n => ({...n, kind:'missed'})), ...N.upcoming.map(n => ({...n, kind:'upcoming'})), ...N.awaiting.map(n => ({...n, kind:'awaiting'}))];
-  const today = todayStr();
+  const ALL = [...N.missed.map(n => ({...n, kind:'missed'})), ...N.upcoming.map(n => ({...n, kind:'upcoming'})), ...N.awaiting.map(n => ({...n, kind:'awaiting'}))];
+  const today = todayStr(), everyone = S.nscope === 'all' && isLead();
+  const ppl = everyone ? [...new Set(ALL.map(x => x.pic))].sort() : [];
+  if (S.nperson && !ppl.includes(S.nperson)) S.nperson = '';
+  const horizon = S.nwhen === 'week' ? addDays(today, 7) : S.nwhen === 'month' ? addDays(today, 30) : '';
+  NOTI = ALL.filter(x => (!S.nperson || x.pic === S.nperson) && (!horizon || !(x.kind === 'awaiting' ? x.reminder || x.deadline : x.deadline) || (x.kind === 'awaiting' ? x.reminder || x.deadline : x.deadline) <= horizon));
   const when = n => n.kind === 'awaiting' ? (n.reminder ? 'reminder ' + fmtDate(n.reminder) : 'awaiting reply') : n.deadline < today ? `${-workDaysBetween(today, n.deadline) || 1} working day${-workDaysBetween(today, n.deadline) > 1 ? 's' : ''} late` : n.deadline === today ? 'due today' : 'due ' + fmtDate(n.deadline);
   const grp = [['missed','Overdue', 'bad', 'clock'],['upcoming','Due soon', 'warn', 'flag'],['awaiting','Awaiting reply', 'info', 'msg']];
   let n = 1;
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${isLead() ? segHTML('nseg', [['mine','Mine'],['all','Everyone']], S.nscope) : ''}<span class="muted" style="font-size:13.5px">Swipe right to mark done, left to snooze until tomorrow.</span></div>
+  return `${staleBanner()}<div class="toolbar st" style="--i:0">${isLead() ? segHTML('nseg', [['mine','Mine'],['all','Everyone']], S.nscope) : ''}${segHTML('nwhen', [['all','Any time'],['week','Next 7 days'],['month','Next 30 days']], S.nwhen)}<span class="muted ntip" style="font-size:13.5px">Swipe right to mark done, left to snooze until tomorrow.</span></div>
+    ${everyone && ppl.length > 1 ? `<div class="chiprow st" style="--i:0">${[['', 'Everyone', ALL.length], ...ppl.map(p => [p, p, ALL.filter(x => x.pic === p).length])].map(([k, l, c]) => `<button type="button" class="${S.nperson === k ? 'on' : ''}" data-nper="${esc(k)}">${esc(l)} <span>${c}</span></button>`).join('')}</div>` : ''}
     ${grp.map(([k, l, c, ic]) => { const ns = NOTI.filter(x => x.kind === k); if (!ns.length) return '';
       return `<div class="ngroup">${l} <span class="ct">${ns.length}</span></div><div class="nlist">${ns.map(x => `<div class="nrow st ${k === 'missed' ? 'unread' : ''}" style="--i:${Math.min(n++, 12)}" data-nkey="${esc(x.key)}">
         <div class="under"><span class="ul">${ico('check',18)} ${canCompleteNotif(x) ? 'Done' : 'View only'}</span><span class="ur">Snooze ${ico('clock',18)}</span></div>
-        <div class="nfg"><span class="nic" style="--c:var(--${c})">${ico(x.type === 'project' ? 'folder' : x.type === 'inquiry' ? 'inbox' : ic, 19)}</span>
+        <div class="nfg"><span class="nic" style="--c:var(--${c})">${ico(x.type === 'project' ? 'folder' : x.type === 'inquiry' || x.type === 'na' ? 'inbox' : x.type === 'mtask' ? 'tasks' : ic, 19)}</span>
           <div style="min-width:0"><div class="nt">${esc(x.taskName)}</div><div class="ns">${esc([x.parentCode !== 'TASK' ? x.parentCode : 'Task', x.parentName !== x.taskName ? x.parentName : '', S.nscope === 'all' ? x.pic : ''].filter(Boolean).join(' · '))}</div></div>
-          <div class="nr"><span class="due ${k === 'missed' ? 'late' : ''}">${esc(when(x))}</span><div class="nact">${canCompleteNotif(x) ? `<button class="btn" type="button" data-ndone="${esc(x.key)}">${ico('check',14)} Done</button>` : ''}${x.type !== 'mtask' ? `<button class="btn" type="button" data-nopen="${esc(x.key)}">Open</button>` : ''}</div></div></div></div>`).join('')}</div>`; }).join('')
-    || `<div class="empty card"><b>All caught up</b>Nothing overdue, due soon or awaiting a reply${S.nscope === 'mine' ? ' for you' : ''}.</div>`}`;
+          <div class="nr"><span class="due ${k === 'missed' ? 'late' : ''}">${esc(when(x))}${canEditNotif(x) ? `<button type="button" class="resched" data-resched="${esc(x.key)}" data-v="${esc(k === 'awaiting' ? x.reminder || '' : x.deadline || '')}" data-dplabel="${k === 'awaiting' ? 'Chase on' : 'New deadline'}" aria-label="Change date">${ico('cal',15)}</button>` : ''}</span><div class="nact">${canCompleteNotif(x) ? `<button class="btn" type="button" data-ndone="${esc(x.key)}">${ico('check',14)} Done</button>` : ''}<button class="btn" type="button" data-nopen="${esc(x.key)}">Open</button></div></div></div></div>`).join('')}</div>`; }).join('')
+    || `<div class="empty card"><b>All caught up</b>Nothing overdue, due soon or awaiting a reply${S.nscope === 'mine' ? ' for you' : ''}${horizon || S.nperson ? ' with these filters' : ''}.</div>`}`;
 }
 
 /* ── Styles gallery ── */
@@ -2304,16 +2474,16 @@ function pageStyles(){
 }
 
 /* ══════════ RENDER + NAVIGATION ══════════ */
-const ORDER = ['dashboard','inquiries','projects','notifications','styles'];
+const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles'];
 function render(opts = {}){
   const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
   $('#ttl').innerHTML = `<h1>${t}</h1>${pr ? `<span class="sub">All projects › ${esc(pr.name)}</span>` : sub ? `<span class="sub">${sub}</span>` : ''}`;
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
   $('#topx').innerHTML = !DB.data ? '' : S.page === 'dashboard' ? segHTML('rseg', Object.entries(RANGE), S.range)
-    : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : '';
+    : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'tasks' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
-  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, notifications: pageNotifications, styles: pageStyles })[S.page]();
+  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, tasks: pageTasks, notifications: pageNotifications, styles: pageStyles })[S.page]();
   if (!opts.keep) v.scrollTop = 0;
   if (aeId === 'q'){ const q = $('#q'); if (q){ q.focus(); try { q.setSelectionRange(sel, sel); } catch(e){} } }
   hydrateIcons(v); counts(); moveNav(!opts.keep);
@@ -2329,6 +2499,8 @@ function render(opts = {}){
 function settleAnims(el){
   try { el.getAnimations({subtree:true}).forEach(a => { const t = a.effect && a.effect.getTiming(); if (t && t.iterations !== Infinity && a.playState !== 'finished') a.finish(); }); } catch(e){}
 }
+/* redraw the current page after a filter / selection change, without replaying entrance animations */
+function refresh(){ const v = $('#view'), top = v.scrollTop; render({keep:true}); settleAnims(v); v.scrollTop = top; }
 function softRender(first){
   if (!AUTH.user) return;
   if (first){ render(); return; }
@@ -2365,7 +2537,7 @@ function toggleProjTask(taskId, done, btn){
     vt(() => { setProjTaskDone(p.id, taskId, done); }, 'list').then(() => { setRing(projPct(findRec(DB.data, 'projects', p.id) || p)); });
     const pp = findRec(DB.data, 'projects', p.id);
     if (done && pp && (pp.tasks||[]).length && pp.tasks.every(x => x.done)){ burst(innerWidth/2, innerHeight/2.4, 60, 260); toast('Every action on this project is done', {icon:'trophy'}); }
-    else toast(`“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setProjTaskDone(p.id, taskId, !done)});
+    else toast(`“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setProjTaskDone(p.id, taskId, !done), actions: done && can('actions','add') ? [followUpAction('project', p.id, t.name, t.id)] : []});
   }, S.motion === 'off' ? 0 : 220);
 }
 function toggleInqTask(taskId, done, btn){
@@ -2374,20 +2546,67 @@ function toggleInqTask(taskId, done, btn){
   setTimeout(() => {
     setInqTaskDone(i.id, taskId, done);
     const s = inquirySLA(findRec(DB.data, 'inquiries', i.id));
-    toast(done && s && s.state === 'done' && _isNpdTask(t) ? `NPD input sent · SLA ${s.met === false ? 'missed' : 'met'}` : `“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqTaskDone(i.id, taskId, !done)});
+    toast(done && s && s.state === 'done' && _isNpdTask(t) ? `NPD input sent · SLA ${s.met === false ? 'missed' : 'met'}` : `“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqTaskDone(i.id, taskId, !done), actions: done && can('inquiries','edit') ? [followUpAction('inquiry', i.id, t.name, t.id)] : []});
   }, S.motion === 'off' ? 0 : 220);
 }
 
 function toggleNA(key, done, btn){
   const i = findRec(DB.data, 'inquiries', sheetId); const na = i && subOf(i.nextActions, key); if (!na) return;
   tickFeedback(btn, done);
-  setTimeout(() => { setInqNADone(i.id, key, done); toast(`“${esc(na.action || 'Next action')}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqNADone(i.id, key, !done)}); }, S.motion === 'off' ? 0 : 220);
+  setTimeout(() => { setInqNADone(i.id, key, done); toast(`“${esc(na.action || 'Next action')}” ${done ? 'done' : 'reopened'}`, {undo: () => setInqNADone(i.id, key, !done), actions: done ? [followUpAction('na', i.id, na.action || 'next action', na.id)] : []}); }, S.motion === 'off' ? 0 : 220);
+}
+
+/* ── Standalone tasks (V1's Tasks page) ── */
+function visibleMTasks(){
+  const all = S.tscope === 'all' && isLead();
+  return (DB.data.mtasks || []).filter(t => (all || (t.owner || 'Adam') === meName()) && (S.tarch ? !!t.archived : !t.archived) && (S.tcat === 'all' || t.category === S.tcat));
+}
+function mtaskRow(t, today){
+  const sel = S.tsel, canE = can('tasks','edit'), canC = can('tasks','complete'), done = t.status === 'done';
+  const pk = prioKey(t.priority), cat = (MT_CATS.find(c => c[0] === t.category) || [0, t.category || ''])[1];
+  return `<div class="task mt ${done ? 'done' : ''} ${sel && sel.has(t.id) ? 'picked' : ''}" style="--n:m-${esc(String(t.id).replace(/[^\w-]/g,''))}" ${sel ? `data-mtsel="${esc(t.id)}" role="button" tabindex="0"` : ''}>
+    ${sel ? `<span class="selc">${ico('check',14)}</span>` : `<button type="button" class="cb" ${canC ? `data-mt="${esc(t.id)}" data-done="${done ? 0 : 1}"` : 'disabled'} aria-label="${done ? 'Reopen' : 'Complete'}: ${esc(t.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>`}
+    <div style="min-width:0" ${!sel && canE ? `data-fm="mtask|${esc(t.id)}" class="tap"` : ''}><div class="tt">${esc(t.title)}</div>
+      <div class="who">${cat ? `<span>${esc(cat)}</span>` : ''}${prio(pk)}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !done ? '<span class="pill warn">In progress</span>' : ''}${S.tscope === 'all' ? `<span>${esc(t.owner || 'Adam')}</span>` : ''}${t.description ? `<span class="desc">${esc(t.description)}</span>` : ''}</div></div>
+    <span class="due ${!done && t.deadline && t.deadline < today ? 'late' : ''}">${done && t.completedAt ? 'done ' + fmtDate(t.completedAt) : t.deadline ? fmtDate(t.deadline) : ''}</span>
+    ${!sel && canE ? `<button type="button" class="ed" data-fm="mtask|${esc(t.id)}" aria-label="Edit ${esc(t.title)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
+}
+function pageTasks(){
+  const today = todayStr(), wk = addDays(today, 7), list = visibleMTasks();
+  const base = (DB.data.mtasks || []).filter(t => (S.tscope === 'all' && isLead() || (t.owner || 'Adam') === meName()) && (S.tarch ? !!t.archived : !t.archived));
+  const byDate = (a, b) => (a.deadline || '9') < (b.deadline || '9') ? -1 : (a.deadline || '9') > (b.deadline || '9') ? 1 : ({high:0, medium:1, low:2}[a.priority] ?? 1) - ({high:0, medium:1, low:2}[b.priority] ?? 1);
+  const open = list.filter(t => t.status !== 'done').sort(byDate), done = list.filter(t => t.status === 'done').sort((a,b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1);
+  const groups = S.tarch ? [['Archived', list.sort((a,b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1)]] : [
+    ['Awaiting reply', open.filter(t => t.status === 'awaiting-reply')],
+    ['Overdue', open.filter(t => t.status !== 'awaiting-reply' && t.deadline && t.deadline < today)],
+    ['Today', open.filter(t => t.status !== 'awaiting-reply' && t.deadline === today)],
+    ['Next 7 days', open.filter(t => t.status !== 'awaiting-reply' && t.deadline > today && t.deadline <= wk)],
+    ['Later', open.filter(t => t.status !== 'awaiting-reply' && t.deadline > wk)],
+    ['No deadline', open.filter(t => t.status !== 'awaiting-reply' && !t.deadline)],
+  ];
+  const cnt = k => base.filter(t => (k === 'all' || t.category === k) && (S.tarch || t.status !== 'done')).length;
+  const body = groups.filter(g => g[1].length).map(([l, ts]) => `<div class="tgroup"><span>${l} · ${ts.length}</span></div>${ts.map(t => mtaskRow(t, today)).join('')}`).join('')
+    + (!S.tarch && done.length ? `<div class="tgroup"><span>Done · ${done.length}</span><button class="lnk" type="button" data-act="tdone">${S.tdone ? 'Hide' : 'Show'}</button></div>${S.tdone ? done.map(t => mtaskRow(t, today)).join('') : ''}` : '');
+  const nSel = S.tsel ? S.tsel.size : 0;
+  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('tcat', [['all','All'], ...MT_CATS].map(([k, l]) => [k, l, cnt(k)]), S.tcat)}</div>
+    <div class="toolbar ttools st" style="--i:0">${isLead() ? segHTML('tscope', [['mine','Mine'],['all','Everyone']], S.tscope) : ''}
+      <span class="tb-gap"></span>
+      <button class="btn ${S.tarch ? 'on' : ''}" type="button" data-act="tarch">${ico(S.tarch ? 'back' : 'file',15)}<span>${S.tarch ? 'Back to tasks' : 'Archived'}</span></button>
+      ${can('tasks','edit') || can('tasks','delete') ? `<button class="btn ${S.tsel ? 'on' : ''}" type="button" data-act="tsel">${ico(S.tsel ? 'x' : 'check',15)}<span>${S.tsel ? 'Cancel' : 'Select'}</span></button>` : ''}
+      ${can('tasks','add') && !S.tarch ? `<button class="b1 tb-new" type="button" data-fm="mtask">${ico('plus',16)}<span>New task</span></button>` : ''}</div>
+    <div class="card tabs-wrap st mtlist" style="--i:1">${body || `<div class="empty" style="padding:28px 10px"><b>${S.tarch ? 'No archived tasks' : 'No tasks here'}</b>${S.tarch ? 'Finished tasks you archive show up here.' : 'Add your own to-dos: reports, meetings, follow-ups.'}</div>`}</div>
+    ${S.tsel ? `<div class="selbar"><b>${nSel} selected</b>${S.tarch ? `<button class="btn sm" type="button" data-act="tbulk-restore" ${nSel ? '' : 'disabled'}>Restore</button>` : `<button class="btn sm" type="button" data-act="tbulk-archive" ${nSel ? '' : 'disabled'}>Archive</button>`}${can('tasks','delete') ? `<button class="btn sm fm-del" type="button" data-act="tbulk-delete" ${nSel ? '' : 'disabled'}>Delete</button>` : ''}</div>` : ''}`;
+}
+function toggleMT(id, done, btn){
+  const t = findRec(DB.data, 'mtasks', id); if (!t) return;
+  tickFeedback(btn, done);
+  setTimeout(() => { setMTaskDone(id, done); toast(`“${esc(t.title)}” ${done ? 'done' : 'reopened'}`, {undo: () => setMTaskDone(id, !done), actions: done && can('tasks','add') ? [followUpAction('mtask', null, t.title, t.id)] : []}); }, S.motion === 'off' ? 0 : 220);
 }
 
 /* ══════════ DATE PICKER — V2's own calendar, never the system date input ══════════
    Drop-down under the field on wide screens, a bottom sheet on phones. Weeks start on
    Monday; weekends are dimmed but can still be picked. */
-const DP = { el: null, scrim: null, field: null, view: 'days', y: 0, m: 0, focus: '', swallow: false };
+const DP = { el: null, scrim: null, field: null, onPick: null, view: 'days', y: 0, m: 0, focus: '', swallow: false };
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const WKDAYS = ['Mo','Tu','We','Th','Fr','Sa','Su'];
 const dParse = s => { if (!s) return null; const t = new Date(String(s).slice(0,10) + 'T00:00:00'); return isNaN(t) ? null : t; };
@@ -2414,7 +2633,7 @@ function dpQuick(){
   return [['Today', t], ['Tomorrow', addDays(t, 1)], ['+2 work days', addWorkDays(t, 2)], ['+5 work days', addWorkDays(t, 5)], ['Next Monday', addDays(t, 7 - dow)]];
 }
 function dpBody(){
-  const sel = DP.field.dataset.v, today = todayStr();
+  const sel = DP.field.dataset.v || '', today = todayStr();
   if (DP.view === 'months'){
     const sd = dParse(sel), td = dParse(today);
     return `<div class="dp-months">${MONTHS.map((n, i) => `<button type="button" data-dpm="${i}" class="${sd && sd.getFullYear() === DP.y && sd.getMonth() === i ? 'sel' : ''}${td.getFullYear() === DP.y && td.getMonth() === i ? ' now' : ''}">${n.slice(0,3)}</button>`).join('')}</div>`;
@@ -2431,7 +2650,7 @@ function dpBody(){
 }
 function dpRender(dir){
   const el = DP.el; if (!el) return;
-  const lab = DP.field.closest('.ff') && $('label', DP.field.closest('.ff'));
+  const lab = DP.field.dataset.dplabel ? {textContent: DP.field.dataset.dplabel} : DP.field.closest('.ff') && $('label', DP.field.closest('.ff'));
   el.dataset.ym = DP.y + '-' + pad2(DP.m + 1);
   el.innerHTML = `${el.classList.contains('sheet') ? `<div class="dp-grab"></div><div class="dp-cap">${esc(lab ? lab.textContent.replace('*', '').trim() : 'Date')}</div>` : ''}
     <div class="dp-head"><button type="button" class="dp-nav" data-dpnav="-1" aria-label="${DP.view === 'days' ? 'Previous month' : 'Previous year'}">${ico('back',16)}</button>
@@ -2448,8 +2667,8 @@ function dpPlace(){
   else if (top + h > innerHeight - 8) top = Math.max(8, innerHeight - h - 8);
   el.style.left = left + 'px'; el.style.top = top + 'px'; el.classList.toggle('up', up);
 }
-function openDP(btn){
-  closeDP(false);
+function openDP(btn, onPick){
+  closeDP(false); DP.onPick = onPick || null;
   const v = btn.dataset.v, base = dParse(v) || dParse(todayStr());
   Object.assign(DP, { field: btn, y: base.getFullYear(), m: base.getMonth(), view: 'days', focus: v || todayStr() });
   const sheet = innerWidth <= 720;
@@ -2475,7 +2694,7 @@ function dpShift(n){
   dpRender(n); dpPlace();
 }
 function dpPick(ds){
-  const f = DP.field; closeDP(true); setDateField(f, ds);
+  const f = DP.field, cb = DP.onPick; closeDP(!cb); if (cb) cb(ds); else setDateField(f, ds);
 }
 document.addEventListener('click', e => {
   const t = e.target;
@@ -2530,7 +2749,7 @@ function fieldHTML(f){
   else if (f.type === 'checks') ctl = `<div class="fm-checks" data-k="${f.k}" data-checks>${f.options.map(([o, l, sub]) => `<label class="fm-ck"><input type="checkbox" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><i>${ico('check',13)}</i><span>${esc(l)}${sub ? `<small>${esc(sub)}</small>` : ''}</span></label>`).join('')}</div>`;
   else if (f.type === 'date') ctl = dateFieldHTML(f, id);
   else if (f.type === 'products') ctl = `<div class="fm-prods" data-k="${f.k}" data-prods>${(v || []).map(prodRow).join('')}</div><button type="button" class="lnk fm-addp" data-addprod>+ Add product</button><div class="fm-rev" data-rev></div>`;
-  else ctl = `<input id="${id}" data-k="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" placeholder="${esc(f.ph || '')}" ${f.type === 'number' ? 'min="0" step="any" inputmode="decimal"' : ''} autocomplete="off">`;
+  else ctl = `<input id="${id}" data-k="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" placeholder="${esc(f.ph || '')}" ${f.type === 'number' ? 'min="0" step="any" inputmode="decimal"' : ''} ${f.list ? `list="${id}-dl"` : ''} autocomplete="off">${f.list ? `<datalist id="${id}-dl">${f.list.map(o => `<option value="${esc(o)}"></option>`).join('')}</datalist>` : ''}`;
   return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}">${lab}${ctl}${f.hint ? `<small>${esc(f.hint)}</small>` : ''}<em class="fm-err"></em></div>`;
 }
 const prodRow = p => `<div class="fm-prod" data-id="${esc(p.id || uid())}"><input data-pf="name" placeholder="Product name / size" value="${esc(p.name || '')}"><input data-pf="volume" type="number" min="0" inputmode="numeric" placeholder="Volume / yr" value="${p.volume || ''}"><input data-pf="cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="RM / pc" value="${p.cost || ''}"><button type="button" class="ibtn" data-delprod aria-label="Remove product">${ico('x',15)}</button></div>`;
@@ -2561,7 +2780,7 @@ function openForm(cfg){
   f.innerHTML = `<div class="fm-card" role="dialog" aria-modal="true" aria-labelledby="fm-title">
     <div class="fm-head"><div style="min-width:0">${cfg.eyebrow ? `<span class="fm-eye">${esc(cfg.eyebrow)}</span>` : ''}<h2 id="fm-title">${esc(cfg.title)}</h2></div><button type="button" class="ibtn" data-fmx="cancel" aria-label="Close">${ico('x',18)}</button></div>
     <form class="fm-body" novalidate autocomplete="off">${cfg.fields.map(fieldHTML).join('')}<button type="submit" hidden></button></form>
-    <div class="fm-foot">${cfg.del ? `<button type="button" class="btn fm-del" data-fmx="del">${ico('trash',15)}<span>${esc(cfg.del.label || 'Delete')}</span></button>` : ''}<span class="fm-msg" id="fm-msg"></span>
+    <div class="fm-foot">${cfg.del ? `<button type="button" class="btn fm-del" data-fmx="del">${ico('trash',15)}<span>${esc(cfg.del.label || 'Delete')}</span></button>` : ''}${cfg.extra ? `<button type="button" class="btn" data-fmx="extra">${ico(cfg.extra.icon || 'plus',15)}<span>${esc(cfg.extra.label)}</span></button>` : ''}<span class="fm-msg" id="fm-msg"></span>
       <button type="button" class="btn" data-fmx="cancel">Cancel</button><button type="button" class="b1" data-fmx="ok">${esc(cfg.submit || 'Save')}</button></div></div>`;
   hydrateIcons(f); formSync(); FM.init = JSON.stringify(readForm());
   $('#fscrim').classList.add('on'); f.classList.add('open'); f.setAttribute('aria-hidden', 'false');
@@ -2600,6 +2819,7 @@ document.addEventListener('click', e => {
   if (x){ const a = x.dataset.fmx;
     if (a === 'cancel') closeForm(true);
     else if (a === 'ok') submitForm();
+    else if (a === 'extra'){ const run = FM.cfg.extra.run; closeForm(true); run(); }
     else if (a === 'del'){ if (!FM.armed){ FM.armed = true; x.classList.add('armed'); $('span', x).textContent = 'Tap again to delete'; setTimeout(() => { FM.armed = false; if (x.isConnected){ x.classList.remove('armed'); $('span', x).textContent = FM.cfg && FM.cfg.del ? FM.cfg.del.label || 'Delete' : 'Delete'; } }, 3500); }
       else { const run = FM.cfg.del.run; closeForm(true); run(); } }
     return; }
@@ -2641,49 +2861,49 @@ const sameLinks = (a, b) => linksToText(a) === linksToText(b);
 const done1 = (msg, undo, icon) => toast(msg, undo ? {undo, icon: icon || 'check'} : {icon: icon || 'check'});
 
 /* ── project action ── */
-function formProjTask(projId, key){
+function formProjTask(projId, key, preset){
   const p = findRec(DB.data, 'projects', projId); if (!p) return;
   const t = key ? subOf(p.tasks, key) : null; if (key && !t) return;
   const subs = p.subStatuses || [];
   openForm({ eyebrow: p.code || p.name, title: t ? 'Edit action' : 'New action', submit: t ? 'Save' : 'Add action',
     fields: [
-      {k:'name', label:'Action', req:true, value: t ? t.name : '', ph:'e.g. Send drawing to factory for review'},
+      {k:'name', label:'Action', req:true, value: t ? t.name : preset ? preset.name : '', ph:'e.g. Send drawing to factory for review'},
       {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
-      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : todayStr()},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : todayStr()},
       {k:'status', label:'Status', type:'chips', value: t ? t.status || (t.done ? 'done' : 'todo') : 'todo', options: TASK_ST},
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
       ...(subs.length ? [{k:'linkedSubStatus', label:'Linked update', type:'select', value: t ? t.linkedSubStatus || '' : '', options: withCur([['', '— None —'], ...subs.map((s, i) => [s.id || String(i), s.title + (s.date ? ' (' + fmtDate(s.date) + ')' : '')])], t && t.linkedSubStatus)}] : []),
     ],
     del: t && can('actions','delete') ? {label:'Delete', run: () => { const u = deleteProjTask(projId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
-      if (!t){ addProjTask(projId, v); done1(`Action added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
+      if (!t){ addProjTask(projId, {...v, followupOf: preset && preset.followupOf}); done1(`Action added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
       if (!Object.keys(ch).length) return;
       if ('status' in ch && v.status === 'awaiting-reply') ch.reminder = v.reminder;
       editProjTask(projId, key, ch); done1('Action saved');
     } });
 }
 /* ── inquiry task ── */
-function formInqTask(inqId, key){
+function formInqTask(inqId, key, preset){
   const i = findRec(DB.data, 'inquiries', inqId); if (!i) return;
   const t = key ? subOf(i.tasks, key) : null; if (key && !t) return;
   openForm({ eyebrow: i.code || i.name, title: t ? 'Edit task' : 'New task', submit: t ? 'Save' : 'Add task',
     fields: [
-      {k:'name', label:'Task', req:true, value: t ? t.name : '', ph:'e.g. Follow up mold quote'},
+      {k:'name', label:'Task', req:true, value: t ? t.name : preset ? preset.name : '', ph:'e.g. Follow up mold quote'},
       {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
-      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : addWorkDays(todayStr(), 2)},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : addWorkDays(todayStr(), 2)},
     ],
     del: t ? {label:'Delete', run: () => { const u = deleteInqTask(inqId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
-    onSubmit: (v, ch) => { if (!t){ addInqTask(inqId, v); done1('Task added'); return; } if (Object.keys(ch).length){ editInqTask(inqId, key, ch); done1('Task saved'); } } });
+    onSubmit: (v, ch) => { if (!t){ addInqTask(inqId, {...v, followupOf: preset && preset.followupOf}); done1('Task added'); return; } if (Object.keys(ch).length){ editInqTask(inqId, key, ch); done1('Task saved'); } } });
 }
 /* ── inquiry next action ── */
-function formInqNA(inqId, key){
+function formInqNA(inqId, key, preset){
   const i = findRec(DB.data, 'inquiries', inqId); if (!i) return;
   const na = key ? subOf(i.nextActions, key) : null; if (key && !na) return;
   openForm({ eyebrow: i.code || i.name, title: na ? 'Edit next action' : 'New next action', submit: na ? 'Save' : 'Add',
     fields: [
-      {k:'action', label:'Next action', req:true, value: na ? na.action || na.text || '' : '', ph:'e.g. Chase customer for artwork'},
+      {k:'action', label:'Next action', req:true, value: na ? na.action || na.text || '' : preset ? preset.name : '', ph:'e.g. Chase customer for artwork'},
       {k:'pic', label:'Person in charge', type:'select', half:true, value: na ? na.pic || meName() : meName(), options: peopleOpts(na && na.pic)},
-      {k:'deadline', label:'Deadline', type:'date', half:true, value: na ? na.deadline || '' : ''},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: na ? na.deadline || '' : preset ? preset.deadline : ''},
     ],
     del: na ? {label:'Delete', run: () => { const u = deleteInqNA(inqId, key); done1('Next action removed', u, 'trash'); }} : null,
     onSubmit: (v, ch) => { if (!na){ addInqNA(inqId, v); done1('Next action added'); return; } if (Object.keys(ch).length){ editInqNA(inqId, key, ch); done1('Next action saved'); } } });
@@ -2825,6 +3045,54 @@ function openFormFor(spec){
   if (kind === 'itask') return formInqTask(sheetId, key || null);
   if (kind === 'na') return formInqNA(sheetId, key || null);
   if (kind === 'inq') return formInquiry(key || null);
+  if (kind === 'mtask') return formMTask(key || null);
+  if (kind === 'pic') return formPIC(S.proj, key || null);
+}
+
+/* ── standalone task ── */
+function formMTask(id, preset){
+  const t = id ? findRec(DB.data, 'mtasks', id) : null; if (id && !t) return;
+  const mine = !t || (t.owner || 'Adam') === meName();
+  openForm({ eyebrow: t && !mine ? `${t.owner}'s task` : 'Tasks', title: t ? 'Edit task' : 'New task', submit: t ? 'Save' : 'Add task',
+    fields: [
+      {k:'title', label:'Task', req:true, value: t ? t.title : preset ? preset.title : '', ph:'e.g. Send monthly NPD report'},
+      {k:'description', label:'Details', type:'textarea', rows:2, value: t ? t.description || '' : '', ph:'Optional'},
+      {k:'category', label:'Category', type:'chips', value: t ? t.category || 'general' : preset ? preset.category : 'general', options: withCur(MT_CATS, t && t.category)},
+      {k:'priority', label:'Priority', type:'chips', half:true, value: t ? t.priority || 'medium' : 'medium', options: MT_PRIO},
+      {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : todayStr()},
+      {k:'status', label:'Status', type:'chips', value: t ? t.status || 'todo' : 'todo', options: TASK_ST},
+      {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
+    ],
+    extra: t && can('tasks','add') ? {label:'Duplicate', icon:'plus', run: () => { const nid = duplicateMTask(t.id); done1('Task duplicated'); if (nid) setTimeout(() => formMTask(nid), 80); }} : null,
+    del: t && can('tasks','delete') ? {label:'Delete', run: () => { if (deleteWouldBeBlocked(1)){ toast('The Sheet would block this delete (too few records left).', {icon:'x'}); return; } const u = deleteMTasks([t.id]); done1(`Deleted “${esc(t.title)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => {
+      if (!t){ createMTask({...v, followupOf: preset && preset.followupOf}); done1(`Task added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
+      if (!Object.keys(ch).length) return;
+      if ('status' in ch && v.status === 'awaiting-reply') ch.reminder = v.reminder;
+      editMTask(t.id, ch); done1('Task saved');
+    } });
+}
+/* ── project person (PIC) ── */
+function formPIC(projId, key){
+  const p = findRec(DB.data, 'projects', projId); if (!p) return;
+  const orig = key ? (p.pics || [])[+key.slice(1)] : null; if (key && !orig) return;
+  openForm({ eyebrow: p.code || p.name, title: orig ? 'Edit person' : 'Add person', submit: orig ? 'Save' : 'Add person',
+    fields: [
+      {k:'name', label:'Name', req:true, value: orig ? orig.name : '', ph:'Type a name', list: people()},
+      {k:'role', label:'Role', value: orig ? orig.role || '' : '', ph:'e.g. Factory PE, Customer QA, Designer', list: [...new Set(DB.data.projects.flatMap(x => (x.pics||[]).map(y => y.role)).filter(Boolean))].slice(0, 30)},
+    ],
+    del: orig ? {label:'Remove', run: () => { const u = deletePIC(projId, key, orig); done1(`Removed ${esc(orig.name)}`, u, 'trash'); }} : null,
+    onSubmit: (v, ch) => { if (!orig){ addPIC(projId, v); done1(`${esc(v.name)} added`); return; } if (Object.keys(ch).length){ editPIC(projId, key, orig, v); done1('Person saved'); } } });
+}
+/* ── "Follow up" button on the done toast (V1 asked in a pop-up every time; here it is one tap away) ── */
+function followUpAction(kind, parentId, name, srcId){
+  return {label:'Follow up', run: () => {
+    const preset = {name: `Follow up: ${name}`, title: `Follow up: ${name}`, deadline: addDays(todayStr(), 3), category:'followup', followupOf: srcId};
+    if (kind === 'project') formProjTask(parentId, null, preset);
+    else if (kind === 'inquiry') formInqTask(parentId, null, preset);
+    else if (kind === 'na') formInqNA(parentId, null, preset);
+    else formMTask(null, preset);
+  }};
 }
 
 /* ── notification swipe: right = done, left = snooze until tomorrow ── */
@@ -2846,7 +3114,8 @@ document.addEventListener('pointermove', e => {
 function notifByKey(k){ return NOTI.find(x => x.key === k); }
 function notifDone(n, rowEl){
   if (!canCompleteNotif(n)){ toast("You don't have permission to complete this one", {icon:'x'}); return false; }
-  const go2 = () => { completeNotif(n, true); toast(`“${esc(n.taskName)}” done`, {undo: () => completeNotif(n, false)}); };
+  const fu = n.type === 'mtask' ? (can('tasks','add') ? followUpAction('mtask', null, n.taskName, n.taskId) : null) : n.type === 'project' ? (can('actions','add') ? followUpAction('project', n.parentId, n.taskName, n.taskId) : null) : (can('inquiries','edit') ? followUpAction(n.type === 'na' ? 'na' : 'inquiry', n.parentId, n.taskName, n.taskId) : null);
+  const go2 = () => { completeNotif(n, true); toast(`“${esc(n.taskName)}” done`, {undo: () => completeNotif(n, false), actions: fu ? [fu] : []}); };
   if (rowEl){ rowEl.style.height = rowEl.offsetHeight + 'px'; rowEl.classList.add('collapse'); setTimeout(go2, 260); } else go2();
   return true;
 }
@@ -2873,14 +3142,16 @@ document.addEventListener('pointerup', swipeEnd); document.addEventListener('poi
 let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
-  const pages = ORDER.filter(p => p !== 'styles').map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',notifications:'bell'}[p]}));
+  const pages = ORDER.filter(p => p !== 'styles').map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
   const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'},{g:'Actions', t:'Open V1', run:() => { location.href = V1_URL; }, ic:'arrowup'}];
   if (DB.data && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
+  if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
   const d = DB.data || {inquiries:[], projects:[]};
   const inq = d.inquiries.filter(i => !q ? !isClosedInq(i) : true).map(i => ({g:'Inquiries', t:i.name, k:i.code, s:[i.customer, i.factory].join(' '), run:() => openSheet(i.id), ic:'inbox'}));
   const pr = d.projects.map(p => ({g:'Projects', t:p.name, k:p.code, s:[p.customer, p.factory].join(' '), run:() => go('project', {proj:p.id}), ic:'folder'}));
-  cmdItems = [...pages, ...acts, ...inq, ...pr].filter(x => !q || [x.t, x.k, x.s, x.g].join(' ').toLowerCase().includes(q)).slice(0, 16);
+  const mts = q ? (d.mtasks||[]).filter(t => !t.archived && (isLead() || (t.owner || 'Adam') === meName())).map(t => ({g:'Tasks', t:t.title, k: t.deadline ? fmtDate(t.deadline) : '', s: t.description || '', run:() => formMTask(t.id), ic:'tasks'})) : [];
+  cmdItems = [...pages, ...acts, ...inq, ...pr, ...mts].filter(x => !q || [x.t, x.k, x.s, x.g].join(' ').toLowerCase().includes(q)).slice(0, 16);
   cmdIdx = 0; let g = '', i = 0;
   $('#cmd-list').innerHTML = cmdItems.map((x, n) => `${x.g !== g ? `<div class="cmd-grp">${g = x.g}</div>` : ''}<button type="button" class="cmd-item ${n===0?'on':''}" data-ci="${n}" style="--i:${i++}">${ico(x.ic,17)}<span>${esc(x.t)}</span>${x.k ? `<span class="k">${esc(x.k)}</span>` : ''}</button>`).join('') || '<div class="empty">No matches</div>';
 }
@@ -2910,10 +3181,10 @@ function openPop(anchor){
   p.classList.add('open'); requestAnimationFrame(() => $$('#pop .seg').forEach(s => placeInd(s, false)));
 }
 function closePop(){ $('#pop').classList.remove('open'); }
-function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') render({keep:true}); }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
+function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') refresh(); }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
 function toggleTheme(btn){
   const r = (btn || $('.theme-btn')).getBoundingClientRect(); root.style.setProperty('--rx', (r.left + r.width/2) + 'px'); root.style.setProperty('--ry', (r.top + r.height/2) + 'px');
-  return vt(() => { S.theme = S.theme === 'dark' ? 'light' : 'dark'; store.set('npd2-theme', S.theme); applyPrefs(); if (S.page === 'styles') render({keep:true}); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === S.theme)); placeInd(ts, false); } }, 'theme');
+  return vt(() => { S.theme = S.theme === 'dark' ? 'light' : 'dark'; store.set('npd2-theme', S.theme); applyPrefs(); if (S.page === 'styles') refresh(); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === S.theme)); placeInd(ts, false); } }, 'theme');
 }
 
 /* ══════════ SIGN IN (real Firebase account, same as V1) ══════════ */
@@ -3003,6 +3274,12 @@ document.addEventListener('click', e => {
   if (t.closest('#form')) return;
   const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
   const nad = t.closest('[data-na]'); if (nad){ toggleNA(nad.dataset.na, nad.dataset.done === '1', nad); return; }
+  const mt = t.closest('[data-mt]'); if (mt){ toggleMT(mt.dataset.mt, mt.dataset.done === '1', mt); return; }
+  const ms = t.closest('[data-mtsel]'); if (ms){ const id = ms.dataset.mtsel; S.tsel.has(id) ? S.tsel.delete(id) : S.tsel.add(id); refresh(); return; }
+  const np = t.closest('[data-nper]'); if (np){ S.nperson = np.dataset.nper; vt(() => refresh(), 'list'); return; }
+  const rs = t.closest('[data-resched]'); if (rs){ const n = notifByKey(rs.dataset.resched); if (!n) return;
+    if (DP.el && DP.field === rs){ closeDP(false); return; }
+    openDP(rs, d => { const was = n.kind === 'awaiting' ? n.reminder : n.deadline; rescheduleNotif(n, d); toast(`“${esc(n.taskName)}” moved to ${fmtDate(d)}`, {icon:'clock', undo: () => rescheduleNotif(n, was || '')}); }); return; }
   const g = t.closest('[data-go]'); if (g && !t.closest('#pop')){ go(g.dataset.go); return; }
   const o = t.closest('[data-open]'); if (o){ openSheet(o.dataset.open); return; }
   const pj = t.closest('[data-proj]'); if (pj){ go('project', {proj: pj.dataset.proj, src: pj.matches('.pcard,.bcard,.li') ? pj : null}); return; }
@@ -3010,12 +3287,12 @@ document.addEventListener('click', e => {
     if (k === 'I' && S.theme === 'dark') setTimeout(() => toast('Studio is designed light-first', {icon:'sun', label:'Switch to light', undo: () => toggleTheme()}), 500);
     if (k === 'J' && S.theme === 'light') setTimeout(() => toast('Graphite is designed dark-first', {icon:'moon', label:'Switch to dark', undo: () => toggleTheme()}), 500);
     return; }
-  const f = t.closest('[data-fac]'); if (f){ S.fac = f.dataset.fac; vt(() => render({keep:true}), 'list'); return; }
+  const f = t.closest('[data-fac]'); if (f){ S.fac = f.dataset.fac; vt(() => refresh(), 'list'); return; }
   const lk = t.closest('#pop [data-look]'); if (lk){ setLook(lk.dataset.look); return; }
   const it = t.closest('[data-itask]'); if (it){ toggleInqTask(it.dataset.itask, it.dataset.done === '1', it); return; }
   const ptk = t.closest('[data-ptask]'); if (ptk){ toggleProjTask(ptk.dataset.ptask, ptk.dataset.done === '1', ptk); return; }
   const nd = t.closest('[data-ndone]'); if (nd){ const n = notifByKey(nd.dataset.ndone); if (n) notifDone(n, nd.closest('.nrow')); return; }
-  const no = t.closest('[data-nopen]'); if (no){ const n = notifByKey(no.dataset.nopen); if (!n) return; if (n.type === 'inquiry') openSheet(n.parentId); else if (n.type === 'project') go('project', {proj:n.parentId}); return; }
+  const no = t.closest('[data-nopen]'); if (no){ const n = notifByKey(no.dataset.nopen); if (!n) return; if (n.type === 'inquiry' || n.type === 'na') openSheet(n.parentId); else if (n.type === 'project') go('project', {proj:n.parentId}); else formMTask(n.parentId); return; }
   const sb = t.closest('.seg button'); if (sb){ const seg = sb.parentElement, v = sb.dataset.v; if (sb.classList.contains('on')) return;
     const prevIdx = $$('button', seg).findIndex(b => b.classList.contains('on'));
     $$('button', seg).forEach(b => { b.classList.toggle('on', b === sb); b.setAttribute('aria-selected', b === sb); }); placeInd(seg);
@@ -3027,7 +3304,10 @@ document.addEventListener('click', e => {
     else if (seg.id === 'pbseg'){ const p = findRec(DB.data, 'projects', S.proj); if (!p) return; const prev = p.ballWith || ''; setBall('projects', p.id, v); toast(`Ball passed to ${esc(BALL_LABELS[v])}`, {icon:'arrow', undo: () => setBall('projects', p.id, prev)}); }
     else if (seg.id === 'ibseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.ballWith || ''; setBall('inquiries', i.id, v); toast(v ? `Ball passed to ${esc(BALL_LABELS[v])}` : 'Ball in court cleared', {icon:'arrow', undo: () => setBall('inquiries', i.id, prev)}); }
     else if (seg.id === 'ioseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.outcome || ''; setOutcome(i.id, v); if (v === 'won'){ const r = sb.getBoundingClientRect(); burst(r.left + r.width/2, r.top, 40, 180); } toast(v ? `Marked as ${OUTCOME_LABELS[v].toLowerCase()}` : 'Outcome reset to open', {icon: v === 'won' ? 'trophy' : 'check', undo: () => setOutcome(i.id, prev)}); }
-    else if (seg.id === 'nseg'){ S.nscope = v; vt(() => render({keep:true}), 'list'); }
+    else if (seg.id === 'nseg'){ S.nscope = v; S.nperson = ''; vt(() => refresh(), 'list'); }
+    else if (seg.id === 'nwhen'){ S.nwhen = v; vt(() => refresh(), 'list'); }
+    else if (seg.id === 'tcat'){ S.tcat = v; vt(() => refresh(), 'list'); }
+    else if (seg.id === 'tscope'){ S.tscope = v; if (S.tsel) S.tsel.clear(); vt(() => refresh(), 'list'); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
     else if (seg.id === 'motionseg'){ S.motion = v; store.set('npd2-motion', v); applyPrefs(); toast(`Motion: ${sb.textContent}`, {icon:'spark'}); }
     return; }
@@ -3035,6 +3315,19 @@ document.addEventListener('click', e => {
     if (act === 'cmdk') openCmd(); else if (act === 'theme') toggleTheme(a); else if (act === 'sync') pull({manual:true}); else if (act === 'signout') signOut();
     else if (act === 'settings'){ $('#pop').classList.contains('open') ? closePop() : openPop(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
+    else if (act === 'dismiss-banner'){ BANNER_TODAY = false; const b = $('.dbanner'); if (b){ b.style.height = b.offsetHeight + 'px'; b.classList.add('collapse'); setTimeout(() => refresh(), 260); } }
+    else if (act === 'tdone'){ S.tdone = !S.tdone; vt(() => refresh(), 'list'); }
+    else if (act === 'tarch'){ S.tarch = !S.tarch; S.tsel = S.tsel ? new Set() : null; vt(() => refresh(), 'list'); }
+    else if (act === 'tsel'){ S.tsel = S.tsel ? null : new Set(); refresh(); }
+    else if (act === 'tbulk-archive' || act === 'tbulk-restore'){ const ids = [...S.tsel], on = act === 'tbulk-archive';
+      const ok = on ? ids.filter(id => (findRec(DB.data, 'mtasks', id) || {}).status === 'done') : ids, skipped = ids.length - ok.length;
+      if (ok.length) archiveMTasks(ok, on);
+      S.tsel = null; refresh();
+      toast(ok.length ? `${ok.length} task${ok.length === 1 ? '' : 's'} ${on ? 'archived' : 'restored'}${skipped ? ` · ${skipped} skipped (only finished tasks can be archived)` : ''}` : 'Only finished tasks can be archived. Tick them off first.', ok.length ? {icon:'check', undo: () => archiveMTasks(ok, !on)} : {icon:'x'}); }
+    else if (act === 'tbulk-delete'){ const ids = [...S.tsel]; if (!ids.length) return;
+      if (deleteWouldBeBlocked(ids.length)){ toast('The Sheet would block deleting this many at once. Delete them in smaller batches.', {icon:'x'}); return; }
+      if (!a.classList.contains('armed')){ a.classList.add('armed'); a.textContent = `Tap again to delete ${ids.length}`; setTimeout(() => { if (a.isConnected){ a.classList.remove('armed'); a.textContent = 'Delete'; } }, 3500); return; }
+      const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`${ids.length} task${ids.length === 1 ? '' : 's'} moved to V1's Recycle Bin`, {icon:'trash', undo: u}); }
     else if (act === 'toggledone'){ S.showDone = !S.showDone; vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); }
     else if (act === 'pin-inq'){ const i = findRec(DB.data, 'inquiries', sheetId); if (i){ const on = !i.pinned; setPin('inquiries', i.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('inquiries', i.id, !on)}); } }
     else if (act === 'pin-proj'){ const p = findRec(DB.data, 'projects', S.proj); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } }
@@ -3044,7 +3337,8 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (!AUTH.user) return;
   if (formOpen()){ if (e.key === 'Escape'){ e.preventDefault(); closeForm(); } return; }
-  if (e.key === 'Enter' && e.target.matches('[data-fm][tabindex]')){ e.preventDefault(); e.target.click(); return; }
+  if (e.key === 'Enter' && e.target.matches('[data-fm][tabindex],[data-mtsel]')){ e.preventDefault(); e.target.click(); return; }
+  if (e.key === 'Escape' && S.tsel && S.page === 'tasks'){ S.tsel = null; refresh(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); $('#cmdk').classList.contains('open') ? closeCmd() : openCmd(); }
   if (e.key === 'Escape'){ closeCmd(); closeSheet(); closePop(); }
   if (e.key === 'Enter' && e.target.matches('.kpi')) e.target.click();

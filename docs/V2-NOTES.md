@@ -26,6 +26,14 @@ The only remaining window is the ~1 second between the re-read and the write.
   products, links, pipeline statuses, mold cost, outcome reason), delete
 - Inquiry tasks and next actions: add, edit, delete, tick done
 - Ball in court, inquiry outcome, pin / unpin; complete tasks from Notifications (snooze is device-only)
+- Standalone tasks (Tasks page): add, edit, duplicate, tick done, archive / restore, select several to
+  archive or delete; categories, priority, awaiting reply; master can see everyone's tasks
+- Project people (PICs): add, edit, remove; each project links to its Gantt (separate page)
+- After ticking anything done, the confirmation offers "Follow up", which opens a prefilled follow-up task
+- Notifications include inquiry next actions, filter by person and by next 7 / 30 days, and every row has a
+  calendar button to move its deadline (or the chase date of an awaiting reply)
+- Dashboard: V1's My Day panels (waiting on others, stale projects, new tasks on older items) and the
+  once-a-day overdue banner
 
 Every date is picked from V2's own calendar (never the phone's or Windows' date box): weeks start
 on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next
@@ -33,7 +41,7 @@ Monday. Optional dates have a small × to clear them.
 
 Deletes go to V1's Recycle Bin in the same format V1 uses, and every delete has an Undo.
 Each change is written to the item's history and to V1's Changelog page, like V1 does.
-Still V1-only: Gantt, standalone tasks, Calendar, Bin restore, users, settings, import/export.
+Still V1-only: see docs/V2-MIGRATION.md (waves 2–5).
 
 ## How V2 maps your data
 - Projects have no phase field, so the board groups by status (not started / in progress / completed)

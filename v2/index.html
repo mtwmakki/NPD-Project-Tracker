@@ -1260,6 +1260,13 @@ body{padding:0}
   .lg-name{font-size:32px}
   .fld input{padding:11px 13px}
   .slide{height:56px}.thumb{width:46px;height:46px}
+  .nic{width:34px;height:34px;border-radius:12px}
+}
+/* Notification rows on phones: the due label and calendar button go under the title so it gets the full width */
+@media (max-width:720px){
+  .nfg{grid-template-columns:auto minmax(0,1fr);gap:6px 12px;padding:12px 14px;align-items:start}
+  .nfg .nic{grid-row:1/span 2}
+  .nfg .nr{grid-column:2;display:flex;align-items:center;gap:8px;justify-items:start}
 }
 /* iOS 26.0 Safari: when its toolbar shrinks, a full-height layout can leave a blank band at the bottom (fixed in 26.1).
    Size the page from the measured window height instead, and paint the page colour behind it. */

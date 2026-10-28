@@ -11,6 +11,8 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
 - Styles include **Liquid Glass** (from the Liquid Glass System design system): frosted glass on every surface, SF
   system font, iOS blue for the main action. Choosing it opens in the device's light or dark mode; the sun/moon button
   still switches it. Studio stays the default.
+- Navigation is icons only in every style: the phone tab bar has no labels, and on tablets and laptops the sidebar
+  is an icon column (factories and pins as coloured dots; hover for names).
 - Phones (iPhone 15 Pro 393 px, Galaxy Z Fold 7 cover 360 px wide): the top bar and tab bar slide away while you
   scroll down and come back when you scroll up; tighter margins and type under 430 px; sheets open full height there.
   On touch screens, fields use 16 px text (stops iPhone zooming in) and icon buttons are 44 px.

@@ -1236,6 +1236,34 @@ body{padding:0}
 html{background:var(--bg)}
 html,body{height:var(--app-h,100%)}
 
+/* ───────── ICON-ONLY NAVIGATION (all styles) ─────────
+   Phones: tab bar without labels. Tablets and laptops: the sidebar is an icon column; factories and pins
+   stay as coloured dots with their names as tooltips. Labels stay in the markup as accessible names. */
+@media (max-width:720px){
+  .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center;gap:0}
+  .tabbar button .i{width:24px;height:24px}
+  .tab-ind{height:48px}
+}
+@media (min-width:1041px){
+  #app{grid-template-columns:76px minmax(0,1fr)}
+  .side{padding:16px 10px;align-items:center}
+  .brand b,.searchbtn .lbl,.searchbtn kbd,.nav button .lbl,.nav button .cnt,.nav .badge-new,.sec,.me div{display:none}
+  .brand{padding:4px 0 12px}
+  .searchbtn{width:46px;justify-content:center;padding:10px 0}
+  .nav{width:46px}.nav button{justify-content:center;padding:0}
+  .me{flex-direction:column;padding:0}.me .ibtn{margin:0}
+}
+@media (min-width:721px){
+  .fac{display:flex;width:46px;height:30px;justify-content:center;padding:0;font-size:0;gap:0}
+  .fac .cnt{display:none}
+  .fac .dot{width:12px;height:12px}
+  #facs{display:grid;gap:2px;margin-top:14px;justify-items:center}
+  #pins{display:grid;gap:2px;margin-top:10px;justify-items:center}
+  .pin{width:46px;height:30px;justify-content:center;padding:0;gap:0}
+  .pin .nm,.pin .star,#pins .ro{display:none}
+  .nav button .cnt.hot{display:block;position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;font:700 10px/16px var(--fb);text-align:center}
+}
+
 /* ══════════ Look K · Liquid Glass — Apple iOS & iPadOS 27 (phones, tablets) and macOS (desktop) ══════════
    Source: Apple "iOS and iPadOS 27" Figma kit. (kit) = value read from the kit; (HIG) = Apple's published
    guidelines, used where the kit page was not read (segmented control, buttons, text fields, sheets, menus, iPad, macOS).
@@ -1479,7 +1507,6 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .tabbar{left:25px;right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);margin:0;padding:4px;border:0;border-radius:999px;justify-content:stretch;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
   :root[data-look="K"] .tabbar button{flex:1 1 0;width:auto;height:54px;padding:6px 2px 7px;gap:1px;align-content:center;color:var(--glass-ink);font:var(--w-emph) 10px/12px var(--fb);letter-spacing:0}
   :root[data-look="K"] .tabbar button .i{width:24px;height:24px}
-  /* icon-only tabs: the label stays in the button for screen readers but takes no space */
   :root[data-look="K"] .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center}
   :root[data-look="K"] .tab-ind{height:48px}
   :root[data-look="K"] .tabbar button.on,:root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
@@ -1523,21 +1550,22 @@ html,body{height:var(--app-h,100%)}
 
 /* ── Mac (≥1041): floating sidebar, 13pt text, 32pt rows (HIG macOS) ── */
 @media (min-width:1041px){
-  :root[data-look="K"] #app{grid-template-columns:240px minmax(0,1fr)}
-  :root[data-look="K"] .side{margin:8px 0 8px 8px;padding:12px 10px;gap:2px;border:0;border-radius:18px;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] #app{grid-template-columns:72px minmax(0,1fr)}
+  :root[data-look="K"] .side{margin:8px 0 8px 8px;padding:12px 8px;gap:2px;align-items:center;border:0;border-radius:18px;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
   :root[data-look="K"] .brand{padding:4px 8px 12px}
   :root[data-look="K"] .brand i{width:24px;height:24px;border-radius:6px;font-size:9px}
   :root[data-look="K"] .brand b{font:700 var(--t3)/var(--t3-l) var(--fb)}
-  :root[data-look="K"] .searchbtn{height:28px;padding:0 10px;margin-bottom:8px;border:0;border-radius:8px;background:var(--fill3);font:400 var(--body)/1 var(--fb)}
+  :root[data-look="K"] .searchbtn{width:40px;height:32px;padding:0;margin-bottom:8px;border:0;border-radius:10px;background:var(--fill3)}
   :root[data-look="K"] .searchbtn kbd{border:0;font:400 var(--cap)/1 var(--fb)}
   :root[data-look="K"] .nav{gap:1px}
-  :root[data-look="K"] .nav button{height:30px;padding:0 8px;gap:8px;border-radius:8px;color:var(--tx);font:400 var(--body)/1 var(--fb);letter-spacing:var(--body-t)}
+  :root[data-look="K"] .nav{width:40px}
+  :root[data-look="K"] .nav button{height:36px;padding:0;justify-content:center;border-radius:10px;color:var(--tx)}
   :root[data-look="K"] .nav button .i{width:16px;height:16px;color:var(--ac)}
   :root[data-look="K"] .nav button .cnt{font:400 var(--body)/1 var(--fb);color:var(--mu)}
-  :root[data-look="K"] .nav button .cnt.hot{background:none;color:var(--bad);padding:0}
-  :root[data-look="K"] .nav-ind{height:30px;border:0;border-radius:8px;background:var(--sel-side);box-shadow:none}
+  :root[data-look="K"] .nav button .cnt.hot{background:var(--bad);color:#fff;top:1px;right:-2px}
+  :root[data-look="K"] .nav-ind{height:36px;border:0;border-radius:10px;background:var(--sel-side);box-shadow:none}
   :root[data-look="K"] .sec{padding:14px 8px 4px;font:700 var(--sub)/var(--sub-l) var(--fb);color:var(--mu)}
-  :root[data-look="K"] .fac{height:28px;padding:0 8px;border-radius:8px;font:400 var(--body)/1 var(--fb);color:var(--tx)}
+  :root[data-look="K"] .fac,:root[data-look="K"] .pin{width:40px;height:26px;border-radius:8px}
   :root[data-look="K"] .fac.on{background:var(--sel-side)}
   :root[data-look="K"] .me b{font:var(--w-emph) var(--body)/var(--body-l) var(--fb)}
   :root[data-look="K"] .me span{font:400 var(--sub)/var(--sub-l) var(--fb)}
@@ -1590,14 +1618,14 @@ html,body{height:var(--app-h,100%)}
   <div class="orbs"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i></div>
   <aside class="side" aria-label="Main navigation">
     <div class="brand"><i>NPD</i><b>Tracker</b></div>
-    <button class="searchbtn" type="button" data-act="cmdk"><span data-ico="search"></span><span class="lbl">Search or jump to…</span><kbd>Ctrl K</kbd></button>
+    <button class="searchbtn" type="button" data-act="cmdk" aria-label="Search or jump to" title="Search (Ctrl K)"><span data-ico="search"></span><span class="lbl">Search or jump to…</span><kbd>Ctrl K</kbd></button>
     <nav class="nav" id="nav">
       <div class="nav-ind" id="nav-ind"></div>
-      <button type="button" data-go="dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
-      <button type="button" data-go="inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
-      <button type="button" data-go="projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
-      <button type="button" data-go="tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
-      <button type="button" data-go="notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
+      <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
+      <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
+      <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
+      <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
+      <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
     </nav>
     <div class="sec">Factories</div>
     <div id="facs"></div>
@@ -1622,11 +1650,11 @@ html,body{height:var(--app-h,100%)}
   </main>
   <nav class="tabbar" id="tabbar">
     <div class="tab-ind" id="tab-ind"></div>
-    <button type="button" data-go="dashboard"><span data-ico="grid"></span>Home</button>
-    <button type="button" data-go="inquiries"><span data-ico="inbox"></span>Inquiries</button>
-    <button type="button" data-go="projects"><span data-ico="folder"></span>Projects</button>
-    <button type="button" data-go="tasks"><span data-ico="tasks"></span>Tasks</button>
-    <button type="button" data-go="notifications"><span data-ico="bell"></span>Alerts</button>
+    <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span>Home</button>
+    <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span>Inquiries</button>
+    <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span>Projects</button>
+    <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span>Tasks</button>
+    <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span>Alerts</button>
   </nav>
 </div>
 

@@ -1478,7 +1478,10 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] #view{padding:calc(env(safe-area-inset-top,0px) + 117px) 16px calc(var(--tabh) + 28px)}
   :root[data-look="K"] .tabbar{left:25px;right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);margin:0;padding:4px;border:0;border-radius:999px;justify-content:stretch;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
   :root[data-look="K"] .tabbar button{flex:1 1 0;width:auto;height:54px;padding:6px 2px 7px;gap:1px;align-content:center;color:var(--glass-ink);font:var(--w-emph) 10px/12px var(--fb);letter-spacing:0}
-  :root[data-look="K"] .tabbar button .i{width:22px;height:22px}
+  :root[data-look="K"] .tabbar button .i{width:24px;height:24px}
+  /* icon-only tabs: the label stays in the button for screen readers but takes no space */
+  :root[data-look="K"] .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center}
+  :root[data-look="K"] .tab-ind{height:48px}
   :root[data-look="K"] .tabbar button.on,:root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
   :root[data-look="K"] .tab-ind{top:4px;height:54px;border-radius:999px;background:var(--sel);box-shadow:none}
   :root[data-look="K"] #totop{right:16px}

@@ -17,8 +17,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script>
 /* Paint the saved style before anything renders (Studio + light by default). Keys are V2-only (npd2-*). */
-(function(){ var L=['I','J','D','A','B','C','E','F','G','H'], r=document.documentElement, g=function(k,d){ try { return localStorage.getItem(k) || d; } catch(e){ return d; } };
-  var look=g('npd2-look','I'); if (L.indexOf(look) < 0) look='I'; r.dataset.look=look; r.dataset.theme=g('npd2-theme', look==='I'?'light':'dark'); })();
+(function(){ var L=['I','J','K','D','A','B','C','E','F','G','H'], r=document.documentElement, g=function(k,d){ try { return localStorage.getItem(k) || d; } catch(e){ return d; } };
+  var look=g('npd2-look','I'); if (L.indexOf(look) < 0) look='I'; r.dataset.look=look; r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
 </script>
 <style>
 /* Layout: one-screen app shell. Sidebar (icon rail on tablet portrait, bottom tab bar on phone) + topbar + scrolling #view.
@@ -171,6 +171,43 @@
 :root[data-look="J"] .ring circle{stroke-width:12}
 :root[data-look="J"] .kpi.alert{background:var(--surf);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
 :root[data-look="J"] .lg-name{font-weight:500}
+
+/* ── Look K · Liquid Glass (from the Liquid Glass System design system) ──
+   Every surface is frosted glass (blur + saturate + 1px top rim + soft shadow) over a colourful content layer.
+   Only the one primary action and the selected item are tinted with the accent; no glows. */
+:root[data-look="K"]{ --fd:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,"Segoe UI","Helvetica Neue",Arial,sans-serif; --fb:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro",system-ui,"Segoe UI","Helvetica Neue",Arial,sans-serif; --fn:var(--fd);
+  --h-w:700; --h-ls:-.015em; --n-w:600; --n-ls:-.03em; --ph-w:600; --r-card:26px; --r-sm:14px; --r-pill:999px; --blur:blur(14px) saturate(1.6); --blur-thick:blur(30px) saturate(1.6);
+  --bg:#000000; --bg2:rgba(44,44,48,.58); --surf:rgba(44,44,48,.58); --surf-solid:#1C1C1E; --glass-thick:rgba(44,44,48,.80); --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.22); --tx:#FFFFFF; --mu:rgba(235,235,245,.62);
+  --ac:#0A84FF; --ac-grad:linear-gradient(#0A84FF,#0A84FF); --on-ac:#FFFFFF; --ok:#30D158; --warn:#FF9F0A; --bad:#FF453A; --info:#BF5AF2;
+  --c1:#0A84FF; --c2:#FF9F0A; --prog:#0A84FF; --bar-grad:linear-gradient(90deg,#0A84FF,#64D2FF); --track:rgba(120,120,128,.32); --hover:rgba(255,255,255,.07); --sel:rgba(255,255,255,.18);
+  --rim:rgba(255,255,255,.30); --glow:none; --shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 var(--rim); --scrim:rgba(0,0,0,.35);
+  --orb1:rgba(194,85,42,.70); --orb2:rgba(31,127,134,.70); --orb3:rgba(10,132,255,.40) }
+:root[data-look="K"][data-theme="light"]{ --bg:#F2F2F7; --bg2:rgba(250,250,252,.62); --surf:rgba(250,250,252,.62); --surf-solid:#FFFFFF; --glass-thick:rgba(250,250,252,.84); --line:rgba(0,0,0,.08); --line-2:rgba(60,60,67,.29); --tx:#000000; --mu:#5E5E63;
+  --ac:#007AFF; --ac-grad:linear-gradient(#007AFF,#007AFF); --on-ac:#FFFFFF; --ok:#248A3D; --warn:#C93400; --bad:#D70015; --info:#8944AB;
+  --c1:#007AFF; --c2:#FF9500; --prog:#007AFF; --bar-grad:linear-gradient(90deg,#007AFF,#32ADE6); --track:rgba(120,120,128,.16); --hover:rgba(255,255,255,.55); --sel:rgba(255,255,255,.85);
+  --rim:rgba(255,255,255,.95); --shadow:0 6px 20px rgba(0,0,0,.10),inset 0 1px 0 var(--rim); --scrim:rgba(0,0,0,.20);
+  --orb1:rgba(255,159,110,.75); --orb2:rgba(90,200,200,.70); --orb3:rgba(0,122,255,.28) }
+:root[data-look="K"] .orb{filter:blur(70px)}
+/* floating functional layer */
+@media (min-width:721px){ :root[data-look="K"] .side{margin:12px 0 12px 12px;border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)} }
+:root[data-look="K"] .nav-ind,:root[data-look="K"] .nav button,:root[data-look="K"] .fac,:root[data-look="K"] .searchbtn{border-radius:var(--r-pill)}
+:root[data-look="K"] .nav-ind{background:var(--sel);border:0;box-shadow:0 2px 10px -4px rgba(0,0,0,.25),inset 0 1px 0 var(--rim)}
+:root[data-look="K"][data-theme="light"] .nav button.on{color:var(--ac)}
+:root[data-look="K"] .brand i,:root[data-look="K"] .lg-logo{box-shadow:none}
+:root[data-look="K"] .card,:root[data-look="K"] .lg-card{border-color:var(--line)}
+:root[data-look="K"] .btn,:root[data-look="K"] .sync,:root[data-look="K"] .ibtn,:root[data-look="K"] .seg{background:var(--surf);border-color:var(--line);box-shadow:inset 0 1px 0 var(--rim);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+:root[data-look="K"] .b1{box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+:root[data-look="K"] .seg .ind{background:var(--sel);border:0;box-shadow:0 2px 10px -4px rgba(0,0,0,.3),inset 0 1px 0 var(--rim)}
+:root[data-look="K"] .seg.acc .ind{background:var(--ac);box-shadow:none}
+:root[data-look="K"] .hero h2 em{background:none;-webkit-text-fill-color:var(--ac);color:var(--ac)}
+/* sheets, menus, dialogs and toasts: thicker glass so text stays readable over busy content */
+:root[data-look="K"] #sheet,:root[data-look="K"] #pop,:root[data-look="K"] .cmd,:root[data-look="K"] .fm-card,:root[data-look="K"] #dp,:root[data-look="K"] .toast,:root[data-look="K"] .selbar,:root[data-look="K"] #totop{background:var(--glass-thick);border-color:var(--line);backdrop-filter:var(--blur-thick);-webkit-backdrop-filter:var(--blur-thick);box-shadow:0 20px 50px -18px rgba(0,0,0,.45),inset 0 1px 0 var(--rim)}
+:root[data-look="K"] #scrim,:root[data-look="K"] #fscrim,:root[data-look="K"] #cmdk{backdrop-filter:none;-webkit-backdrop-filter:none}
+@media (max-width:720px){
+  :root[data-look="K"] .tabbar{margin:0 12px calc(10px + env(safe-area-inset-bottom,0px));padding:8px;border:1px solid var(--line);border-radius:32px;background:var(--glass-thick);backdrop-filter:var(--blur-thick);-webkit-backdrop-filter:var(--blur-thick);box-shadow:var(--shadow)}
+  :root[data-look="K"] .tab-ind{border-radius:var(--r-pill);box-shadow:inset 0 1px 0 var(--rim)}
+  :root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
+}
 
 /* motion levels */
 :root[data-motion="calm"]{--k:.65}
@@ -2063,7 +2100,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard','Track your inquiries and projects'], inquiries:['Inquiries','5-day SLA · working days'], projects:['Projects','all NPD projects'], project:['Projects',''], tasks:['Tasks','your own to-dos'], notifications:['Notifications','your actions'], styles:['Styles','10 looks · same app'] };
+const TITLES = { dashboard:['Dashboard','Track your inquiries and projects'], inquiries:['Inquiries','5-day SLA · working days'], projects:['Projects','all NPD projects'], project:['Projects',''], tasks:['Tasks','your own to-dos'], notifications:['Notifications','your actions'], styles:['Styles','11 looks · same app'] };
 const RANGE = {today:'Today', week:'This week', month:'This month', year:'This year'};
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function words(str){ let i = 0; return str.replace(/(<em>.*?<\/em>|[^\s<]+)/g, w => `<span class="w"><span style="--i:${i++}">${w}</span></span>`); }
@@ -2511,12 +2548,14 @@ function pageNotifications(){
 }
 
 /* ── Styles gallery ── */
-const LOOKS = [['I','Studio','linear-gradient(115deg,#FFA25C,#C3BDBF 50%,#7FA7CF)'],['J','Graphite','linear-gradient(135deg,#141414 55%,#FFE58A 55%)'],['D','Vision','linear-gradient(135deg,#05070D,#38BDF8 60%,#A78BFA)'],['A','Atelier','linear-gradient(135deg,#0E0D0B,#D8B479)'],['B','Neobank','linear-gradient(120deg,#5B6CFF,#22D3EE)'],['C','Telemetry','linear-gradient(90deg,#05070A 50%,#FFB020 50%)'],['E','Blueprint','repeating-linear-gradient(0deg,#0A1F3C 0 5px,#2B4F80 5px 6px),#0A1F3C'],['F','Dot Matrix','radial-gradient(#fff 1.2px,transparent 1.6px) 0 0/6px 6px,#000'],['G','Ember','linear-gradient(120deg,#FFB347,#FF6A3D 45%,#FF3D7F)'],['H','Evergreen','linear-gradient(135deg,#07130E 40%,#B8F35A)']];
+const LOOKS = [['I','Studio','linear-gradient(115deg,#FFA25C,#C3BDBF 50%,#7FA7CF)'],['J','Graphite','linear-gradient(135deg,#141414 55%,#FFE58A 55%)'],['K','Glass','radial-gradient(circle at 25% 30%,#FF9F6E,transparent 60%),radial-gradient(circle at 80% 75%,#5AC8C8,transparent 60%),#0A84FF'],['D','Vision','linear-gradient(135deg,#05070D,#38BDF8 60%,#A78BFA)'],['A','Atelier','linear-gradient(135deg,#0E0D0B,#D8B479)'],['B','Neobank','linear-gradient(120deg,#5B6CFF,#22D3EE)'],['C','Telemetry','linear-gradient(90deg,#05070A 50%,#FFB020 50%)'],['E','Blueprint','repeating-linear-gradient(0deg,#0A1F3C 0 5px,#2B4F80 5px 6px),#0A1F3C'],['F','Dot Matrix','radial-gradient(#fff 1.2px,transparent 1.6px) 0 0/6px 6px,#000'],['G','Ember','linear-gradient(120deg,#FFB347,#FF6A3D 45%,#FF3D7F)'],['H','Evergreen','linear-gradient(135deg,#07130E 40%,#B8F35A)']];
 const STYLES = [
   {k:'I',n:'Studio',ref:1,def:1,short:1,v:'Soft grey app floating on a warm-to-cool gradient. Google Sans, dark ink pills, circular icon rail, blue and orange striped charts.',f:'Your reference 1 (Panze dashboard)',fd:'Google Sans',fn:'Google Sans',nw:400,hw:400,fonts:'Google Sans',
     d:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,138,61,.35),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(77,163,255,.35),transparent 55%),#15191E',tx:'#F2F4F7',bar:'linear-gradient(90deg,#4DA3FF 58%,#FF8A3D 58%)'},l:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,162,92,.6),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(127,167,207,.65),transparent 55%),#F1F3F6',tx:'#14191F',bar:'linear-gradient(90deg,#1E7FE0 58%,#FF7A1A 58%)'}},
   {k:'J',n:'Graphite',ref:2,short:1,v:'Layered near-blacks, two-tone headlines, tinted tags, priority icons, turquoise charts and yellow progress.',f:'Your reference 2 (Displaay project UI)',fd:'Instrument Sans',fn:'Instrument Sans',nw:500,hw:500,fonts:'Instrument Sans',
     d:{bg:'linear-gradient(#1F1F1F,#1F1F1F)',tx:'#F2F2F2',bar:'linear-gradient(90deg,#F5D547 62%,#2A2A2A 62%)'},l:{bg:'#FFFFFF',tx:'#141414',bar:'linear-gradient(90deg,#E9B800 62%,#ECECEC 62%)'}},
+  {k:'K',n:'Liquid Glass',isNew:1,v:'Frosted glass on every surface over soft coloured light, SF type, iOS blue on the one main action. Follows your device\'s light or dark mode.',f:'Your Liquid Glass System (Apple iOS 26–27)',fd:'SF Pro Display',fn:'SF Pro Display',nw:600,hw:700,fonts:'SF Pro (system font)',
+    d:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(194,85,42,.75),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(31,127,134,.75),transparent 60%),#000',tx:'#FFFFFF',bar:'linear-gradient(90deg,#0A84FF 62%,rgba(120,120,128,.36) 62%)'},l:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(255,159,110,.8),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(90,200,200,.75),transparent 60%),#F2F2F7',tx:'#000000',bar:'linear-gradient(90deg,#007AFF 62%,rgba(120,120,128,.2) 62%)'}},
   {k:'D',n:'Vision',short:1,v:'Frosted glass over soft coloured light, ultra-thin numbers.',f:'Apple Vision Pro, premium car screens',fd:'Sora',fn:'Sora',nw:200,hw:300,fonts:'Sora · Plus Jakarta Sans',
     d:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.45),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.4),transparent 60%),#05070D',tx:'#F6F8FB',bar:'linear-gradient(90deg,#A5F3FC,#7DD3FC,#A78BFA)'},l:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.35),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.3),transparent 60%),#E8EDF4',tx:'#0A1020',bar:'linear-gradient(90deg,#22B8E8,#0B7FA8,#7C5CF0)'}},
   {k:'A',n:'Atelier',v:'Editorial serif headlines, champagne gold, lots of air.',f:'Luxury annual report, Apple Notes',fd:'Instrument Serif',fn:'Instrument Serif',nw:400,hw:400,fonts:'Instrument Serif · Hanken Grotesk',
@@ -2538,8 +2577,8 @@ function pageStyles(){
   return `<p class="muted st" style="--i:0;margin:0 0 14px;max-width:70ch">Same app, same data. Studio is the default; tap <b>Apply</b> to switch. Your choice is remembered on this device only.</p>
   <div class="sgrid">${STYLES.map((x,i) => { const c = S.theme === 'light' ? x.l : x.d, cur = S.look === x.k;
     return `<div class="card scard st ${cur?'cur':''}" style="--i:${Math.min(i+1,10)}"><div class="sprev" style="background:${c.bg};color:${c.tx}"><span class="dots"><i style="background:#5EEAD4"></i><i style="background:#FCD34D"></i><i style="background:#FB7185"></i></span>
-        <div class="g" style="font-family:'${x.fd}';font-weight:${x.hw};${x.up?'text-transform:uppercase;letter-spacing:.04em;':''}">${greet()}, ${esc(meName().split(' ')[0])}</div>
-        <div class="n" style="font-family:'${x.fn}';font-weight:${x.nw}">38<small>%  win rate</small></div><div class="bar" style="background:${c.bar}"></div></div>
+        <div class="g" style="font-family:'${x.fd}',system-ui,sans-serif;font-weight:${x.hw};${x.up?'text-transform:uppercase;letter-spacing:.04em;':''}">${greet()}, ${esc(meName().split(' ')[0])}</div>
+        <div class="n" style="font-family:'${x.fn}',system-ui,sans-serif;font-weight:${x.nw}">38<small>%  win rate</small></div><div class="bar" style="background:${c.bar}"></div></div>
       <div class="sinfo"><div class="hd"><h4>${x.n}</h4>${x.def ? '<span class="newtag">Default</span>' : ''}</div><p>${x.v}</p>
         <div class="ft"><code>${x.fonts}</code><button class="${cur?'btn':'b1'} try" type="button" data-apply="${x.k}">${cur?'In use':'Apply'}</button></div></div></div>`; }).join('')}</div>`;
 }
@@ -3254,6 +3293,7 @@ function openPop(anchor){
 }
 function closePop(){ $('#pop').classList.remove('open'); }
 function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') refresh(); }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
+function matchDeviceTheme(){ const t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; if (t === S.theme) return; S.theme = t; store.set('npd2-theme', t); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === t)); placeInd(ts, false); } }
 function toggleTheme(btn){
   const r = (btn || $('.theme-btn')).getBoundingClientRect(); root.style.setProperty('--rx', (r.left + r.width/2) + 'px'); root.style.setProperty('--ry', (r.top + r.height/2) + 'px');
   return vt(() => { S.theme = S.theme === 'dark' ? 'light' : 'dark'; store.set('npd2-theme', S.theme); applyPrefs(); if (S.page === 'styles') refresh(); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === S.theme)); placeInd(ts, false); } }, 'theme');
@@ -3356,12 +3396,12 @@ document.addEventListener('click', e => {
   const o = t.closest('[data-open]'); if (o){ openSheet(o.dataset.open); return; }
   const pb = t.closest('[data-pinp]'); if (pb){ const p = findRec(DB.data, 'projects', pb.dataset.pinp); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? `Pinned ${esc(p.name)} to the sidebar` : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } return; }
   const pj = t.closest('[data-proj]'); if (pj){ go('project', {proj: pj.dataset.proj, src: pj.matches('.pcard,.bcard,.li') ? pj : null}); return; }
-  const ap = t.closest('[data-apply]'); if (ap){ const k = ap.dataset.apply; setLook(k);
+  const ap = t.closest('[data-apply]'); if (ap){ const k = ap.dataset.apply; if (k === 'K' && S.look !== 'K') matchDeviceTheme(); setLook(k);
     if (k === 'I' && S.theme === 'dark') setTimeout(() => toast('Studio is designed light-first', {icon:'sun', label:'Switch to light', undo: () => toggleTheme()}), 500);
     if (k === 'J' && S.theme === 'light') setTimeout(() => toast('Graphite is designed dark-first', {icon:'moon', label:'Switch to dark', undo: () => toggleTheme()}), 500);
     return; }
   const f = t.closest('[data-fac]'); if (f){ S.fac = f.dataset.fac; vt(() => refresh(), 'list'); return; }
-  const lk = t.closest('#pop [data-look]'); if (lk){ setLook(lk.dataset.look); return; }
+  const lk = t.closest('#pop [data-look]'); if (lk){ if (lk.dataset.look === 'K' && S.look !== 'K') matchDeviceTheme(); setLook(lk.dataset.look); return; }
   const it = t.closest('[data-itask]'); if (it){ toggleInqTask(it.dataset.itask, it.dataset.done === '1', it); return; }
   const ptk = t.closest('[data-ptask]'); if (ptk){ toggleProjTask(ptk.dataset.ptask, ptk.dataset.done === '1', ptk); return; }
   const nd = t.closest('[data-ndone]'); if (nd){ const n = notifByKey(nd.dataset.ndone); if (n) notifDone(n, nd.closest('.nrow')); return; }

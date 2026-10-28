@@ -8,6 +8,9 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
 - Signs in with the same Firebase account as V1 (signing in or out in one also affects the other on that device).
 - Reads and writes the same Google Sheet through the same Apps Script bridge. No new fields are added.
 - V2's style, theme, motion and snoozed notifications are stored only on the device (`npd2-*` keys).
+- Styles include **Liquid Glass** (from the Liquid Glass System design system): frosted glass on every surface, SF
+  system font, iOS blue for the main action. Choosing it opens in the device's light or dark mode; the sun/moon button
+  still switches it. Studio stays the default.
 
 ## Merge-safe saving (V1 V77.9 + V2)
 Both apps re-read the Sheet right before saving. If someone else saved in between:

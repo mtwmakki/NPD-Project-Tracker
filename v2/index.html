@@ -592,7 +592,7 @@ button{font:inherit;color:inherit}
 .task.done .cb svg path{stroke-dashoffset:0}
 .task.pop .cb{animation:pop calc(500ms*var(--k)) var(--spring)}
 @keyframes pop{40%{transform:scale(1.3)}}
-.task .tt{font-weight:600;font-size:14.5px;background:linear-gradient(currentColor,currentColor) 0 58%/0 1.5px no-repeat;transition:background-size calc(420ms*var(--k)) var(--ease-out),color .3s;width:fit-content;max-width:100%}
+.task .tt{display:inline;-webkit-box-decoration-break:clone;box-decoration-break:clone;font-weight:600;font-size:14.5px;background:linear-gradient(currentColor,currentColor) 0 58%/0 1.5px no-repeat;transition:background-size calc(420ms*var(--k)) var(--ease-out),color .3s;width:fit-content;max-width:100%}
 .task.done .tt{background-size:100% 1.5px;color:var(--mu)}
 .task .who{font-size:12.5px;color:var(--mu)}
 .due{font:500 12px var(--fm);color:var(--mu);white-space:nowrap}
@@ -1227,7 +1227,44 @@ body{padding:0}
   :root[data-look] .kpi .val{font-size:36px}
   .kpis,.grid2,.grid3,.dgrid{gap:10px}
   #sheet{top:calc(8px + env(safe-area-inset-top,0px));height:auto}
+  /* compact spacing: smaller headings, pills and buttons, less air between and inside cards */
+  .dash{gap:12px}
+  :root[data-look] .hero h2{font-size:30px}
+  :root[data-look] .hero p{font-size:14.5px;margin-top:10px}
+  .hero .eyebrow{margin-bottom:8px}
+  .hero{gap:14px}
+  :root[data-look] .btn,:root[data-look] .b1{padding:10px 14px;font-size:14px}
+  :root[data-look] .pill{font-size:11.5px;padding:5px 8px;gap:5px}
+  :root[data-look] .dh{grid-template-columns:minmax(0,1fr) 76px;gap:12px;padding:16px;align-items:start}
+  :root[data-look] .dh-title{font-size:24px;margin:4px 0 8px}
+  .pring,.pring svg{width:76px;height:76px}
+  .pring .c b{font-size:20px}.pring .c>span{font-size:9.5px}
+  .ph h3{font-size:17px}
+  :root[data-look] .ph h3{font-size:17px}
+  .kpi .lab{font-size:12.5px}
+  .ringwrap{grid-template-columns:96px minmax(0,1fr);gap:12px}.ringc,.ring{width:96px;height:96px}.ringc .c b{font-size:26px}
+  /* task rows: due date beside the title instead of on its own line */
+  :root:not([data-look="I"]) .task{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"c t d" "c t p";gap:4px 10px;padding:10px 12px}
+  :root:not([data-look="I"]) .task .due{grid-area:d;align-self:start;justify-self:end;padding-top:2px}
+  :root:not([data-look="I"]) .task .prio{grid-area:p;justify-self:end}
+  :root[data-look="I"] .task{padding:12px 14px;border-radius:18px}
+  .task .tt{font-size:14px}
+  .task .cb{width:24px;height:24px;border-radius:8px}
+  :root[data-look="I"] .task .cb{width:30px;height:30px;border-radius:50%}
+  :root[data-look="I"] .task .tt{font-size:15px}
+  :root[data-look="I"] .task{row-gap:2px}
+  :root[data-look="I"] .seg button{padding:10px 14px;font-size:14px}
+  /* sign-in card */
+  .lg-card{padding:26px 20px 20px;gap:12px}
+  .lg-logo{width:44px;height:44px}
+  .lg-name{font-size:32px}
+  .fld input{padding:11px 13px}
+  .slide{height:56px}.thumb{width:46px;height:46px}
 }
+/* iOS 26.0 Safari: when its toolbar shrinks, a full-height layout can leave a blank band at the bottom (fixed in 26.1).
+   Size the page from the measured window height instead, and paint the page colour behind it. */
+html{background:var(--bg)}
+html,body{height:var(--app-h,100%)}
 </style>
 
 </head>
@@ -2106,6 +2143,8 @@ function updFade(el){ if (!el) return; const max = el.scrollWidth - el.clientWid
 function wireScroll(){ $$('.seg,.tok,#topx').forEach(updFade); }
 let lastInput = 0;
 const PHONE = matchMedia('(max-width:720px)');
+function setAppH(){ document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px'); }
+setAppH(); addEventListener('resize', setAppH); if (window.visualViewport) visualViewport.addEventListener('resize', setAppH);
 /* the floating top bar and tab bar on phones: the page is padded by their measured heights */
 function measureBars(){ const app = $('#app'), top = $('.top'), tab = $('#tabbar'); if (!app || !top || !tab) return;
   app.style.setProperty('--toph', top.offsetHeight + 'px'); app.style.setProperty('--tabh', Math.max(0, app.clientHeight - tab.offsetTop) + 'px'); }

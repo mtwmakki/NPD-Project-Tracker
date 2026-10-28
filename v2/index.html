@@ -172,43 +172,6 @@
 :root[data-look="J"] .kpi.alert{background:var(--surf);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
 :root[data-look="J"] .lg-name{font-weight:500}
 
-/* ── Look K · Liquid Glass (from the Liquid Glass System design system) ──
-   Every surface is frosted glass (blur + saturate + 1px top rim + soft shadow) over a colourful content layer.
-   Only the one primary action and the selected item are tinted with the accent; no glows. */
-:root[data-look="K"]{ --fd:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,"Segoe UI","Helvetica Neue",Arial,sans-serif; --fb:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro",system-ui,"Segoe UI","Helvetica Neue",Arial,sans-serif; --fn:var(--fd);
-  --h-w:700; --h-ls:-.015em; --n-w:600; --n-ls:-.03em; --ph-w:600; --r-card:26px; --r-sm:14px; --r-pill:999px; --blur:blur(14px) saturate(1.6); --blur-thick:blur(30px) saturate(1.6);
-  --bg:#000000; --bg2:rgba(44,44,48,.58); --surf:rgba(44,44,48,.58); --surf-solid:#1C1C1E; --glass-thick:rgba(44,44,48,.80); --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.22); --tx:#FFFFFF; --mu:rgba(235,235,245,.62);
-  --ac:#0A84FF; --ac-grad:linear-gradient(#0A84FF,#0A84FF); --on-ac:#FFFFFF; --ok:#30D158; --warn:#FF9F0A; --bad:#FF453A; --info:#BF5AF2;
-  --c1:#0A84FF; --c2:#FF9F0A; --prog:#0A84FF; --bar-grad:linear-gradient(90deg,#0A84FF,#64D2FF); --track:rgba(120,120,128,.32); --hover:rgba(255,255,255,.07); --sel:rgba(255,255,255,.18);
-  --rim:rgba(255,255,255,.30); --glow:none; --shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 var(--rim); --scrim:rgba(0,0,0,.35);
-  --orb1:rgba(194,85,42,.70); --orb2:rgba(31,127,134,.70); --orb3:rgba(10,132,255,.40) }
-:root[data-look="K"][data-theme="light"]{ --bg:#F2F2F7; --bg2:rgba(250,250,252,.62); --surf:rgba(250,250,252,.62); --surf-solid:#FFFFFF; --glass-thick:rgba(250,250,252,.84); --line:rgba(0,0,0,.08); --line-2:rgba(60,60,67,.29); --tx:#000000; --mu:#5E5E63;
-  --ac:#007AFF; --ac-grad:linear-gradient(#007AFF,#007AFF); --on-ac:#FFFFFF; --ok:#248A3D; --warn:#C93400; --bad:#D70015; --info:#8944AB;
-  --c1:#007AFF; --c2:#FF9500; --prog:#007AFF; --bar-grad:linear-gradient(90deg,#007AFF,#32ADE6); --track:rgba(120,120,128,.16); --hover:rgba(255,255,255,.55); --sel:rgba(255,255,255,.85);
-  --rim:rgba(255,255,255,.95); --shadow:0 6px 20px rgba(0,0,0,.10),inset 0 1px 0 var(--rim); --scrim:rgba(0,0,0,.20);
-  --orb1:rgba(255,159,110,.75); --orb2:rgba(90,200,200,.70); --orb3:rgba(0,122,255,.28) }
-:root[data-look="K"] .orb{filter:blur(70px)}
-/* floating functional layer */
-@media (min-width:721px){ :root[data-look="K"] .side{margin:12px 0 12px 12px;border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)} }
-:root[data-look="K"] .nav-ind,:root[data-look="K"] .nav button,:root[data-look="K"] .fac,:root[data-look="K"] .searchbtn{border-radius:var(--r-pill)}
-:root[data-look="K"] .nav-ind{background:var(--sel);border:0;box-shadow:0 2px 10px -4px rgba(0,0,0,.25),inset 0 1px 0 var(--rim)}
-:root[data-look="K"][data-theme="light"] .nav button.on{color:var(--ac)}
-:root[data-look="K"] .brand i,:root[data-look="K"] .lg-logo{box-shadow:none}
-:root[data-look="K"] .card,:root[data-look="K"] .lg-card{border-color:var(--line)}
-:root[data-look="K"] .btn,:root[data-look="K"] .sync,:root[data-look="K"] .ibtn,:root[data-look="K"] .seg{background:var(--surf);border-color:var(--line);box-shadow:inset 0 1px 0 var(--rim);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
-:root[data-look="K"] .b1{box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
-:root[data-look="K"] .seg .ind{background:var(--sel);border:0;box-shadow:0 2px 10px -4px rgba(0,0,0,.3),inset 0 1px 0 var(--rim)}
-:root[data-look="K"] .seg.acc .ind{background:var(--ac);box-shadow:none}
-:root[data-look="K"] .hero h2 em{background:none;-webkit-text-fill-color:var(--ac);color:var(--ac)}
-/* sheets, menus, dialogs and toasts: thicker glass so text stays readable over busy content */
-:root[data-look="K"] #sheet,:root[data-look="K"] #pop,:root[data-look="K"] .cmd,:root[data-look="K"] .fm-card,:root[data-look="K"] #dp,:root[data-look="K"] .toast,:root[data-look="K"] .selbar,:root[data-look="K"] #totop{background:var(--glass-thick);border-color:var(--line);backdrop-filter:var(--blur-thick);-webkit-backdrop-filter:var(--blur-thick);box-shadow:0 20px 50px -18px rgba(0,0,0,.45),inset 0 1px 0 var(--rim)}
-:root[data-look="K"] #scrim,:root[data-look="K"] #fscrim,:root[data-look="K"] #cmdk{backdrop-filter:none;-webkit-backdrop-filter:none}
-@media (max-width:720px){
-  :root[data-look="K"] .tabbar{margin:0 12px calc(10px + env(safe-area-inset-bottom,0px));padding:8px;border:1px solid var(--line);border-radius:32px;background:var(--glass-thick);backdrop-filter:var(--blur-thick);-webkit-backdrop-filter:var(--blur-thick);box-shadow:var(--shadow)}
-  :root[data-look="K"] .tab-ind{border-radius:var(--r-pill);box-shadow:inset 0 1px 0 var(--rim)}
-  :root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
-}
-
 /* motion levels */
 :root[data-motion="calm"]{--k:.65}
 :root[data-motion="off"]{--k:.001}
@@ -592,7 +555,7 @@ button{font:inherit;color:inherit}
 .task.done .cb svg path{stroke-dashoffset:0}
 .task.pop .cb{animation:pop calc(500ms*var(--k)) var(--spring)}
 @keyframes pop{40%{transform:scale(1.3)}}
-.task .tt{font-weight:600;font-size:14.5px;background:linear-gradient(currentColor,currentColor) 0 58%/0 1.5px no-repeat;transition:background-size calc(420ms*var(--k)) var(--ease-out),color .3s;width:fit-content;max-width:100%}
+.task .tt{display:inline;-webkit-box-decoration-break:clone;box-decoration-break:clone;font-weight:600;font-size:14.5px;background:linear-gradient(currentColor,currentColor) 0 58%/0 1.5px no-repeat;transition:background-size calc(420ms*var(--k)) var(--ease-out),color .3s;width:fit-content;max-width:100%}
 .task.done .tt{background-size:100% 1.5px;color:var(--mu)}
 .task .who{font-size:12.5px;color:var(--mu)}
 .due{font:500 12px var(--fm);color:var(--mu);white-space:nowrap}
@@ -1179,6 +1142,451 @@ body{padding:0}
 .pinpill.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 18%,transparent)}
 [data-proj][role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .pill.plink{text-decoration:none;color:inherit}
+
+/* ───────── PHONES (iPhone, Fold cover screen) ───────── */
+/* Touch screens: iOS zooms into any field under 16px when it gets focus, and fingers need ~44px targets */
+@media (hover:none) and (pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select{font-size:16px!important}
+  .ibtn,.fm-prod .ibtn,.dp-nav{width:44px;height:44px}
+  .fac{height:44px}
+  .seg button{padding-top:12px;padding-bottom:12px}
+  .resched{width:34px;height:34px;position:relative}
+  .cb{position:relative}
+  .resched::after,.fm-dclr::after,.cb::after{content:"";position:absolute;inset:-8px}
+}
+/* Top bar and tab bar float over the page so they can slide away while scrolling down (--toph/--tabh are measured in JS) */
+@media (max-width:720px){
+  #app{--toph:61px;--tabh:69px;--tab-off:var(--tabh)}
+  #app.bars-off{--tab-off:env(safe-area-inset-bottom,0px)}
+  .main{grid-template-rows:minmax(0,1fr)}
+  :root[data-look] .top{position:absolute;top:0;left:0;right:0;z-index:4;transition:transform calc(320ms*var(--k)) var(--ease-out),background-color .25s,box-shadow .25s}
+  .top.elev{background:color-mix(in srgb,var(--surf-solid) 82%,transparent);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
+  :root[data-look] #view{padding-top:calc(var(--toph) + 6px);padding-bottom:calc(var(--tabh) + 28px);scroll-padding-top:var(--toph)}
+  :root[data-look] .tabbar{position:absolute;left:0;right:0;bottom:0;transition:transform calc(320ms*var(--k)) var(--ease-out)}
+  .tabbar{background:color-mix(in srgb,var(--surf-solid) 92%,transparent)}
+  #app.bars-off .top{transform:translateY(-100%)}
+  #app.bars-off .tabbar{transform:translateY(calc(100% + 40px))}
+  #totop{bottom:calc(var(--tab-off) + 16px);transition:opacity calc(250ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring),bottom calc(320ms*var(--k)) var(--ease-out)}
+  .selbar{bottom:calc(var(--tab-off) + 8px)}
+  /* Studio keeps its desktop spacing otherwise (40px side margins, 56px title) */
+  :root[data-look="I"] .top{padding:14px 16px 8px;align-items:center}
+  :root[data-look="I"] .top h1{font-size:28px}
+  :root[data-look="I"] .top .sub{font-size:14px}
+  :root[data-look="I"] #view{padding-left:16px;padding-right:16px}
+  :root[data-look="I"] .panel,:root[data-look="I"] .tabs-wrap{padding:18px}
+  :root[data-look="I"] .ph h3{font-size:20px}
+  :root[data-look="I"] .kpi{padding:16px}
+  :root[data-look="I"] .task{padding:14px 16px;border-radius:20px}
+  :root[data-look="I"] .lg-card{border-radius:30px}
+}
+/* Narrow phones (iPhone 15 Pro ~393px, Fold cover ~410px): tighter margins and type, sheets open full height */
+@media (max-width:430px){
+  :root[data-look] .top{padding:12px 12px 6px}
+  :root[data-look] .top h1{font-size:24px}
+  :root[data-look] #view{padding-left:12px;padding-right:12px}
+  :root[data-look] .panel,:root[data-look] .tabs-wrap{padding:16px}
+  :root[data-look] .hero{padding:18px 16px}
+  :root[data-look] .kpi{padding:14px}
+  :root[data-look] .kpi .val{font-size:36px}
+  .kpis,.grid2,.grid3,.dgrid{gap:10px}
+  #sheet{top:calc(8px + env(safe-area-inset-top,0px));height:auto}
+  /* compact spacing: smaller headings, pills and buttons, less air between and inside cards */
+  .dash{gap:12px}
+  :root[data-look] .hero h2{font-size:30px}
+  :root[data-look] .hero p{font-size:14.5px;margin-top:10px}
+  .hero .eyebrow{margin-bottom:8px}
+  .hero{gap:14px}
+  :root[data-look] .btn,:root[data-look] .b1{padding:10px 14px;font-size:14px}
+  :root[data-look] .pill{font-size:11.5px;padding:5px 8px;gap:5px}
+  :root[data-look] .dh{grid-template-columns:minmax(0,1fr) 76px;gap:12px;padding:16px;align-items:start}
+  :root[data-look] .dh-title{font-size:24px;margin:4px 0 8px}
+  .pring,.pring svg{width:76px;height:76px}
+  .pring .c b{font-size:20px}.pring .c>span{font-size:9.5px}
+  .ph h3{font-size:17px}
+  :root[data-look] .ph h3{font-size:17px}
+  .kpi .lab{font-size:12.5px}
+  .ringwrap{grid-template-columns:96px minmax(0,1fr);gap:12px}.ringc,.ring{width:96px;height:96px}.ringc .c b{font-size:26px}
+  /* task rows: due date beside the title instead of on its own line */
+  :root:not([data-look="I"]) .task{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"c t d" "c t p";gap:4px 10px;padding:10px 12px}
+  :root:not([data-look="I"]) .task .due{grid-area:d;align-self:start;justify-self:end;padding-top:2px}
+  :root:not([data-look="I"]) .task .prio{grid-area:p;justify-self:end}
+  :root[data-look="I"] .task{padding:12px 14px;border-radius:18px}
+  .task .tt{font-size:14px}
+  .task .cb{width:24px;height:24px;border-radius:8px}
+  :root[data-look="I"] .task .cb{width:30px;height:30px;border-radius:50%}
+  :root[data-look="I"] .task .tt{font-size:15px}
+  :root[data-look="I"] .task{row-gap:2px}
+  :root[data-look="I"] .seg button{padding:10px 14px;font-size:14px}
+  /* sign-in card */
+  .lg-card{padding:26px 20px 20px;gap:12px}
+  .lg-logo{width:44px;height:44px}
+  .lg-name{font-size:32px}
+  .fld input{padding:11px 13px}
+  .slide{height:56px}.thumb{width:46px;height:46px}
+  .nic{width:34px;height:34px;border-radius:12px}
+}
+/* Notification rows on phones: the due label and calendar button go under the title so it gets the full width */
+@media (max-width:720px){
+  .nfg{grid-template-columns:auto minmax(0,1fr);gap:6px 12px;padding:12px 14px;align-items:start}
+  .nfg .nic{grid-row:1/span 2}
+  .nfg .nr{grid-column:2;display:flex;align-items:center;gap:8px;justify-items:start}
+}
+/* iOS 26.0 Safari: when its toolbar shrinks, a full-height layout can leave a blank band at the bottom (fixed in 26.1).
+   Size the page from the measured window height instead, and paint the page colour behind it. */
+html{background:var(--bg)}
+html,body{height:var(--app-h,100%)}
+
+/* ───────── ICON-ONLY NAVIGATION (all styles) ─────────
+   Phones: tab bar without labels. Tablets and laptops: the sidebar is an icon column; factories and pins
+   stay as coloured dots with their names as tooltips. Labels stay in the markup as accessible names. */
+@media (max-width:720px){
+  .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center;gap:0}
+  .tabbar button .i{width:24px;height:24px}
+  .tab-ind{height:48px}
+}
+@media (min-width:1041px){
+  #app{grid-template-columns:76px minmax(0,1fr)}
+  .side{padding:16px 10px;align-items:center}
+  .brand b,.searchbtn .lbl,.searchbtn kbd,.nav button .lbl,.nav button .cnt,.nav .badge-new,.sec,.me div{display:none}
+  .brand{padding:4px 0 12px}
+  .searchbtn{width:46px;justify-content:center;padding:10px 0}
+  .nav{width:46px}.nav button{justify-content:center;padding:0}
+  .me{flex-direction:column;padding:0}.me .ibtn{margin:0}
+}
+@media (min-width:721px){
+  .fac{display:flex;width:46px;height:30px;justify-content:center;padding:0;font-size:0;gap:0}
+  .fac .cnt{display:none}
+  .fac .dot{width:12px;height:12px}
+  #facs{display:grid;gap:2px;margin-top:14px;justify-items:center}
+  #pins{display:grid;gap:2px;margin-top:10px;justify-items:center}
+  .pin{width:46px;height:30px;justify-content:center;padding:0;gap:0}
+  .pin .nm,.pin .star,#pins .ro{display:none}
+  .nav button .cnt.hot{display:block;position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;font:700 10px/16px var(--fb);text-align:center}
+}
+
+/* ══════════ Look K · Liquid Glass — Apple iOS & iPadOS 27 (phones, tablets) and macOS (desktop) ══════════
+   Source: Apple "iOS and iPadOS 27" Figma kit. (kit) = value read from the kit; (HIG) = Apple's published
+   guidelines, used where the kit page was not read (segmented control, buttons, text fields, sheets, menus, iPad, macOS).
+   Content sits on solid grouped backgrounds; only bars, toolbar buttons and floating controls are glass (kit).
+   Everything is scoped to [data-look="K"] so the other styles are untouched. */
+:root[data-look="K"]{
+  --fd:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fb:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fn:var(--fd); --fm:ui-monospace,"SF Mono",Menlo,monospace;
+  --h-w:700; --h-ls:.4px; --n-w:700; --n-ls:.38px; --ph-w:590; --lab-tt:none; --lab-ls:0;
+  /* type scale, Large (default) Dynamic Type: size / leading / tracking (kit) */
+  --lt:34px; --lt-l:41px; --lt-t:.4px; --t1:28px; --t1-l:34px; --t1-t:.38px; --t2:22px; --t2-l:28px; --t2-t:-.26px; --t3:20px; --t3-l:25px; --t3-t:-.45px;
+  --hl:17px; --hl-l:22px; --body:17px; --body-l:22px; --body-t:-.43px; --callout:16px; --callout-l:21px;
+  --sub:15px; --sub-l:20px; --sub-t:-.23px; --foot:13px; --foot-l:18px; --foot-t:-.08px; --cap:12px; --cap-l:16px; --cap2:11px; --cap2-l:13px;
+  --w-emph:590; --w-hl:590;
+  /* metrics: list rows 52 / 68, 16pt insets, grouped cards r26, 44pt toolbar controls (kit); segmented 32, buttons 34 (HIG) */
+  --row:52px; --row-tall:68px; --pad:16px; --gap:16px; --r-card:26px; --r-sm:12px; --r-pill:999px; --ctl:44px; --seg-h:32px; --btn-h:34px; --fld-h:44px;
+  --blur:none; --pattern:none; --grid:transparent; --glow:none; --shadow:none;
+  --orb1:transparent; --orb2:transparent; --orb3:transparent;
+  /* dark (kit: Dark - Base) */
+  --bg:#000000; --bg2:transparent; --surf:#1C1C1E; --surf-solid:#1C1C1E; --surf-3:#2C2C2E; --app:#000000;
+  --line:rgba(255,255,255,.17); --line-2:#38383A; --tx:#FFFFFF; --mu:rgba(235,235,245,.7); --mu3:rgba(235,235,245,.3);
+  --ac:#0091FF; --ac-grad:linear-gradient(#0091FF,#0091FF); --on-ac:#FFFFFF; --ok:#30D158; --warn:#FF9230; --bad:#FF4245; --info:#6D7CFF;
+  --c1:#0091FF; --c2:#FF9230; --prog:#0091FF; --bar-grad:linear-gradient(90deg,#0091FF,#0091FF);
+  --fill3:rgba(118,118,128,.24); --fill4:rgba(116,116,128,.18); --track:rgba(120,120,128,.32);
+  --hover:rgba(255,255,255,.06); --sel:rgba(255,255,255,.14); --sel-side:rgba(255,255,255,.1); --scrim:rgba(0,0,0,.4);
+  --tint1:transparent; --tint2:transparent;
+  /* glass: light values are the kit's control stack; dark is an approximation (dark glass stack not read) */
+  --glass:rgba(44,44,46,.72); --glass-thick:rgba(36,36,38,.86); --glass-blur:blur(12px) saturate(1.8);
+  --glass-sh:0 0 0 .5px rgba(255,255,255,.14),0 8px 15px rgba(0,0,0,.25); --glass-ink:#FFFFFF;
+  --knob-sh:0 3px 8px rgba(0,0,0,.24),0 3px 1px rgba(0,0,0,.08); --seg-ind:#636366;
+  color-scheme:dark }
+:root[data-look="K"][data-theme="light"]{
+  --bg:#F2F2F7; --surf:#FFFFFF; --surf-solid:#FFFFFF; --surf-3:#F2F2F7; --app:#F2F2F7;
+  --line:#E6E6E6; --line-2:#C6C6C8; --tx:#000000; --mu:rgba(60,60,67,.6); --mu3:rgba(60,60,67,.3);
+  --ac:#0088FF; --ac-grad:linear-gradient(#0088FF,#0088FF); --ok:#34C759; --warn:#FF8D28; --bad:#FF383C; --info:#6155F5;
+  --c1:#0088FF; --c2:#FF8D28; --prog:#0088FF; --bar-grad:linear-gradient(90deg,#0088FF,#0088FF);
+  --fill3:rgba(118,118,128,.12); --fill4:rgba(116,116,128,.08); --track:rgba(120,120,128,.16);
+  --hover:rgba(0,0,0,.04); --sel:#EDEDED; --sel-side:rgba(0,0,0,.06); --scrim:rgba(0,0,0,.2);
+  --glass:rgba(250,250,250,.78); --glass-thick:rgba(250,250,250,.9);
+  --glass-sh:1.25px 0 0 -.75px #D0D0D0,-1.25px 0 0 -.75px #D0D0D0,0 0 0 .5px #E8E8E8,0 8px 15px rgba(0,0,0,.02); --glass-ink:#1A1A1A;
+  --knob-sh:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04); --seg-ind:#FFFFFF;
+  color-scheme:light }
+/* macOS on desktop (HIG): 13pt body, denser rows and controls */
+@media (min-width:1041px){ :root[data-look="K"]{
+  --lt:26px; --lt-l:32px; --lt-t:.22px; --t1:22px; --t1-l:26px; --t1-t:-.26px; --t2:17px; --t2-l:22px; --t2-t:-.43px; --t3:15px; --t3-l:20px; --t3-t:-.23px;
+  --hl:13px; --hl-l:16px; --body:13px; --body-l:16px; --body-t:-.08px; --callout:12px; --callout-l:15px; --sub:11px; --sub-l:14px; --sub-t:.06px;
+  --foot:10px; --foot-l:13px; --foot-t:.12px; --cap:10px; --cap-l:13px; --cap2:10px; --cap2-l:13px; --w-hl:700;
+  --row:32px; --row-tall:44px; --pad:14px; --gap:14px; --r-card:14px; --r-sm:8px; --ctl:32px; --seg-h:24px; --btn-h:28px; --fld-h:28px } }
+
+/* page */
+:root[data-look="K"] body,:root[data-look="K"] #login,:root[data-look="K"] #app{background:var(--bg)}
+:root[data-look="K"] body{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .orbs{display:none}
+:root[data-look="K"] .muted{color:var(--mu)}
+:root[data-look="K"] .mono{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t);font-variant-numeric:tabular-nums}
+
+/* glass controls (kit: toolbar button group) */
+:root[data-look="K"] .ibtn,:root[data-look="K"] .sync,:root[data-look="K"] #totop{width:var(--ctl);height:var(--ctl);border:0;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh);color:var(--glass-ink)}
+:root[data-look="K"] .sync{width:auto;padding:0 14px;border-radius:999px;font:400 var(--foot)/1 var(--fb);color:var(--mu)}
+:root[data-look="K"] .ibtn .i{width:20px;height:20px}
+
+/* buttons (HIG: bordered = tinted fill + accent label, prominent = accent fill) */
+:root[data-look="K"] .btn,:root[data-look="K"] .b1{height:var(--btn-h);padding:0 14px;border:0;border-radius:999px;font:var(--w-emph) var(--sub)/1 var(--fb);letter-spacing:var(--sub-t);box-shadow:none;gap:6px}
+:root[data-look="K"] .btn{background:var(--fill3);color:var(--ac)}
+:root[data-look="K"] .b1{background:var(--ac);color:var(--on-ac)}
+:root[data-look="K"] .btn:hover,:root[data-look="K"] .b1:hover{filter:brightness(1.04)}
+:root[data-look="K"] .fm-del{color:var(--bad);background:var(--fill3)}
+:root[data-look="K"] .fm-del.armed{background:var(--bad);color:#fff}
+:root[data-look="K"] .ripple{display:none}
+
+/* segmented control (HIG: track = tertiary fill, raised white thumb) */
+:root[data-look="K"] .seg{height:var(--seg-h);padding:2px;gap:0;border:0;border-radius:999px;background:var(--fill3);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+:root[data-look="K"] .seg .ind{top:2px;bottom:2px;border:0;border-radius:999px;background:var(--seg-ind);box-shadow:var(--knob-sh)}
+:root[data-look="K"] .seg.acc .ind{background:var(--ac);box-shadow:none}
+:root[data-look="K"] .seg button{height:100%;padding:0 12px;border-radius:999px;color:var(--tx);font:var(--w-emph) var(--foot)/1 var(--fb);letter-spacing:var(--foot-t)}
+:root[data-look="K"] .seg button.on{color:var(--tx)}
+:root[data-look="K"] .seg.acc button.on{color:var(--on-ac)}
+
+/* tags / status pills: small tinted capsules */
+:root[data-look="K"] .pill{border:0;border-radius:999px;padding:3px 8px;gap:4px;background:var(--fill3);color:var(--mu);font:var(--w-emph) var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t)}
+:root[data-look="K"] .pill.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+:root[data-look="K"] .pill.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+:root[data-look="K"] .pill.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+:root[data-look="K"] .pill.info{background:color-mix(in srgb,var(--info) 14%,transparent);color:var(--info)}
+:root[data-look="K"] .dotc{width:6px;height:6px}
+
+/* cards = grouped table sections: solid, no border or shadow (kit: grouped/secondary, r26) */
+:root[data-look="K"] .card{background:var(--surf);border:0;border-radius:var(--r-card);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+:root[data-look="K"] .card::after{display:none}
+:root[data-look="K"] .hov:hover{border-color:transparent}
+:root[data-look="K"] .panel,:root[data-look="K"] .tabs-wrap{padding:var(--pad);gap:12px}
+:root[data-look="K"] .dash{gap:var(--gap)}
+:root[data-look="K"] .dgrid,:root[data-look="K"] .grid2,:root[data-look="K"] .grid3,:root[data-look="K"] .kpis{gap:var(--gap)}
+/* section header inside a card (kit: list header "Prominent" = Title 3 semibold) */
+:root[data-look="K"] .ph{align-items:baseline}
+:root[data-look="K"] .ph h3{font:var(--w-emph) var(--t3)/var(--t3-l) var(--fb);letter-spacing:var(--t3-t)}
+:root[data-look="K"] .ph span{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);text-transform:none;color:var(--mu)}
+/* group labels (kit: list header "Nested" = Headline, secondary label, sentence case) */
+:root[data-look="K"] .tgroup,:root[data-look="K"] .ngroup,:root[data-look="K"] .sec,:root[data-look="K"] .fm-sec,:root[data-look="K"] .hero .eyebrow,:root[data-look="K"] #pop h4{font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t);text-transform:none;color:var(--mu)}
+:root[data-look="K"] .tgroup{padding:14px 0 6px}
+:root[data-look="K"] .ngroup{padding:18px var(--pad) 8px}
+:root[data-look="K"] .ngroup .ct{font-weight:400}
+
+/* top bar */
+:root[data-look="K"] .top{gap:10px}
+:root[data-look="K"] .top h1{font:var(--h-w) var(--lt)/var(--lt-l) var(--fd);letter-spacing:var(--lt-t)}
+:root[data-look="K"] .top .sub{font:510 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);color:var(--mu)}
+:root[data-look="K"] .top.elev{box-shadow:none}
+
+/* hero greeting: content, not a card */
+:root[data-look="K"] .hero{background:none;padding:4px 0 6px;border-radius:0;gap:12px;overflow:visible}
+:root[data-look="K"] .hero .eyebrow{margin-bottom:4px}
+:root[data-look="K"] .hero h2{font:var(--h-w) var(--t1)/var(--t1-l) var(--fd);letter-spacing:var(--t1-t)}
+:root[data-look="K"] .hero h2 em{background:none;-webkit-text-fill-color:var(--ac);color:var(--ac)}
+:root[data-look="K"] .hero p{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);margin-top:6px}
+:root[data-look="K"] .hero .cta{gap:8px}
+
+/* KPI tiles */
+:root[data-look="K"] .kpi{padding:var(--pad);gap:4px}
+:root[data-look="K"] .kpi .lab{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);color:var(--mu)}
+:root[data-look="K"] .kpi .val{font:var(--n-w) var(--t1)/var(--t1-l) var(--fd);letter-spacing:var(--t1-t)}
+:root[data-look="K"] .kpi .sub{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t)}
+:root[data-look="K"] .kpi.alert{background:var(--surf);border:0}
+:root[data-look="K"] .kpi.alert .lab{color:var(--bad)}
+:root[data-look="K"] .bignum b{font:var(--n-w) var(--t1)/var(--t1-l) var(--fd)}
+
+/* banners */
+:root[data-look="K"] .banner{border:0;border-radius:var(--r-card);background:var(--surf);padding:12px var(--pad);font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
+:root[data-look="K"] .banner.warn{background:color-mix(in srgb,var(--warn) 12%,var(--surf))}
+
+/* list rows inside a section (kit: Row 52 / 68, title Body, subtitle Subheadline, inset hairline separators) */
+:root[data-look="K"] .tabbody{gap:0}
+:root[data-look="K"] .task{position:relative;background:none;border:0;border-radius:0;min-height:var(--row);padding:11px 0;gap:4px 12px;align-items:center}
+:root[data-look="K"] .task+.task::before,:root[data-look="K"] .row+.row::before,:root[data-look="K"] .li+.li::before,:root[data-look="K"] .nrow+.nrow .nfg::before{content:"";position:absolute;top:0;right:0;left:var(--sep-l,0);border-top:1px solid var(--line);pointer-events:none}
+:root[data-look="K"] .task{--sep-l:36px}
+:root[data-look="K"] .task.done{background:none;opacity:1}
+:root[data-look="K"] .task .tt{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .task.done .tt{color:var(--mu)}
+:root[data-look="K"] .task .who{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);color:var(--mu)}
+:root[data-look="K"] .due{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t);font-variant-numeric:tabular-nums;color:var(--mu)}
+:root[data-look="K"] .due.late{color:var(--bad)}
+:root[data-look="K"] .task .cb{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--mu3)}
+:root[data-look="K"] .task.done .cb{background:var(--ac);border-color:var(--ac)}
+:root[data-look="K"] .task .ed{width:32px;height:32px}
+/* "Add" rows (kit: Row - Button = centred accent Body) */
+:root[data-look="K"] .addrow{min-height:var(--row);padding:0;border:0;border-radius:0;background:none;color:var(--ac);font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .addrow:hover{background:none;color:var(--ac);opacity:.75}
+:root[data-look="K"] .empty{padding:24px var(--pad);font:400 var(--sub)/var(--sub-l) var(--fb)}
+:root[data-look="K"] .empty b{font:var(--w-emph) var(--t3)/var(--t3-l) var(--fb);letter-spacing:var(--t3-t);margin-bottom:4px}
+
+/* inquiry / project rows: one grouped section instead of separate cards */
+:root[data-look="K"] .rows{gap:0;background:var(--surf);border-radius:var(--r-card);overflow:hidden}
+:root[data-look="K"] .rows>.row{position:relative;background:none;border-radius:0;min-height:var(--row-tall);padding:10px var(--pad);--sep-l:var(--pad)}
+:root[data-look="K"] .row .t{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .row .s{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
+:root[data-look="K"] .li{position:relative;border-radius:0;padding:10px 0;min-height:var(--row)}
+:root[data-look="K"] .li:hover{background:none}
+:root[data-look="K"] .li .t{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .li .s{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
+/* project cards */
+:root[data-look="K"] .pcard{padding:var(--pad);gap:10px}
+:root[data-look="K"] .pcard:hover{transform:none}
+:root[data-look="K"] .pcard .t{font:var(--w-emph) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .pcard .brief{font:400 var(--sub)/var(--sub-l) var(--fb);margin-top:-4px}
+:root[data-look="K"] .bcard{padding:12px var(--pad);gap:8px}
+:root[data-look="K"] .bhead{border:0;border-radius:var(--r-sm);background:none;padding:6px 4px;font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);color:var(--mu)}
+:root[data-look="K"] .pbar{height:4px}
+/* project page header */
+:root[data-look="K"] .dh{padding:var(--pad)}
+:root[data-look="K"] .dh-title{font:var(--h-w) var(--t2)/var(--t2-l) var(--fd);letter-spacing:var(--t2-t);margin:2px 0 8px}
+:root[data-look="K"] .backlink{font:400 var(--body)/var(--body-l) var(--fb);color:var(--ac);padding:0}
+
+/* notifications: one grouped list */
+:root[data-look="K"] .nlist{gap:0;background:var(--surf);border-radius:var(--r-card);overflow:hidden}
+:root[data-look="K"] .nrow{border-radius:0}
+:root[data-look="K"] .nfg{background:var(--surf);border:0;border-radius:0;padding:11px var(--pad);min-height:var(--row-tall);gap:4px 12px;--sep-l:calc(var(--pad) + 42px)}
+:root[data-look="K"] .nic{width:30px;height:30px;border-radius:8px}
+:root[data-look="K"] .nt{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .nrow.unread .nt{font-weight:var(--w-emph)}
+:root[data-look="K"] .nrow:not(.unread) .nt{font-weight:400;color:var(--tx)}
+:root[data-look="K"] .ns{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
+:root[data-look="K"] .resched{border:0;background:var(--fill3);color:var(--ac)}
+
+/* forms and sheets (HIG: sheets show the grouped background; fields are filled, borderless) */
+:root[data-look="K"] #sheet,:root[data-look="K"] .fm-card{background:var(--bg);border:0;box-shadow:0 20px 60px rgba(0,0,0,.25);backdrop-filter:none;-webkit-backdrop-filter:none}
+:root[data-look="K"] .fm-head h2{font:var(--w-emph) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t)}
+:root[data-look="K"] .fm-eye{font:400 var(--foot)/var(--foot-l) var(--fb);color:var(--mu)}
+:root[data-look="K"] .fm-foot{border-top:0}
+:root[data-look="K"] .fm-sec{border-top:0;padding-top:12px}
+:root[data-look="K"] .ff>label,:root[data-look="K"] .fld label{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t);color:var(--mu);padding-left:var(--pad)}
+:root[data-look="K"] .ff input:not([type=checkbox]),:root[data-look="K"] .ff select,:root[data-look="K"] .ff textarea,:root[data-look="K"] .fm-prod input,:root[data-look="K"] .fld input,:root[data-look="K"] .fm-date,:root[data-look="K"] .search input,:root[data-look="K"] .cmd input{min-height:var(--fld-h);border:0;border-radius:var(--r-sm);background:var(--surf);color:var(--tx);font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t);padding:0 var(--pad);box-shadow:none}
+:root[data-look="K"] .ff textarea{padding:11px var(--pad)}
+:root[data-look="K"] .ff input:focus,:root[data-look="K"] .ff select:focus,:root[data-look="K"] .ff textarea:focus,:root[data-look="K"] .fld input:focus,:root[data-look="K"] .fm-date[aria-expanded="true"]{box-shadow:0 0 0 2px var(--ac)}
+:root[data-look="K"] .fm-chips button{height:var(--btn-h);padding:0 14px;border:0;background:var(--fill3);color:var(--tx);font:var(--w-emph) var(--sub)/1 var(--fb)}
+:root[data-look="K"] .fm-chips button.on{background:var(--ac);color:var(--on-ac)}
+:root[data-look="K"] .fm-ck{border:0;background:var(--surf);border-radius:var(--r-sm)}
+:root[data-look="K"] .fm-ck i{border-radius:50%}
+/* switches (kit: 64 x 28 capsule, green when on, 38 x 24 knob) */
+:root[data-look="K"] .fm-tog i,:root[data-look="K"] .sw{width:64px;height:28px;border:0;border-radius:999px;background:var(--track)}
+:root[data-look="K"] .fm-tog i::after,:root[data-look="K"] .sw::after{left:2px;top:2px;width:38px;height:24px;border-radius:999px;background:#fff;box-shadow:var(--knob-sh)}
+:root[data-look="K"] .fm-tog input:checked+i,:root[data-look="K"] .keep input:checked+.sw{background:var(--ok)}
+:root[data-look="K"] .fm-tog input:checked+i::after,:root[data-look="K"] .keep input:checked+.sw::after{transform:translateX(22px);background:#fff}
+
+/* menus, popovers, toasts, pickers, command bar: glass (kit material for floating controls) */
+:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd,:root[data-look="K"] .toast,:root[data-look="K"] .selbar{background:var(--glass-thick);border:0;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
+:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd{border-radius:var(--r-card)}
+:root[data-look="K"] .toast{border-radius:var(--r-card);font:400 var(--sub)/var(--sub-l) var(--fb)}
+:root[data-look="K"] .looks button{border:0;background:var(--fill4);color:var(--tx);border-radius:var(--r-sm)}
+:root[data-look="K"] .looks button.on{box-shadow:0 0 0 2px var(--ac)}
+:root[data-look="K"] .dp-d.sel,:root[data-look="K"] .dp-quick button.on,:root[data-look="K"] .dp-months button.sel{background:var(--ac);box-shadow:none}
+:root[data-look="K"] #scrim,:root[data-look="K"] #fscrim,:root[data-look="K"] #cmdk{backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* sign-in */
+:root[data-look="K"] .lg-card{background:var(--surf);border:0;border-radius:var(--r-card);box-shadow:none;backdrop-filter:none}
+:root[data-look="K"] .lg-name{font:var(--h-w) var(--lt)/var(--lt-l) var(--fd);letter-spacing:var(--lt-t)}
+:root[data-look="K"] .lg-hello,:root[data-look="K"] .lg-foot{font:400 var(--sub)/var(--sub-l) var(--fb);color:var(--mu)}
+:root[data-look="K"] .lg-logo,:root[data-look="K"] .brand i,:root[data-look="K"] .avatar{background:var(--ac);box-shadow:none}
+:root[data-look="K"] .lg-logo{border-radius:12px}
+:root[data-look="K"] .fld input{background:var(--surf-3)}
+:root[data-look="K"] .slide{height:52px;border:0;background:var(--fill3)}
+:root[data-look="K"] .slide-fill{background:var(--ac)}
+:root[data-look="K"] .thumb{width:44px;height:44px;background:var(--ac);box-shadow:none}
+
+/* ── iPhone (≤720): floating glass tab bar, 44pt glass buttons above a 34pt large title that shrinks on scroll ── */
+@media (max-width:720px){
+  :root[data-look="K"] #app.bars-off{--tab-off:var(--tabh)}
+  :root[data-look="K"] #app.bars-off .top,:root[data-look="K"] #app.bars-off .tabbar{transform:none}
+  :root[data-look="K"] .top{flex-wrap:wrap;justify-content:flex-end;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 8px) 16px 10px;background:none}
+  :root[data-look="K"] .top .ttl{order:2;flex:1 0 100%;margin:0;transition:transform calc(260ms*var(--k)) var(--ease-out)}
+  :root[data-look="K"] .top .ttl h1{transition:font-size calc(220ms*var(--k)) var(--ease-out)}
+  :root[data-look="K"] .top.elev .ttl{position:absolute;left:16px;top:calc(env(safe-area-inset-top,0px) + 8px);height:var(--ctl);max-width:calc(100% - 32px - 4*var(--ctl) - 3*10px - 8px);flex:none}
+  :root[data-look="K"] .top.elev .ttl h1{font:var(--w-emph) var(--hl)/var(--ctl) var(--fb);letter-spacing:var(--body-t)}
+  :root[data-look="K"] .top.elev .sub{display:none}
+  /* scroll edge effect (kit: soft blur under the bars) */
+  :root[data-look="K"] .top::before{content:"";position:absolute;inset:0 0 -24px;z-index:-1;pointer-events:none;opacity:0;transition:opacity .25s;
+    background:linear-gradient(var(--bg) 40%,color-mix(in srgb,var(--bg) 0%,transparent));backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+    -webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+  :root[data-look="K"] .top.elev::before{opacity:1}
+  :root[data-look="K"] #view{padding:calc(env(safe-area-inset-top,0px) + 117px) 16px calc(var(--tabh) + 28px)}
+  :root[data-look="K"] .tabbar{left:25px;right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);margin:0;padding:4px;border:0;border-radius:999px;justify-content:stretch;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .tabbar button{flex:1 1 0;width:auto;height:54px;padding:6px 2px 7px;gap:1px;align-content:center;color:var(--glass-ink);font:var(--w-emph) 10px/12px var(--fb);letter-spacing:0}
+  :root[data-look="K"] .tabbar button .i{width:24px;height:24px}
+  :root[data-look="K"] .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center}
+  :root[data-look="K"] .tab-ind{height:48px}
+  :root[data-look="K"] .tabbar button.on,:root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
+  :root[data-look="K"] .tab-ind{top:4px;height:54px;border-radius:999px;background:var(--sel);box-shadow:none}
+  :root[data-look="K"] #totop{right:16px}
+  :root[data-look="K"] #pop{border-radius:var(--r-card)}
+  :root[data-look="K"] #sheet{border-radius:38px 38px 0 0;left:0;right:0;bottom:0}
+  :root[data-look="K"] #form{padding:8px 0 0}
+  :root[data-look="K"] .fm-card{border-radius:38px 38px 0 0}
+  :root[data-look="K"] .nfg{grid-template-columns:auto minmax(0,1fr)}
+  /* the shared compact phone rules are replaced by the kit's sizes */
+  :root[data-look="K"] .kpi .val{font-size:var(--t1)}
+  :root[data-look="K"] .dh{grid-template-columns:minmax(0,1fr) 76px}
+}
+@media (max-width:430px){
+  :root[data-look="K"] .top{padding-left:16px;padding-right:16px}
+  :root[data-look="K"] #view{padding-left:16px;padding-right:16px}
+  :root[data-look="K"] .panel,:root[data-look="K"] .tabs-wrap{padding:var(--pad)}
+  :root[data-look="K"] .hero h2{font-size:var(--t1)}
+  :root[data-look="K"] .btn,:root[data-look="K"] .b1{padding:0 14px;font-size:var(--sub)}
+  :root[data-look="K"] .pill{font-size:var(--foot);padding:3px 8px}
+  :root[data-look="K"] .dh-title{font-size:var(--t2)}
+  :root[data-look="K"] .ph h3{font-size:var(--t3)}
+  :root[data-look="K"] .task{padding:11px 0}
+  :root[data-look="K"] .task .tt{font-size:var(--body)}
+  :root[data-look="K"] .task .cb{width:24px;height:24px;border-radius:50%}
+  :root[data-look="K"] .lg-name{font-size:var(--lt)}
+  :root[data-look="K"] .lg-card{padding:28px 20px 20px}
+  :root[data-look="K"] .slide{height:52px}:root[data-look="K"] .thumb{width:44px;height:44px}
+}
+
+/* ── iPad (721–1040): icon sidebar as a floating glass column (HIG) ── */
+@media (min-width:721px) and (max-width:1040px){
+  :root[data-look="K"] .side{margin:12px 0 12px 12px;border:0;border-radius:var(--r-card);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .nav button,:root[data-look="K"] .nav-ind{border-radius:14px}
+  :root[data-look="K"] .nav-ind{background:var(--sel);border:0;box-shadow:none}
+  :root[data-look="K"] .nav button.on{color:var(--ac)}
+  :root[data-look="K"] .top{padding:20px 24px 8px}
+  :root[data-look="K"] #view{padding:8px 24px 40px}
+}
+
+/* ── Mac (≥1041): floating sidebar, 13pt text, 32pt rows (HIG macOS) ── */
+@media (min-width:1041px){
+  :root[data-look="K"] #app{grid-template-columns:72px minmax(0,1fr)}
+  :root[data-look="K"] .side{margin:8px 0 8px 8px;padding:12px 8px;gap:2px;align-items:center;border:0;border-radius:18px;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .brand{padding:4px 8px 12px}
+  :root[data-look="K"] .brand i{width:24px;height:24px;border-radius:6px;font-size:9px}
+  :root[data-look="K"] .brand b{font:700 var(--t3)/var(--t3-l) var(--fb)}
+  :root[data-look="K"] .searchbtn{width:40px;height:32px;padding:0;margin-bottom:8px;border:0;border-radius:10px;background:var(--fill3)}
+  :root[data-look="K"] .searchbtn kbd{border:0;font:400 var(--cap)/1 var(--fb)}
+  :root[data-look="K"] .nav{gap:1px}
+  :root[data-look="K"] .nav{width:40px}
+  :root[data-look="K"] .nav button{height:36px;padding:0;justify-content:center;border-radius:10px;color:var(--tx)}
+  :root[data-look="K"] .nav button .i{width:16px;height:16px;color:var(--ac)}
+  :root[data-look="K"] .nav button .cnt{font:400 var(--body)/1 var(--fb);color:var(--mu)}
+  :root[data-look="K"] .nav button .cnt.hot{background:var(--bad);color:#fff;top:1px;right:-2px}
+  :root[data-look="K"] .nav-ind{height:36px;border:0;border-radius:10px;background:var(--sel-side);box-shadow:none}
+  :root[data-look="K"] .sec{padding:14px 8px 4px;font:700 var(--sub)/var(--sub-l) var(--fb);color:var(--mu)}
+  :root[data-look="K"] .fac,:root[data-look="K"] .pin{width:40px;height:26px;border-radius:8px}
+  :root[data-look="K"] .fac.on{background:var(--sel-side)}
+  :root[data-look="K"] .me b{font:var(--w-emph) var(--body)/var(--body-l) var(--fb)}
+  :root[data-look="K"] .me span{font:400 var(--sub)/var(--sub-l) var(--fb)}
+  :root[data-look="K"] .top{padding:14px 24px 10px;min-height:52px}
+  :root[data-look="K"] .top h1{font:700 var(--lt)/var(--lt-l) var(--fd)}
+  :root[data-look="K"] #view{padding:6px 24px 40px}
+  :root[data-look="K"] .ibtn .i{width:16px;height:16px}
+  :root[data-look="K"] .sync{height:var(--ctl)}
+  :root[data-look="K"] .task{--sep-l:32px}
+  :root[data-look="K"] .task .cb{width:16px;height:16px;border-width:1px}
+  :root[data-look="K"] .task .cb svg{width:11px;height:11px}
+  :root[data-look="K"] .nic{width:22px;height:22px;border-radius:6px}
+  :root[data-look="K"] .nic .i{width:14px;height:14px}
+  :root[data-look="K"] .nfg{--sep-l:calc(var(--pad) + 34px)}
+  :root[data-look="K"] .pill{padding:1px 7px}
+  :root[data-look="K"] .fm-card,:root[data-look="K"] #sheet{border-radius:18px}
+  :root[data-look="K"] .fm-tog i,:root[data-look="K"] .sw{width:38px;height:22px}
+  :root[data-look="K"] .fm-tog i::after,:root[data-look="K"] .sw::after{width:20px;height:20px;top:1px;left:1px}
+  :root[data-look="K"] .fm-tog input:checked+i::after,:root[data-look="K"] .keep input:checked+.sw::after{transform:translateX(16px)}
+  :root[data-look="K"] .lg-card{border-radius:18px}
+}
 </style>
 
 </head>
@@ -1210,14 +1618,14 @@ body{padding:0}
   <div class="orbs"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i></div>
   <aside class="side" aria-label="Main navigation">
     <div class="brand"><i>NPD</i><b>Tracker</b></div>
-    <button class="searchbtn" type="button" data-act="cmdk"><span data-ico="search"></span><span class="lbl">Search or jump to…</span><kbd>Ctrl K</kbd></button>
+    <button class="searchbtn" type="button" data-act="cmdk" aria-label="Search or jump to" title="Search (Ctrl K)"><span data-ico="search"></span><span class="lbl">Search or jump to…</span><kbd>Ctrl K</kbd></button>
     <nav class="nav" id="nav">
       <div class="nav-ind" id="nav-ind"></div>
-      <button type="button" data-go="dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
-      <button type="button" data-go="inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
-      <button type="button" data-go="projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
-      <button type="button" data-go="tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
-      <button type="button" data-go="notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
+      <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
+      <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
+      <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
+      <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
+      <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
     </nav>
     <div class="sec">Factories</div>
     <div id="facs"></div>
@@ -1242,11 +1650,11 @@ body{padding:0}
   </main>
   <nav class="tabbar" id="tabbar">
     <div class="tab-ind" id="tab-ind"></div>
-    <button type="button" data-go="dashboard"><span data-ico="grid"></span>Home</button>
-    <button type="button" data-go="inquiries"><span data-ico="inbox"></span>Inquiries</button>
-    <button type="button" data-go="projects"><span data-ico="folder"></span>Projects</button>
-    <button type="button" data-go="tasks"><span data-ico="tasks"></span>Tasks</button>
-    <button type="button" data-go="notifications"><span data-ico="bell"></span>Alerts</button>
+    <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span>Home</button>
+    <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span>Inquiries</button>
+    <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span>Projects</button>
+    <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span>Tasks</button>
+    <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span>Alerts</button>
   </nav>
 </div>
 
@@ -2050,12 +2458,19 @@ function moveNav(animate = true){
   const nb = $(`#nav button[data-go="${key}"]`), ni = $('#nav-ind');
   if (nb){ if (!animate) ni.style.transition = 'none'; ni.style.transform = `translateY(${nb.offsetTop}px)`; ni.style.opacity = '1'; if (!animate){ void ni.offsetWidth; ni.style.transition = ''; } } else ni.style.opacity = '0';
   const tb = $(`#tabbar button[data-go="${key}"]`), ti = $('#tab-ind');
-  if (tb && tb.offsetWidth){ if (!animate) ti.style.transition = 'none'; ti.style.transform = `translateX(${tb.offsetLeft}px)`; if (!animate){ void ti.offsetWidth; ti.style.transition = ''; } }
+  if (tb && tb.offsetWidth){ if (!animate) ti.style.transition = 'none'; ti.style.width = tb.offsetWidth + 'px'; ti.style.transform = `translateX(${tb.offsetLeft}px)`; if (!animate){ void ti.offsetWidth; ti.style.transition = ''; } }
 }
 function updFade(el){ if (!el) return; const max = el.scrollWidth - el.clientWidth;
   el.classList.toggle('fl', max > 8 && el.scrollLeft > 2); el.classList.toggle('fr', max > 8 && el.scrollLeft < max - 2); }
 function wireScroll(){ $$('.seg,.tok,#topx').forEach(updFade); }
 let lastInput = 0;
+const PHONE = matchMedia('(max-width:720px)');
+function setAppH(){ document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px'); }
+setAppH(); addEventListener('resize', setAppH); if (window.visualViewport) visualViewport.addEventListener('resize', setAppH);
+/* the floating top bar and tab bar on phones: the page is padded by their measured heights */
+function measureBars(){ const app = $('#app'), top = $('.top'), tab = $('#tabbar'); if (!app || !top || !tab) return;
+  app.style.setProperty('--toph', top.offsetHeight + 'px'); app.style.setProperty('--tabh', Math.max(0, app.clientHeight - tab.offsetTop) + 'px'); }
+if (window.ResizeObserver) addEventListener('DOMContentLoaded', () => { const ro = new ResizeObserver(() => measureBars()); ['.top','#tabbar','#app'].forEach(q => { const e = $(q); if (e) ro.observe(e); }); });
 ['pointerdown','touchstart','wheel','keydown'].forEach(ev => addEventListener(ev, () => { lastInput = Date.now(); }, {passive:true, capture:true}));
 document.addEventListener('scroll', e => {
   const t = e.target; if (!t || !t.classList) return; lastInput = Date.now();
@@ -2066,7 +2481,10 @@ document.addEventListener('scroll', e => {
     if (t.matches('.seg,.tok,#topx')) updFade(t);
     if (t.id === 'view'){ const top = t.scrollTop, a = top > 8, b = top > 700;
       if (a !== t._elev){ t._elev = a; $('.top').classList.toggle('elev', a); }
-      if (b !== t._tt){ t._tt = b; $('#totop').classList.toggle('show', b); } } });
+      if (b !== t._tt){ t._tt = b; $('#totop').classList.toggle('show', b); }
+      const dy = top - (t._y || 0); t._y = top;
+      const off = PHONE.matches && top > 120 && (dy > 4 ? true : dy < -4 ? false : !!t._off);
+      if (off !== !!t._off){ t._off = off; $('#app').classList.toggle('bars-off', off); } } });
 }, {capture:true, passive:true});
 
 /* ══════════ SIDEBAR ══════════ */
@@ -2554,7 +2972,7 @@ const STYLES = [
     d:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,138,61,.35),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(77,163,255,.35),transparent 55%),#15191E',tx:'#F2F4F7',bar:'linear-gradient(90deg,#4DA3FF 58%,#FF8A3D 58%)'},l:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,162,92,.6),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(127,167,207,.65),transparent 55%),#F1F3F6',tx:'#14191F',bar:'linear-gradient(90deg,#1E7FE0 58%,#FF7A1A 58%)'}},
   {k:'J',n:'Graphite',ref:2,short:1,v:'Layered near-blacks, two-tone headlines, tinted tags, priority icons, turquoise charts and yellow progress.',f:'Your reference 2 (Displaay project UI)',fd:'Instrument Sans',fn:'Instrument Sans',nw:500,hw:500,fonts:'Instrument Sans',
     d:{bg:'linear-gradient(#1F1F1F,#1F1F1F)',tx:'#F2F2F2',bar:'linear-gradient(90deg,#F5D547 62%,#2A2A2A 62%)'},l:{bg:'#FFFFFF',tx:'#141414',bar:'linear-gradient(90deg,#E9B800 62%,#ECECEC 62%)'}},
-  {k:'K',n:'Liquid Glass',isNew:1,v:'Frosted glass on every surface over soft coloured light, SF type, iOS blue on the one main action. Follows your device\'s light or dark mode.',f:'Your Liquid Glass System (Apple iOS 26–27)',fd:'SF Pro Display',fn:'SF Pro Display',nw:600,hw:700,fonts:'SF Pro (system font)',
+  {k:'K',n:'Liquid Glass',isNew:1,v:'Apple iOS 27 on phones and tablets, macOS on desktop: grouped lists, glass bars and buttons, SF type, system blue. Follows your device\'s light or dark mode.',f:'Apple iOS & iPadOS 27 Figma kit',fd:'SF Pro Display',fn:'SF Pro Display',nw:600,hw:700,fonts:'SF Pro (system font)',
     d:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(194,85,42,.75),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(31,127,134,.75),transparent 60%),#000',tx:'#FFFFFF',bar:'linear-gradient(90deg,#0A84FF 62%,rgba(120,120,128,.36) 62%)'},l:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(255,159,110,.8),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(90,200,200,.75),transparent 60%),#F2F2F7',tx:'#000000',bar:'linear-gradient(90deg,#007AFF 62%,rgba(120,120,128,.2) 62%)'}},
   {k:'D',n:'Vision',short:1,v:'Frosted glass over soft coloured light, ultra-thin numbers.',f:'Apple Vision Pro, premium car screens',fd:'Sora',fn:'Sora',nw:200,hw:300,fonts:'Sora · Plus Jakarta Sans',
     d:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.45),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.4),transparent 60%),#05070D',tx:'#F6F8FB',bar:'linear-gradient(90deg,#A5F3FC,#7DD3FC,#A78BFA)'},l:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.35),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.3),transparent 60%),#E8EDF4',tx:'#0A1020',bar:'linear-gradient(90deg,#22B8E8,#0B7FA8,#7C5CF0)'}},
@@ -2599,7 +3017,7 @@ function render(opts = {}){
   hydrateIcons(v); counts(); moveNav(!opts.keep);
   requestAnimationFrame(() => {
     $$('#view .seg,#topx .seg').forEach(s => placeInd(s, false)); wireScroll();
-    if (!opts.keep){ $('.top').classList.remove('elev'); $('#totop').classList.remove('show'); }
+    if (!opts.keep){ $('.top').classList.remove('elev'); $('#totop').classList.remove('show'); $('#app').classList.remove('bars-off'); v._off = false; v._y = 0; }
     if (!DB.data) return;
     if (S.page === 'dashboard'){ if (!opts.keep) countUp(v); wireChart(); }
     if (S.page === 'project'){ const p = findRec(DB.data, 'projects', S.proj); if (p) setRing(projPct(p)); }

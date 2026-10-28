@@ -1179,6 +1179,55 @@ body{padding:0}
 .pinpill.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 18%,transparent)}
 [data-proj][role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .pill.plink{text-decoration:none;color:inherit}
+
+/* ───────── PHONES (iPhone, Fold cover screen) ───────── */
+/* Touch screens: iOS zooms into any field under 16px when it gets focus, and fingers need ~44px targets */
+@media (hover:none) and (pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select{font-size:16px!important}
+  .ibtn,.fm-prod .ibtn,.dp-nav{width:44px;height:44px}
+  .fac{height:44px}
+  .seg button{padding-top:12px;padding-bottom:12px}
+  .resched{width:34px;height:34px;position:relative}
+  .cb{position:relative}
+  .resched::after,.fm-dclr::after,.cb::after{content:"";position:absolute;inset:-8px}
+}
+/* Top bar and tab bar float over the page so they can slide away while scrolling down (--toph/--tabh are measured in JS) */
+@media (max-width:720px){
+  #app{--toph:61px;--tabh:69px;--tab-off:var(--tabh)}
+  #app.bars-off{--tab-off:env(safe-area-inset-bottom,0px)}
+  .main{grid-template-rows:minmax(0,1fr)}
+  :root[data-look] .top{position:absolute;top:0;left:0;right:0;z-index:4;transition:transform calc(320ms*var(--k)) var(--ease-out),background-color .25s,box-shadow .25s}
+  .top.elev{background:color-mix(in srgb,var(--surf-solid) 82%,transparent);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
+  :root[data-look] #view{padding-top:calc(var(--toph) + 6px);padding-bottom:calc(var(--tabh) + 28px);scroll-padding-top:var(--toph)}
+  :root[data-look] .tabbar{position:absolute;left:0;right:0;bottom:0;transition:transform calc(320ms*var(--k)) var(--ease-out)}
+  .tabbar{background:color-mix(in srgb,var(--surf-solid) 92%,transparent)}
+  #app.bars-off .top{transform:translateY(-100%)}
+  #app.bars-off .tabbar{transform:translateY(calc(100% + 40px))}
+  #totop{bottom:calc(var(--tab-off) + 16px);transition:opacity calc(250ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring),bottom calc(320ms*var(--k)) var(--ease-out)}
+  .selbar{bottom:calc(var(--tab-off) + 8px)}
+  /* Studio keeps its desktop spacing otherwise (40px side margins, 56px title) */
+  :root[data-look="I"] .top{padding:14px 16px 8px;align-items:center}
+  :root[data-look="I"] .top h1{font-size:28px}
+  :root[data-look="I"] .top .sub{font-size:14px}
+  :root[data-look="I"] #view{padding-left:16px;padding-right:16px}
+  :root[data-look="I"] .panel,:root[data-look="I"] .tabs-wrap{padding:18px}
+  :root[data-look="I"] .ph h3{font-size:20px}
+  :root[data-look="I"] .kpi{padding:16px}
+  :root[data-look="I"] .task{padding:14px 16px;border-radius:20px}
+  :root[data-look="I"] .lg-card{border-radius:30px}
+}
+/* Narrow phones (iPhone 15 Pro ~393px, Fold cover ~410px): tighter margins and type, sheets open full height */
+@media (max-width:430px){
+  :root[data-look] .top{padding:12px 12px 6px}
+  :root[data-look] .top h1{font-size:24px}
+  :root[data-look] #view{padding-left:12px;padding-right:12px}
+  :root[data-look] .panel,:root[data-look] .tabs-wrap{padding:16px}
+  :root[data-look] .hero{padding:18px 16px}
+  :root[data-look] .kpi{padding:14px}
+  :root[data-look] .kpi .val{font-size:36px}
+  .kpis,.grid2,.grid3,.dgrid{gap:10px}
+  #sheet{top:calc(8px + env(safe-area-inset-top,0px));height:auto}
+}
 </style>
 
 </head>
@@ -2056,6 +2105,11 @@ function updFade(el){ if (!el) return; const max = el.scrollWidth - el.clientWid
   el.classList.toggle('fl', max > 8 && el.scrollLeft > 2); el.classList.toggle('fr', max > 8 && el.scrollLeft < max - 2); }
 function wireScroll(){ $$('.seg,.tok,#topx').forEach(updFade); }
 let lastInput = 0;
+const PHONE = matchMedia('(max-width:720px)');
+/* the floating top bar and tab bar on phones: the page is padded by their measured heights */
+function measureBars(){ const app = $('#app'), top = $('.top'), tab = $('#tabbar'); if (!app || !top || !tab) return;
+  app.style.setProperty('--toph', top.offsetHeight + 'px'); app.style.setProperty('--tabh', Math.max(0, app.clientHeight - tab.offsetTop) + 'px'); }
+if (window.ResizeObserver) addEventListener('DOMContentLoaded', () => { const ro = new ResizeObserver(() => measureBars()); ['.top','#tabbar','#app'].forEach(q => { const e = $(q); if (e) ro.observe(e); }); });
 ['pointerdown','touchstart','wheel','keydown'].forEach(ev => addEventListener(ev, () => { lastInput = Date.now(); }, {passive:true, capture:true}));
 document.addEventListener('scroll', e => {
   const t = e.target; if (!t || !t.classList) return; lastInput = Date.now();
@@ -2066,7 +2120,10 @@ document.addEventListener('scroll', e => {
     if (t.matches('.seg,.tok,#topx')) updFade(t);
     if (t.id === 'view'){ const top = t.scrollTop, a = top > 8, b = top > 700;
       if (a !== t._elev){ t._elev = a; $('.top').classList.toggle('elev', a); }
-      if (b !== t._tt){ t._tt = b; $('#totop').classList.toggle('show', b); } } });
+      if (b !== t._tt){ t._tt = b; $('#totop').classList.toggle('show', b); }
+      const dy = top - (t._y || 0); t._y = top;
+      const off = PHONE.matches && top > 120 && (dy > 4 ? true : dy < -4 ? false : !!t._off);
+      if (off !== !!t._off){ t._off = off; $('#app').classList.toggle('bars-off', off); } } });
 }, {capture:true, passive:true});
 
 /* ══════════ SIDEBAR ══════════ */
@@ -2599,7 +2656,7 @@ function render(opts = {}){
   hydrateIcons(v); counts(); moveNav(!opts.keep);
   requestAnimationFrame(() => {
     $$('#view .seg,#topx .seg').forEach(s => placeInd(s, false)); wireScroll();
-    if (!opts.keep){ $('.top').classList.remove('elev'); $('#totop').classList.remove('show'); }
+    if (!opts.keep){ $('.top').classList.remove('elev'); $('#totop').classList.remove('show'); $('#app').classList.remove('bars-off'); v._off = false; v._y = 0; }
     if (!DB.data) return;
     if (S.page === 'dashboard'){ if (!opts.keep) countUp(v); wireChart(); }
     if (S.page === 'project'){ const p = findRec(DB.data, 'projects', S.proj); if (p) setRing(projPct(p)); }

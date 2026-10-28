@@ -11,6 +11,9 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
 - Styles include **Liquid Glass** (from the Liquid Glass System design system): frosted glass on every surface, SF
   system font, iOS blue for the main action. Choosing it opens in the device's light or dark mode; the sun/moon button
   still switches it. Studio stays the default.
+- Phones (iPhone 15 Pro 393 px, Galaxy Z Fold 7 cover 360 px wide): the top bar and tab bar slide away while you
+  scroll down and come back when you scroll up; tighter margins and type under 430 px; sheets open full height there.
+  On touch screens, fields use 16 px text (stops iPhone zooming in) and icon buttons are 44 px.
 
 ## Merge-safe saving (V1 V77.9 + V2)
 Both apps re-read the Sheet right before saving. If someone else saved in between:

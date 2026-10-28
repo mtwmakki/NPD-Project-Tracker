@@ -44,7 +44,8 @@ Screen bg (non-grouped) backgrounds/primary #FFF. Content px16, starts below lar
 - Compact title after scrolling (17pt semibold, left aligned beside the toolbar buttons)
 - Dark-mode glass (light glass values are from the kit)
 - iPad sidebar (kept as the icon column, floating glass)
-- Desktop follows macOS (not in this kit): 13pt body, 32pt rows, 8pt-radius sidebar selection, floating glass sidebar
+- Desktop uses the iPadOS sizes from the kit (17pt body, 52pt rows, 44pt controls) with a floating glass icon sidebar.
+  (macOS sizes, 13pt body / 32pt rows, were tried first and read far too small in a laptop browser.)
 
 ## Pages still to read when calls are available
 iPad examples (Sidebar 12740:37613, List 12740:37605, Tab Bars 12740:23860, Toolbars 12740:23847),

@@ -61,7 +61,13 @@ The full playbook with a live specimen is `docs/liquid-glass-playbook.html`. Wha
   (::after, soft-light; the glint follows the pointer via --mx / --my), inner specular lines in the shadow.
   Shadow 0 8px 32px rgba(0,0,0,.12) + inset 0 1px 1px rgba(255,255,255,.6) (dark .45 / .28).
 - Content: thin frosted material, light rgba(255,255,255,.72) / dark rgba(28,28,30,.70), blur(30px) saturate(150%).
-- Backdrop: neutral grey page #E8E9ED / #0A0A0C with soft grey light and shade, no colour.
+- Backdrop: neutral grey page #D9DBE0 / #0A0A0C with soft grey light and shade, no colour (light was #E8E9ED in the playbook;
+  made greyer after review so the glass stands out).
+- Settings → Glass (Liquid Glass style only): Transparency 0-100% (70 default) and Blur 0-40px (24 default) sliders, and
+  Cards: Solid / Thin / Ultra-thin. Saved per device (npd2-gt, npd2-gb, npd2-mat). Transparency t maps to bar fill
+  light .60 - .50t / dark .80 - .50t, overlays .96 - .20t. The sliders follow iOS 26: 6pt track filled with the accent,
+  a 38 x 24 white capsule knob that becomes a clear glass lens while held, drag the knob (tapping the track does nothing),
+  arrow / Home / End keys.
 - Colour only where it needs attention: the primary action, the current tab, late (red) and at-risk (orange) items.
   Notification icons are neutral grey unless late or at risk. Factory colours unchanged.
 - Type: Geist for text and headings (due text like "6 working days late" stays Geist with tabular figures), Geist Mono for codes, IDs and big numbers. iOS 27 sizes unchanged.

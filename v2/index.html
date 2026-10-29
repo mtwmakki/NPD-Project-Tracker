@@ -20,7 +20,8 @@
 <script>
 /* Paint the saved style before anything renders (Vision + dark by default). Keys are V2-only (npd2-*). */
 (function(){ var L=['I','J','K','D','A','B','C','E','F','G','H'], r=document.documentElement, g=function(k,d){ try { return localStorage.getItem(k) || d; } catch(e){ return d; } };
-  var look=g('npd2-look','D'); if (L.indexOf(look) < 0) look='D'; r.dataset.look=look; r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
+  var look=g('npd2-look','D'); if (L.indexOf(look) < 0) look='D'; r.dataset.look=look;
+  r.dataset.mat=g('npd2-mat','thin'); r.style.setProperty('--lg-t', (+g('npd2-gt','70') || 0)/100); r.style.setProperty('--lg-b', +g('npd2-gb','24') || 0); r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
 </script>
 <style>
 /* Layout: one-screen app shell. Sidebar (icon rail on tablet portrait, bottom tab bar on phone) + topbar + scrolling #view.
@@ -762,6 +763,7 @@ button{font:inherit;color:inherit}
 #pop{position:fixed;z-index:55;width:384px;padding:16px;border-radius:22px;background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);display:grid;gap:14px;
   transform-origin:var(--ox,0) var(--oy,100%);transform:scale(.85);opacity:0;pointer-events:none;transition:transform calc(var(--spring-d)*var(--k)) var(--spring),opacity calc(200ms*var(--k))}
 #pop.open{transform:none;opacity:1;pointer-events:auto}
+#pop{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}#pop::-webkit-scrollbar{display:none}
 #pop h4{margin:0 0 8px;font:600 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
 .looks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .looks button{font-size:10.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -822,7 +824,8 @@ button{font:inherit;color:inherit}
   #sheet.open{transform:translateY(var(--drag,0px))}
   .grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line-2);margin:10px auto -6px}
   .nact{display:none}
-  #pop{left:12px!important;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;top:auto!important;width:auto}
+  #pop{left:12px!important;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;top:auto!important;width:auto;
+    max-height:calc(100dvh - 96px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))!important}
 }
 
 /* ───────── V2 LIVE-DATA ADDITIONS ───────── */
@@ -1300,25 +1303,31 @@ html,body{height:var(--app-h,100%)}
   --tint1:transparent; --tint2:transparent;
   /* Liquid Glass tokens (playbook mix): blur 24 / saturate 180%; bars .25 light / .45 dark, overlays .82;
      the shine is a gradient rim (--rim-*), a top sheen + pointer glint (--sheen, --glint) and inner specular lines (in --glass-sh) */
-  --glass:rgba(20,20,20,.45); --glass-thick:rgba(24,24,26,.82); --glass-blur:blur(24px) saturate(180%);
+  /* fills and blur follow the Glass sliders in Settings: --lg-t 0-1 (transparency, .7 default), --lg-b px (blur, 24 default) */
+  --glass:rgba(20,20,20,calc(.8 - .5*var(--lg-t,.7))); --glass-thick:rgba(24,24,26,calc(.96 - .2*var(--lg-t,.7))); --glass-blur:blur(calc(var(--lg-b,24)*1px)) saturate(180%);
   --glass-bd:transparent; --glass-sh:0 8px 32px 0 rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.3),inset 0 1px 1px rgba(255,255,255,.28),inset 0 -1px 1px rgba(255,255,255,.05); --glass-ink:#FFFFFF;
   --rim-a:.42; --rim-m:.05; --rim-b:.16; --sheen:.16; --glint:.28; --lens-hi:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 1px rgba(255,255,255,.06);
   --knob-sh:0 3px 8px rgba(0,0,0,.24),0 3px 1px rgba(0,0,0,.08); --seg-ind:#636366;
   color-scheme:dark }
 :root[data-look="K"][data-theme="light"]{
-  --bg:#E8E9ED; --surf:#FFFFFF; --surf-solid:#FFFFFF; --surf-3:#F2F2F7; --app:#E8E9ED;
+  --bg:#D9DBE0; --surf:#FFFFFF; --surf-solid:#FFFFFF; --surf-3:#F2F2F7; --app:#D9DBE0;
   --mat:rgba(255,255,255,.72); --mat-edge:inset 0 1px 0 rgba(255,255,255,.75),0 0 0 .5px rgba(255,255,255,.5),0 1px 3px rgba(0,0,0,.04);
   --line:#E6E6E6; --line-2:#C6C6C8; --tx:#000000; --mu:rgba(0,0,0,.75); --mu3:rgba(0,0,0,.45);
   --ac:#0088FF; --ac-grad:linear-gradient(#0088FF,#0088FF); --ok:#34C759; --warn:#FF8D28; --bad:#FF383C; --info:#6155F5;
   --c1:#0088FF; --c2:#FF8D28; --prog:#0088FF; --bar-grad:linear-gradient(90deg,#0088FF,#0088FF);
   --fill3:rgba(118,118,128,.12); --fill4:rgba(116,116,128,.08); --track:rgba(120,120,128,.16);
   --hover:rgba(0,0,0,.04); --sel:rgba(255,255,255,.72); --sel-side:rgba(0,0,0,.06); --scrim:rgba(0,0,0,.2);
-  --glass:rgba(255,255,255,.25); --glass-thick:rgba(255,255,255,.82); --glass-ink:#0F172A;
+  --glass:rgba(255,255,255,calc(.6 - .5*var(--lg-t,.7))); --glass-thick:rgba(255,255,255,calc(.96 - .2*var(--lg-t,.7))); --glass-ink:#0F172A;
   --glass-sh:0 8px 32px 0 rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06),inset 0 1px 1px rgba(255,255,255,.6),inset 0 -1px 1px rgba(255,255,255,.14);
   --rim-a:.95; --rim-m:.10; --rim-b:.55; --sheen:.42; --glint:.55; --lens-hi:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 1px rgba(255,255,255,.18),0 1px 3px rgba(0,0,0,.06);
-  --orb1:rgba(255,255,255,.95); --orb2:rgba(150,154,164,.42); --orb3:rgba(190,193,201,.55);
+  --orb1:rgba(255,255,255,.55); --orb2:rgba(138,142,153,.45); --orb3:rgba(172,176,186,.5);
   --knob-sh:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04); --seg-ind:#FFFFFF;
   color-scheme:light }
+
+/* content material chosen in Settings: thin (default), ultra-thin or solid */
+:root[data-look="K"][data-mat="ultra"]{--mat:rgba(28,28,30,.46); --mat-blur:blur(40px) saturate(160%)}
+:root[data-look="K"][data-theme="light"][data-mat="ultra"]{--mat:rgba(255,255,255,.48)}
+:root[data-look="K"][data-mat="solid"]{--mat:var(--surf); --mat-blur:none}
 
 /* page */
 :root[data-look="K"] body,:root[data-look="K"] #login,:root[data-look="K"] #app{background:var(--bg)}
@@ -1501,13 +1510,37 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .ibtn,:root[data-look="K"] .sync{position:relative}
 :root[data-look="K"] .top .seg{background:var(--glass);border:1px solid var(--glass-bd);box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
 :root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg){isolation:isolate}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
   background:linear-gradient(140deg,rgba(255,255,255,var(--rim-a)) 0%,rgba(255,255,255,var(--rim-m)) 34%,rgba(255,255,255,var(--rim-m)) 64%,rgba(255,255,255,var(--rim-b)) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 :root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   background:radial-gradient(130% 90% at 50% -30%,rgba(255,255,255,var(--sheen)) 0%,rgba(255,255,255,0) 58%),
              radial-gradient(90px circle at var(--mx,-200px) var(--my,-200px),rgba(255,255,255,var(--glint)),rgba(255,255,255,0) 70%);
   mix-blend-mode:soft-light}
+
+/* sidebar: items keep their size; on a short screen it scrolls without a visible bar */
+:root[data-look="K"] .side{scrollbar-width:none}
+:root[data-look="K"] .side::-webkit-scrollbar{display:none}
+:root[data-look="K"] .side>*{flex-shrink:0}
+
+/* Settings · Glass: iOS 26 slider (6pt track filled with the accent up to the knob; a white 38 x 24 capsule knob that turns
+   into a clear glass lens while held; drag the knob, tapping the track does not jump; icons at both ends) */
+.lg-set{display:grid;gap:2px}
+.lg-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font:500 13px/18px var(--fb);color:var(--tx)}
+.lg-row b{font:500 13px/18px var(--fm);color:var(--mu);font-variant-numeric:tabular-nums}
+.ios-sl{display:flex;align-items:center;gap:10px;height:44px;touch-action:none;-webkit-tap-highlight-color:transparent;outline:0;color:var(--mu)}
+.ios-sl .sl-ic{display:grid;place-items:center;width:20px;flex:none}
+.ios-sl .sl-ic svg{width:18px;height:18px}
+.sl-track{position:relative;flex:1;height:6px;border-radius:3px;background:rgba(120,120,128,.2)}
+:root[data-theme="dark"] .sl-track{background:rgba(120,120,128,.36)}
+.sl-fill{position:absolute;left:0;top:0;bottom:0;width:calc(19px + var(--v)*(100% - 38px));border-radius:inherit;background:var(--ac)}
+.sl-knob{position:absolute;top:50%;left:calc(var(--v)*(100% - 38px));width:38px;height:24px;margin-top:-12px;border-radius:12px;background:#fff;cursor:grab;
+  box-shadow:0 .5px 4px rgba(0,0,0,.12),0 6px 13px rgba(0,0,0,.12);transition:scale calc(300ms*var(--k)) var(--spring),background-color .2s,box-shadow .2s}
+.ios-sl.drag .sl-knob{scale:1.45 1.55;cursor:grabbing;background:rgba(255,255,255,.16);
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.75),inset 0 1px 1px rgba(255,255,255,.9),inset 0 -1px 1px rgba(255,255,255,.3),0 6px 16px rgba(0,0,0,.18)}
+.ios-sl:focus-visible .sl-knob{box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 45%,transparent),0 .5px 4px rgba(0,0,0,.12),0 6px 13px rgba(0,0,0,.12)}
+#matseg{width:100%}#matseg button{flex:1;justify-content:center}
+.lg-reset{justify-self:start;margin-top:6px;border:0;background:none;padding:6px 0;color:var(--ac);font:500 13px/1 var(--fb);cursor:pointer}
 
 /* content material: thin frosted */
 :root[data-look="K"] :is(.card:not(.row):not(.hero),.rows,.lg-card),:root[data-look="K"] .banner{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur);box-shadow:var(--mat-edge)}
@@ -1779,8 +1812,10 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false,
+  mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
   focus: store.get('npd2-focus', 'all'), tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
-function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus; }
+function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus;
+  root.dataset.mat = S.mat; root.style.setProperty('--lg-t', S.gt / 100); root.style.setProperty('--lg-b', S.gb); }
 const inqOn = () => S.focus !== 'projects';
 applyPrefs();
 
@@ -3811,8 +3846,39 @@ $('#cmdk').addEventListener('click', e => { const b = e.target.closest('.cmd-ite
 function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([k,n,g]) => `<button type="button" class="${S.look===k?'on':''}" data-look="${k}"><i style="background:${g}"></i>${n}</button>`).join('')}</div></div>
   <div><h4>Focus</h4>${segHTML('focusseg', [['all','Inquiries + projects'],['projects','Projects only']], S.focus)}<p class="pop-note">Projects only hides inquiries everywhere: menu, Dashboard, alerts and search. Only on this device.</p></div>
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
+  ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button><a class="btn" href="${V1_URL}" style="flex:1;justify-content:center;text-decoration:none">Open V1</a></div>`; }
+const SL_IC = { solid:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
+  clear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
+  sharp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>',
+  soft:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="8" opacity=".25"/><circle cx="12" cy="12" r="5.5" opacity=".5"/><circle cx="12" cy="12" r="3"/></svg>' };
+const SLIDERS = { gt:{ label:'Glass transparency', min:0, max:100, unit:'%', lo:'solid', hi:'clear' }, gb:{ label:'Glass blur', min:0, max:40, unit:'px', lo:'sharp', hi:'soft' } };
+function sliderHTML(k){ const c = SLIDERS[k], v = S[k];
+  return `<div class="ios-sl" role="slider" tabindex="0" data-sl="${k}" aria-label="${c.label}" aria-valuemin="${c.min}" aria-valuemax="${c.max}" aria-valuenow="${v}" aria-valuetext="${v}${c.unit}" style="--v:${(v - c.min) / (c.max - c.min)}">
+    <span class="sl-ic">${SL_IC[c.lo]}</span><div class="sl-track"><i class="sl-fill"></i><i class="sl-knob"></i></div><span class="sl-ic">${SL_IC[c.hi]}</span></div>`; }
+function glassHTML(){ return `<div class="lg-set"><h4>Glass</h4>
+  <div class="lg-row"><span>Transparency</span><b id="sl-gt">${S.gt}%</b></div>${sliderHTML('gt')}
+  <div class="lg-row"><span>Blur</span><b id="sl-gb">${S.gb}px</b></div>${sliderHTML('gb')}
+  <div class="lg-row" style="margin-bottom:6px"><span>Cards</span></div>${segHTML('matseg', [['solid','Solid'],['thin','Thin'],['ultra','Ultra-thin']], S.mat)}
+  <button class="lg-reset" type="button" data-act="glass-reset">Reset glass</button></div>`; }
+function setSlider(k, v, save){ const c = SLIDERS[k]; v = Math.round(Math.max(c.min, Math.min(c.max, v))); S[k] = v; applyPrefs();
+  const el = $(`.ios-sl[data-sl="${k}"]`); if (el){ el.style.setProperty('--v', (v - c.min) / (c.max - c.min)); el.setAttribute('aria-valuenow', v); el.setAttribute('aria-valuetext', v + c.unit); }
+  const lab = $('#sl-' + k); if (lab) lab.textContent = v + c.unit;
+  if (save) store.set('npd2-' + k, String(v)); }
+/* iOS behaviour: only the knob can be dragged (a tap on the track does nothing); while held it lifts into a glass lens */
+let slDrag = null;
+document.addEventListener('pointerdown', e => { const sl = e.target.closest && e.target.closest('.ios-sl'); if (!sl) return;
+  const kn = $('.sl-knob', sl).getBoundingClientRect(); if (e.clientX < kn.left - 12 || e.clientX > kn.right + 12) return;
+  const tr = $('.sl-track', sl).getBoundingClientRect(), c = SLIDERS[sl.dataset.sl];
+  slDrag = { sl, k: sl.dataset.sl, x0: e.clientX, v0: S[sl.dataset.sl], per: (c.max - c.min) / Math.max(1, tr.width - 38) };
+  sl.classList.add('drag'); try { sl.setPointerCapture(e.pointerId); } catch (_){} e.preventDefault(); });
+document.addEventListener('pointermove', e => { if (slDrag) setSlider(slDrag.k, slDrag.v0 + (e.clientX - slDrag.x0) * slDrag.per, false); });
+const slEnd = () => { if (!slDrag) return; slDrag.sl.classList.remove('drag'); setSlider(slDrag.k, S[slDrag.k], true); slDrag = null; };
+document.addEventListener('pointerup', slEnd); document.addEventListener('pointercancel', slEnd);
+document.addEventListener('keydown', e => { const sl = e.target.closest && e.target.closest('.ios-sl'); if (!sl) return; const k = sl.dataset.sl, c = SLIDERS[k], big = (c.max - c.min) / 10;
+  const d = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1, PageUp:big, PageDown:-big }[e.key];
+  if (d){ e.preventDefault(); setSlider(k, S[k] + d, true); } else if (e.key === 'Home' || e.key === 'End'){ e.preventDefault(); setSlider(k, e.key === 'Home' ? c.min : c.max, true); } });
 function openPop(anchor){
   const p = $('#pop'); p.innerHTML = popHTML(); hydrateIcons(p);
   const a = anchor || $('[data-act="settings"]'); const r = a.getBoundingClientRect();
@@ -3821,6 +3887,7 @@ function openPop(anchor){
   if (below){ p.style.top = (r.bottom + 10) + 'px'; p.style.bottom = 'auto'; p.style.setProperty('--oy', '0%'); }
   else { p.style.top = 'auto'; p.style.bottom = (innerHeight - r.top + 10) + 'px'; p.style.setProperty('--oy', '100%'); }
   p.style.setProperty('--ox', (r.left - parseFloat(p.style.left) + r.width/2) + 'px');
+  p.style.maxHeight = Math.max(240, below ? innerHeight - r.bottom - 22 : r.top - 22) + 'px';   /* taller than the room left: it scrolls */
   if (S.look === 'K'){ /* Liquid Glass: the menu's clip starts as the 44pt button, placed where the button meets the menu */
     const pr = p.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight, s = 44;
     const x = Math.max(0, Math.min(w - s, r.left + r.width/2 - s/2 - pr.left)), y = Math.max(0, Math.min(h - s, r.top + r.height/2 - s/2 - pr.top));
@@ -3830,7 +3897,8 @@ function openPop(anchor){
   p.classList.add('open'); requestAnimationFrame(() => $$('#pop .seg').forEach(s => placeInd(s, false)));
 }
 function closePop(){ $('#pop').classList.remove('open'); }
-function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') refresh(); }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
+function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') refresh();
+  const pop = $('#pop'); if (pop.classList.contains('open')){ const gs = $('.lg-set', pop); if (k === 'K' && !gs){ $('#themeseg', pop).parentElement.insertAdjacentHTML('afterend', glassHTML()); } else if (k !== 'K' && gs) gs.remove(); } }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
 function matchDeviceTheme(){ const t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; if (t === S.theme) return; S.theme = t; store.set('npd2-theme', t); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === t)); placeInd(ts, false); } }
 function toggleTheme(btn){
   const r = (btn || $('.theme-btn')).getBoundingClientRect(); root.style.setProperty('--rx', (r.left + r.width/2) + 'px'); root.style.setProperty('--ry', (r.top + r.height/2) + 'px');
@@ -3963,11 +4031,14 @@ document.addEventListener('click', e => {
       vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
     else if (seg.id === 'motionseg'){ S.motion = v; store.set('npd2-motion', v); applyPrefs(); toast(`Motion: ${sb.textContent}`, {icon:'spark'}); }
+    else if (seg.id === 'matseg'){ S.mat = v; store.set('npd2-mat', v); applyPrefs(); }
     return; }
   const a = t.closest('[data-act]'); if (a){ const act = a.dataset.act;
     if (act === 'cmdk') openCmd(); else if (act === 'theme') toggleTheme(a); else if (act === 'sync') pull({manual:true}); else if (act === 'signout') signOut();
     else if (act === 'settings'){ $('#pop').classList.contains('open') ? closePop() : openPop(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
+    else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();
+      const ms = $('#matseg'); if (ms){ $$('button', ms).forEach(b => b.classList.toggle('on', b.dataset.v === 'thin')); placeInd(ms, true); } }
     else if (act === 'dismiss-banner'){ BANNER_TODAY = false; const b = $('.dbanner'); if (b){ b.style.height = b.offsetHeight + 'px'; b.classList.add('collapse'); setTimeout(() => refresh(), 260); } }
     else if (act === 'tdone'){ S.tdone = !S.tdone; vt(() => refresh(), 'list'); }
     else if (act === 'tarch'){ S.tarch = !S.tarch; S.tsel = S.tsel ? new Set() : null; vt(() => refresh(), 'list'); }

@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Signed-off copy of the Liquid Glass playbook. The Srotone and Trap comparison fonts are not in the repository (no web licence), so those options fall back to Geist here. -->
+<title>Liquid Glass Playbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400..800&family=Funnel+Sans:wght@400..800&family=Geist:wght@400..800&family=Geist+Mono:wght@400..600&family=Manrope:wght@400..800&family=Plus+Jakarta+Sans:wght@400..800&family=Onest:wght@400..800&family=Figtree:wght@400..800&display=swap">
+<style>
+/* Layout: one reading column (~70ch); specimen stages and tables run full column width, tables scroll in their own box. */
+:root{
+  --bg:#F4F5F8; --paper:#FFFFFF; --ink:#0E1116; --ink-2:rgba(14,17,22,.72); --ink-3:rgba(14,17,22,.55);
+  --rule:#E3E6EC; --accent:#0088FF; --accent-ink:#0062B8; --warn:#9A4A06; --warn-bg:#FFF4E0; --ok:#15803D; --bad:#C2252B;
+  --code-bg:#F0F2F6; --chip:#E9EDF4;
+  /* typeface: Geist for text and headings, Geist Mono for codes, IDs and big numbers (chosen).
+     The other proposals stay switchable for comparison. */
+  --f-ui:"Geist",system-ui,"Segoe UI",Roboto,sans-serif;
+  --f-display:"Geist",system-ui,"Segoe UI",Roboto,sans-serif;
+  --f-num:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-code:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-mono:"Geist Mono",ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  /* chosen Liquid Glass tokens (the mix) */
+  --g-blur:24px; --g-sat:180%;
+  --spring:cubic-bezier(.175,.885,.32,1.275); --ease-out:cubic-bezier(.22,1,.36,1); --ease-in:cubic-bezier(.55,0,.75,.2);
+  --t-morph:400ms; --t-press:300ms;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0B0D12; --paper:#14171E; --ink:#F3F5F8; --ink-2:rgba(243,245,248,.8); --ink-3:rgba(243,245,248,.6);
+  --rule:#262B35; --accent:#3AA0FF; --accent-ink:#7CC0FF; --warn:#F5B454; --warn-bg:#2A2111; --ok:#4ADE80; --bad:#FF7A7F;
+  --code-bg:#1B1F28; --chip:#222835; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0B0D12; --paper:#14171E; --ink:#F3F5F8; --ink-2:rgba(243,245,248,.8); --ink-3:rgba(243,245,248,.6);
+  --rule:#262B35; --accent:#3AA0FF; --accent-ink:#7CC0FF; --warn:#F5B454; --warn-bg:#2A2111; --ok:#4ADE80; --bad:#FF7A7F;
+  --code-bg:#1B1F28; --chip:#222835; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--f-ui);-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px;display:grid;grid-template-columns:minmax(0,1fr);gap:56px}
+header.doc{display:grid;gap:14px}
+.eyebrow{font:600 12px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{margin:0;font:700 40px/1.1 var(--f-display);letter-spacing:.2px;text-wrap:balance}
+h2{margin:0 0 14px;font:700 26px/1.2 var(--f-display);letter-spacing:-.2px;text-wrap:balance}
+h3{margin:22px 0 8px;font:600 18px/1.3 var(--f-ui);letter-spacing:-.2px}
+p{margin:0 0 12px;max-width:68ch}
+.lede{font-size:18px;color:var(--ink-2);max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);font:500 13px/1.4 var(--f-ui);color:var(--ink-2)}
+.chip b{color:var(--ink);font-weight:600}
+section{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;min-width:0}
+ul,ol{margin:0 0 12px;padding-left:22px;max-width:68ch}
+li{margin:4px 0}
+code,.mono{font:500 13.5px/1.5 var(--f-mono)}
+code{background:var(--code-bg);padding:1px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{margin:8px 0 14px;background:var(--code-bg);border-radius:14px;padding:16px 18px;overflow-x:auto;font:500 13px/1.6 var(--f-mono);color:var(--ink)}
+pre code{background:none;padding:0;white-space:pre}
+.note{border-radius:14px;padding:14px 16px;background:var(--warn-bg);color:var(--ink);font-size:15px;max-width:68ch}
+.note b{color:var(--warn)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:18px;padding:18px 20px}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:16px;background:var(--paper);margin:8px 0 14px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:600 12px/1.3 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--code-bg)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--ok);font-weight:600}.fail{color:var(--bad);font-weight:600}.pick{color:var(--accent-ink);font-weight:600}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:8px 0 14px}
+.two>*{min-width:0}
+.do b{color:var(--ok)}.dont b{color:var(--bad)}
+.toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+.toc a{color:var(--accent-ink);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+
+/* ───────── specimen ───────── */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px}
+.seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--chip);gap:2px}
+.seg button{border:0;background:none;color:var(--ink-2);font:600 13px/1 var(--f-ui);padding:0 14px;height:36px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:14px}
+.stage{position:relative;border-radius:28px;overflow:hidden;height:460px;isolation:isolate;
+  --fill-bar:rgba(255,255,255,.25); --fill-btn:rgba(255,255,255,.20); --fill-hover:rgba(255,255,255,.30); --fill-over:rgba(255,255,255,.82);
+  --rim-a:.95; --rim-m:.10; --rim-b:.55; --sheen:.42; --glint:.55; --spec:rgba(255,255,255,.6); --spec-b:rgba(255,255,255,.14);
+  --drop:0 8px 32px 0 rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06); --label:#0F172A; --sel:rgba(255,255,255,.72);
+  --page:#E8E9ED; --surface:#FFFFFF; --t:#000000; --t2:rgba(0,0,0,.75); --sep:rgba(0,0,0,.08); color:var(--label); background:var(--page);
+  /* content material: thin frosted by default */
+  --mat:rgba(255,255,255,.72); --mat-blur:blur(30px) saturate(150%);
+  --mat-edge:inset 0 1px 0 rgba(255,255,255,.75),0 0 0 .5px rgba(255,255,255,.5),0 1px 3px rgba(0,0,0,.04)}
+.stage.dark{
+  --fill-bar:rgba(20,20,20,.45); --fill-btn:rgba(20,20,20,.45); --fill-hover:rgba(40,40,40,.5); --fill-over:rgba(24,24,26,.82);
+  --rim-a:.42; --rim-m:.05; --rim-b:.16; --sheen:.16; --glint:.28; --spec:rgba(255,255,255,.28); --spec-b:rgba(255,255,255,.05);
+  --drop:0 8px 32px 0 rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.3); --label:#FFFFFF; --sel:rgba(255,255,255,.16);
+  --page:#0A0A0C; --surface:#1C1C1E; --t:#FFFFFF; --t2:rgba(255,255,255,.85); --sep:rgba(255,255,255,.1);
+  --mat:rgba(28,28,30,.70); --mat-edge:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 .5px rgba(255,255,255,.08)}
+:root[data-mat="solid"] .stage{--mat:var(--surface); --mat-blur:none}
+:root[data-mat="ultra"] .stage.light{--mat:rgba(255,255,255,.48); --mat-blur:blur(40px) saturate(160%)}
+:root[data-mat="ultra"] .stage.dark{--mat:rgba(28,28,30,.46); --mat-blur:blur(40px) saturate(160%)}
+/* neutral backdrop: soft grey light and shade only, so the frosting has tone to work with but no colour */
+.glow{position:absolute;inset:-25%;z-index:-1;pointer-events:none;filter:blur(40px);
+  background:radial-gradient(38% 38% at 22% 22%,rgba(255,255,255,.95),transparent 70%),radial-gradient(34% 34% at 86% 42%,rgba(150,154,164,.42),transparent 70%),radial-gradient(42% 42% at 50% 102%,rgba(190,193,201,.55),transparent 70%)}
+.stage.dark .glow{background:radial-gradient(38% 38% at 22% 22%,rgba(255,255,255,.10),transparent 70%),radial-gradient(34% 34% at 86% 42%,rgba(130,134,146,.16),transparent 70%),radial-gradient(42% 42% at 50% 102%,rgba(255,255,255,.06),transparent 70%)}
+.stage-label{position:absolute;left:20px;top:22px;font:600 11px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+/* content layer: solid */
+.content{position:absolute;left:16px;right:16px;top:76px;display:grid;gap:12px}
+.list{background:var(--mat);border-radius:20px;overflow:hidden;-webkit-backdrop-filter:var(--mat-blur);backdrop-filter:var(--mat-blur);box-shadow:var(--mat-edge);
+  transition:background-color 350ms var(--ease-out),-webkit-backdrop-filter 350ms var(--ease-out),backdrop-filter 350ms var(--ease-out)}
+.li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:center;padding:0 16px;min-height:60px;position:relative}
+.li+.li::before{content:"";position:absolute;top:0;left:58px;right:0;border-top:1px solid var(--sep)}
+.li i{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ic-ink);background:var(--ic-bg);font-style:normal}
+.stage{--ic-bg:rgba(118,118,128,.14); --ic-ink:#3A3A3F}
+.stage.dark{--ic-bg:rgba(118,118,128,.28); --ic-ink:#D1D1D6}
+/* colour only where it needs attention */
+.li i.late{background:#FF383C;color:#fff}
+.stage.dark .li i.late{background:#FF4245}
+.li .late-t{color:#D70015}
+.stage.dark .li .late-t{color:#FF6961}
+.li .risk-t{color:#C93400}
+.stage.dark .li .risk-t{color:#FF9F0A}
+.pill.primary{background:rgba(0,136,255,.88);color:#fff}
+.stage.dark .pill.primary{background:rgba(0,145,255,.82)}
+@media (hover:hover){ .pill.primary:hover{background:rgba(0,136,255,.95)} }
+.li i svg{width:17px;height:17px}
+.li b{display:block;font:590 16px/21px var(--f-ui);letter-spacing:-.3px;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li span{display:block;font:400 14px/19px var(--f-ui);color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li em{font:500 12.5px/1 var(--f-code);font-style:normal;color:var(--t2);font-variant-numeric:tabular-nums}
+
+/* interactive layer: glass. The shine is three layers: gradient rim (::before), top sheen + pointer glint (::after), inner specular lines (box-shadow). */
+.glass{position:relative;isolation:isolate;-webkit-backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat));backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat));
+  box-shadow:var(--drop),inset 0 1px 1px 0 var(--spec),inset 0 -1px 1px 0 var(--spec-b)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:2;
+  background:linear-gradient(140deg,rgba(255,255,255,var(--rim-a)) 0%,rgba(255,255,255,var(--rim-m)) 34%,rgba(255,255,255,var(--rim-m)) 64%,rgba(255,255,255,var(--rim-b)) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+  background:radial-gradient(130% 90% at 50% -30%,rgba(255,255,255,var(--sheen)) 0%,rgba(255,255,255,0) 58%),
+             radial-gradient(90px circle at var(--mx,-200px) var(--my,-200px),rgba(255,255,255,var(--glint)),rgba(255,255,255,0) 70%);
+  mix-blend-mode:soft-light;transition:opacity var(--t-press) var(--ease-out)}
+.glass>*{position:relative;z-index:3}
+
+/* proportions: height 44, radius = height / 2, icon 20, 8-pt spacing */
+.toolbar{position:absolute;right:16px;top:12px;display:flex;gap:8px;z-index:5}
+.pill{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border:0;border-radius:22px;background:var(--fill-btn);color:var(--label);
+  font:590 15px/20px var(--f-ui);letter-spacing:-.2px;cursor:pointer;transition:transform var(--t-press) var(--spring),background-color var(--t-press) var(--ease-out)}
+.icon{width:44px;height:44px;padding:0;border:0;border-radius:22px;background:var(--fill-btn);color:var(--label);display:grid;place-items:center;cursor:pointer;
+  transition:transform var(--t-press) var(--spring),background-color var(--t-press) var(--ease-out)}
+.pill svg,.icon svg{width:20px;height:20px;flex:none}
+@media (hover:hover){ .pill:hover,.icon:hover{transform:scale(1.03);background:var(--fill-hover)} }
+.pill:active,.icon:active{transform:scale(.97)}
+.icon[aria-expanded="true"]{background:var(--fill-hover)}
+
+/* menu: grows out of the settings button's own shape (clip-path), items follow */
+.menu{position:absolute;right:16px;top:12px;width:228px;padding:6px;border-radius:22px;background:var(--fill-over);z-index:6;
+  clip-path:inset(0 0 calc(100% - 44px) calc(100% - 44px) round 22px);opacity:0;pointer-events:none;
+  transition:clip-path 260ms var(--ease-in),opacity 180ms linear 80ms}
+.menu.open{clip-path:inset(0 0 0 0 round 22px);opacity:1;pointer-events:auto;
+  transition:clip-path var(--t-morph) var(--spring),opacity 120ms linear}
+.menu .mi{display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;border-radius:16px;font:400 15px/20px var(--f-ui);letter-spacing:-.2px;color:var(--label);
+  opacity:0;transform:translateY(-6px);transition:opacity 160ms var(--ease-out),transform 260ms var(--ease-out)}
+.menu .mi svg{width:18px;height:18px;opacity:.8}
+.menu.open .mi{opacity:1;transform:none;transition-delay:calc(var(--n)*32ms + 90ms)}
+.menu .mi:hover{background:rgba(127,127,140,.14)}
+.menu hr{border:0;border-top:1px solid var(--sep);margin:4px 12px}
+
+/* tab bar: fixed tab track slides inside a shrinking capsule */
+.tabbar{position:absolute;left:16px;bottom:16px;height:56px;padding:4px;border-radius:28px;background:var(--fill-bar);overflow:hidden;z-index:5;
+  width:calc(4*56px + 8px);transition:width var(--t-morph) var(--spring)}
+.tabbar.folded{width:64px;cursor:pointer}
+.track{position:relative;display:flex;transition:transform var(--t-morph) var(--spring);touch-action:pan-y}
+/* selection lens: one glass drop that slides between tabs (iOS 26 style), stretches while moving, lifts while dragged */
+.lens{position:absolute;left:0;top:0;width:56px;height:48px;pointer-events:none;will-change:transform}
+.lens i{position:absolute;inset:0;border-radius:24px;background:var(--sel);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 1px rgba(255,255,255,.18),0 1px 3px rgba(0,0,0,.06);
+  transition:transform 320ms var(--spring),background-color 200ms,box-shadow 200ms}
+.stage.dark .lens i{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 1px rgba(255,255,255,.06)}
+.lens.lift i{transform:scale(1.14,1.08);background:rgba(255,255,255,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(0,0,0,.14)}
+.stage.dark .lens.lift i{background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 18px rgba(0,0,0,.4)}
+.tab{position:relative;width:56px;height:48px;flex:none;border:0;border-radius:24px;background:none;display:grid;place-items:center;color:var(--label);cursor:pointer;
+  transition:opacity 200ms var(--ease-out),color 200ms}
+.tab svg{width:22px;height:22px;transition:transform 300ms var(--spring)}
+.tab:active svg{transform:scale(.88)}
+.tab[aria-current="page"]{color:#0088FF}
+.stage.dark .tab[aria-current="page"]{color:#3AA0FF}
+.tabbar.folded .tab:not([aria-current="page"]){opacity:0}
+/* sidebar rail (tablet, laptop): the same lens, moving up and down */
+.stages.rails{margin-top:14px}
+.stage.rail-stage{height:300px}
+.rail-stage .content{left:84px;top:56px}
+.rail{position:absolute;left:12px;top:56px;width:56px;padding:4px;border-radius:28px;background:var(--fill-bar);overflow:hidden;z-index:5}
+.rail .track{flex-direction:column;touch-action:pan-x}
+.rail .tab{width:48px;height:48px}
+.rail .lens{width:48px;height:48px}
+.stage .rail{animation:rise 620ms var(--spring) both;animation-delay:160ms}
+.search{position:absolute;right:16px;bottom:16px;width:56px;height:56px;border:0;border-radius:28px;background:var(--fill-bar);display:grid;place-items:center;color:var(--label);z-index:5;cursor:pointer;
+  transition:transform var(--t-press) var(--spring)}
+.search:active{transform:scale(.95)}
+.search svg{width:22px;height:22px}
+
+/* entrance: glass rises in after the content, staggered */
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.96)}}
+@keyframes fade{from{opacity:0}}
+.stage .content{animation:fade 500ms var(--ease-out) both}
+.stage .toolbar,.stage .tabbar,.stage .search{animation:rise 620ms var(--spring) both}
+.stage .toolbar{animation-delay:120ms}.stage .tabbar{animation-delay:200ms}.stage .search{animation-delay:260ms}
+
+@media (prefers-reduced-motion: reduce){
+  .stage *,.stage{animation:none!important;transition:none!important}
+}
+@media (prefers-reduced-transparency: reduce){
+  .stage .glass{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .stage.light .glass{background:#F7F8FA}
+  .stage.dark .glass{background:#26282E}
+  .stage .list{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* proportion diagram */
+.dims{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin:6px 0 14px}
+.dim{display:grid;gap:8px;justify-items:start;font:500 12.5px/1.4 var(--f-mono);color:var(--ink-3)}
+.dim .box{border:1px dashed var(--ink-3);border-radius:22px;display:grid;place-items:center;color:var(--ink-2);font:600 12px/1 var(--f-ui)}
+@font-face{font-family:"Srotone";src:url(fonts/srotone-700.ttf) format("truetype");font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Srotone";src:url(fonts/srotone-800.ttf) format("truetype");font-weight:750 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Trap";src:url(fonts/trap-regular.otf) format("opentype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Trap";src:url(fonts/trap-semibold.otf) format("opentype");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Trap";src:url(fonts/trap-bold.otf) format("opentype");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Trap";src:url(fonts/trap-extrabold.otf) format("opentype");font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"Trap";src:url(fonts/trap-black.otf) format("opentype");font-weight:900;font-style:normal;font-display:swap}
+:root[data-font]{--f-code:var(--f-ui)}
+/* Trap has no %, $, ~, em dash, middle dot, curly apostrophe, ellipsis or accents: those fall back to Geist. Its figures are all one width. */
+:root[data-font="trap"]{--f-display:"Trap","Geist",system-ui,sans-serif;--f-num:"Trap","Geist",system-ui,sans-serif;--f-code:"Geist Mono",ui-monospace,monospace}
+:root[data-font="trap-text"]{--f-ui:"Trap","Geist",system-ui,sans-serif;--f-display:"Trap","Geist",system-ui,sans-serif;--f-num:"Trap","Geist",system-ui,sans-serif;--f-code:"Geist Mono",ui-monospace,monospace}
+:root[data-font="trap-all"]{--f-ui:"Trap","Geist",system-ui,sans-serif;--f-display:"Trap","Geist",system-ui,sans-serif;--f-num:"Trap","Geist",system-ui,sans-serif;--f-code:"Trap","Geist",system-ui,sans-serif}
+:root[data-font="srotone"]{--f-display:"Srotone","Geist",system-ui,sans-serif;--f-num:"Srotone","Geist",system-ui,sans-serif}
+:root[data-font="srotone-funnel"]{--f-ui:"Funnel Sans",system-ui,sans-serif;--f-display:"Srotone","Funnel Sans",system-ui,sans-serif;--f-num:"Srotone","Funnel Sans",system-ui,sans-serif}
+:root[data-font="funnel"]{--f-ui:"Funnel Sans",system-ui,sans-serif;--f-display:"Funnel Display","Funnel Sans",system-ui,sans-serif;--f-num:"Funnel Display","Funnel Sans",system-ui,sans-serif}
+:root[data-font="manrope"]{--f-ui:"Manrope",system-ui,sans-serif;--f-display:"Manrope",system-ui,sans-serif;--f-num:"Manrope",system-ui,sans-serif}
+:root[data-font="jakarta"]{--f-ui:"Plus Jakarta Sans",system-ui,sans-serif;--f-display:"Plus Jakarta Sans",system-ui,sans-serif;--f-num:"Plus Jakarta Sans",system-ui,sans-serif}
+:root[data-font="onest"]{--f-ui:"Onest",system-ui,sans-serif;--f-display:"Onest",system-ui,sans-serif;--f-num:"Onest",system-ui,sans-serif}
+:root[data-font="figtree"]{--f-ui:"Figtree",system-ui,sans-serif;--f-display:"Figtree",system-ui,sans-serif;--f-num:"Figtree",system-ui,sans-serif}
+:root[data-font="system"]{--f-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;--f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,"Segoe UI",Roboto,sans-serif;--f-num:var(--f-display)}
+/* type proposal specimen */
+.fonts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:10px;margin:6px 0 14px}
+.fontopt{display:grid;gap:4px;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer;font:inherit;transition:border-color .2s,box-shadow .2s}
+.fontopt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.fontopt .nm{font-size:20px;line-height:1.2;font-weight:650}
+.fontopt .why{font:400 13.5px/1.45 var(--f-ui);color:var(--ink-2)}
+.fontopt .tag{font:600 11px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink)}
+.typecard{display:grid;gap:12px;padding:22px 24px;border-radius:20px;background:var(--paper);border:1px solid var(--rule)}
+.typecard .lt{font:700 34px/41px var(--f-display);letter-spacing:-.4px;margin:0}
+.typecard .t2{font:650 22px/28px var(--f-display);letter-spacing:-.2px;margin:0}
+.typecard .bd{font:400 17px/24px var(--f-ui);margin:0;max-width:60ch}
+.typecard .sc{font:400 15px/20px var(--f-ui);color:var(--ink-2);margin:0}
+.typecard .cap{font:500 13px/18px var(--f-ui);color:var(--ink-3);margin:0}
+.typecard .nums{display:flex;flex-wrap:wrap;gap:24px;align-items:baseline}
+.typecard .nums b{font:700 44px/1 var(--f-num);letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.typecard .nums span{font:500 13px/1.3 var(--f-ui);color:var(--ink-3);display:block;margin-top:4px}
+.typecard .codes{font:500 14px/1.5 var(--f-code);font-variant-numeric:tabular-nums;color:var(--ink-2)}
+@media (max-width:520px){ h1{font-size:32px} h2{font-size:22px} .lede{font-size:16px} .stage{height:480px} }
+</style>
+
+<div class="wrap">
+<header class="doc">
+  <span class="eyebrow">NPD Tracker V2 · design playbook · draft 2 for review</span>
+  <h1>Liquid Glass Playbook</h1>
+  <p class="lede">How the Liquid Glass style in the tracker should look and behave: where glass goes, the chosen tokens, the shine, motion and proportions, and how each rule maps onto the tracker's screens. Nothing in <code>index.html</code> changes until you sign this off.</p>
+  <div class="meta">
+    <span class="chip">Scope <b>Liquid Glass style only</b></span>
+    <span class="chip">Default style <b>Vision (unchanged)</b></span>
+    <span class="chip">Tokens <b>mix of §1 and §4</b></span>
+    <span class="chip">Open PR <b>#6 on hold until review</b></span>
+  </div>
+  <nav class="toc" aria-label="Contents">
+    <a href="#specimen">Live specimen</a><a href="#typeface">Typeface</a><a href="#layers">1 · Layers</a><a href="#tokens">2 · Tokens</a><a href="#colour">Colour rule</a><a href="#shine">3 · Shine</a><a href="#proportion">4 · Proportions</a><a href="#motion">5 · Motion</a>
+    <a href="#type">6 · Type &amp; contrast</a><a href="#map">7 · Tracker mapping</a><a href="#code">8 · Implementation</a><a href="#a11y">9 · Accessibility</a><a href="#decided">10 · Decisions</a>
+  </nav>
+</header>
+
+<section id="specimen">
+  <h2>Live specimen</h2>
+  <p>The floating glass layer over a frosted content list on a neutral grey backdrop. Colour appears only where it needs attention: the primary action, the current tab, and late or at-risk work. Switch the content material between Solid, Thin and Ultra-thin to compare.</p>
+  <p> Move the pointer over a glass control to see the glint follow it. Tap a tab, or press and slide along the tab bar, to see the selection glide. Open the menu, fold the tab bar, or tap the folded pill to unfold it.</p>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Demonstrations">
+      <button type="button" id="menu-btn" aria-pressed="false">Open menu</button>
+      <button type="button" id="fold" aria-pressed="false">Fold tab bar</button>
+      <button type="button" id="replay" aria-pressed="false">Replay entrance</button>
+    </div>
+    <div class="seg" role="group" aria-label="Content material">
+      <button type="button" data-mat="solid" aria-pressed="false">Solid</button>
+      <button type="button" data-mat="thin" aria-pressed="true">Thin</button>
+      <button type="button" data-mat="ultra" aria-pressed="false">Ultra-thin</button>
+    </div>
+  </div>
+  <div class="stages" id="stages">
+    <template id="stage-tpl">
+      <div class="glow" aria-hidden="true"></div>
+      <span class="stage-label"></span>
+      <div class="content">
+        <div class="list">
+          <div class="li"><i class="late"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></i><div><b>Pristine Shampoo Bottle</b><span>Send mold inquiry · <span class="late-t" style="display:inline">day 7 of 5, late</span></span></div><em>INQ-300</em></div>
+          <div class="li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/></svg></i><div><b>Farm Fresh 2L Bore-Seal</b><span>Combi-Pack · 2 of 6 actions done</span></div><em>14 Oct</em></div>
+          <div class="li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></i><div><b>T1 trial at factory</b><span>Super Uniart · Adam</span></div><em>1 Nov</em></div>
+          <div class="li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v10M12 18v2"/></svg></i><div><b>Lid Snap Fit</b><span>Reachpac · <span class="risk-t" style="display:inline">due in 2 days</span></span></div><em>3 Nov</em></div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="pill primary glass" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>New project</span></button>
+        <button class="icon glass" type="button" aria-label="Settings" aria-expanded="false" data-menu-btn><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button>
+      </div>
+      <div class="menu glass" data-menu role="menu" aria-label="Settings">
+        <div class="mi" role="menuitem" style="--n:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 000 16z" fill="currentColor"/></svg>Style</div>
+        <div class="mi" role="menuitem" style="--n:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>Theme</div>
+        <div class="mi" role="menuitem" style="--n:2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Motion</div>
+        <hr>
+        <div class="mi" role="menuitem" style="--n:3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>Open V1</div>
+      </div>
+      <div class="tabbar glass" data-tabbar>
+        <div class="track">
+          <span class="lens" aria-hidden="true"><i></i></span>
+          <button class="tab" type="button" aria-current="page" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+          <button class="tab" type="button" aria-label="Inquiries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg></button>
+          <button class="tab" type="button" aria-label="Projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/></svg></button>
+          <button class="tab" type="button" aria-label="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 20a2 2 0 004 0"/></svg></button>
+        </div>
+      </div>
+      <button class="search glass" type="button" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </template>
+  </div>
+  <p>Tablet and laptop: the sidebar rail uses the same lens, sliding up and down. Tap an icon, or press and slide along the rail.</p>
+  <div class="stages rails" id="rails">
+    <template id="rail-tpl">
+      <div class="glow" aria-hidden="true"></div>
+      <span class="stage-label"></span>
+      <nav class="rail glass" data-rail aria-label="Sections">
+        <div class="track">
+          <span class="lens" aria-hidden="true"><i></i></span>
+          <button class="tab" type="button" aria-current="page" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+          <button class="tab" type="button" aria-label="Inquiries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l2-8h12l2 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg></button>
+          <button class="tab" type="button" aria-label="Projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/></svg></button>
+          <button class="tab" type="button" aria-label="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 20a2 2 0 004 0"/></svg></button>
+        </div>
+      </nav>
+      <div class="content"><div class="list">
+          <div class="li"><i class="late"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></i><div><b>Pristine Shampoo Bottle</b><span>Send mold inquiry · <span class="late-t" style="display:inline">day 7 of 5, late</span></span></div><em>INQ-300</em></div>
+          <div class="li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/></svg></i><div><b>Farm Fresh 2L Bore-Seal</b><span>Combi-Pack · 2 of 6 actions done</span></div><em>14 Oct</em></div>
+          <div class="li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></i><div><b>T1 trial at factory</b><span>Super Uniart · Adam</span></div><em>1 Nov</em></div>
+      </div></div>
+    </template>
+  </div>
+</section>
+
+<section id="typeface">
+  <h2>Typeface proposals</h2>
+  <p>Tap an option: the whole page, the specimen above and the type card below switch to it. Look most at the numbers and the codes, since the tracker is full of them.</p>
+  <div class="note"><b>Also compared: Trap.</b> Your installed Trap (named "Inktrap" inside the files) in Regular, SemiBold, Bold, ExtraBold and Black. Its figures are all one width, so numbers line up without a mono font. It has no %, $, ~, em dash, middle dot, curly apostrophe, ellipsis or accented letters; those fall back to Geist automatically (look at "0%" and the dots in the type card). Like Srotone, the files carry no licence text and are marked for preview and print only, so check your licence covers web use before it goes on the public tracker.</div>
+  <div class="note"><b>Chosen: Geist + Geist Mono.</b> Geist for all text and headings; Geist Mono for codes, IDs, dates in lists and the big numbers, so columns of figures line up. Both are free (SIL Open Font License), so there is nothing to license. <b>About Srotone</b> (kept here for comparison only): it comes in Bold and Extra Bold only and has no hyphen, dashes, %, &amp;, @ or middle dot, so it is used for headings and big numbers, never for body text or codes; missing characters fall back to the text face. Its font file (by Glyphminds Studios) carries no licence text and is marked for preview and print embedding only. Putting it on the public tracker site needs a web licence from the foundry; check yours before we ship it.</div>
+  <div class="fonts" role="group" aria-label="Typeface">
+    <button type="button" class="fontopt" data-font="trap" aria-pressed="false" style="font-family:'Trap','Geist',sans-serif"><span class="tag">Trap · proposal</span><span class="nm">Trap + Geist + Geist Mono</span><span class="why">Trap for page titles, card headings and big numbers; Geist for lists and body text; Geist Mono for codes and IDs. The most character with no loss of readability.</span></button>
+    <button type="button" class="fontopt" data-font="trap-text" aria-pressed="false" style="font-family:'Trap','Geist',sans-serif"><span class="tag">New · bolder</span><span class="nm">Trap + Geist Mono</span><span class="why">Trap everywhere, including lists and body text (Regular and SemiBold); Geist Mono only for codes and IDs. Very distinctive; a little wider, so long titles truncate sooner.</span></button>
+    <button type="button" class="fontopt" data-font="trap-all" aria-pressed="false" style="font-family:'Trap','Geist',sans-serif"><span class="tag">New · one font</span><span class="nm">Trap only</span><span class="why">Trap for everything, codes too, relying on its equal-width figures. Simplest, but codes lose the clear mono look.</span></button>
+    <button type="button" class="fontopt" data-font="geist" aria-pressed="true" style="font-family:'Geist',sans-serif"><span class="tag">Chosen</span><span class="nm">Geist + Geist Mono</span><span class="why">Precise, technical and very even. Codes, dates and counts in Geist Mono line up perfectly. The most “engineering tool” feel.</span></button>
+    <button type="button" class="fontopt" data-font="srotone" aria-pressed="false" style="font-family:'Srotone','Geist',sans-serif"><span class="tag">Advent</span><span class="nm">Srotone + Geist</span><span class="why">Srotone, your Advent font, for page titles, card headings and big numbers; Geist for lists, body text and codes. Strong brand headlines with precise, readable data.</span></button>
+    <button type="button" class="fontopt" data-font="srotone-funnel" aria-pressed="false" style="font-family:'Srotone','Funnel Sans',sans-serif"><span class="tag">Advent · softer</span><span class="nm">Srotone + Funnel Sans</span><span class="why">The same Srotone headings with Funnel Sans for text: a little warmer and rounder than Geist.</span></button>
+    <button type="button" class="fontopt" data-font="funnel" aria-pressed="false" style="font-family:'Funnel Display',sans-serif"><span class="tag">Close to brand</span><span class="nm">Funnel Display + Funnel Sans</span><span class="why">Used in the Advent logo canvas layout. Crisp, slightly squared headlines; no Srotone.</span></button>
+    <button type="button" class="fontopt" data-font="manrope" aria-pressed="false" style="font-family:'Manrope',sans-serif"><span class="tag">Softest</span><span class="nm">Manrope</span><span class="why">Rounded geometric shapes that sit naturally with glass and capsules. Friendly, still tidy at small sizes.</span></button>
+    <button type="button" class="fontopt" data-font="jakarta" aria-pressed="false" style="font-family:'Plus Jakarta Sans',sans-serif"><span class="tag">Polished</span><span class="nm">Plus Jakarta Sans</span><span class="why">Modern product feel with open letters and a slightly wide stance. Already used by the Vision style.</span></button>
+    <button type="button" class="fontopt" data-font="onest" aria-pressed="false" style="font-family:'Onest',sans-serif"><span class="tag">Neutral</span><span class="nm">Onest</span><span class="why">A clean grotesk with good figures and generous spacing; the quietest option that still has character.</span></button>
+    <button type="button" class="fontopt" data-font="figtree" aria-pressed="false" style="font-family:'Figtree',sans-serif"><span class="tag">Warm</span><span class="nm">Figtree</span><span class="why">Light-hearted geometric with very readable small text. Feels approachable on phones.</span></button>
+    <button type="button" class="fontopt" data-font="system" aria-pressed="false"><span class="tag">Current</span><span class="nm">System font</span><span class="why">SF on Apple devices, Segoe UI on Windows, Roboto on Android. Shown only for comparison.</span></button>
+  </div>
+  <div class="typecard" aria-label="Type specimen">
+    <p class="cap">Large title · 34</p><p class="lt">Dashboard</p>
+    <p class="cap">Title · 22</p><p class="t2">Pristine Shampoo Bottle Redesign</p>
+    <p class="bd">Send the revised mold inquiry to Combi-Pack and chase Clark for the insert cost before the T1 trial on 1 Nov.</p>
+    <p class="sc">Combi-Pack · Improvement · 2 of 6 actions done · due 14 Oct</p>
+    <div class="nums"><div><b>16</b><span>Overdue actions</span></div><div><b>8 / 25</b><span>Projects needing attention</span></div><div><b>0%</b><span>On track</span></div><div><b>−8</b><span>Working days late</span></div></div>
+    <p class="codes">INQ-300 · CPRO0194 · PTC-2501-01 · 14 Oct 2026 · 1,250 pcs · RM 0.42</p>
+  </div>
+</section>
+
+<section id="layers">
+  <h2>1 · Two layers, never mixed</h2>
+  <p>Every surface in the tracker belongs to one of two layers. The layer decides the material, not how important the component is.</p>
+  <div class="two">
+    <div class="card"><h3 style="margin-top:0">Interactive layer: glass</h3>
+      <ul><li>Floating tab bar (phone) and sidebar rail (tablet, laptop)</li><li>Toolbar buttons: settings, theme, sign out, sync pill</li><li>Range control in the top bar (Today / This week …)</li><li>Overlays: settings menu, toasts, date picker, command bar, selection bar</li><li>Back-to-top button</li></ul></div>
+    <div class="card"><h3 style="margin-top:0">Content layer: frosted material</h3>
+      <ul><li>Dashboard tiles, panels, the overdue banner</li><li>Project and inquiry lists, task rows, alert rows</li><li>Project page sections, milestones, board columns</li><li>Forms and sheets</li><li>Sign-in card</li></ul>
+      <p style="margin:8px 0 0;font-size:14px;color:var(--ink-2)">Thin by default, ultra-thin only over calm backgrounds, solid where text is dense (forms, long notes). Content materials get a soft top edge but never the controls' rim, sheen or glint.</p></div>
+  </div>
+  <div class="two">
+    <div class="card do"><b>Do</b><ul><li>Use glass only where something floats over content and moves or collapses.</li><li>Keep a soft grey light-and-shade backdrop so the frosting has tone to work with.</li><li>Give every glass shape the full shine (rim, sheen, specular lines).</li></ul></div>
+    <div class="card dont"><b>Don't</b><ul><li>Put glass on cards, lists or anything people read for long.</li><li>Stack glass on glass.</li><li>Tint glass with the accent, except the selected tab and the one primary action.</li></ul></div>
+  </div>
+</section>
+
+<section id="tokens">
+  <h2>2 · Tokens (chosen)</h2>
+  <p>Your directive gave two sets of values: §1 (glass specification) and §4 (reference component). These are the values we're using, a mix of both.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Token</th><th>§1 directive</th><th>§4 reference</th><th>Chosen</th></tr></thead>
+    <tbody>
+      <tr><td>Backdrop</td><td class="mono">blur 20px, saturate 180%</td><td class="mono">blur 24px, saturate 200%</td><td class="pick mono">blur 24px, saturate 180%</td></tr>
+      <tr><td>Fill · light bars (tab bar, rail, search)</td><td class="mono">white .25</td><td class="mono">white .20</td><td class="pick mono">white .25</td></tr>
+      <tr><td>Fill · light buttons</td><td class="mono">white .25</td><td class="mono">white .20, hover .30</td><td class="pick mono">white .20, hover .30</td></tr>
+      <tr><td>Fill · dark</td><td class="mono">rgba(20,20,20,.45)</td><td class="mono">black .30</td><td class="pick mono">rgba(20,20,20,.45)</td></tr>
+      <tr><td>Fill · overlays with text (menu, toast)</td><td>—</td><td>—</td><td class="pick mono">white .82 / rgba(24,24,26,.82)</td></tr>
+      <tr><td>Edge · light</td><td class="mono">1px white .35</td><td class="mono">1px white .40</td><td class="pick">Gradient rim: white .95 top-left → .10 → .55 bottom-right (averages about .40)</td></tr>
+      <tr><td>Edge · dark</td><td class="mono">1px white .35</td><td class="mono">1px white .10</td><td class="pick">Gradient rim: white .42 → .05 → .16 (averages about .10)</td></tr>
+      <tr><td>Shadow + specular</td><td class="mono" colspan="2">0 8px 32px rgba(0,0,0,.12), inset 0 1px 1px rgba(255,255,255,.6)</td><td class="pick">Same, plus a faint bottom specular line (inset 0 −1px 1px white .14)</td></tr>
+      <tr><td>Label on glass</td><td>—</td><td class="mono">slate-900 #0F172A / white</td><td class="pick">slate-900 / white</td></tr>
+      <tr><td>Motion</td><td class="mono">400ms spring</td><td class="mono">300ms spring</td><td class="pick">400ms for opening and folding, 300ms for presses</td></tr>
+      <tr><td>Secondary text</td><td class="mono">black .75 / white .85</td><td>—</td><td class="pick">black .75 / white .85</td></tr>
+      <tr><td>Accent</td><td>—</td><td>—</td><td class="pick">System blue #0088FF light / #3AA0FF dark</td></tr>
+      <tr><td>Content · solid</td><td rowspan="3">Solid, thin or ultra-thin material</td><td rowspan="3">—</td><td class="pick mono">#FFFFFF / #1C1C1E, no blur</td></tr>
+      <tr><td>Content · thin (default)</td><td class="pick mono">white .72 / rgba(28,28,30,.70), blur 30px saturate 150%</td></tr>
+      <tr><td>Content · ultra-thin</td><td class="pick mono">white .48 / rgba(28,28,30,.46), blur 40px saturate 160%</td></tr>
+      <tr><td>Content edge</td><td>—</td><td>—</td><td class="pick mono">inset 0 1px 0 white .75 (dark .08) + .5px hairline; 20px corners</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="colour">
+  <h2>Colour rule</h2>
+  <p>The style is greyscale. Colour is a signal, so it appears only where something needs attention or action. If everything is colourful, nothing stands out.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Colour</th><th>Used only for</th><th>Light / dark</th></tr></thead>
+    <tbody>
+      <tr><td>System blue</td><td>The one primary action per screen, the current tab or sidebar item, links, the unread dot, focus rings</td><td class="mono">#0088FF / #0091FF</td></tr>
+      <tr><td>Red</td><td>Overdue or late items, past-SLA inquiries, delete</td><td class="mono">#D70015 text, #FF383C fill / #FF6961, #FF4245</td></tr>
+      <tr><td>Orange</td><td>At risk: due within 3 days, delivery within 14 days</td><td class="mono">#C93400 / #FF9F0A</td></tr>
+      <tr><td>Green</td><td>Only the brief “done” confirmation (a tick as it completes); finished items go grey</td><td class="mono">#248A3D / #30D158</td></tr>
+      <tr><td>Everything else</td><td>List icons, tags (factory, status, classification), chips, progress tracks, charts' secondary series, backgrounds</td><td>Neutral greys: fills rgba(118,118,128,.14) / .28, icons #3A3A3F / #D1D1D6</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>Check:</b> on any screen, there should be at most one blue filled control, and red or orange only next to work that is actually late or at risk.</div>
+</section>
+
+<section id="shine">
+  <h2>3 · The shine</h2>
+  <p>A flat 1px border reads as plastic. Real glass catches light unevenly, so every glass shape gets three layers:</p>
+  <ol>
+    <li><b>Gradient rim:</b> a 1px ring, brightest at the top-left where the light hits, nearly gone along the middle, a softer catch at the bottom-right. Drawn as a masked gradient, so it follows any corner radius.</li>
+    <li><b>Top sheen:</b> a wide, soft radial highlight entering from the top edge, blended with <code>soft-light</code> so it lifts the colour underneath instead of painting white over it.</li>
+    <li><b>Specular lines and glint:</b> the inner 1px highlight from §1 along the top, a faint one along the bottom, and a small highlight that follows the pointer (or finger) across the surface.</li>
+  </ol>
+  <p>In dark mode every layer drops to about a third of its strength, so controls glint instead of glowing.</p>
+</section>
+
+<section id="proportion">
+  <h2>4 · Proportions</h2>
+  <p>Three rules keep every component in proportion: <b>corner radius = height ÷ 2</b> for anything that floats; <b>inner radius = outer radius − padding</b> when one rounded shape sits inside another; and <b>every size on the 4-pt grid</b>.</p>
+  <div class="dims" aria-hidden="true">
+    <div class="dim"><div class="box" style="width:44px;height:44px">20</div>Icon button<br>44 × 44 · r22</div>
+    <div class="dim"><div class="box" style="width:150px;height:44px">14 · 20 · 8 · label · 18</div>Pill button<br>h44 · r22</div>
+    <div class="dim"><div class="box" style="width:120px;height:56px;border-radius:28px">4 · 56 × 48 · 4</div>Tab bar<br>h56 · r28 · tab r24</div>
+    <div class="dim"><div class="box" style="width:120px;height:72px">6 · row 40 · r16</div>Menu<br>w228 · r22</div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Component</th><th>Size</th><th>Padding / gap</th><th>Radius</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td>Icon button</td><td class="num">44 × 44</td><td>—</td><td class="num">22</td><td>Icon 20, stroke 1.75</td></tr>
+      <tr><td>Pill button</td><td class="num">h 44</td><td>14 icon side · 18 label side · gap 8</td><td class="num">22</td><td>Icon 20 · label 15/20 semibold, −0.2 tracking</td></tr>
+      <tr><td>Toolbar group</td><td>—</td><td>8 between buttons · 16 from screen edge</td><td>—</td><td>—</td></tr>
+      <tr><td>Tab bar</td><td class="num">h 56</td><td>4 inside · 16 from edges</td><td class="num">28 (tab 24 = 28 − 4)</td><td>Tabs 56 × 48 · icon 22</td></tr>
+      <tr><td>Search / single control</td><td class="num">56 × 56</td><td>16 from edges</td><td class="num">28</td><td>Icon 22</td></tr>
+      <tr><td>Menu</td><td class="num">w 228</td><td>6 inside · rows 40 tall, 12 side padding</td><td class="num">22 (rows 16 = 22 − 6)</td><td>Icon 18 · label 15/20</td></tr>
+      <tr><td>Content list</td><td>rows 60</td><td>16 side · separators start at the text</td><td class="num">20</td><td>Title 16/21 semibold · detail 14/19</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="motion">
+  <h2>5 · Motion</h2>
+  <ul>
+    <li><b>Only cheap properties move:</b> <code>transform</code>, <code>opacity</code> and <code>clip-path</code>. Nothing that changes layout (height, padding, margins) is animated, which was the cause of the jerky opening before.</li>
+    <li><b>Opening uses the spring, closing doesn't:</b> things open with <code>cubic-bezier(.175,.885,.32,1.275)</code> over 400ms (a small overshoot) and close with a quick ease-in in about 250ms, so they never bounce on the way out.</li>
+    <li><b>Morph from the source:</b> the menu starts as the exact 44 × 44 shape of the settings button and the clip opens out from that corner; its rows fade in 32ms apart once the shape is mostly open.</li>
+    <li><b>Changing tabs:</b> the selection is one glass drop (the lens) that slides to the new tab on a real spring (about 5% overshoot, 460–640ms depending on distance). While it travels it stretches toward the new tab and squashes slightly, then settles; the new icon dips and bounces as the lens lands. Press and slide along the bar and the lens lifts, follows your finger, the icon under it turns blue as you pass, and it snaps to the nearest tab when you let go. The tablet and laptop sidebar rail uses the same lens, moving up and down.</li>
+    <li><b>Folding the tab bar:</b> the capsule's width springs from 232 to 64 while the row of tabs slides so the current tab stays centred; the others fade. Tapping the folded pill unfolds it and never navigates.</li>
+    <li><b>Entrance:</b> content fades in first; then the toolbar, tab bar and search rise 14px into place, 80ms apart.</li>
+    <li><b>Press:</b> 0.97 while pressed, 1.03 on hover with a mouse, 300ms spring back.</li>
+    <li><b>Reduced motion:</b> every transition and entrance is instant.</li>
+  </ul>
+</section>
+
+<section id="type">
+  <h2>6 · Type and contrast</h2>
+  <p>Typeface: Geist for text and headings, Geist Mono for codes, IDs and big numbers (signed off), unless you pick one of the Trap options; Trap would ship with the tracker as five small font files (10 KB each). Both load from Google Fonts with the system font as fallback, so it looks the same on iPhone, Fold and Windows.</p>
+  <p> In the tracker, sizes follow the iOS 27 kit: Large Title 34, Title 2 22, Title 3 20, list titles 17, secondary 15, details 13.</p>
+  <p>Measured contrast (WCAG), against the flat glow colour; busy content behind glass will vary:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Pair</th><th>Ratio</th><th>Needs</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Label slate-900 on light glass</td><td class="num">15.8 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>White label on dark glass</td><td class="num">18.9 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>Blue #0088FF selected tab icon on light glass</td><td class="num">3.1 : 1</td><td class="num">3 : 1 (icon)</td><td class="pass">Pass, just</td></tr>
+      <tr><td>Secondary black .75 on white</td><td class="num">10.4 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>Secondary white .85 on #1C1C1E</td><td class="num">12.5 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>Title black on ultra-thin over the strongest glow</td><td class="num">≈ 14 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>Secondary black .75 on ultra-thin over the strongest glow</td><td class="num">≈ 9 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>White title on dark ultra-thin over the glow</td><td class="num">≈ 11 : 1</td><td class="num">4.5 : 1</td><td class="pass">Pass</td></tr>
+      <tr><td>Tertiary black .45 on white</td><td class="num">3.4 : 1</td><td class="num">4.5 : 1</td><td class="fail">Fail for text</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>Rule:</b> tertiary at .45 is only for icons, borders and placeholder hints. Tertiary <i>text</i> uses .60 (5.7 : 1).</div>
+</section>
+
+<section id="map">
+  <h2>7 · How it maps onto the tracker</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Tracker element</th><th>Layer</th><th>Phone</th><th>Tablet / laptop</th></tr></thead>
+    <tbody>
+      <tr><td>Navigation (<code>.tabbar</code>, <code>.side</code>)</td><td>Glass</td><td>Floating capsule h56, 16 from edges, icons only, folds on scroll</td><td>Floating icon rail, 12 from edges, r28</td></tr>
+      <tr><td>Toolbar buttons (<code>.ibtn</code>, <code>.sync</code>)</td><td>Glass</td><td>44 circles, 8 apart, above the large title</td><td>44 circles right of the title</td></tr>
+      <tr><td>Range control in top bar (<code>.top .seg</code>)</td><td>Glass</td><td>Not shown on phones</td><td>Glass capsule h44, thumb r18</td></tr>
+      <tr><td>Segmented controls inside cards</td><td>Content</td><td colspan="2">Tinted track with a white thumb; no glass</td></tr>
+      <tr><td>Primary action (<code>.b1</code>)</td><td>Content</td><td colspan="2">Solid system-blue capsule h44; the only tinted control on a screen</td></tr>
+      <tr><td>Secondary action (<code>.btn</code>)</td><td>Content</td><td colspan="2">Tinted fill, blue label; becomes the glass pill only where it floats (toolbar, selection bar)</td></tr>
+      <tr><td>Menus, toasts, date picker, command bar</td><td>Glass (thick)</td><td colspan="2">.82 fill, grows out of its trigger</td></tr>
+      <tr><td>Cards, lists, rows, banner</td><td>Content</td><td colspan="2">Thin frosted material, r20, hairline separators</td></tr>
+      <tr><td>Forms, sheets, long notes</td><td>Content</td><td colspan="2">Solid, so dense text and inputs stay crisp</td></tr>
+      <tr><td>Page background</td><td>Content</td><td colspan="2">#E8E9ED / #0A0A0C with soft grey light and shade, no colour</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="code">
+  <h2>8 · Implementation in the tracker</h2>
+  <p>The tracker is plain HTML and CSS, so the §4 component becomes one <code>.glass</code> recipe plus tokens, scoped to the Liquid Glass style so the other ten styles never see it.</p>
+<pre><code>:root[data-look="K"]{
+  --g-blur: 24px; --g-sat: 180%;
+  --fill-bar: rgba(255,255,255,.25);  --fill-btn: rgba(255,255,255,.20);  --fill-over: rgba(255,255,255,.82);
+  --rim-a: .95; --rim-m: .10; --rim-b: .55; --sheen: .42; --glint: .55;
+  --spring: cubic-bezier(.175,.885,.32,1.275); --t-morph: 400ms; --t-press: 300ms;
+}
+.glass{
+  backdrop-filter: blur(var(--g-blur)) saturate(var(--g-sat));
+  box-shadow: 0 8px 32px rgba(0,0,0,.12), inset 0 1px 1px rgba(255,255,255,.6), inset 0 -1px 1px rgba(255,255,255,.14);
+}
+.glass::before{ /* gradient rim */
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+  background: linear-gradient(140deg, rgba(255,255,255,var(--rim-a)), rgba(255,255,255,var(--rim-m)) 34% 64%, rgba(255,255,255,var(--rim-b)));
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.glass::after{ /* top sheen + pointer glint */
+  content:""; position:absolute; inset:0; border-radius:inherit; mix-blend-mode: soft-light;
+  background: radial-gradient(130% 90% at 50% -30%, rgba(255,255,255,var(--sheen)), transparent 58%),
+              radial-gradient(90px circle at var(--mx) var(--my), rgba(255,255,255,var(--glint)), transparent 70%);
+}</code></pre>
+  <p>In the tracker, <code>.glass</code> is applied through the existing selectors (<code>.ibtn</code>, <code>.sync</code>, <code>.tabbar</code>, <code>.side</code>, <code>#pop</code>, <code>.toast</code>, <code>#dp</code>, <code>.cmd</code>, <code>.selbar</code>, <code>#totop</code>, <code>.top .seg</code>), so no markup changes are needed. One small script sets <code>--mx</code> / <code>--my</code> on whichever glass element the pointer is over.</p>
+  <h3>Changes to pull request #6 after sign-off</h3>
+  <ul><li>Tokens switched to the chosen mix (24px blur, .20 buttons, gradient rims).</li>
+  <li>The three-layer shine on every glass element.</li>
+  <li>Menu and overlays grow out of their trigger with <code>clip-path</code>; tab bar folds with width + slide, not by collapsing tabs.</li>
+  <li>Proportions from §4 (44 controls, tab bar h56 / r28, menu rows 40 / r16).</li>
+  <li>Reduced-transparency fallback, reduced motion, tertiary text at .60.</li></ul>
+</section>
+
+<section id="a11y">
+  <h2>9 · Accessibility and performance</h2>
+  <ul>
+    <li><b>Reduce transparency:</b> glass becomes solid #F7F8FA / #26282E and content materials become solid, all with no blur.</li>
+    <li><b>Reduce motion:</b> no springs, no entrance, no fold, no menu morph.</li>
+    <li><b>Focus:</b> a 2px system-blue ring outside every glass control.</li>
+    <li><b>Touch:</b> every glass control at least 44 × 44; icon-only controls keep an accessible name.</li>
+    <li><b>Glass audit before each release:</b> at most 6 glass surfaces per screen, none on a card, list or form, no glass inside glass.</li>
+    <li><b>Performance:</b> the glint updates only through CSS variables (no layout), the blur itself is never animated, and glass never sits on scrolling rows.</li>
+  </ul>
+</section>
+
+<section id="decided">
+  <h2>10 · Decisions</h2>
+  <ol>
+    <li><b>Token set:</b> the mix in §2. <span class="pass">Decided</span></li>
+    <li><b>Duration:</b> 400ms opening and folding, 300ms presses. <span class="pass">Decided</span></li>
+    <li><b>Label on light glass:</b> slate-900 #0F172A. <span class="pass">Decided</span></li>
+    <li><b>Folding tab bar:</b> kept. <span class="pass">Decided</span></li>
+    <li><b>Typeface:</b> Geist + Geist Mono (Trap and Srotone stay in the switcher for comparison). <span class="pass">Decided</span></li>
+    <li><b>Changing tabs:</b> sliding glass lens with a spring, icon colour follows the finger while dragging, same lens on the tablet and laptop sidebar rail (moving up and down). <span class="pass">Decided</span></li>
+    <li><b>Secondary buttons:</b> tinted inside content, glass only when floating. <span class="pass">Decided</span></li>
+  </ol>
+  <p>Signed off on 29 October 2026 and applied to the Liquid Glass style in pull request #6. A copy of this playbook is saved in the repository as <code>docs/liquid-glass-playbook.html</code>.</p>
+</section>
+</div>
+
+<script>
+(function(){
+  var host = document.getElementById('stages'), tpl = document.getElementById('stage-tpl');
+  ['light','dark'].forEach(function(mode){
+    var s = document.createElement('div'); s.className = 'stage ' + mode;
+    s.appendChild(tpl.content.cloneNode(true)); s.querySelector('.stage-label').textContent = mode === 'light' ? 'Light' : 'Dark';
+    host.appendChild(s);
+  });
+  var rails = document.getElementById('rails'), rtpl = document.getElementById('rail-tpl');
+  ['light','dark'].forEach(function(mode){
+    var s = document.createElement('div'); s.className = 'stage rail-stage ' + mode;
+    s.appendChild(rtpl.content.cloneNode(true)); s.querySelector('.stage-label').textContent = mode === 'light' ? 'Light · rail' : 'Dark · rail';
+    rails.appendChild(s);
+  });
+  var stages = host.querySelectorAll('.stage');
+  document.querySelectorAll('.fontopt').forEach(function(b){ b.addEventListener('click', function(){
+    if (b.dataset.font === 'geist') delete document.documentElement.dataset.font; else document.documentElement.dataset.font = b.dataset.font;
+    document.querySelectorAll('.fontopt').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); }); }); });
+  document.querySelectorAll('[data-mat]').forEach(function(b){ b.addEventListener('click', function(){
+    if (b.dataset.mat === 'thin') delete document.documentElement.dataset.mat; else document.documentElement.dataset.mat = b.dataset.mat;
+    b.parentNode.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); }); }); });
+
+  /* pointer glint: the highlight follows the pointer or finger across each glass shape */
+  [host, rails].forEach(function(host){
+  host.addEventListener('pointermove', function(e){
+    var g = e.target.closest && e.target.closest('.glass'); if (!g) return;
+    var r = g.getBoundingClientRect(); g.style.setProperty('--mx', (e.clientX - r.left) + 'px'); g.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  });
+  host.addEventListener('pointerout', function(e){
+    var g = e.target.closest && e.target.closest('.glass'); if (g && !g.contains(e.relatedTarget)){ g.style.removeProperty('--mx'); g.style.removeProperty('--my'); }
+  });
+  });
+
+  function setMenu(open){
+    var b = document.getElementById('menu-btn'); b.setAttribute('aria-pressed', String(open)); b.textContent = open ? 'Close menu' : 'Open menu';
+    stages.forEach(function(s){ s.querySelector('[data-menu]').classList.toggle('open', open); s.querySelector('[data-menu-btn]').setAttribute('aria-expanded', String(open)); });
+  }
+  function setFold(on){
+    var b = document.getElementById('fold'); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Unfold tab bar' : 'Fold tab bar';
+    stages.forEach(function(s){ var t = s.querySelector('[data-tabbar]'), tabs = [].slice.call(t.querySelectorAll('.tab')), i = tabs.findIndex(function(x){ return x.hasAttribute('aria-current'); });
+      t.classList.toggle('folded', on); t.querySelector('.track').style.transform = on ? 'translateX(' + (-56 * i) + 'px)' : ''; });
+  }
+  document.getElementById('menu-btn').addEventListener('click', function(){ setMenu(this.getAttribute('aria-pressed') !== 'true'); });
+  document.getElementById('fold').addEventListener('click', function(){ setFold(this.getAttribute('aria-pressed') !== 'true'); });
+  document.getElementById('replay').addEventListener('click', function(){
+    setMenu(false); setFold(false);
+    document.querySelectorAll('.stage').forEach(function(s){ s.querySelectorAll('.content,.toolbar,.tabbar,.search,.rail').forEach(function(el){ el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }); });
+  });
+  stages.forEach(function(s){
+    s.querySelector('[data-menu-btn]').addEventListener('click', function(){ setMenu(this.getAttribute('aria-expanded') !== 'true'); });
+    s.querySelector('[data-menu]').addEventListener('click', function(e){ if (e.target.closest('.mi')) setMenu(false); });
+  });
+
+  /* spring curve as CSS linear(): damping .68, about 5% overshoot */
+  var RM = matchMedia('(prefers-reduced-motion: reduce)');
+  var SPRING = (function(){
+    if (!(window.CSS && CSS.supports('transition-timing-function', 'linear(0, 1)'))) return 'cubic-bezier(.175,.885,.32,1.275)';
+    var z = .68, w = 11, wd = w * Math.sqrt(1 - z * z), pts = [];
+    for (var k = 0; k <= 40; k++){ var t = k / 40; pts.push(+(1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t))).toFixed(4)); }
+    pts[40] = 1; return 'linear(' + pts.join(',') + ')';
+  })();
+
+  /* selection lens: one glass drop per nav (tab bar along x, rail along y), kept in step across the light and dark stages */
+  function navGroup(sel, axis, step){
+    var navs = [].slice.call(document.querySelectorAll(sel)), P = axis === 'x' ? 'translateX' : 'translateY';
+    function pos(L){ var m = new DOMMatrix(getComputedStyle(L).transform); return axis === 'x' ? m.m41 : m.m42; }
+    function stop(L){ var v = pos(L); L.getAnimations({ subtree: true }).forEach(function(a){ a.cancel(); }); L.style.transform = P + '(' + v + 'px)'; }
+    function mark(t, idx){ t.querySelectorAll('.tab').forEach(function(x, k){ if (k === idx) x.setAttribute('aria-current','page'); else x.removeAttribute('aria-current'); }); }
+    function select(idx){
+      navs.forEach(function(t){
+        var tabs = t.querySelectorAll('.tab'), L = t.querySelector('.lens'), from = pos(L), to = idx * step, d = Math.abs(to - from) / step;
+        var landed = !tabs[idx].hasAttribute('aria-current') || L.classList.contains('lift') || d >= .05;
+        mark(t, idx); stop(L); L.style.transform = P + '(' + to + 'px)';
+        if (RM.matches || !landed) return;
+        var dur = 460 + Math.min(d, 3) * 60, st = 1 + Math.min(d, 3) * .16, st2 = 1 + (st - 1) * .2;
+        function sc(a, b){ return axis === 'x' ? 'scale(' + a + ',' + b + ')' : 'scale(' + b + ',' + a + ')'; }
+        if (d >= .05) L.animate([{ transform: P + '(' + from + 'px)' }, { transform: P + '(' + to + 'px)' }], { duration: dur, easing: SPRING });
+        /* the drop stretches toward where it is going and squashes a little, then settles */
+        if (d >= .05 && !L.classList.contains('lift')) L.firstElementChild.animate([
+          { transform: 'scale(1,1)' }, { transform: sc(st, 1.08), offset: .3 }, { transform: sc(st2, .97), offset: .66 }, { transform: 'scale(1,1)' }
+        ], { duration: dur, easing: 'cubic-bezier(.22,1,.36,1)' });
+        /* the new icon gives a small bounce as the lens lands on it */
+        tabs[idx].querySelector('svg').animate([
+          { transform: 'scale(1)' }, { transform: 'scale(.84)', offset: .3 }, { transform: 'scale(1.12)', offset: .65 }, { transform: 'scale(1)' }
+        ], { duration: 420, delay: d >= .05 ? dur * .3 : 0, easing: 'ease-out' });
+      });
+    }
+    navs.forEach(function(t){
+      var L = t.querySelector('.lens'), n = t.querySelectorAll('.tab').length, drag = null;
+      function at(e){ return axis === 'x' ? e.clientX : e.clientY; }
+      function near(v){ return Math.max(0, Math.min(n - 1, Math.round(v / step))); }
+      t.addEventListener('click', function(e){
+        if (t.classList.contains('folded')){ setFold(false); return; }
+        if (t._dragged){ t._dragged = false; return; }
+        var b = e.target.closest('.tab'); if (b) select([].indexOf.call(t.querySelectorAll('.tab'), b));
+      });
+      /* press and slide along the bar: the lens lifts and follows the finger, the icon under it lights up, and it snaps to the nearest tab on release */
+      t.addEventListener('pointerdown', function(e){
+        if (t.classList.contains('folded') || !e.target.closest('.tab')) return;
+        var r = t.querySelector('.track').getBoundingClientRect();
+        drag = { p: at(e), o: axis === 'x' ? r.left : r.top, on: false };
+      });
+      t.addEventListener('pointermove', function(e){
+        if (!drag) return;
+        if (!drag.on){ if (Math.abs(at(e) - drag.p) < 6) return; drag.on = true; t.setPointerCapture(e.pointerId); stop(L); L.classList.add('lift'); }
+        var v = Math.max(-8, Math.min(step * (n - 1) + 8, at(e) - drag.o - step / 2));
+        L.style.transform = P + '(' + v + 'px)'; mark(t, near(v));
+      });
+      function endDrag(){
+        if (!drag) return; var d = drag; drag = null; if (!d.on) return;
+        t._dragged = true; select(near(pos(L))); L.classList.remove('lift');
+        setTimeout(function(){ t._dragged = false; }, 0);
+      }
+      t.addEventListener('pointerup', endDrag); t.addEventListener('pointercancel', endDrag);
+    });
+  }
+  navGroup('[data-tabbar]', 'x', 56);
+  navGroup('[data-rail]', 'y', 48);
+})();
+</script>

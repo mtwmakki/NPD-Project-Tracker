@@ -52,14 +52,25 @@ iPad examples (Sidebar 12740:37613, List 12740:37605, Tab Bars 12740:23860, Tool
 Segmented Controls 507:24683, Buttons 507:24673, Text Fields 553:22762, Sheets 507:24684, Menus 507:24676,
 Toolbars 507:25993 (Default/inline title 12740:24029), Materials 215:105157
 
-## Liquid Glass spec (user directive, applied to the Liquid Glass style)
-- Glass only on the interactive layer: tab bar, sidebar, toolbar buttons, sync pill, toolbar segmented control, menus, toasts, pickers.
-  Content (cards, lists, forms) stays on solid grouped surfaces.
-- Glass: backdrop blur(20px) saturate(180%); fill light rgba(255,255,255,.25) / dark rgba(20,20,20,.45);
-  edge 1px rgba(255,255,255,.35); shadow 0 8px 32px rgba(0,0,0,.12) + inset 0 1px 1px rgba(255,255,255,.6).
-  Menus/toasts/pickers that carry text use a thicker fill (.72) so their text stays readable over busy content.
-- Motion: cubic-bezier(.175,.885,.32,1.275), 400ms, scaled by the Motion setting. The settings menu morphs open from its button;
-  on phones the tab bar folds into a compact pill (current tab) while scrolling down and unfolds on scroll up or tap.
-- Secondary text: rgba(0,0,0,.75) light / rgba(255,255,255,.85) dark (tertiary .45 / .55).
-- Backdrop: soft blue / indigo / cyan glow behind the content so the glass picks up colour.
-- Not done: overlay / plus-lighter blend layers (the saturate(180%) backdrop carries the colour bleed; extra blend layers lowered icon contrast).
+## Liquid Glass playbook (signed off 29 Oct 2026, applied to the Liquid Glass style)
+The full playbook with a live specimen is `docs/liquid-glass-playbook.html`. What the tracker uses:
+- Glass only on what floats: toolbar buttons, sync pill, range control, tab bar, sidebar rail, menus, toasts, pickers,
+  command bar, selection bar, back to top. Never on cards, lists or forms; never glass on glass.
+- Glass: backdrop blur(24px) saturate(180%); bars light rgba(255,255,255,.25) / dark rgba(20,20,20,.45); overlays that carry text .82.
+  Shine in three layers: gradient rim (::before, light .95 → .10 → .55, dark .42 → .05 → .16), top sheen + pointer glint
+  (::after, soft-light; the glint follows the pointer via --mx / --my), inner specular lines in the shadow.
+  Shadow 0 8px 32px rgba(0,0,0,.12) + inset 0 1px 1px rgba(255,255,255,.6) (dark .45 / .28).
+- Content: thin frosted material, light rgba(255,255,255,.72) / dark rgba(28,28,30,.70), blur(30px) saturate(150%).
+- Backdrop: neutral grey page #E8E9ED / #0A0A0C with soft grey light and shade, no colour.
+- Colour only where it needs attention: the primary action, the current tab, late (red) and at-risk (orange) items.
+  Notification icons are neutral grey unless late or at risk. Factory colours unchanged.
+- Type: Geist for text and headings (due text like "6 working days late" stays Geist with tabular figures), Geist Mono for codes, IDs and big numbers. iOS 27 sizes unchanged.
+- Motion (scaled by the Motion setting, off with Reduce Motion):
+  - Tabs: one glass lens glides to the new tab on a spring (damping .68, about 5% overshoot, 460-640ms by distance), stretches
+    toward the new tab and settles; the new icon dips and bounces as it lands. Press and slide along the tab bar (phone) or the
+    sidebar rail (tablet, laptop) and the lens lifts, follows the finger, lights the icon under it and snaps on release.
+  - Phone tab bar folds while scrolling down: the capsule's width springs to one tab and the row of tabs slides so the current
+    tab stays in it; scrolling up or tapping the pill unfolds it.
+  - Settings menu grows out of the settings button's own 44pt shape with clip-path; rows follow 32ms apart; closes with a quick ease-in.
+  - Press 0.97, hover 1.03 with a mouse, 300ms spring. Entrance: toolbar, sidebar and tab bar rise 14px in, staggered.
+- Proportions: controls 44 / r22; tab bar h56 / r28 with a 48-tall lens; rail items 44 tall capsules in an r28 rail; menu rows r16.

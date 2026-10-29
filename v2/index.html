@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NPD Tracker V2</title>
 <meta name="description" content="NPD Project Tracker V2 — same live data as V1, redesigned.">
-<meta name="theme-color" content="#F1F3F6">
+<meta name="theme-color" content="#05070D">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -18,9 +18,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script>
-/* Paint the saved style before anything renders (Studio + light by default). Keys are V2-only (npd2-*). */
+/* Paint the saved style before anything renders (Vision + dark by default). Keys are V2-only (npd2-*). */
 (function(){ var L=['I','J','K','D','A','B','C','E','F','G','H'], r=document.documentElement, g=function(k,d){ try { return localStorage.getItem(k) || d; } catch(e){ return d; } };
-  var look=g('npd2-look','I'); if (L.indexOf(look) < 0) look='I'; r.dataset.look=look; r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
+  var look=g('npd2-look','D'); if (L.indexOf(look) < 0) look='D'; r.dataset.look=look; r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
 </script>
 <style>
 /* Layout: one-screen app shell. Sidebar (icon rail on tablet portrait, bottom tab bar on phone) + topbar + scrolling #view.
@@ -1698,7 +1698,7 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 
 /* ── prefs ── */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S = { look: root.dataset.look || 'I', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
+const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false,
   focus: store.get('npd2-focus', 'all'), tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus; }
@@ -2948,16 +2948,16 @@ function pageNotifications(){
 }
 
 /* ── Styles gallery ── */
-const LOOKS = [['I','Studio','linear-gradient(115deg,#FFA25C,#C3BDBF 50%,#7FA7CF)'],['J','Graphite','linear-gradient(135deg,#141414 55%,#FFE58A 55%)'],['K','Glass','radial-gradient(circle at 25% 30%,#FF9F6E,transparent 60%),radial-gradient(circle at 80% 75%,#5AC8C8,transparent 60%),#0A84FF'],['D','Vision','linear-gradient(135deg,#05070D,#38BDF8 60%,#A78BFA)'],['A','Atelier','linear-gradient(135deg,#0E0D0B,#D8B479)'],['B','Neobank','linear-gradient(120deg,#5B6CFF,#22D3EE)'],['C','Telemetry','linear-gradient(90deg,#05070A 50%,#FFB020 50%)'],['E','Blueprint','repeating-linear-gradient(0deg,#0A1F3C 0 5px,#2B4F80 5px 6px),#0A1F3C'],['F','Dot Matrix','radial-gradient(#fff 1.2px,transparent 1.6px) 0 0/6px 6px,#000'],['G','Ember','linear-gradient(120deg,#FFB347,#FF6A3D 45%,#FF3D7F)'],['H','Evergreen','linear-gradient(135deg,#07130E 40%,#B8F35A)']];
+const LOOKS = [['D','Vision','linear-gradient(135deg,#05070D,#38BDF8 60%,#A78BFA)'],['I','Studio','linear-gradient(115deg,#FFA25C,#C3BDBF 50%,#7FA7CF)'],['J','Graphite','linear-gradient(135deg,#141414 55%,#FFE58A 55%)'],['K','Glass','radial-gradient(circle at 25% 30%,#FF9F6E,transparent 60%),radial-gradient(circle at 80% 75%,#5AC8C8,transparent 60%),#0A84FF'],['A','Atelier','linear-gradient(135deg,#0E0D0B,#D8B479)'],['B','Neobank','linear-gradient(120deg,#5B6CFF,#22D3EE)'],['C','Telemetry','linear-gradient(90deg,#05070A 50%,#FFB020 50%)'],['E','Blueprint','repeating-linear-gradient(0deg,#0A1F3C 0 5px,#2B4F80 5px 6px),#0A1F3C'],['F','Dot Matrix','radial-gradient(#fff 1.2px,transparent 1.6px) 0 0/6px 6px,#000'],['G','Ember','linear-gradient(120deg,#FFB347,#FF6A3D 45%,#FF3D7F)'],['H','Evergreen','linear-gradient(135deg,#07130E 40%,#B8F35A)']];
 const STYLES = [
-  {k:'I',n:'Studio',ref:1,def:1,short:1,v:'Soft grey app floating on a warm-to-cool gradient. Google Sans, dark ink pills, circular icon rail, blue and orange striped charts.',f:'Your reference 1 (Panze dashboard)',fd:'Google Sans',fn:'Google Sans',nw:400,hw:400,fonts:'Google Sans',
+  {k:'D',n:'Vision',def:1,short:1,v:'Frosted glass over soft coloured light, ultra-thin numbers.',f:'Apple Vision Pro, premium car screens',fd:'Sora',fn:'Sora',nw:200,hw:300,fonts:'Sora · Plus Jakarta Sans',
+    d:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.45),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.4),transparent 60%),#05070D',tx:'#F6F8FB',bar:'linear-gradient(90deg,#A5F3FC,#7DD3FC,#A78BFA)'},l:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.35),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.3),transparent 60%),#E8EDF4',tx:'#0A1020',bar:'linear-gradient(90deg,#22B8E8,#0B7FA8,#7C5CF0)'}},
+  {k:'I',n:'Studio',ref:1,short:1,v:'Soft grey app floating on a warm-to-cool gradient. Google Sans, dark ink pills, circular icon rail, blue and orange striped charts.',f:'Your reference 1 (Panze dashboard)',fd:'Google Sans',fn:'Google Sans',nw:400,hw:400,fonts:'Google Sans',
     d:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,138,61,.35),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(77,163,255,.35),transparent 55%),#15191E',tx:'#F2F4F7',bar:'linear-gradient(90deg,#4DA3FF 58%,#FF8A3D 58%)'},l:{bg:'radial-gradient(120% 80% at 0% 0%,rgba(255,162,92,.6),transparent 55%),radial-gradient(120% 80% at 100% 0%,rgba(127,167,207,.65),transparent 55%),#F1F3F6',tx:'#14191F',bar:'linear-gradient(90deg,#1E7FE0 58%,#FF7A1A 58%)'}},
   {k:'J',n:'Graphite',ref:2,short:1,v:'Layered near-blacks, two-tone headlines, tinted tags, priority icons, turquoise charts and yellow progress.',f:'Your reference 2 (Displaay project UI)',fd:'Instrument Sans',fn:'Instrument Sans',nw:500,hw:500,fonts:'Instrument Sans',
     d:{bg:'linear-gradient(#1F1F1F,#1F1F1F)',tx:'#F2F2F2',bar:'linear-gradient(90deg,#F5D547 62%,#2A2A2A 62%)'},l:{bg:'#FFFFFF',tx:'#141414',bar:'linear-gradient(90deg,#E9B800 62%,#ECECEC 62%)'}},
   {k:'K',n:'Liquid Glass',isNew:1,v:'Apple iOS 27 on phones and tablets, macOS on desktop: grouped lists, glass bars and buttons, SF type, system blue. Follows your device\'s light or dark mode.',f:'Apple iOS & iPadOS 27 Figma kit',fd:'SF Pro Display',fn:'SF Pro Display',nw:600,hw:700,fonts:'SF Pro (system font)',
     d:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(194,85,42,.75),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(31,127,134,.75),transparent 60%),#000',tx:'#FFFFFF',bar:'linear-gradient(90deg,#0A84FF 62%,rgba(120,120,128,.36) 62%)'},l:{bg:'radial-gradient(90% 90% at 0% 0%,rgba(255,159,110,.8),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(90,200,200,.75),transparent 60%),#F2F2F7',tx:'#000000',bar:'linear-gradient(90deg,#007AFF 62%,rgba(120,120,128,.2) 62%)'}},
-  {k:'D',n:'Vision',short:1,v:'Frosted glass over soft coloured light, ultra-thin numbers.',f:'Apple Vision Pro, premium car screens',fd:'Sora',fn:'Sora',nw:200,hw:300,fonts:'Sora · Plus Jakarta Sans',
-    d:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.45),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.4),transparent 60%),#05070D',tx:'#F6F8FB',bar:'linear-gradient(90deg,#A5F3FC,#7DD3FC,#A78BFA)'},l:{bg:'radial-gradient(120% 90% at 0% 0%,rgba(56,189,248,.35),transparent 60%),radial-gradient(90% 90% at 100% 100%,rgba(167,139,250,.3),transparent 60%),#E8EDF4',tx:'#0A1020',bar:'linear-gradient(90deg,#22B8E8,#0B7FA8,#7C5CF0)'}},
   {k:'A',n:'Atelier',v:'Editorial serif headlines, champagne gold, lots of air.',f:'Luxury annual report, Apple Notes',fd:'Instrument Serif',fn:'Instrument Serif',nw:400,hw:400,fonts:'Instrument Serif · Hanken Grotesk',
     d:{bg:'radial-gradient(100% 120% at 100% 0%,rgba(216,180,121,.25),transparent 60%),#0E0D0B',tx:'#F3EDE3',bar:'linear-gradient(90deg,#E6C68F,#B98E4C)'},l:{bg:'#F6F2EB',tx:'#1C1712',bar:'linear-gradient(90deg,#A97B30,#7C561A)'}},
   {k:'B',n:'Neobank',v:'Chunky grotesk, huge numbers, blue-to-cyan gradient cards.',f:'Revolut, modern banking apps',fd:'Bricolage Grotesque',fn:'Bricolage Grotesque',nw:800,hw:800,fonts:'Bricolage Grotesque · Manrope',
@@ -2974,7 +2974,7 @@ const STYLES = [
     d:{bg:'radial-gradient(100% 100% at 100% 0%,rgba(184,243,90,.22),transparent 60%),#07130E',tx:'#EEF6E8',bar:'linear-gradient(90deg,#D9F99D,#B8F35A,#5EEAD4)'},l:{bg:'radial-gradient(100% 100% at 100% 0%,rgba(101,163,13,.18),transparent 60%),#F2F5EC',tx:'#0C1F14',bar:'linear-gradient(90deg,#65A30D,#3F7D20,#0F766E)'}}
 ];
 function pageStyles(){
-  return `<p class="muted st" style="--i:0;margin:0 0 14px;max-width:70ch">Same app, same data. Studio is the default; tap <b>Apply</b> to switch. Your choice is remembered on this device only.</p>
+  return `<p class="muted st" style="--i:0;margin:0 0 14px;max-width:70ch">Same app, same data. Vision is the default; tap <b>Apply</b> to switch. Your choice is remembered on this device only.</p>
   <div class="sgrid">${STYLES.map((x,i) => { const c = S.theme === 'light' ? x.l : x.d, cur = S.look === x.k;
     return `<div class="card scard st ${cur?'cur':''}" style="--i:${Math.min(i+1,10)}"><div class="sprev" style="background:${c.bg};color:${c.tx}"><span class="dots"><i style="background:#5EEAD4"></i><i style="background:#FCD34D"></i><i style="background:#FB7185"></i></span>
         <div class="g" style="font-family:'${x.fd}',system-ui,sans-serif;font-weight:${x.hw};${x.up?'text-transform:uppercase;letter-spacing:.04em;':''}">${greet()}, ${esc(meName().split(' ')[0])}</div>

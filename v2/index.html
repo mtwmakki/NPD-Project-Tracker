@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Instrument+Sans:wght@400;500;600;700&family=Sora:wght@200;300;400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Doto:wght@600;800;900&family=Geist:wght@400;500;600;700&family=Unbounded:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Instrument+Sans:wght@400;500;600;700&family=Sora:wght@200;300;400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Doto:wght@600;800;900&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=Unbounded:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -1272,9 +1272,10 @@ html,body{height:var(--app-h,100%)}
    Content sits on solid grouped backgrounds; only bars, toolbar buttons and floating controls are glass (kit).
    Everything is scoped to [data-look="K"] so the other styles are untouched. */
 :root[data-look="K"]{
-  --fd:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --fb:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --fn:var(--fd); --fm:ui-monospace,"SF Mono",Menlo,monospace;
+  /* typeface (playbook): Geist for text and headings, Geist Mono for codes, IDs, dates in lists and big numbers */
+  --fd:"Geist",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,sans-serif;
+  --fb:"Geist",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,sans-serif;
+  --fn:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace; --fm:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
   --h-w:700; --h-ls:.4px; --n-w:700; --n-ls:.38px; --ph-w:590; --lab-tt:none; --lab-ls:0;
   /* type scale, Large (default) Dynamic Type: size / leading / tracking (kit) */
   --lt:34px; --lt-l:41px; --lt-t:.4px; --t1:28px; --t1-l:34px; --t1-t:.38px; --t2:22px; --t2-l:28px; --t2-t:-.26px; --t3:20px; --t3-l:25px; --t3-t:-.45px;
@@ -1284,41 +1285,50 @@ html,body{height:var(--app-h,100%)}
   /* metrics: list rows 52 / 68, 16pt insets, grouped cards r26, 44pt toolbar controls (kit); segmented 32, buttons 34 (HIG) */
   --row:52px; --row-tall:68px; --pad:16px; --gap:16px; --r-card:26px; --r-sm:12px; --r-pill:999px; --ctl:44px; --seg-h:32px; --btn-h:34px; --fld-h:44px;
   --blur:none; --pattern:none; --grid:transparent; --glow:none; --shadow:none;
-  --orb1:transparent; --orb2:transparent; --orb3:transparent;
+  --spring:cubic-bezier(.175,.885,.32,1.275); --spring-d:400ms; --spring-soft:cubic-bezier(.175,.885,.32,1.275); --spring-soft-d:400ms;
+  /* neutral backdrop (playbook): soft grey light and shade only, so the frosting has tone to work with but no colour */
+  --orb1:rgba(255,255,255,.10); --orb2:rgba(130,134,146,.16); --orb3:rgba(255,255,255,.06);
   /* dark (kit: Dark - Base) */
-  --bg:#000000; --bg2:transparent; --surf:#1C1C1E; --surf-solid:#1C1C1E; --surf-3:#2C2C2E; --app:#000000;
-  --line:rgba(255,255,255,.17); --line-2:#38383A; --tx:#FFFFFF; --mu:rgba(235,235,245,.7); --mu3:rgba(235,235,245,.3);
+  --bg:#0A0A0C; --bg2:transparent; --surf:#1C1C1E; --surf-solid:#1C1C1E; --surf-3:#2C2C2E; --app:#0A0A0C;
+  /* content material: thin frosted (playbook) */
+  --mat:rgba(28,28,30,.70); --mat-blur:blur(30px) saturate(150%); --mat-edge:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 .5px rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.17); --line-2:#38383A; --tx:#FFFFFF; --mu:rgba(255,255,255,.85); --mu3:rgba(255,255,255,.55);
   --ac:#0091FF; --ac-grad:linear-gradient(#0091FF,#0091FF); --on-ac:#FFFFFF; --ok:#30D158; --warn:#FF9230; --bad:#FF4245; --info:#6D7CFF;
   --c1:#0091FF; --c2:#FF9230; --prog:#0091FF; --bar-grad:linear-gradient(90deg,#0091FF,#0091FF);
   --fill3:rgba(118,118,128,.24); --fill4:rgba(116,116,128,.18); --track:rgba(120,120,128,.32);
-  --hover:rgba(255,255,255,.06); --sel:rgba(255,255,255,.14); --sel-side:rgba(255,255,255,.1); --scrim:rgba(0,0,0,.4);
+  --hover:rgba(255,255,255,.06); --sel:rgba(255,255,255,.16); --sel-side:rgba(255,255,255,.1); --scrim:rgba(0,0,0,.4);
   --tint1:transparent; --tint2:transparent;
-  /* glass: light values are the kit's control stack; dark is an approximation (dark glass stack not read) */
-  --glass:rgba(44,44,46,.72); --glass-thick:rgba(36,36,38,.86); --glass-blur:blur(12px) saturate(1.8);
-  --glass-sh:0 0 0 .5px rgba(255,255,255,.14),0 8px 15px rgba(0,0,0,.25); --glass-ink:#FFFFFF;
+  /* Liquid Glass tokens (playbook mix): blur 24 / saturate 180%; bars .25 light / .45 dark, overlays .82;
+     the shine is a gradient rim (--rim-*), a top sheen + pointer glint (--sheen, --glint) and inner specular lines (in --glass-sh) */
+  --glass:rgba(20,20,20,.45); --glass-thick:rgba(24,24,26,.82); --glass-blur:blur(24px) saturate(180%);
+  --glass-bd:transparent; --glass-sh:0 8px 32px 0 rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.3),inset 0 1px 1px rgba(255,255,255,.28),inset 0 -1px 1px rgba(255,255,255,.05); --glass-ink:#FFFFFF;
+  --rim-a:.42; --rim-m:.05; --rim-b:.16; --sheen:.16; --glint:.28; --lens-hi:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 1px rgba(255,255,255,.06);
   --knob-sh:0 3px 8px rgba(0,0,0,.24),0 3px 1px rgba(0,0,0,.08); --seg-ind:#636366;
   color-scheme:dark }
 :root[data-look="K"][data-theme="light"]{
-  --bg:#F2F2F7; --surf:#FFFFFF; --surf-solid:#FFFFFF; --surf-3:#F2F2F7; --app:#F2F2F7;
-  --line:#E6E6E6; --line-2:#C6C6C8; --tx:#000000; --mu:rgba(60,60,67,.6); --mu3:rgba(60,60,67,.3);
+  --bg:#E8E9ED; --surf:#FFFFFF; --surf-solid:#FFFFFF; --surf-3:#F2F2F7; --app:#E8E9ED;
+  --mat:rgba(255,255,255,.72); --mat-edge:inset 0 1px 0 rgba(255,255,255,.75),0 0 0 .5px rgba(255,255,255,.5),0 1px 3px rgba(0,0,0,.04);
+  --line:#E6E6E6; --line-2:#C6C6C8; --tx:#000000; --mu:rgba(0,0,0,.75); --mu3:rgba(0,0,0,.45);
   --ac:#0088FF; --ac-grad:linear-gradient(#0088FF,#0088FF); --ok:#34C759; --warn:#FF8D28; --bad:#FF383C; --info:#6155F5;
   --c1:#0088FF; --c2:#FF8D28; --prog:#0088FF; --bar-grad:linear-gradient(90deg,#0088FF,#0088FF);
   --fill3:rgba(118,118,128,.12); --fill4:rgba(116,116,128,.08); --track:rgba(120,120,128,.16);
-  --hover:rgba(0,0,0,.04); --sel:#EDEDED; --sel-side:rgba(0,0,0,.06); --scrim:rgba(0,0,0,.2);
-  --glass:rgba(250,250,250,.78); --glass-thick:rgba(250,250,250,.9);
-  --glass-sh:1.25px 0 0 -.75px #D0D0D0,-1.25px 0 0 -.75px #D0D0D0,0 0 0 .5px #E8E8E8,0 8px 15px rgba(0,0,0,.02); --glass-ink:#1A1A1A;
+  --hover:rgba(0,0,0,.04); --sel:rgba(255,255,255,.72); --sel-side:rgba(0,0,0,.06); --scrim:rgba(0,0,0,.2);
+  --glass:rgba(255,255,255,.25); --glass-thick:rgba(255,255,255,.82); --glass-ink:#0F172A;
+  --glass-sh:0 8px 32px 0 rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06),inset 0 1px 1px rgba(255,255,255,.6),inset 0 -1px 1px rgba(255,255,255,.14);
+  --rim-a:.95; --rim-m:.10; --rim-b:.55; --sheen:.42; --glint:.55; --lens-hi:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 1px rgba(255,255,255,.18),0 1px 3px rgba(0,0,0,.06);
+  --orb1:rgba(255,255,255,.95); --orb2:rgba(150,154,164,.42); --orb3:rgba(190,193,201,.55);
   --knob-sh:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04); --seg-ind:#FFFFFF;
   color-scheme:light }
 
 /* page */
 :root[data-look="K"] body,:root[data-look="K"] #login,:root[data-look="K"] #app{background:var(--bg)}
 :root[data-look="K"] body{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
-:root[data-look="K"] .orbs{display:none}
+:root[data-look="K"] .orb{filter:blur(90px)}
 :root[data-look="K"] .muted{color:var(--mu)}
-:root[data-look="K"] .mono{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t);font-variant-numeric:tabular-nums}
+:root[data-look="K"] .mono{font:500 var(--foot)/var(--foot-l) var(--fm);letter-spacing:0;font-variant-numeric:tabular-nums}
 
 /* glass controls (kit: toolbar button group) */
-:root[data-look="K"] .ibtn,:root[data-look="K"] .sync,:root[data-look="K"] #totop{width:var(--ctl);height:var(--ctl);border:0;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh);color:var(--glass-ink)}
+:root[data-look="K"] .ibtn,:root[data-look="K"] .sync,:root[data-look="K"] #totop{width:var(--ctl);height:var(--ctl);border:1px solid var(--glass-bd);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh);color:var(--glass-ink)}
 :root[data-look="K"] .sync{width:auto;padding:0 14px;border-radius:999px;font:400 var(--foot)/1 var(--fb);color:var(--mu)}
 :root[data-look="K"] .ibtn .i{width:20px;height:20px}
 
@@ -1381,11 +1391,11 @@ html,body{height:var(--app-h,100%)}
 /* KPI tiles */
 :root[data-look="K"] .kpi{padding:var(--pad);gap:4px}
 :root[data-look="K"] .kpi .lab{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);color:var(--mu)}
-:root[data-look="K"] .kpi .val{font:var(--n-w) var(--t1)/var(--t1-l) var(--fd);letter-spacing:var(--t1-t)}
+:root[data-look="K"] .kpi .val{font:var(--n-w) var(--t1)/var(--t1-l) var(--fn);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
 :root[data-look="K"] .kpi .sub{font:400 var(--foot)/var(--foot-l) var(--fb);letter-spacing:var(--foot-t)}
 :root[data-look="K"] .kpi.alert{background:var(--surf);border:0}
 :root[data-look="K"] .kpi.alert .lab{color:var(--bad)}
-:root[data-look="K"] .bignum b{font:var(--n-w) var(--t1)/var(--t1-l) var(--fd)}
+:root[data-look="K"] .bignum b{font:var(--n-w) var(--t1)/var(--t1-l) var(--fn);letter-spacing:-.5px}
 
 /* banners */
 :root[data-look="K"] .banner{border:0;border-radius:var(--r-card);background:var(--surf);padding:12px var(--pad);font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
@@ -1465,7 +1475,7 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .fm-tog input:checked+i::after,:root[data-look="K"] .keep input:checked+.sw::after{transform:translateX(22px);background:#fff}
 
 /* menus, popovers, toasts, pickers, command bar: glass (kit material for floating controls) */
-:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd,:root[data-look="K"] .toast,:root[data-look="K"] .selbar{background:var(--glass-thick);border:0;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
+:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd,:root[data-look="K"] .toast,:root[data-look="K"] .selbar{background:var(--glass-thick);border:1px solid var(--glass-bd);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
 :root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd{border-radius:var(--r-card)}
 :root[data-look="K"] .toast{border-radius:var(--r-card);font:400 var(--sub)/var(--sub-l) var(--fb)}
 :root[data-look="K"] .looks button{border:0;background:var(--fill4);color:var(--tx);border-radius:var(--r-sm)}
@@ -1484,6 +1494,74 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .slide-fill{background:var(--ac)}
 :root[data-look="K"] .thumb{width:44px;height:44px;background:var(--ac);box-shadow:none}
 
+/* ───────── Liquid Glass · playbook (signed off) ─────────
+   Glass only on what floats: toolbar buttons, sync pill, range control, tab bar, sidebar rail, menus, toasts, pickers, command bar, back to top.
+   The shine is three layers: a gradient rim (::before), a top sheen + pointer glint (::after) and inner specular lines (in --glass-sh).
+   Content sits on the thin frosted material; colour only on the primary action, the current tab, late and at-risk work. */
+:root[data-look="K"] .ibtn,:root[data-look="K"] .sync{position:relative}
+:root[data-look="K"] .top .seg{background:var(--glass);border:1px solid var(--glass-bd);box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg){isolation:isolate}
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
+  background:linear-gradient(140deg,rgba(255,255,255,var(--rim-a)) 0%,rgba(255,255,255,var(--rim-m)) 34%,rgba(255,255,255,var(--rim-m)) 64%,rgba(255,255,255,var(--rim-b)) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:radial-gradient(130% 90% at 50% -30%,rgba(255,255,255,var(--sheen)) 0%,rgba(255,255,255,0) 58%),
+             radial-gradient(90px circle at var(--mx,-200px) var(--my,-200px),rgba(255,255,255,var(--glint)),rgba(255,255,255,0) 70%);
+  mix-blend-mode:soft-light}
+
+/* content material: thin frosted */
+:root[data-look="K"] :is(.card:not(.row):not(.hero),.rows,.lg-card),:root[data-look="K"] .banner{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur);box-shadow:var(--mat-edge)}
+:root[data-look="K"] .card .card{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
+:root[data-look="K"] .kpi.alert{background:var(--mat)}
+:root[data-look="K"] .banner.warn{background:color-mix(in srgb,var(--warn) 12%,var(--mat))}
+:root[data-look="K"] .nlist{background:none;box-shadow:var(--mat-edge)}
+:root[data-look="K"] .nfg{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur)}
+/* colour only where it needs attention: list icons are neutral unless late or at risk */
+:root[data-look="K"] .nic:not([style*="bad"]):not([style*="warn"]){background:var(--fill3);color:var(--mu)}
+
+/* press: 0.97 while pressed, 1.03 on hover with a mouse, 300ms spring back */
+:root[data-look="K"] :is(.ibtn,.sync,.btn,.b1){transition:transform calc(300ms*var(--k)) var(--spring),background-color calc(300ms*var(--k)) var(--ease-out),color .2s,opacity .2s}
+@media (hover:hover){ :root[data-look="K"] :is(.ibtn,.sync,.btn,.b1):hover{transform:scale(1.03)} }
+:root[data-look="K"] :is(.ibtn,.sync,.btn,.b1):active{transform:scale(.97)}
+
+/* selection lens: one glass drop that glides between tabs (script drives the slide), lifts while dragged */
+:root[data-look="K"] :is(.tab-ind,.nav-ind){transition:scale calc(320ms*var(--k)) var(--spring),background-color .2s,box-shadow .2s,opacity .2s;box-shadow:var(--lens-hi)}
+:root[data-look="K"] :is(.tab-ind,.nav-ind).lg-lift{scale:1.14 1.08;background:rgba(255,255,255,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(0,0,0,.14)}
+:root[data-look="K"][data-theme="dark"] :is(.tab-ind,.nav-ind).lg-lift{background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 18px rgba(0,0,0,.4)}
+:root[data-look="K"] :is(#tabbar,#nav) button .i{transition:scale calc(300ms*var(--k)) var(--spring)}
+:root[data-look="K"] :is(#tabbar,#nav) button:active .i{scale:.88}
+:root[data-look="K"] :is(#tabbar,#nav){touch-action:none}
+
+/* settings menu: grows out of the settings button's own 44pt shape (clip-path), rows follow 32ms apart; closes with a quick ease-in */
+:root[data-look="K"] #pop{transform:none;opacity:0;clip-path:inset(var(--ct,0px) var(--cr,0px) var(--cb,0px) var(--cl,0px) round 22px);
+  transition:clip-path calc(260ms*var(--k)) var(--ease-in),opacity calc(180ms*var(--k)) linear calc(80ms*var(--k))}
+:root[data-look="K"] #pop.open{clip-path:inset(-40px round calc(var(--r-card) + 40px));opacity:1;
+  transition:clip-path calc(400ms*var(--k)) var(--spring),opacity calc(120ms*var(--k)) linear}
+:root[data-look="K"] #pop>*{opacity:0;translate:0 -6px;transition:opacity calc(160ms*var(--k)) var(--ease-out),translate calc(260ms*var(--k)) var(--ease-out)}
+:root[data-look="K"] #pop.open>*{opacity:1;translate:none}
+:root[data-look="K"] #pop.open>:nth-child(1){transition-delay:calc(90ms*var(--k))}
+:root[data-look="K"] #pop.open>:nth-child(2){transition-delay:calc(122ms*var(--k))}
+:root[data-look="K"] #pop.open>:nth-child(3){transition-delay:calc(154ms*var(--k))}
+:root[data-look="K"] #pop.open>:nth-child(4){transition-delay:calc(186ms*var(--k))}
+:root[data-look="K"] #pop.open>:nth-child(n+5){transition-delay:calc(218ms*var(--k))}
+
+/* entrance: the glass rises in after the content, staggered */
+@keyframes lg-rise{from{opacity:0;translate:0 14px;scale:.96}}
+:root[data-look="K"] #app:not(.pre) :is(.top .sync,.top .ibtn,#tabbar,.side){animation:lg-rise calc(620ms*var(--k)) var(--spring) backwards}
+:root[data-look="K"] #app:not(.pre) :is(.top .sync,.side){animation-delay:calc(120ms*var(--k))}
+:root[data-look="K"] #app:not(.pre) .top .ibtn{animation-delay:calc(160ms*var(--k))}
+:root[data-look="K"] #app:not(.pre) #tabbar{animation-delay:calc(200ms*var(--k))}
+
+/* phone: scrolling down folds the tab bar into a pill holding the current tab (width shrinks, the row of tabs slides); tapping it unfolds */
+@media (max-width:720px){
+  :root[data-look="K"] #tabbar{--tbw:calc((100vw - 60px) / 5);overflow:hidden;transition:right calc(400ms*var(--k)) var(--spring)}
+  :root[data-look="K"] #tabbar button{flex:0 0 var(--tbw);width:var(--tbw)}
+  :root[data-look="K"] #tabbar>*{translate:0 0;transition:translate calc(400ms*var(--k)) var(--spring),scale calc(320ms*var(--k)) var(--spring),opacity calc(200ms*var(--k)) var(--ease-out),color .2s,background-color .2s,box-shadow .2s}
+  :root[data-look="K"] #app.bars-off #tabbar{right:calc(100% - 25px - var(--tbw) - 10px);cursor:pointer}
+  :root[data-look="K"] #app.bars-off #tabbar>*{translate:calc(var(--fold-i,0) * var(--tbw) * -1) 0}
+  :root[data-look="K"] #app.bars-off #tabbar button:not(.on){opacity:0;pointer-events:none}
+}
+
 /* ── iPhone (≤720): floating glass tab bar, 44pt glass buttons above a 34pt large title that shrinks on scroll ── */
 @media (max-width:720px){
   :root[data-look="K"] #app.bars-off{--tab-off:var(--tabh)}
@@ -1500,13 +1578,13 @@ html,body{height:var(--app-h,100%)}
     -webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
   :root[data-look="K"] .top.elev::before{opacity:1}
   :root[data-look="K"] #view{padding:calc(env(safe-area-inset-top,0px) + 117px) 16px calc(var(--tabh) + 28px)}
-  :root[data-look="K"] .tabbar{left:25px;right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);margin:0;padding:4px;border:0;border-radius:999px;justify-content:stretch;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .tabbar{left:25px;right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);margin:0;padding:4px;border:1px solid var(--glass-bd);border-radius:999px;justify-content:stretch;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
   :root[data-look="K"] .tabbar button{flex:1 1 0;width:auto;height:54px;padding:6px 2px 7px;gap:1px;align-content:center;color:var(--glass-ink);font:var(--w-emph) 10px/12px var(--fb);letter-spacing:0}
   :root[data-look="K"] .tabbar button .i{width:24px;height:24px}
   :root[data-look="K"] .tabbar button{height:48px;padding:0;font-size:0;line-height:0;place-items:center}
   :root[data-look="K"] .tab-ind{height:48px}
   :root[data-look="K"] .tabbar button.on,:root[data-look="K"][data-theme="light"] .tabbar button.on{color:var(--ac)}
-  :root[data-look="K"] .tab-ind{top:4px;height:54px;border-radius:999px;background:var(--sel);box-shadow:none}
+  :root[data-look="K"] .tab-ind{top:4px;height:48px;border-radius:999px;background:var(--sel);box-shadow:var(--lens-hi)}
   :root[data-look="K"] #totop{right:16px}
   :root[data-look="K"] #pop{border-radius:var(--r-card)}
   :root[data-look="K"] #sheet{border-radius:38px 38px 0 0;left:0;right:0;bottom:0}
@@ -1536,9 +1614,10 @@ html,body{height:var(--app-h,100%)}
 
 /* ── iPad (721–1040): icon sidebar as a floating glass column (HIG) ── */
 @media (min-width:721px) and (max-width:1040px){
-  :root[data-look="K"] .side{margin:12px 0 12px 12px;border:0;border-radius:var(--r-card);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
-  :root[data-look="K"] .nav button,:root[data-look="K"] .nav-ind{border-radius:14px}
-  :root[data-look="K"] .nav-ind{background:var(--sel);border:0;box-shadow:none}
+  :root[data-look="K"] .side{margin:12px 0 12px 12px;border:1px solid var(--glass-bd);border-radius:var(--r-card);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .nav button,:root[data-look="K"] .nav-ind{border-radius:22px}
+  :root[data-look="K"] .side{border-radius:28px}
+  :root[data-look="K"] .nav-ind{background:var(--sel);border:0;box-shadow:var(--lens-hi)}
   :root[data-look="K"] .nav button.on{color:var(--ac)}
   :root[data-look="K"] .top{padding:20px 24px 8px}
   :root[data-look="K"] #view{padding:8px 24px 40px}
@@ -1547,16 +1626,16 @@ html,body{height:var(--app-h,100%)}
 /* ── Desktop (≥1041): iPadOS 27 sizes from the kit (17pt text, 52pt rows, 44pt controls) with a floating glass icon sidebar ── */
 @media (min-width:1041px){
   :root[data-look="K"] #app{grid-template-columns:84px minmax(0,1fr)}
-  :root[data-look="K"] .side{margin:12px 0 12px 12px;padding:16px 10px;gap:4px;align-items:center;border:0;border-radius:var(--r-card);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
+  :root[data-look="K"] .side{margin:12px 0 12px 12px;padding:16px 10px;gap:4px;align-items:center;border:1px solid var(--glass-bd);border-radius:28px;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh)}
   :root[data-look="K"] .brand{padding:4px 0 14px}
   :root[data-look="K"] .brand i{width:40px;height:40px}
   :root[data-look="K"] .searchbtn{width:48px;height:44px;padding:0;margin-bottom:8px;border:0;border-radius:14px;background:var(--fill3)}
   :root[data-look="K"] .nav{width:48px;gap:4px}
-  :root[data-look="K"] .nav button{height:44px;padding:0;justify-content:center;border-radius:14px;color:var(--tx)}
+  :root[data-look="K"] .nav button{height:44px;padding:0;justify-content:center;border-radius:22px;color:var(--tx)}
   :root[data-look="K"] .nav button .i{width:22px;height:22px}
   :root[data-look="K"] .nav button.on{color:var(--ac)}
   :root[data-look="K"] .nav button .cnt.hot{background:var(--bad);color:#fff;top:2px;right:0}
-  :root[data-look="K"] .nav-ind{height:44px;border:0;border-radius:14px;background:var(--sel);box-shadow:none}
+  :root[data-look="K"] .nav-ind{height:44px;border:0;border-radius:22px;background:var(--sel);box-shadow:var(--lens-hi)}
   :root[data-look="K"] .fac,:root[data-look="K"] .pin{width:48px;height:32px;border-radius:10px}
   :root[data-look="K"] .fac.on{background:var(--sel)}
   :root[data-look="K"] .top{padding:20px 28px 10px}
@@ -2435,18 +2514,71 @@ function placeInd(container, animate = true){
 }
 function segHTML(id, items, cur, acc){ return `<div class="seg${acc ? ' acc' : ''}" id="${id}" role="tablist"><i class="ind"></i>${items.map(([k,l,n]) => `<button type="button" role="tab" data-v="${k}" class="${k===cur?'on':''}" aria-selected="${k===cur}">${l}${n!=null?` <span class="n">${n}</span>`:''}</button>`).join('')}</div>`; }
 function moveNav(animate = true){
-  const key = S.page === 'project' ? 'projects' : S.page;
+  const key = S.page === 'project' ? 'projects' : S.page, lg = animate && lgMotion();
   $$('#nav button,#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === key));
   const nb = $(`#nav button[data-go="${key}"]`), ni = $('#nav-ind');
-  if (nb){ if (!animate) ni.style.transition = 'none'; ni.style.transform = `translateY(${nb.offsetTop}px)`; ni.style.opacity = '1'; if (!animate){ void ni.offsetWidth; ni.style.transition = ''; } } else ni.style.opacity = '0';
+  if (nb){ const f = lg && lgPos(ni, 'y'); if (!animate) ni.style.transition = 'none'; ni.style.transform = `translateY(${nb.offsetTop}px)`; ni.style.opacity = '1'; if (!animate){ void ni.offsetWidth; ni.style.transition = ''; } if (lg) lgGlide(ni, 'y', f, nb.offsetTop, nb); } else ni.style.opacity = '0';
   const tb = $(`#tabbar button[data-go="${key}"]`), ti = $('#tab-ind');
-  if (tb && tb.offsetWidth){ if (!animate) ti.style.transition = 'none'; ti.style.width = tb.offsetWidth + 'px'; ti.style.transform = `translateX(${tb.offsetLeft}px)`; if (!animate){ void ti.offsetWidth; ti.style.transition = ''; } }
+  if (tb && tb.offsetWidth){ const f = lg && lgPos(ti, 'x'); if (!animate) ti.style.transition = 'none'; ti.style.width = tb.offsetWidth + 'px'; ti.style.transform = `translateX(${tb.offsetLeft}px)`; if (!animate){ void ti.offsetWidth; ti.style.transition = ''; } if (lg) lgGlide(ti, 'x', f, tb.offsetLeft, tb); }
+  if (tb) $('#tabbar').style.setProperty('--fold-i', $$('#tabbar button').indexOf(tb));
 }
+/* Liquid Glass: the selection lens glides on a real spring (about 5% overshoot), stretches toward where it is going,
+   and the new icon bounces as it lands. The spring is sampled into a CSS linear() curve. */
+const LG_SPRING = (() => {
+  if (!(window.CSS && CSS.supports('transition-timing-function', 'linear(0, 1)'))) return 'cubic-bezier(.175,.885,.32,1.275)';
+  const z = .68, w = 11, wd = w * Math.sqrt(1 - z * z), pts = [];
+  for (let k = 0; k <= 40; k++){ const t = k / 40; pts.push(+(1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t))).toFixed(4)); }
+  pts[40] = 1; return `linear(${pts.join(',')})`;
+})();
+function lgMotion(){ return S.look === 'K' && S.motion !== 'off' && !reduced && !!Element.prototype.animate; }
+function lgPos(el, axis){ const m = new DOMMatrix(getComputedStyle(el).transform); el.getAnimations().forEach(a => a.cancel()); return axis === 'x' ? m.m41 : m.m42; }
+function lgGlide(ind, axis, from, to, btn){
+  const d = Math.abs(to - from) / ((axis === 'x' ? ind.offsetWidth : ind.offsetHeight) || 1); if (d < .05) return;
+  const k = parseFloat(getComputedStyle(root).getPropertyValue('--k')) || 1, P = axis === 'x' ? 'translateX' : 'translateY';
+  const dur = (460 + Math.min(d, 3) * 60) * k, st = 1 + Math.min(d, 3) * .16, st2 = 1 + (st - 1) * .2, sc = (a, b) => axis === 'x' ? `${a} ${b}` : `${b} ${a}`;
+  ind.animate([{ transform: `${P}(${from}px)` }, { transform: `${P}(${to}px)` }], { duration: dur, easing: LG_SPRING });
+  if (!ind.classList.contains('lg-lift')) ind.animate([{ scale: '1 1' }, { scale: sc(st, 1.08), offset: .3 }, { scale: sc(st2, .97), offset: .66 }, { scale: '1 1' }], { duration: dur, easing: 'cubic-bezier(.22,1,.36,1)' });
+  const ic = btn.querySelector('.i'); if (ic) ic.animate([{ scale: '1' }, { scale: '.84', offset: .3 }, { scale: '1.12', offset: .65 }, { scale: '1' }], { duration: 420 * k, delay: dur * .3, easing: 'ease-out' });
+}
+/* press and slide along the tab bar or sidebar rail: the lens lifts and follows the finger, the icon under it lights up,
+   and it snaps to the nearest tab on release */
+function lgDrag(bar, axis){
+  if (!bar) return; let d = null;
+  const at = e => axis === 'x' ? e.clientX : e.clientY, off = b => axis === 'x' ? b.offsetLeft : b.offsetTop, P = axis === 'x' ? 'translateX' : 'translateY';
+  bar.addEventListener('pointerdown', e => {
+    if (S.look !== 'K' || !e.isPrimary || $('#app').classList.contains('bars-off') || !e.target.closest('button[data-go]')) return;
+    d = { p: at(e), on: false, ind: $(axis === 'x' ? '#tab-ind' : '#nav-ind') };
+  });
+  bar.addEventListener('pointermove', e => {
+    if (!d) return;
+    if (!d.on){ if (Math.abs(at(e) - d.p) < 8) return; d.on = true; try { bar.setPointerCapture(e.pointerId); } catch (_){} d.v0 = lgPos(d.ind, axis); d.ind.classList.add('lg-lift'); }
+    const bs = $$('button[data-go]', bar).filter(b => b.offsetWidth), v = Math.max(off(bs[0]) - 8, Math.min(off(bs[bs.length - 1]) + 8, d.v0 + at(e) - d.p));
+    d.ind.style.transform = `${P}(${v}px)`;
+    d.near = bs.reduce((a, b) => Math.abs(off(b) - v) < Math.abs(off(a) - v) ? b : a);
+    bs.forEach(b => b.classList.toggle('on', b === d.near));
+  });
+  const end = () => { if (!d) return; const x = d; d = null; if (!x.on) return;
+    bar._lgDragged = Date.now(); const key = x.near.dataset.go, cur = S.page === 'project' ? 'projects' : S.page;
+    if (key === cur) moveNav(true); else go(key);
+    x.ind.classList.remove('lg-lift'); };
+  bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+  bar.addEventListener('click', e => { if (Date.now() - (bar._lgDragged || 0) < 400){ e.preventDefault(); e.stopPropagation(); } }, true);
+}
+lgDrag($('#tabbar'), 'x'); lgDrag($('#nav'), 'y');
+/* pointer glint: the highlight on each glass shape follows the pointer or finger */
+const LG_GLASS = '.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg';
+document.addEventListener('pointermove', e => { if (S.look !== 'K' || !e.target.closest) return; const g = e.target.closest(LG_GLASS); if (!g) return;
+  const r = g.getBoundingClientRect(); g.style.setProperty('--mx', (e.clientX - r.left) + 'px'); g.style.setProperty('--my', (e.clientY - r.top) + 'px'); }, {passive:true});
+document.addEventListener('pointerout', e => { const g = e.target.closest && e.target.closest(LG_GLASS); if (g && !g.contains(e.relatedTarget)){ g.style.removeProperty('--mx'); g.style.removeProperty('--my'); } }, {passive:true});
 function updFade(el){ if (!el) return; const max = el.scrollWidth - el.clientWidth;
   el.classList.toggle('fl', max > 8 && el.scrollLeft > 2); el.classList.toggle('fr', max > 8 && el.scrollLeft < max - 2); }
 function wireScroll(){ $$('.seg,.tok,#topx').forEach(updFade); }
 let lastInput = 0;
 const PHONE = matchMedia('(max-width:720px)');
+/* Liquid Glass: a tap on the folded tab bar unfolds it instead of navigating */
+document.addEventListener('click', e => { const app = $('#app');
+  if (S.look !== 'K' || !PHONE.matches || !app || !app.classList.contains('bars-off') || !(e.target.closest && e.target.closest('#tabbar'))) return;
+  e.preventDefault(); e.stopPropagation(); app.classList.remove('bars-off'); $('#view')._off = false; setTimeout(() => moveNav(false), 420); }, true);
 function setAppH(){ document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px'); }
 setAppH(); addEventListener('resize', setAppH); if (window.visualViewport) visualViewport.addEventListener('resize', setAppH);
 /* the floating top bar and tab bar on phones: the page is padded by their measured heights */
@@ -3689,6 +3821,12 @@ function openPop(anchor){
   if (below){ p.style.top = (r.bottom + 10) + 'px'; p.style.bottom = 'auto'; p.style.setProperty('--oy', '0%'); }
   else { p.style.top = 'auto'; p.style.bottom = (innerHeight - r.top + 10) + 'px'; p.style.setProperty('--oy', '100%'); }
   p.style.setProperty('--ox', (r.left - parseFloat(p.style.left) + r.width/2) + 'px');
+  if (S.look === 'K'){ /* Liquid Glass: the menu's clip starts as the 44pt button, placed where the button meets the menu */
+    const pr = p.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight, s = 44;
+    const x = Math.max(0, Math.min(w - s, r.left + r.width/2 - s/2 - pr.left)), y = Math.max(0, Math.min(h - s, r.top + r.height/2 - s/2 - pr.top));
+    p.style.setProperty('--cl', x + 'px'); p.style.setProperty('--ct', y + 'px'); p.style.setProperty('--cr', (w - x - s) + 'px'); p.style.setProperty('--cb', (h - y - s) + 'px');
+    p.style.transition = 'none'; void p.offsetWidth; p.style.transition = '';
+  }
   p.classList.add('open'); requestAnimationFrame(() => $$('#pop .seg').forEach(s => placeInd(s, false)));
 }
 function closePop(){ $('#pop').classList.remove('open'); }

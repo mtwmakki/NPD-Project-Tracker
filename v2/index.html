@@ -102,15 +102,15 @@
 @media (min-width:1041px){ :root[data-look="I"] #app{grid-template-columns:108px minmax(0,1fr)} }
 :root[data-look="I"] .side{background:transparent;border-right:0;align-items:center;padding:28px 14px 18px;backdrop-filter:none}
 :root[data-look="I"] .brand{padding:0 0 18px}
-:root[data-look="I"] .brand b,:root[data-look="I"] .searchbtn,:root[data-look="I"] .nav .lbl,:root[data-look="I"] .nav .cnt,:root[data-look="I"] .nav .badge-new,:root[data-look="I"] .sec,:root[data-look="I"] .me div,:root[data-look="I"] .fac .cnt,:root[data-look="I"] #pins{display:none}
+:root[data-look="I"] .brand b,:root[data-look="I"] .searchbtn,:root[data-look="I"] .nav .lbl,:root[data-look="I"] .nav .cnt,:root[data-look="I"] .nav .badge-new,:root[data-look="I"] .sec,:root[data-look="I"] .me div,:root[data-look="I"] .side .fac .cnt,:root[data-look="I"] .side #pins{display:none}
 :root[data-look="I"] .brand i{width:54px;height:54px;border-radius:50%;background:var(--ac);color:var(--on-ac);box-shadow:none;font-size:12px}
 :root[data-look="I"] .nav{width:56px;gap:10px}
 :root[data-look="I"] .nav button{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%;background:var(--surf-solid);color:var(--tx);box-shadow:0 1px 2px rgba(16,24,40,.06)}
 :root[data-look="I"] .nav button.on{color:var(--on-ac);background:transparent;box-shadow:none}
 :root[data-look="I"] .nav-ind{height:56px;border-radius:50%;background:var(--ac);border:0;box-shadow:0 10px 24px -10px rgba(16,24,40,.5)}
-:root[data-look="I"] .fac{width:56px;height:34px;justify-content:center;padding:0;font-size:0;border-radius:99px}
-:root[data-look="I"] .fac .dot{width:12px;height:12px}
-:root[data-look="I"] #facs{display:grid;gap:4px;margin-top:18px}
+:root[data-look="I"] .side .fac{width:56px;height:34px;justify-content:center;padding:0;font-size:0;border-radius:99px}
+:root[data-look="I"] .side .fac .dot{width:12px;height:12px}
+:root[data-look="I"] .side #facs{display:grid;gap:4px;margin-top:18px}
 :root[data-look="I"] .me{padding:0}
 :root[data-look="I"] .top{padding:34px 40px 14px;align-items:flex-end;gap:14px}
 :root[data-look="I"] .top .ttl{flex-direction:column-reverse;align-items:flex-start;gap:4px}
@@ -682,6 +682,24 @@ button{font:inherit;color:inherit}
 .pin .ring2{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--dc);flex:none}
 .pin .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .pin .star{margin-left:auto;color:#F5C518;font-size:13px}
+/* sidebar button for pinned items and the factory filter; the panel grows out of it sideways */
+.shelf-btn{position:relative;flex:none;margin:14px auto 0}
+.shelf-btn .shelf-dot{position:absolute;top:4px;right:4px;width:9px;height:9px;border-radius:50%;background:var(--dc);box-shadow:0 0 0 2px var(--surf-solid);opacity:0;scale:.4;transition:opacity .2s,scale calc(300ms*var(--k)) var(--spring)}
+.shelf-btn.filtered .shelf-dot{opacity:1;scale:1}
+.shelf-btn[aria-expanded="true"]{background:var(--sel);color:var(--ac)}
+#shelf{position:fixed;z-index:56;width:280px;padding:8px;border-radius:22px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;
+  background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  opacity:0;pointer-events:none;clip-path:inset(var(--ct,0px) var(--cr,0px) var(--cb,0px) 0px round 22px);
+  transition:clip-path calc(260ms*var(--k)) var(--ease-in),opacity calc(180ms*var(--k)) linear calc(80ms*var(--k))}
+#shelf::-webkit-scrollbar{display:none}
+#shelf.open{opacity:1;pointer-events:auto;clip-path:inset(-40px round 64px);transition:clip-path calc(420ms*var(--k)) var(--spring),opacity calc(120ms*var(--k)) linear}
+#shelf>*{opacity:0;translate:-8px 0;transition:opacity calc(160ms*var(--k)) var(--ease-out),translate calc(260ms*var(--k)) var(--ease-out)}
+#shelf.open>*{opacity:1;translate:none}
+#shelf.open>:nth-child(1){transition-delay:calc(90ms*var(--k))}#shelf.open>:nth-child(2){transition-delay:calc(118ms*var(--k))}
+#shelf.open>:nth-child(3){transition-delay:calc(146ms*var(--k))}#shelf.open>:nth-child(4){transition-delay:calc(174ms*var(--k))}
+.shelf-h{font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu);padding:12px 12px 6px}
+#shelf #pins,#shelf #facs{display:grid;gap:2px}
+#shelf .ro{padding:2px 12px 8px;font-size:13px;color:var(--mu);line-height:1.4}
 .searchpill{display:none;align-items:center;gap:12px;height:54px;padding:0 22px;border-radius:999px;border:1px solid var(--line-2);background:transparent;color:var(--mu);font:400 16px var(--fb);cursor:pointer;white-space:nowrap;flex:none}
 .top .ttl h1{flex-shrink:0}
 .top .sub{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -795,7 +813,7 @@ button{font:inherit;color:inherit}
 @media (max-width:1040px){
   #app{grid-template-columns:76px minmax(0,1fr)}
   .side{padding:16px 10px;align-items:center}
-  .brand b,.searchbtn .lbl,.searchbtn kbd,.nav button .lbl,.nav button .cnt,.nav .badge-new,.sec,.fac,.me div,#pins{display:none}
+  .brand b,.searchbtn .lbl,.searchbtn kbd,.nav button .lbl,.nav button .cnt,.nav .badge-new,.sec,.side .fac,.me div,.side #pins{display:none}
   #topx{display:none}
   .brand{padding:4px 0 12px}
   .searchbtn{width:46px;justify-content:center;padding:10px 0}
@@ -1259,13 +1277,6 @@ html,body{height:var(--app-h,100%)}
   .me{flex-direction:column;padding:0}.me .ibtn{margin:0}
 }
 @media (min-width:721px){
-  .fac{display:flex;width:46px;height:30px;justify-content:center;padding:0;font-size:0;gap:0}
-  .fac .cnt{display:none}
-  .fac .dot{width:12px;height:12px}
-  #facs{display:grid;gap:2px;margin-top:14px;justify-items:center}
-  #pins{display:grid;gap:2px;margin-top:10px;justify-items:center}
-  .pin{width:46px;height:30px;justify-content:center;padding:0;gap:0}
-  .pin .nm,.pin .star,#pins .ro{display:none}
   .nav button .cnt.hot{display:block;position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;font:700 10px/16px var(--fb);text-align:center}
 }
 
@@ -1509,11 +1520,15 @@ html,body{height:var(--app-h,100%)}
    Content sits on the thin frosted material; colour only on the primary action, the current tab, late and at-risk work. */
 :root[data-look="K"] .ibtn,:root[data-look="K"] .sync{position:relative}
 :root[data-look="K"] .top .seg{background:var(--glass);border:1px solid var(--glass-bd);box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg){isolation:isolate}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg){isolation:isolate}
+:root[data-look="K"] #shelf{background:var(--glass-thick);border:1px solid var(--glass-bd);border-radius:var(--r-card);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
+:root[data-look="K"] #shelf :is(.fac,.pin){height:40px;border-radius:16px;font:400 15px/20px var(--fb);letter-spacing:-.2px;color:var(--tx)}
+:root[data-look="K"] #shelf .fac.on{background:var(--sel)}
+:root[data-look="K"] .shelf-btn[aria-expanded="true"]{background:var(--sel)}
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
   background:linear-gradient(140deg,rgba(255,255,255,var(--rim-a)) 0%,rgba(255,255,255,var(--rim-m)) 34%,rgba(255,255,255,var(--rim-m)) 64%,rgba(255,255,255,var(--rim-b)) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   background:radial-gradient(130% 90% at 50% -30%,rgba(255,255,255,var(--sheen)) 0%,rgba(255,255,255,0) 58%),
              radial-gradient(90px circle at var(--mx,-200px) var(--my,-200px),rgba(255,255,255,var(--glint)),rgba(255,255,255,0) 70%);
   mix-blend-mode:soft-light}
@@ -1669,8 +1684,6 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .nav button.on{color:var(--ac)}
   :root[data-look="K"] .nav button .cnt.hot{background:var(--bad);color:#fff;top:2px;right:0}
   :root[data-look="K"] .nav-ind{height:44px;border:0;border-radius:22px;background:var(--sel);box-shadow:var(--lens-hi)}
-  :root[data-look="K"] .fac,:root[data-look="K"] .pin{width:48px;height:32px;border-radius:10px}
-  :root[data-look="K"] .fac.on{background:var(--sel)}
   :root[data-look="K"] .top{padding:20px 28px 10px}
   :root[data-look="K"] #view{padding:8px 28px 48px}
   :root[data-look="K"] .fm-card,:root[data-look="K"] #sheet{border-radius:var(--r-card)}
@@ -1721,10 +1734,7 @@ html,body{height:var(--app-h,100%)}
       <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
       <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
     </nav>
-    <div class="sec">Factories</div>
-    <div id="facs"></div>
-    <div class="sec">Pinned</div>
-    <div id="pins"></div>
+    <button class="ibtn shelf-btn" type="button" data-act="shelf" aria-expanded="false" aria-controls="shelf" aria-label="Pinned and factories" title="Pinned and factories"><span data-ico="pin"></span><i class="shelf-dot"></i></button>
     <div class="side-foot">
       <div class="me"><span class="avatar" id="me-av">··</span><div><b id="me-name">…</b><span id="me-role"></span></div><button class="ibtn" type="button" data-act="settings" aria-label="Style and motion settings"><span data-ico="sliders"></span></button></div>
     </div>
@@ -1758,6 +1768,7 @@ html,body{height:var(--app-h,100%)}
   <div class="cmd-in"><span data-ico="search"></span><input id="cmd-q" placeholder="Search inquiries, projects, pages…" autocomplete="off"><span class="mono">Esc</span></div>
   <div class="cmd-list" id="cmd-list"></div></div></div>
 <div id="pop" role="dialog" aria-label="Style and motion"></div>
+<div id="shelf" role="dialog" aria-label="Pinned and factories" aria-hidden="true"><div class="shelf-h">Pinned</div><div id="pins"></div><div class="shelf-h">Factory</div><div id="facs"></div></div>
 <div id="fscrim"></div>
 <div id="form" aria-hidden="true"></div>
 <div id="toasts" aria-live="polite"></div>
@@ -2539,6 +2550,13 @@ function countUp(scope){
     requestAnimationFrame(step);
   });
 }
+/* a switch that is re-rendered with the page: start its new highlight where the old one was, then slide */
+function indNow(seg){ const i = seg.querySelector(':scope > .ind'); if (!i) return null; return { w: i.getBoundingClientRect().width, x: new DOMMatrix(getComputedStyle(i).transform).m41 }; }
+function slideInd(id, from){ if (!from) return;
+  requestAnimationFrame(() => {   /* runs after render's own frame, which snaps every switch into place */
+    const seg = document.getElementById(id), i = seg && seg.querySelector(':scope > .ind'); if (!i) return;
+    i.style.transition = 'none'; i.style.width = from.w + 'px'; i.style.transform = `translateX(${from.x}px)`; void i.offsetWidth; i.style.transition = '';
+    placeInd(seg, true); }); }
 function placeInd(container, animate = true){
   const ind = container.querySelector(':scope > .ind'), on = container.querySelector(':scope > button.on'); if (!ind || !on) return;
   if (!animate) ind.style.transition = 'none';
@@ -2601,7 +2619,7 @@ function lgDrag(bar, axis){
 }
 lgDrag($('#tabbar'), 'x'); lgDrag($('#nav'), 'y');
 /* pointer glint: the highlight on each glass shape follows the pointer or finger */
-const LG_GLASS = '.ibtn,.sync,#totop,.tabbar,.side,#pop,.toast,#dp,.cmd,.selbar,.top .seg';
+const LG_GLASS = '.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg';
 document.addEventListener('pointermove', e => { if (S.look !== 'K' || !e.target.closest) return; const g = e.target.closest(LG_GLASS); if (!g) return;
   const r = g.getBoundingClientRect(); g.style.setProperty('--mx', (e.clientX - r.left) + 'px'); g.style.setProperty('--my', (e.clientY - r.top) + 'px'); }, {passive:true});
 document.addEventListener('pointerout', e => { const g = e.target.closest && e.target.closest(LG_GLASS); if (g && !g.contains(e.relatedTarget)){ g.style.removeProperty('--mx'); g.style.removeProperty('--my'); } }, {passive:true});
@@ -2655,6 +2673,7 @@ function counts(){
   $('#facs').innerHTML = [['all','All factories','var(--mu)'], ...factories().map(f => [f, f, facColor(f)])].map(([k,l,c]) =>
     `<button type="button" class="fac ${S.fac===k?'on':''}" data-fac="${esc(k)}" title="${esc(l)}"><i class="dot" style="--dc:${c}"></i>${esc(l)}<span class="cnt">${k==='all' ? (d ? (inqOn() ? openInq.length : 0) + d.projects.filter(p => !isClosedProj(p)).length : '') : activeOf(k)}</span></button>`).join('');
   const pins = d ? [...d.projects.filter(p => p.pinned).map(p => ({p, k:'proj'})), ...(inqOn() ? d.inquiries.filter(i => i.pinned) : []).map(p => ({p, k:'inq'}))].sort((a,b) => (b.p.pinnedAt||'') < (a.p.pinnedAt||'') ? -1 : 1).slice(0, 8) : [];
+  const sb = $('.shelf-btn'); if (sb){ sb.classList.toggle('filtered', S.fac !== 'all'); if (S.fac !== 'all') sb.style.setProperty('--dc', facColor(S.fac)); }
   $('#pins').innerHTML = pins.length ? pins.map(({p,k}) => { const h = k === 'proj' ? projHealth(p) : inqState(p).k;
     const c = ['over'].includes(h) ? 'var(--bad)' : h === 'risk' ? 'var(--warn)' : 'var(--c1)';
     return `<button type="button" class="pin" ${k==='proj' ? `data-proj="${esc(p.id)}"` : `data-open="${esc(p.id)}"`} title="${esc(p.name)}"><i class="ring2" style="--dc:${c}"></i><span class="nm">${esc(p.name)}</span><span class="star" aria-label="Pinned">★</span></button>`; }).join('')
@@ -2667,7 +2686,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard','Track your inquiries and projects'], inquiries:['Inquiries','5-day SLA · working days'], projects:['Projects','all NPD projects'], project:['Projects',''], tasks:['Tasks','your own to-dos'], notifications:['Notifications','your actions'], styles:['Styles','11 looks · same app'] };
+const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], tasks:['Tasks',''], notifications:['Notifications',''], styles:['Styles',''] };
 const RANGE = {today:'Today', week:'This week', month:'This month', year:'This year'};
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function words(str){ let i = 0; return str.replace(/(<em>.*?<\/em>|[^\s<]+)/g, w => `<span class="w"><span style="--i:${i++}">${w}</span></span>`); }
@@ -2946,7 +2965,7 @@ function pageDashboardProjects(){
   let n = 0;
   return `${staleBanner()}<div class="dash">
     <section class="card hero st" style="--i:${n++}">
-      <div><div class="eyebrow">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})} · Projects focus${S.fac !== 'all' ? ' · ' + esc(S.fac) : ''}</div>
+      <div><div class="eyebrow">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}${S.fac !== 'all' ? ' · ' + esc(S.fac) : ''}</div>
         <h2>${words(`${greet()}, <em>${esc(meName().split(' ')[0])}.</em>`)}</h2><p>${msg}</p></div>
       <div class="cta"><button class="btn" type="button" data-go="projects">All projects</button>${lead ? `<button class="b1" type="button" data-proj="${esc(lead.p.id)}">Open ${esc(lead.p.name.split(' ').slice(0,3).join(' '))} ${ico('arrow',16)}</button>` : ''}</div>
     </section>
@@ -3153,7 +3172,7 @@ function pageStyles(){
 /* ══════════ RENDER + NAVIGATION ══════════ */
 const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles'];
 function render(opts = {}){
-  const [t, sub0] = TITLES[S.page] || ['NPD Tracker',''], sub = S.page === 'dashboard' && !inqOn() ? 'Track your projects' : sub0;
+  const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
   $('#ttl').innerHTML = `<h1>${t}</h1>${pr ? `<span class="sub">All projects › ${esc(pr.name)}</span>` : sub ? `<span class="sub">${sub}</span>` : ''}`;
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
@@ -3187,7 +3206,7 @@ function softRender(first){
 }
 function go(page, o = {}){
   if (page === S.page && page !== 'project'){ $('#view').scrollTo({top:0, behavior:'smooth'}); return Promise.resolve(); }
-  closeSheet(); closePop(); closeCmd();
+  closeSheet(); closePop(); closeCmd(); closeShelf();
   const from = ORDER.indexOf(S.page === 'project' ? 'projects' : S.page), to = ORDER.indexOf(page === 'project' ? 'projects' : page);
   let type = to >= from ? 'fwd' : 'back';
   if (page === 'project') type = o.src ? 'morph' : 'fwd';
@@ -3897,6 +3916,20 @@ function openPop(anchor){
   p.classList.add('open'); requestAnimationFrame(() => $$('#pop .seg').forEach(s => placeInd(s, false)));
 }
 function closePop(){ $('#pop').classList.remove('open'); }
+/* pinned + factory panel: grows sideways out of its sidebar button (clip starts as the button's own shape) */
+function openShelf(btn){
+  const p = $('#shelf'), r = btn.getBoundingClientRect(), side = btn.closest('.side').getBoundingClientRect();
+  p.style.left = (side.right + 10) + 'px'; p.style.maxHeight = (innerHeight - 24) + 'px';
+  const h = p.offsetHeight, w = p.offsetWidth, top = Math.max(12, Math.min(innerHeight - h - 12, r.top - 8)); p.style.top = top + 'px';
+  const s = Math.min(h, r.height), y = Math.max(0, Math.min(h - s, r.top - top));
+  p.style.setProperty('--ct', y + 'px'); p.style.setProperty('--cb', (h - y - s) + 'px'); p.style.setProperty('--cr', (w - s) + 'px');
+  p.style.transition = 'none'; void p.offsetWidth; p.style.transition = '';
+  p.classList.add('open'); p.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true');
+}
+function closeShelf(){ const p = $('#shelf'); if (!p.classList.contains('open')) return; p.classList.remove('open'); p.setAttribute('aria-hidden', 'true'); $$('.shelf-btn').forEach(b => b.setAttribute('aria-expanded', 'false')); }
+$('#shelf').addEventListener('click', e => { if (e.target.closest('.fac,.pin')) setTimeout(closeShelf, 140); });
+document.addEventListener('pointerdown', e => { if ($('#shelf').classList.contains('open') && !e.target.closest('#shelf,.shelf-btn')) closeShelf(); }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShelf(); });
 function setLook(k){ if (k === S.look) return; vt(() => { S.look = k; store.set('npd2-look', k); applyPrefs(); $$('#pop .looks button').forEach(b => b.classList.toggle('on', b.dataset.look === k)); if (S.page === 'styles') refresh();
   const pop = $('#pop'); if (pop.classList.contains('open')){ const gs = $('.lg-set', pop); if (k === 'K' && !gs){ $('#themeseg', pop).parentElement.insertAdjacentHTML('afterend', glassHTML()); } else if (k !== 'K' && gs) gs.remove(); } }, 'style').then(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); setTimeout(() => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); }, 400); }); }
 function matchDeviceTheme(){ const t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; if (t === S.theme) return; S.theme = t; store.set('npd2-theme', t); const ts = $('#themeseg'); if (ts){ $$('button', ts).forEach(b => b.classList.toggle('on', b.dataset.v === t)); placeInd(ts, false); } }
@@ -4023,10 +4056,10 @@ document.addEventListener('click', e => {
     else if (seg.id === 'pbseg'){ const p = findRec(DB.data, 'projects', S.proj); if (!p) return; const prev = p.ballWith || ''; setBall('projects', p.id, v); toast(`Ball passed to ${esc(BALL_LABELS[v])}`, {icon:'arrow', undo: () => setBall('projects', p.id, prev)}); }
     else if (seg.id === 'ibseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.ballWith || ''; setBall('inquiries', i.id, v); toast(v ? `Ball passed to ${esc(BALL_LABELS[v])}` : 'Ball in court cleared', {icon:'arrow', undo: () => setBall('inquiries', i.id, prev)}); }
     else if (seg.id === 'ioseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.outcome || ''; setOutcome(i.id, v); if (v === 'won'){ const r = sb.getBoundingClientRect(); burst(r.left + r.width/2, r.top, 40, 180); } toast(v ? `Marked as ${OUTCOME_LABELS[v].toLowerCase()}` : 'Outcome reset to open', {icon: v === 'won' ? 'trophy' : 'check', undo: () => setOutcome(i.id, prev)}); }
-    else if (seg.id === 'nseg'){ S.nscope = v; S.nperson = ''; vt(() => refresh(), 'list'); }
-    else if (seg.id === 'nwhen'){ S.nwhen = v; vt(() => refresh(), 'list'); }
-    else if (seg.id === 'tcat'){ S.tcat = v; vt(() => refresh(), 'list'); }
-    else if (seg.id === 'tscope'){ S.tscope = v; if (S.tsel) S.tsel.clear(); vt(() => refresh(), 'list'); }
+    else if (seg.id === 'nseg'){ S.nscope = v; S.nperson = ''; const from = indNow(seg); vt(() => { refresh(); slideInd('nseg', from); }, 'list'); }
+    else if (seg.id === 'nwhen'){ S.nwhen = v; const from = indNow(seg); vt(() => { refresh(); slideInd('nwhen', from); }, 'list'); }
+    else if (seg.id === 'tcat'){ S.tcat = v; const from = indNow(seg); vt(() => { refresh(); slideInd('tcat', from); }, 'list'); }
+    else if (seg.id === 'tscope'){ S.tscope = v; if (S.tsel) S.tsel.clear(); const from = indNow(seg); vt(() => { refresh(); slideInd('tscope', from); }, 'list'); }
     else if (seg.id === 'focusseg'){ S.focus = v; store.set('npd2-focus', v); applyPrefs(); closeSheet(); if (S.page === 'inquiries' && v === 'projects') S.page = 'dashboard';
       vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
@@ -4035,7 +4068,8 @@ document.addEventListener('click', e => {
     return; }
   const a = t.closest('[data-act]'); if (a){ const act = a.dataset.act;
     if (act === 'cmdk') openCmd(); else if (act === 'theme') toggleTheme(a); else if (act === 'sync') pull({manual:true}); else if (act === 'signout') signOut();
-    else if (act === 'settings'){ $('#pop').classList.contains('open') ? closePop() : openPop(a); } else if (act === 'closesheet') closeSheet();
+    else if (act === 'settings'){ $('#pop').classList.contains('open') ? closePop() : openPop(a); }
+    else if (act === 'shelf'){ $('#shelf').classList.contains('open') ? closeShelf() : openShelf(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
     else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();
       const ms = $('#matseg'); if (ms){ $$('button', ms).forEach(b => b.classList.toggle('on', b.dataset.v === 'thin')); placeInd(ms, true); } }

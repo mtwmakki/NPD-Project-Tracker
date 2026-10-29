@@ -51,3 +51,15 @@ Screen bg (non-grouped) backgrounds/primary #FFF. Content px16, starts below lar
 iPad examples (Sidebar 12740:37613, List 12740:37605, Tab Bars 12740:23860, Toolbars 12740:23847),
 Segmented Controls 507:24683, Buttons 507:24673, Text Fields 553:22762, Sheets 507:24684, Menus 507:24676,
 Toolbars 507:25993 (Default/inline title 12740:24029), Materials 215:105157
+
+## Liquid Glass spec (user directive, applied to the Liquid Glass style)
+- Glass only on the interactive layer: tab bar, sidebar, toolbar buttons, sync pill, toolbar segmented control, menus, toasts, pickers.
+  Content (cards, lists, forms) stays on solid grouped surfaces.
+- Glass: backdrop blur(20px) saturate(180%); fill light rgba(255,255,255,.25) / dark rgba(20,20,20,.45);
+  edge 1px rgba(255,255,255,.35); shadow 0 8px 32px rgba(0,0,0,.12) + inset 0 1px 1px rgba(255,255,255,.6).
+  Menus/toasts/pickers that carry text use a thicker fill (.72) so their text stays readable over busy content.
+- Motion: cubic-bezier(.175,.885,.32,1.275), 400ms, scaled by the Motion setting. The settings menu morphs open from its button;
+  on phones the tab bar folds into a compact pill (current tab) while scrolling down and unfolds on scroll up or tap.
+- Secondary text: rgba(0,0,0,.75) light / rgba(255,255,255,.85) dark (tertiary .45 / .55).
+- Backdrop: soft blue / indigo / cyan glow behind the content so the glass picks up colour.
+- Not done: overlay / plus-lighter blend layers (the saturate(180%) backdrop carries the colour bleed; extra blend layers lowered icon contrast).

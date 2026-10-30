@@ -207,7 +207,7 @@ button{font:inherit;color:inherit}
 #login.out .orbs{transform:scale(1.5)}
 .lg-card{position:relative;z-index:1;width:min(400px,100%);padding:34px 28px 24px;border-radius:30px;background:var(--surf);border:1px solid var(--line);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--shadow);display:grid;gap:16px;
   transition:transform calc(800ms*var(--k)) var(--ease-out),filter calc(600ms*var(--k)),opacity calc(600ms*var(--k));animation:cardin calc(1000ms*var(--k)) var(--ease-out) backwards}
-@keyframes cardin{from{opacity:0;transform:translateY(24px) scale(.96);filter:blur(10px)}}
+@keyframes cardin{from{opacity:0;transform:translateY(24px) scale(.96)}}
 #login.out .lg-card{transform:scale(.9) translateY(-10px);filter:blur(14px);opacity:0}
 .lg-logo{width:52px;height:52px;border-radius:16px;background:var(--ac-grad);display:grid;place-items:center;color:var(--on-ac);font:700 13px/1 var(--fb);box-shadow:var(--glow)}
 .lg-hello{color:var(--mu);font-size:14px;margin-top:6px}
@@ -324,7 +324,7 @@ button{font:inherit;color:inherit}
 
 /* entrance */
 .st{animation:rise calc(700ms*var(--k)) var(--ease-out) backwards;animation-delay:calc(var(--i,0)*55ms*var(--k))}
-@keyframes rise{from{opacity:.001;transform:translateY(16px) scale(.985);filter:blur(6px)}}
+@keyframes rise{from{opacity:.001;transform:translateY(16px) scale(.985)}}
 :root[data-motion="off"] .st{animation:none}
 
 /* ───────── VIEW TRANSITIONS ───────── */
@@ -334,13 +334,13 @@ button{font:inherit;color:inherit}
 :root[data-vt="fwd"]::view-transition-new(view){animation:in-r calc(620ms*var(--k)) var(--ease-out) backwards}
 :root[data-vt="back"]::view-transition-old(view){animation:out-r calc(260ms*var(--k)) var(--ease-in) both}
 :root[data-vt="back"]::view-transition-new(view){animation:in-l calc(620ms*var(--k)) var(--ease-out) backwards}
-@keyframes out-l{to{opacity:0;transform:translateX(-40px) scale(.985);filter:blur(8px)}}
-@keyframes out-r{to{opacity:0;transform:translateX(40px) scale(.985);filter:blur(8px)}}
-@keyframes in-r{from{opacity:0;transform:translateX(56px) scale(.985);filter:blur(10px)}}
-@keyframes in-l{from{opacity:0;transform:translateX(-56px) scale(.985);filter:blur(10px)}}
+@keyframes out-l{to{opacity:0;transform:translateX(-40px) scale(.985)}}
+@keyframes out-r{to{opacity:0;transform:translateX(40px) scale(.985)}}
+@keyframes in-r{from{opacity:0;transform:translateX(56px) scale(.985)}}
+@keyframes in-l{from{opacity:0;transform:translateX(-56px) scale(.985)}}
 :root[data-vt="morph"]::view-transition-old(view),:root[data-vt="morphback"]::view-transition-old(view){animation:fadeout calc(220ms*var(--k)) var(--ease-in) both}
 :root[data-vt="morph"]::view-transition-new(view),:root[data-vt="morphback"]::view-transition-new(view){animation:fadein calc(500ms*var(--k)) calc(120ms*var(--k)) var(--ease-out) backwards}
-@keyframes fadeout{to{opacity:0;filter:blur(6px)}}
+@keyframes fadeout{to{opacity:0}}
 @keyframes fadein{from{opacity:0;filter:blur(6px)}}
 ::view-transition-group(hero),::view-transition-group(herobox){animation-duration:calc(var(--spring-soft-d)*1.3*var(--k));animation-timing-function:var(--spring-soft)}
 :root[data-vt="list"]::view-transition-old(view){animation:none;opacity:0}
@@ -357,6 +357,10 @@ button{font:inherit;color:inherit}
 @keyframes stylein{from{opacity:0;filter:blur(10px);transform:scale(.98)}}
 /* fallback when View Transitions API is missing */
 .vt-fallback{animation:in-r calc(520ms*var(--k)) var(--ease-out) backwards}
+.vt-back{animation:in-l calc(520ms*var(--k)) var(--ease-out) backwards}
+/* opening a project card: the page grows out from the card that was tapped */
+.vt-zoom{animation:in-zoom calc(460ms*var(--k)) var(--ease-out) backwards}
+@keyframes in-zoom{from{opacity:0;transform:scale(.92)}}
 
 /* ───────── DASHBOARD ───────── */
 .dash{display:grid;gap:16px}
@@ -1305,7 +1309,7 @@ html,body{height:var(--app-h,100%)}
   /* dark (kit: Dark - Base) */
   --bg:#0A0A0C; --bg2:transparent; --surf:#1C1C1E; --surf-solid:#1C1C1E; --surf-3:#2C2C2E; --app:#0A0A0C;
   /* content material: thin frosted (playbook) */
-  --mat:rgba(28,28,30,.70); --mat-blur:blur(30px) saturate(150%); --mat-edge:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 .5px rgba(255,255,255,.08);
+  --mat:rgba(28,28,30,.70); --mat-edge:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 .5px rgba(255,255,255,.08);
   --line:rgba(255,255,255,.17); --line-2:#38383A; --tx:#FFFFFF; --mu:rgba(255,255,255,.85); --mu3:rgba(255,255,255,.55);
   --ac:#0091FF; --ac-grad:linear-gradient(#0091FF,#0091FF); --on-ac:#FFFFFF; --ok:#30D158; --warn:#FF9230; --bad:#FF4245; --info:#6D7CFF;
   --c1:#0091FF; --c2:#FF9230; --prog:#0091FF; --bar-grad:linear-gradient(90deg,#0091FF,#0091FF);
@@ -1336,9 +1340,9 @@ html,body{height:var(--app-h,100%)}
   color-scheme:light }
 
 /* content material chosen in Settings: thin (default), ultra-thin or solid */
-:root[data-look="K"][data-mat="ultra"]{--mat:rgba(28,28,30,.46); --mat-blur:blur(40px) saturate(160%)}
+:root[data-look="K"][data-mat="ultra"]{--mat:rgba(28,28,30,.46)}
 :root[data-look="K"][data-theme="light"][data-mat="ultra"]{--mat:rgba(255,255,255,.48)}
-:root[data-look="K"][data-mat="solid"]{--mat:var(--surf); --mat-blur:none}
+:root[data-look="K"][data-mat="solid"]{--mat:var(--surf)}
 
 /* page */
 :root[data-look="K"] body,:root[data-look="K"] #login,:root[data-look="K"] #app{background:var(--bg)}
@@ -1557,13 +1561,14 @@ html,body{height:var(--app-h,100%)}
 #matseg{width:100%}#matseg button{flex:1;justify-content:center}
 .lg-reset{justify-self:start;margin-top:6px;border:0;background:none;padding:6px 0;color:var(--ac);font:500 13px/1 var(--fb);cursor:pointer}
 
-/* content material: thin frosted */
-:root[data-look="K"] :is(.card:not(.row):not(.hero),.rows,.lg-card),:root[data-look="K"] .banner{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur);box-shadow:var(--mat-edge)}
+/* content material: thin frosted. Only the page's blurred grey sits behind cards, so they get no backdrop blur of their own
+   (it looked the same and cost frames on every page change); the glass controls keep theirs */
+:root[data-look="K"] :is(.card:not(.row):not(.hero),.rows,.lg-card),:root[data-look="K"] .banner{background:var(--mat);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:var(--mat-edge)}
 :root[data-look="K"] .card .card{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
 :root[data-look="K"] .kpi.alert{background:var(--mat)}
 :root[data-look="K"] .banner.warn{background:color-mix(in srgb,var(--warn) 12%,var(--mat))}
 :root[data-look="K"] .nlist{background:none;box-shadow:var(--mat-edge)}
-:root[data-look="K"] .nfg{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur)}
+:root[data-look="K"] .nfg{background:var(--mat)}
 /* colour only where it needs attention: list icons are neutral unless late or at risk */
 :root[data-look="K"] .nic:not([style*="bad"]):not([style*="warn"]){background:var(--fill3);color:var(--mu)}
 
@@ -2494,9 +2499,15 @@ function recentTasks(x){
 
 /* ══════════ MOTION + UI HELPERS (from the approved prototype) ══════════ */
 const TOUCH = matchMedia('(hover: none) and (pointer: coarse)').matches;
+/* page changes use a light CSS animation on the content: a view transition first snapshots the whole page
+   (sidebar, glass, every card), which froze the screen for a moment on each tab change */
+const PAGE_VT = ['fwd','back','morph','morphback'];
+let VT_FROM = '';
+function pageAnim(type){ const v = $('#view'); v.classList.remove('vt-fallback','vt-back','vt-zoom'); v.style.transformOrigin = type === 'morph' && VT_FROM ? VT_FROM : '';
+  void v.offsetWidth; v.classList.add(type === 'morph' ? 'vt-zoom' : type === 'back' || type === 'morphback' ? 'vt-back' : 'vt-fallback'); VT_FROM = ''; }
 function vt(fn, type){
-  const ok = document.startViewTransition && S.motion !== 'off' && !TOUCH;
-  if (!ok){ fn(); if (['fwd','back','morph','morphback'].includes(type) && S.motion !== 'off'){ const v = $('#view'); v.classList.remove('vt-fallback'); void v.offsetWidth; v.classList.add('vt-fallback'); } return Promise.resolve(); }
+  const ok = document.startViewTransition && S.motion !== 'off' && !TOUCH && !PAGE_VT.includes(type);
+  if (!ok){ fn(); if (PAGE_VT.includes(type) && S.motion !== 'off') pageAnim(type); return Promise.resolve(); }
   root.dataset.vt = type;
   const t = document.startViewTransition(fn);
   return t.finished.catch(() => {}).finally(() => { delete root.dataset.vt; });
@@ -3212,6 +3223,7 @@ function go(page, o = {}){
   if (page === 'project') type = o.src ? 'morph' : 'fwd';
   if (S.page === 'project' && page === 'projects') type = 'morphback';
   if (S.page === 'project' && page !== 'projects') type = 'back';
+  if (o.src){ const r = o.src.getBoundingClientRect(), vr = $('#view').getBoundingClientRect(); VT_FROM = `${Math.round(r.left + r.width/2 - vr.left)}px ${Math.round(r.top + r.height/2 - vr.top)}px`; }
   if (o.src){ const tt = o.src.querySelector('.t'); if (tt) tt.style.viewTransitionName = 'hero'; if (o.src.matches('.pcard,.bcard')) o.src.style.viewTransitionName = 'herobox'; }
   const prevProj = S.proj;
   return vt(() => {

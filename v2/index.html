@@ -1260,7 +1260,7 @@ body{padding:0}
 }
 /* iOS 26.0 Safari: when its toolbar shrinks, a full-height layout can leave a blank band at the bottom (fixed in 26.1).
    Size the page from the measured window height instead, and paint the page colour behind it. */
-html{background:var(--bg)}
+html{background:var(--bg);overflow:hidden}   /* the app scrolls inside #view; without this, phones widened the page to fit the app's 5% entrance zoom behind the login */
 html,body{height:var(--app-h,100%)}
 
 /* ───────── ICON-ONLY NAVIGATION (all styles) ─────────
@@ -1694,6 +1694,104 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .fm-card,:root[data-look="K"] #sheet{border-radius:var(--r-card)}
 }
 
+/* ───────── LOGIN (every style) ─────────
+   Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
+   Phone: brand on top, the form in a sheet at the bottom within thumb reach; it moves up while the keyboard is open. */
+#login{overflow-y:auto}
+#login .lg-shell{position:relative;z-index:1;width:min(1040px,100%);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,400px);gap:64px;align-items:center}
+#login .lg-brand{display:grid;gap:24px;align-content:center;min-width:0;animation:cardin calc(1000ms*var(--k)) var(--ease-out) backwards;
+  transition:opacity calc(500ms*var(--k)),transform calc(700ms*var(--k)) var(--ease-out)}
+#login.out .lg-brand{opacity:0;transform:translateY(-10px) scale(.98)}
+.lg-mark{display:flex;align-items:center;gap:12px;font:600 17px/1 var(--fb);color:var(--tx)}
+#login .lg-mark .lg-logo{width:40px;height:40px}
+.lg-pitch{margin:0;max-width:14ch;font:var(--h-w,700) 40px/1.1 var(--fd);letter-spacing:-.02em;color:var(--tx);text-wrap:balance}
+.lg-pitch span{color:var(--mu)}
+/* the glimpse: three small cards showing what the tracker keeps an eye on (an illustration, not live data) */
+.lg-glimpse{display:grid;gap:12px;justify-items:start;max-width:440px}
+.gcard{display:grid;gap:8px;width:72%;padding:14px 16px;border-radius:20px;background:color-mix(in srgb,var(--surf-solid) 72%,transparent);border:1px solid var(--line);
+  box-shadow:0 12px 32px -16px rgba(0,0,0,.35);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);font:400 13px/1.35 var(--fb);color:var(--tx)}
+.gcard.g2{margin-left:22%}
+.gcard.g3{margin-left:8%;width:56%}
+.gcard .gk{font:500 12px/1 var(--fm);color:var(--mu)}
+.gcard b{font-weight:600;font-size:15px;line-height:20px}
+.gmeter{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.gmeter i{height:4px;border-radius:2px;background:var(--line-2)}
+.gmeter i.on{background:var(--ac)}
+.gchip{justify-self:start;display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font:600 12px/1 var(--fb)}
+.gchip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.gchip.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.gchip.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.gbar{height:6px;border-radius:3px;background:var(--line-2);overflow:hidden}
+.gbar i{display:block;width:72%;height:100%;border-radius:inherit;background:var(--ac)}
+/* the form */
+#login .lg-card{width:100%;gap:16px;padding:32px 28px 24px}
+.lg-head{display:grid;gap:4px}
+#login .lg-name{margin:0;font:var(--h-w,700) 28px/1.15 var(--fd);letter-spacing:-.02em;text-wrap:balance}
+#login .lg-hello{margin:0;font:400 14px/20px var(--fb);color:var(--mu)}
+#login .fld{gap:8px}
+#login .fld label{padding:0;font:500 13px/16px var(--fb);letter-spacing:0;color:var(--mu)}
+.fld-lr{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#login .fld-lr .lnk{font:500 13px/16px var(--fb);color:var(--ac);text-decoration:none}
+#login .fld-lr .lnk:hover{text-decoration:underline}
+#login .fld input{height:48px;min-height:48px;padding:0 14px;border:1px solid var(--line-2);border-radius:12px;background:color-mix(in srgb,var(--surf-solid) 88%,transparent);
+  color:var(--tx);font:500 16px var(--fb);box-shadow:none}
+#login .fld input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 20%,transparent)}
+#login .fld.bad input{border-color:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 16%,transparent)}
+.pw-wrap{position:relative}
+#login .pw-wrap input{padding-right:52px}
+.pw-eye{position:absolute;right:4px;top:4px;width:44px;height:40px;border:0;border-radius:10px;background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer}
+.pw-eye:hover{color:var(--tx);background:var(--hover)}
+.pw-eye .eye-off,.pw-eye[aria-pressed="true"] .eye-on{display:none}
+.pw-eye[aria-pressed="true"] .eye-off{display:block}
+.fld-err{margin:0;font:500 13px/18px var(--fb);color:var(--bad)}
+.fld-err:empty{display:none}
+.fld-hint{margin:0;font:500 13px/18px var(--fb);color:var(--warn)}
+.lg-keep{position:relative;display:flex;align-items:center;gap:12px;min-height:44px;margin:-4px 0;width:max-content;font:400 14px/20px var(--fb);color:var(--tx);cursor:pointer;user-select:none}
+.lg-keep input{position:absolute;opacity:0;pointer-events:none}
+.lg-keep .ck{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line-2);display:grid;place-items:center;color:transparent;transition:background .2s,border-color .2s,color .2s}
+.lg-keep input:checked + .ck{background:var(--ac);border-color:var(--ac);color:var(--on-ac)}
+.lg-keep input:focus-visible + .ck{outline:2px solid var(--ac);outline-offset:2px}
+#login .lg-err{min-height:0;margin:0;font:500 13px/18px var(--fb)}
+#login .lg-err:empty{display:none}
+.lg-go{height:52px;border:0;border-radius:999px;background:var(--ac-grad);color:var(--on-ac);font:600 16px/1 var(--fb);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;
+  box-shadow:0 10px 24px -10px color-mix(in srgb,var(--ac) 80%,transparent);transition:transform calc(300ms*var(--k)) var(--spring),filter .2s,background-color .3s}
+.lg-go:hover{filter:brightness(1.06)}
+.lg-go:active{transform:scale(.98)}
+.lg-go:disabled{cursor:progress}
+.lg-go .spin{display:none;border-color:color-mix(in srgb,var(--on-ac) 35%,transparent);border-top-color:var(--on-ac)}
+.lg-go.busy .spin{display:block}
+.lg-go.done{background:var(--ok);filter:none}
+#login .lg-links{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#login .lg-links .lnk{font:500 13px/20px var(--fb);color:var(--mu);text-decoration:none;min-height:24px}
+#login .lg-links .lnk:hover{color:var(--tx);text-decoration:underline}
+#login .lg-links .lnk:last-child{margin-left:auto}
+#login.checking :is(.fld,.lg-keep,.lg-go,.lg-links,.lg-err){display:none}
+/* Liquid Glass: the glimpse cards are glass, the form sits on the frosted material */
+:root[data-look="K"] .gcard{background:var(--glass);border-color:transparent;box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+:root[data-look="K"] #login .lg-card{border-radius:30px}
+:root[data-look="K"] #login .lg-name{font-weight:700}
+@media (max-width:900px){
+  #login .lg-shell{grid-template-columns:minmax(0,420px);justify-content:center;gap:28px}
+  #login .lg-brand{gap:16px}
+  #login .lg-pitch{font-size:28px;max-width:18ch}
+  #login .lg-glimpse{display:none}
+}
+@media (max-width:720px){
+  #login{place-items:stretch;padding:0}
+  #login .lg-shell{min-height:100%;grid-template-columns:minmax(0,1fr);grid-template-rows:1fr auto;gap:16px;align-items:stretch;padding-top:calc(env(safe-area-inset-top,0px) + 40px)}
+  #login .lg-brand{align-content:start;gap:16px;padding:0 24px}
+  #login .lg-glimpse{display:grid;gap:8px}
+  #login .lg-pitch{font-size:24px}
+  #login .gcard{width:82%;padding:12px 14px}
+  #login .gcard.g2,#login .gcard.g3{display:none}
+  #login .lg-card{align-self:end;width:auto;margin:0 8px calc(8px + env(safe-area-inset-bottom,0px));padding:24px 20px 16px;border-radius:32px;gap:14px}
+  #login .lg-name{font-size:22px}
+  #login.kb .lg-pitch,#login.kb .lg-glimpse{display:none}
+  #login.kb .lg-shell{grid-template-rows:auto 1fr;padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+  #login.kb .lg-card{align-self:start}
+}
+@media (max-width:720px) and (max-height:800px){ #login .lg-glimpse{display:none} }   /* e.g. the Fold cover screen: the form fits without scrolling */
+
 /* ───────── LOGO (Advent Studio app icon, every style) ─────────
    Dark tile #111110 with the #F2F1EC mark, 24% corners, mark 60.5% wide; on dark themes the light tile. */
 :root[data-look] .brand i,:root[data-look] .lg-logo{background:#111110;color:#F2F1EC;border:0;border-radius:24%;box-shadow:none;font-size:0}
@@ -1706,23 +1804,34 @@ html,body{height:var(--app-h,100%)}
 <!-- SIGN IN -->
 <div id="login" class="checking">
   <div class="orbs"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i></div>
-  <form class="lg-card" id="lgform" autocomplete="on" novalidate>
-    <div class="lg-logo" role="img" aria-label="NPD Tracker"><svg viewBox="-4 -4 168 108" aria-hidden="true"><polygon points="0,100 0,58 58,0 160,0 160,100 104,100 104,70 92,70 62,100" fill="currentColor" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg></div>
-    <div class="lg-hello" id="lg-hello">Welcome back</div>
-    <h1 class="lg-name" id="lg-name">NPD Tracker</h1>
-    <div class="lg-check"><i class="spin"></i><span>Checking your sign-in…</span></div>
-    <div class="fld"><label for="lg-email">Email</label><input id="lg-email" name="email" type="email" autocomplete="username" inputmode="email" required></div>
-    <div class="fld"><label for="lg-pass">Password</label><input id="lg-pass" name="password" type="password" autocomplete="current-password" required></div>
-    <label class="keep" for="lg-keep"><input id="lg-keep" type="checkbox" checked><span class="sw"></span>Keep me signed in on this device</label>
-    <p class="lg-err" id="lg-err" role="alert"></p>
-    <div class="slide" id="slide">
-      <div class="slide-fill"></div>
-      <span class="slide-txt">Slide to sign in</span>
-      <button class="thumb" id="thumb" type="button" aria-label="Sign in (slide, or press Enter)"></button>
-    </div>
-    <div class="lg-links"><button class="lnk" type="button" id="lg-forgot">Forgot password?</button><a class="lnk" href="https://mtwmakki.github.io/NPD-Project-Tracker/?v1">Open V1</a></div>
-    <p class="lg-foot">Same account and same data as the current tracker</p>
-  </form>
+  <div class="lg-shell">
+    <!-- brand side: logo, one line, and a glimpse of what the tracker shows (illustration, not live data) -->
+    <aside class="lg-brand" aria-label="NPD Tracker">
+      <div class="lg-mark"><span class="lg-logo"><svg viewBox="-4 -4 168 108" aria-hidden="true"><polygon points="0,100 0,58 58,0 160,0 160,100 104,100 104,70 92,70 62,100" fill="currentColor" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg></span><b>NPD Tracker</b></div>
+      <p class="lg-pitch">Every inquiry, mold and trial.<span> One place.</span></p>
+      <div class="lg-glimpse" aria-hidden="true">
+        <div class="gcard"><span class="gk">Inquiry · Combi-Pack</span><b>Send mold inquiry</b><span class="gmeter"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="gchip ok">Day 3 of 5</span></div>
+        <div class="gcard g2"><span class="gk">Project</span><b>T1 trial at factory</b><span class="gchip warn">In 2 days</span></div>
+        <div class="gcard g3"><span class="gk">Project</span><b>Mold tooling · 72%</b><span class="gbar"><i></i></span></div>
+      </div>
+    </aside>
+    <form class="lg-card" id="lgform" autocomplete="on" novalidate>
+      <div class="lg-head"><h1 class="lg-name" id="lg-name">Sign in</h1><p class="lg-hello" id="lg-hello">NPD Tracker</p></div>
+      <div class="lg-check"><i class="spin"></i><span>Checking your sign-in…</span></div>
+      <div class="fld" id="f-email"><label for="lg-email">Email</label>
+        <input id="lg-email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" required aria-describedby="lg-email-err">
+        <p class="fld-err" id="lg-email-err"></p></div>
+      <div class="fld" id="f-pass"><div class="fld-lr"><label for="lg-pass">Password</label><button class="lnk" type="button" id="lg-forgot">Forgot password?</button></div>
+        <div class="pw-wrap"><input id="lg-pass" name="password" type="password" autocomplete="current-password" required aria-describedby="lg-pass-err lg-caps">
+          <button type="button" class="pw-eye" id="lg-eye" aria-label="Show password" aria-pressed="false"><svg class="i eye-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="i eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></div>
+        <p class="fld-hint" id="lg-caps" hidden>Caps Lock is on</p>
+        <p class="fld-err" id="lg-pass-err"></p></div>
+      <label class="lg-keep" for="lg-keep"><input id="lg-keep" type="checkbox" checked><span class="ck" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Keep me signed in</label>
+      <p class="lg-err" id="lg-err" role="alert"></p>
+      <button class="lg-go" id="lg-go" type="submit"><i class="spin" aria-hidden="true"></i><span class="lg-go-t">Sign in</span></button>
+      <div class="lg-links"><button class="lnk" type="button" id="lg-switch" hidden>Not <span id="lg-who"></span>? Switch account</button><a class="lnk" href="https://mtwmakki.github.io/NPD-Project-Tracker/?v1">Open V1</a></div>
+    </form>
+  </div>
 </div>
 
 <!-- APP -->
@@ -3951,10 +4060,30 @@ function toggleTheme(btn){
 }
 
 /* ══════════ SIGN IN (real Firebase account, same as V1) ══════════ */
-const LG = { x: 0, max: () => $('#slide').clientWidth - 60 };
-function lgSetX(v){ const sl = $('#slide'); LG.x = Math.max(0, Math.min(LG.max(), v)); sl.style.setProperty('--x', LG.x + 'px'); sl.querySelector('.slide-txt').style.opacity = String(Math.max(0, 1 - LG.x/LG.max()*1.6)); }
-function lgError(msg, info){ const e = $('#lg-err'); e.textContent = msg || ''; e.classList.toggle('info', !!info); if (msg && !info){ const c = $('.lg-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); } }
-function lgReset(){ const sl = $('#slide'); sl.classList.remove('done','busy'); lgSetX(0); $('#thumb').innerHTML = ico('arrow', 22); }
+/* sign-in: a plain button (Enter submits), errors under the field they belong to, show password, Caps Lock hint,
+   and the last account on this device remembered for "Welcome back" */
+const LG = { viaForm: false, keep: true }, LG_LAST = 'npd2-last-user';
+function lgLast(){ try { return JSON.parse(store.get(LG_LAST, '') || 'null'); } catch(e){ return null; } }
+function lgFirst(n){ return String(n || '').trim().split(/\s+/)[0]; }
+function lgGreeting(){
+  const u = lgLast(), em = $('#lg-email');
+  if (u && u.email){
+    $('#lg-name').textContent = 'Welcome back' + (u.name ? ', ' + lgFirst(u.name) : '');
+    $('#lg-hello').textContent = 'Sign in to NPD Tracker';
+    if (!em.value) em.value = u.email;
+    $('#lg-who').textContent = lgFirst(u.name) || u.email; $('#lg-switch').hidden = false;
+  } else { $('#lg-name').textContent = 'Sign in'; $('#lg-hello').textContent = greet() + ' · NPD Tracker'; $('#lg-switch').hidden = true; }
+}
+function lgFieldErr(k, msg){ const f = $('#f-' + k), e = $(`#lg-${k}-err`), inp = $(k === 'email' ? '#lg-email' : '#lg-pass'); if (!f) return;
+  f.classList.toggle('bad', !!msg); e.textContent = msg || ''; inp.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
+function lgError(msg, info, field){
+  lgFieldErr('email', ''); lgFieldErr('pass', '');
+  const e = $('#lg-err'); e.textContent = field ? '' : (msg || ''); e.classList.toggle('info', !!info);
+  if (field) lgFieldErr(field, msg);
+  if (msg && !info){ const c = $('.lg-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+}
+function lgBusy(on){ const b = $('#lg-go'); b.classList.toggle('busy', on); b.disabled = on; $('.lg-go-t', b).textContent = on ? 'Signing in…' : 'Sign in'; }
+function lgReset(){ const b = $('#lg-go'); b.classList.remove('busy','done'); b.disabled = false; $('.lg-go-t', b).textContent = 'Sign in'; }
 function authMessage(e){
   const c = (e && e.code) || '';
   if (/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return 'Email or password is incorrect.';
@@ -3964,47 +4093,50 @@ function authMessage(e){
   if (/user-disabled/.test(c)) return 'This account is disabled. Ask the tracker owner.';
   return 'Could not sign in: ' + ((e && e.message) || 'unknown error');
 }
+function authField(e){ const c = (e && e.code) || ''; return /invalid-email/.test(c) ? 'email' : /invalid-credential|wrong-password|user-not-found|invalid-login/.test(c) ? 'pass' : ''; }
 async function attemptSignIn(){
-  const sl = $('#slide'); if (sl.classList.contains('busy') || sl.classList.contains('done')) return;
+  const b = $('#lg-go'); if (b.classList.contains('busy') || b.classList.contains('done')) return;
   const email = $('#lg-email').value.trim(), pw = $('#lg-pass').value;
-  if (!email || !pw){ lgError(!email ? 'Enter your email first.' : 'Enter your password first.'); lgReset(); (!email ? $('#lg-email') : $('#lg-pass')).focus(); return; }
-  if (!window.firebase || !firebase.auth){ lgError('The sign-in service did not load. Check your connection and reload.'); lgReset(); return; }
-  lgSetX(LG.max()); sl.classList.add('busy'); $('#thumb').innerHTML = '<i class="spin" style="border-top-color:var(--on-ac)"></i>'; lgError('');
+  if (!email){ lgError('Enter your email.', false, 'email'); $('#lg-email').focus(); return; }
+  if (!pw){ lgError('Enter your password.', false, 'pass'); $('#lg-pass').focus(); return; }
+  if (!window.firebase || !firebase.auth){ lgError('The sign-in service did not load. Check your connection and reload.'); return; }
+  lgError(''); lgBusy(true);
   try {
-    const keep = $('#lg-keep').checked;
-    await firebase.auth().setPersistence(keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
-    LG.viaSlide = true;
+    LG.keep = $('#lg-keep').checked;
+    await firebase.auth().setPersistence(LG.keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
+    LG.viaForm = true;
     await firebase.auth().signInWithEmailAndPassword(email, pw);      // onAuthStateChanged takes it from here
-  } catch(e){ LG.viaSlide = false; lgReset(); lgError(authMessage(e)); }
+  } catch(e){ LG.viaForm = false; lgReset(); const f = authField(e); lgError(authMessage(e), false, f); if (f === 'pass') $('#lg-pass').select(); else if (f === 'email') $('#lg-email').focus(); }
 }
 function initLogin(){
-  $('#lg-hello').textContent = greet();
-  const sl = $('#slide'), th = $('#thumb'); th.innerHTML = ico('arrow', 22);
-  let on = false, sx = 0;
-  th.addEventListener('pointerdown', e => { if (sl.classList.contains('done') || sl.classList.contains('busy')) return; on = true; sx = e.clientX - LG.x; sl.classList.add('drag'); th.setPointerCapture(e.pointerId); });
-  th.addEventListener('pointermove', e => { if (on) lgSetX(e.clientX - sx); });
-  const end = () => { if (!on) return; on = false; sl.classList.remove('drag'); if (LG.x > LG.max()*.85) attemptSignIn(); else lgSetX(0); };
-  th.addEventListener('pointerup', end); th.addEventListener('pointercancel', end);
-  th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); attemptSignIn(); } });
+  lgGreeting();
   $('#lgform').addEventListener('submit', e => { e.preventDefault(); attemptSignIn(); });
+  ['email','pass'].forEach(k => $(k === 'email' ? '#lg-email' : '#lg-pass').addEventListener('input', () => { lgFieldErr(k, ''); const g = $('#lg-err'); if (!g.classList.contains('info')) g.textContent = ''; }));
+  const pw = $('#lg-pass'), caps = e => { if (e.getModifierState) $('#lg-caps').hidden = !e.getModifierState('CapsLock'); };
+  pw.addEventListener('keydown', caps); pw.addEventListener('keyup', caps); pw.addEventListener('blur', () => { $('#lg-caps').hidden = true; });
+  $('#lg-eye').addEventListener('click', () => { const show = pw.type === 'password', b = $('#lg-eye');
+    pw.type = show ? 'text' : 'password'; b.setAttribute('aria-pressed', String(show)); b.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); pw.focus({preventScroll:true}); });
+  $('#lg-switch').addEventListener('click', () => { store.set(LG_LAST, ''); $('#lg-email').value = ''; pw.value = ''; lgError(''); lgGreeting(); $('#lg-email').focus(); });
   $('#lg-forgot').addEventListener('click', async () => {
-    const email = $('#lg-email').value.trim(); if (!email){ lgError('Type your email above, then tap “Forgot password?” again.'); $('#lg-email').focus(); return; }
-    try { await firebase.auth().sendPasswordResetEmail(email); lgError('Reset email sent. Check your inbox.', true); } catch(e){ lgError(authMessage(e)); }
+    const email = $('#lg-email').value.trim(); if (!email){ lgError('Type your email first, then tap “Forgot password?” again.', false, 'email'); $('#lg-email').focus(); return; }
+    try { await firebase.auth().sendPasswordResetEmail(email); lgError('Reset email sent to ' + email + '. Check your inbox.', true); } catch(e){ lgError(authMessage(e), false, authField(e) === 'email' ? 'email' : ''); }
   });
+  /* phones: while the keyboard is open the brand side steps aside so the form stays in view */
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => { $('#login').classList.toggle('kb', PHONE.matches && visualViewport.height < innerHeight * .78); });
 }
 function enterApp(){
-  const lg = $('#login'), restored = lg.classList.contains('checking') && !LG.viaSlide;
+  const lg = $('#login'), restored = lg.classList.contains('checking') && !LG.viaForm;
   const show = () => { lg.classList.add('out'); $('#app').classList.remove('pre'); S.page = S.page || 'dashboard'; render(); setTimeout(() => { $('#app').style.transform = 'none'; $('#app').style.filter = 'none'; }, 1200); };
   if (restored){ show(); return; }
-  const sl = $('#slide'), th = $('#thumb'); sl.classList.remove('busy'); sl.classList.add('done'); lgSetX(LG.max()); th.innerHTML = ico('check', 22);
+  const b = $('#lg-go'); b.classList.remove('busy'); b.classList.add('done'); $('.lg-go-t', b).textContent = 'Signed in';
   if (navigator.vibrate) try { navigator.vibrate(12); } catch(_){}
-  const r = th.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 22, 120);
-  setTimeout(show, S.motion === 'off' ? 0 : 380);
+  const r = b.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 18, 110);
+  setTimeout(show, S.motion === 'off' ? 0 : 420);
 }
 function showLogin(){
-  const lg = $('#login'); lg.classList.remove('checking','out'); LG.viaSlide = false; lgReset(); lgError('');
+  const lg = $('#login'); lg.classList.remove('checking','out'); LG.viaForm = false; lgReset(); lgError(''); $('#lg-pass').value = ''; lgGreeting();
   $('#app').style.transform = ''; $('#app').style.filter = ''; $('#app').classList.add('pre');
-  const card = $('.lg-card'); card.style.animation = 'none'; void card.offsetWidth; card.style.animation = '';
+  $$('.lg-card,.lg-brand').forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
   setTimeout(() => (($('#lg-email').value ? $('#lg-pass') : $('#lg-email'))).focus({preventScroll:true}), 400);
 }
 async function onSignedIn(user){
@@ -4017,6 +4149,8 @@ async function onSignedIn(user){
   const isMaster = user.email === MASTER_EMAIL;
   AUTH.profile = profile || { uid: user.uid, email: user.email, name: isMaster ? 'Adam' : (user.displayName || String(user.email).split('@')[0]), role: isMaster ? 'master' : 'member' };
   if (isMaster) AUTH.profile.role = 'master';
+  if (LG.viaForm) store.set(LG_LAST, LG.keep ? JSON.stringify({ email: user.email, name: AUTH.profile.name || '' }) : '');
+  else { const u = lgLast(); if (u && u.email === user.email && AUTH.profile.name && u.name !== AUTH.profile.name) store.set(LG_LAST, JSON.stringify({ email: user.email, name: AUTH.profile.name })); }
   setMe(); loadUsers();
   if (!DB.data) loadV1Cache();
   enterApp();

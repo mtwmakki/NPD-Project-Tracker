@@ -13,7 +13,11 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
   still switches it.
 - Vision is the default style on a new device (dark first); a style someone picked stays picked.
 - Navigation is icons only in every style: the phone tab bar has no labels, and on tablets and laptops the sidebar
-  is an icon column (factories and pins as coloured dots; hover for names).
+  is an icon column. Pinned items and the factory filter sit behind one pin button that opens a panel beside it.
+- Sign in: a Sign in button (Enter also signs in), show-password, a Caps Lock warning, and errors under the field they
+  belong to. With "Keep me signed in" ticked, the device remembers the last email and first name for "Welcome back"
+  (`npd2-last-user`; "Switch account" forgets it). Laptops show a brand side next to the form; phones put the form in
+  a sheet at the bottom that moves up while the keyboard is open.
 - Phones (iPhone 15 Pro 393 px, Galaxy Z Fold 7 cover 360 px wide): the top bar and tab bar slide away while you
   scroll down and come back when you scroll up; tighter margins and type under 430 px; sheets open full height there.
   On touch screens, fields use 16 px text (stops iPhone zooming in) and icon buttons are 44 px.

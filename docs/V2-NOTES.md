@@ -1,11 +1,13 @@
 # NPD Tracker V2 (beta)
 
 The usual address `https://mtwmakki.github.io/NPD-Project-Tracker/` now opens V2 directly
-(V2 itself lives at `…/v2/`). V1 is still available at `https://mtwmakki.github.io/NPD-Project-Tracker/?v1`
-for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
+(V2 itself lives at `…/v2/`). **V1 is retired (30 Oct 2026):** the root page only forwards to V2, old `/?v1`
+bookmarks land in V2, and V2 has no links to V1. V1's code is in git history (root `index.html` before the
+retirement commit). `gantt.html` stays at the root: V2's Gantt button opens it and each device keeps its plans there.
 
 ## Same data, same account
-- Signs in with the same Firebase account as V1 (signing in or out in one also affects the other on that device).
+- Signs in with the same Firebase account V1 used. The first sign-in of a new person creates their profile in
+  Firestore `users` (member role and permissions; the master email always gets master), as V1 did.
 - Reads and writes the same Google Sheet through the same Apps Script bridge. No new fields are added.
 - V2's style, theme, motion and snoozed notifications are stored only on the device (`npd2-*` keys).
 - Styles include **Liquid Glass** (from the Liquid Glass System design system): frosted glass on every surface, SF
@@ -13,7 +15,11 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
   still switches it.
 - Vision is the default style on a new device (dark first); a style someone picked stays picked.
 - Navigation is icons only in every style: the phone tab bar has no labels, and on tablets and laptops the sidebar
-  is an icon column (factories and pins as coloured dots; hover for names).
+  is an icon column. Pinned items and the factory filter sit behind one pin button that opens a panel beside it.
+- Sign in: a Sign in button (Enter also signs in), show-password, a Caps Lock warning, and errors under the field they
+  belong to. With "Keep me signed in" ticked, the device remembers the last email and first name for "Welcome back"
+  (`npd2-last-user`; "Switch account" forgets it). Laptops show a brand side next to the form; phones put the form in
+  a sheet at the bottom that moves up while the keyboard is open.
 - Phones (iPhone 15 Pro 393 px, Galaxy Z Fold 7 cover 360 px wide): the top bar and tab bar slide away while you
   scroll down and come back when you scroll up; tighter margins and type under 430 px; sheets open full height there.
   On touch screens, fields use 16 px text (stops iPhone zooming in) and icon buttons are 44 px.
@@ -21,12 +27,12 @@ for what V2 doesn't have yet; every "Open V1" link in V2 goes there.
   a small progress ring beside the project name). The page is sized from the measured window height to avoid the
   blank band iOS 26.0 Safari leaves under the tab bar.
 
-## Merge-safe saving (V1 V77.9 + V2)
-Both apps re-read the Sheet right before saving. If someone else saved in between:
-- V2 applies only its own changes on top of the latest data. An edit form sends only the fields you
-  actually changed, so a different field changed in V1 at the same moment is kept.
-- V1 keeps every item changed elsewhere and writes only the items changed in V1.
+## Merge-safe saving
+V2 re-reads the Sheet right before saving and applies only its own changes on top of the latest data, so
+changes saved meanwhile on another device are kept. An edit form sends only the fields you actually changed.
 The only remaining window is the ~1 second between the re-read and the write.
+The last data seen is kept on the device (`npd2-cache`) for an instant first screen and for when the Sheet
+can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then removed.
 
 ## What V2 can change
 - Projects: new project, edit details (code, name, brief, classification, factory, customer, sales
@@ -55,9 +61,10 @@ Every date is picked from V2's own calendar (never the phone's or Windows' date 
 on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next
 Monday. Optional dates have a small × to clear them.
 
-Deletes go to V1's Recycle Bin in the same format V1 uses, and every delete has an Undo.
-Each change is written to the item's history and to V1's Changelog page, like V1 does.
-Still V1-only: see docs/V2-MIGRATION.md (waves 2–5).
+Deletes go to the recycle bin (`data.bin`, same format V1 used) and every delete has an Undo; V2 has no bin
+page yet, so after the Undo is gone a restore means editing the Sheet.
+Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
+Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 
 ## How V2 maps your data
 - Projects have no phase field, so the board groups by status (not started / in progress / completed)

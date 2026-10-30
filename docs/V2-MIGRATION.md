@@ -1,7 +1,8 @@
 # Moving V1 features into V2
 
-Since V77.11 the main address opens V2; V1 stays at `…/NPD-Project-Tracker/?v1` until everything below is
-ported or dropped. Size: S = under half a day, M = about a day, L = several days.
+**V1 was retired on 30 Oct 2026** (nobody used it any more); its code is in git history. The tables below
+are now the list of V1 features V2 does not have yet. Their data stays in the Sheet (V2 keeps every field it
+doesn't touch), so any of them can still be built in V2 later. Size: S = under half a day, M = about a day, L = several days.
 
 ## Already in V2
 Sign-in, Dashboard (KPIs, chart, SLA, won/lost, factory load, "Needs you"), Inquiries (filters, search,

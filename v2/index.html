@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NPD Tracker V2</title>
-<meta name="description" content="NPD Project Tracker V2 — same live data as V1, redesigned.">
+<meta name="description" content="NPD Tracker: inquiries, projects, molds and trials in one place.">
 <meta name="theme-color" content="#05070D">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
@@ -939,7 +939,6 @@ body{padding:0}
 .pill.pedit{cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .pill.pedit:hover{border-color:var(--ac)}
 .sh-foot{align-items:center}
-.sh-v1{margin-right:auto;font-size:12.5px}
 .rail-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .rail-act{display:flex;justify-content:flex-end;margin-top:6px}
 .ph7.tap{border-radius:12px;padding:4px 2px;transition:background .2s}
@@ -1764,7 +1763,7 @@ html,body{height:var(--app-h,100%)}
 #login .lg-links{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 #login .lg-links .lnk{font:500 13px/20px var(--fb);color:var(--mu);text-decoration:none;min-height:24px}
 #login .lg-links .lnk:hover{color:var(--tx);text-decoration:underline}
-#login .lg-links .lnk:last-child{margin-left:auto}
+#login .lg-links:not(:has(:not([hidden]))){display:none}
 #login.checking :is(.fld,.lg-keep,.lg-go,.lg-links,.lg-err){display:none}
 /* Liquid Glass: the glimpse cards are glass, the form sits on the frosted material */
 :root[data-look="K"] .gcard{background:var(--glass);border-color:transparent;box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
@@ -1829,7 +1828,7 @@ html,body{height:var(--app-h,100%)}
       <label class="lg-keep" for="lg-keep"><input id="lg-keep" type="checkbox" checked><span class="ck" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Keep me signed in</label>
       <p class="lg-err" id="lg-err" role="alert"></p>
       <button class="lg-go" id="lg-go" type="submit"><i class="spin" aria-hidden="true"></i><span class="lg-go-t">Sign in</span></button>
-      <div class="lg-links"><button class="lnk" type="button" id="lg-switch" hidden>Not <span id="lg-who"></span>? Switch account</button><a class="lnk" href="https://mtwmakki.github.io/NPD-Project-Tracker/?v1">Open V1</a></div>
+      <div class="lg-links"><button class="lnk" type="button" id="lg-switch" hidden>Not <span id="lg-who"></span>? Switch account</button></div>
     </form>
   </div>
 </div>
@@ -1906,7 +1905,6 @@ const FIREBASE_CONFIG = {
 };
 const SHEETS_BRIDGE_URL   = 'https://script.google.com/macros/s/AKfycbylUhW_qEb3yR7qkSuevviQCsB6nmgqbWzPa8HJvKeKi8fde0gnPRMWgl-goC0_ynI8JA/exec';
 const SHEETS_BRIDGE_TOKEN = 'NzO8Z4aB3VME3sMFyLlo-U4uk0OmIX25';
-const V1_URL = 'https://mtwmakki.github.io/NPD-Project-Tracker/?v1';   // the plain address now opens V2
 const MASTER_EMAIL = 'npd@my.tpacpackaging.com';
 const POLL_MS = 20000, SAVE_DEBOUNCE_MS = 900;
 
@@ -2101,10 +2099,15 @@ async function bridgeRead(){
   if (!j || !j._data) throw new Error('empty');
   return j;
 }
-/* Instant first paint: V1's own local copy (same website, read-only — V2 never writes it) */
-function loadV1Cache(){
-  try { const raw = localStorage.getItem('npd_tracker_v3'); if (!raw) return false;
+/* Instant first paint: the last data seen on this device (also shown when the Sheet can't be reached).
+   npd_tracker_v3 is the copy the retired V1 left behind; it is read once and then replaced by V2's own. */
+const CACHE_KEY = 'npd2-cache';
+function loadCache(){
+  try { const raw = localStorage.getItem(CACHE_KEY) || localStorage.getItem('npd_tracker_v3'); if (!raw) return false;
     DB.data = normalize(JSON.parse(raw)); DB.source = 'cache'; return true; } catch(e){ return false; }
+}
+function saveCache(){
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(DB.data)); localStorage.removeItem('npd_tracker_v3'); } catch(e){}   // storage full: skip
 }
 async function pull(opts = {}){
   if (DB.saving || DB.ops.length){ return; }           // never replace data while our own edits are pending
@@ -2114,7 +2117,7 @@ async function pull(opts = {}){
     DB.lastPull = Date.now(); DB.err = '';
     const changed = j._updatedAt !== DB.ts || DB.source !== 'live';
     if (changed && !DB.ops.length && !DB.saving){
-      DB.data = normalize(JSON.parse(j._data)); DB.ts = j._updatedAt || ''; DB.by = j._updatedBy || ''; DB.source = 'live';
+      DB.data = normalize(JSON.parse(j._data)); DB.ts = j._updatedAt || ''; DB.by = j._updatedBy || ''; DB.source = 'live'; saveCache();
       if (!opts.silent || opts.first) softRender(opts.first); else renderWhenIdle();
     }
     setSync('ok');
@@ -2136,7 +2139,7 @@ function renderWhenIdle(){
 /* Three kinds of patch, all safe to replay on top of the latest Sheet data:
    {coll, id, fn}        change one record (fn gets the record)
    {coll, add, at}       insert a new record (skipped if its id already exists)
-   {coll, remove, bin}   remove a record; with bin:{id, kind} a copy goes to V1's Recycle Bin */
+   {coll, remove, bin}   remove a record; with bin:{id, kind} a copy goes to the recycle bin (data.bin) */
 function applyOp(d, op){
   const list = d[op.coll] = d[op.coll] || [];
   if (op.add){
@@ -2185,9 +2188,9 @@ async function commit(){
     }
     DB.data = fresh; DB.ts = ts; DB.by = meName() + ' (V2)'; DB.source = 'live'; DB.retry = 0;
     DB.ops.forEach(op => applyOp(DB.data, op));   // edits made while saving
-    setSync('saved');
-    if (otherSaved) toast('Merged with changes saved meanwhile in V1', {icon:'refresh'});
-    if (missing) toast(`${missing} change${missing > 1 ? 's' : ''} skipped: the item was removed in V1`, {icon:'x'});
+    saveCache(); setSync('saved');
+    if (otherSaved) toast('Merged with changes saved meanwhile on another device', {icon:'refresh'});
+    if (missing) toast(`${missing} change${missing > 1 ? 's' : ''} skipped: the item was removed on another device`, {icon:'x'});
     softRender(false);
   } catch(e){
     failed = true;
@@ -2469,7 +2472,7 @@ function createInquiry(v, defaults){
     products: v.products || [], nextActions: [], nextAction: '',
     pipeline: { moldInquiry:{status:'', remark:'', date:''}, costing:{status:'', remark:'', date:''}, priceSubmission:{status:'', remark:'', date:''} },
     ballWith: '', ballSince: '', links: v.links || [], outcome: '', outcomeReason: '', outcomeDate: '', moldCost: 0,
-    tasks: DEFAULT_INQ_TASKS.filter(([k]) => defaults.includes(k)).map(([, n, wd]) => ({id: uid(), name: n, deadline: addWorkDays(v.date, wd), done: false, pic: me})),
+    tasks: DEFAULT_INQ_TASKS.filter(([k]) => defaults.includes(k)).map(([, n, wd]) => ({id: uid(), name: n, deadline: addWorkDays(v.date, wd), done: false, pic: me, addedOn: today})),
     expanded: true, activityLog: [{id: uid(), type:'create', icon:'pencil', text:`Inquiry created: ${strong(v.name)}`, by: me, date: today, time: nowHM()}] };
   mutate([{coll:'inquiries', add: inq, at:'start'}]);
   changelog({type:'create', icon:'circle-plus', text:`Created inquiry: ${strong(v.name)}`, section:'inquiries'});
@@ -3027,7 +3030,7 @@ function sheetHTML(i){
     ${(i.links||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Links</h3><div class="links">${i.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div></section>` : ''}
     ${(i.activityLog||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Activity <span>latest ${Math.min(10, i.activityLog.length)}</span></h3><div class="hist">${[...i.activityLog].reverse().slice(0,10).map((a,k) => `<div class="h" style="--i:${k}"><i style="--c:${a.type === 'done' ? 'var(--ok)' : a.type === 'create' ? 'var(--ac)' : 'var(--info)'}"></i><div><b>${richText(a.text)}</b><span>${esc(a.by || '')}</span></div><span class="due">${fmtDate(a.date)}${a.time ? ' ' + esc(a.time) : ''}</span></div>`).join('')}</div></section>` : ''}
   </div>
-  <div class="sh-foot"><a class="lnk sh-v1" href="${V1_URL}" target="_blank" rel="noopener">Open in V1</a>${canE ? `<button class="btn" type="button" data-fm="inq|${esc(i.id)}">${ico('pencil',15)} Edit details</button>` : ''}<button class="b1" type="button" data-act="closesheet">Done</button></div>`;
+  <div class="sh-foot">${canE ? `<button class="btn" type="button" data-fm="inq|${esc(i.id)}">${ico('pencil',15)} Edit details</button>` : ''}<button class="b1" type="button" data-act="closesheet">Done</button></div>`;
 }
 function openSheet(id){
   const i = findRec(DB.data, 'inquiries', id); if (!i) return; sheetId = id;
@@ -3204,7 +3207,7 @@ function tabBody(p){
 }
 function pageProject(){
   const p = findRec(DB.data, 'projects', S.proj);
-  if (!p) return `<div class="empty card"><b>Project not found</b>It may have been removed in V1. <button class="lnk" type="button" data-go="projects">Back to projects</button></div>`;
+  if (!p) return `<div class="empty card"><b>Project not found</b>It may have been deleted on another device. <button class="lnk" type="button" data-go="projects">Back to projects</button></div>`;
   const h = projHealth(p), pct = projPct(p), C = 2*Math.PI*50, canE = can('projects','edit'), today = todayStr();
   const wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null;
   return `${staleBanner()}<div class="dash">
@@ -3691,7 +3694,7 @@ function formProjTask(projId, key, preset){
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
       ...(subs.length ? [{k:'linkedSubStatus', label:'Linked update', type:'select', value: t ? t.linkedSubStatus || '' : '', options: withCur([['', '— None —'], ...subs.map((s, i) => [s.id || String(i), s.title + (s.date ? ' (' + fmtDate(s.date) + ')' : '')])], t && t.linkedSubStatus)}] : []),
     ],
-    del: t && can('actions','delete') ? {label:'Delete', run: () => { const u = deleteProjTask(projId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    del: t && can('actions','delete') ? {label:'Delete', run: () => { const u = deleteProjTask(projId, key); done1(`Deleted “${esc(t.name)}”.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
       if (!t){ addProjTask(projId, {...v, followupOf: preset && preset.followupOf}); done1(`Action added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
       if (!Object.keys(ch).length) return;
@@ -3709,7 +3712,7 @@ function formInqTask(inqId, key, preset){
       {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : addWorkDays(todayStr(), 2)},
     ],
-    del: t ? {label:'Delete', run: () => { const u = deleteInqTask(inqId, key); done1(`Deleted “${esc(t.name)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    del: t ? {label:'Delete', run: () => { const u = deleteInqTask(inqId, key); done1(`Deleted “${esc(t.name)}”.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => { if (!t){ addInqTask(inqId, {...v, followupOf: preset && preset.followupOf}); done1('Task added'); return; } if (Object.keys(ch).length){ editInqTask(inqId, key, ch); done1('Task saved'); } } });
 }
 /* ── inquiry next action ── */
@@ -3797,7 +3800,7 @@ function formInquiry(id){
     fields.push({k:'defaults', label:'Start with these tasks', type:'checks', value:['mold','iml','npd'], options: DEFAULT_INQ_TASKS.map(([k, n, wd]) => [k, n, `due ${wd} working days after the inquiry date`])});
   }
   openForm({ eyebrow: i ? i.code : 'Inquiries', title: i ? 'Edit inquiry' : 'New inquiry', submit: i ? 'Save changes' : 'Create inquiry', fields,
-    del: i && can('inquiries','delete') ? {label:'Delete inquiry', run: () => { closeSheet(); const u = deleteRecord('inquiries', i.id); done1(`Deleted ${esc(i.code || i.name)}. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    del: i && can('inquiries','delete') ? {label:'Delete inquiry', run: () => { closeSheet(); const u = deleteRecord('inquiries', i.id); done1(`Deleted ${esc(i.code || i.name)}.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
       const dupe = DB.data.inquiries.find(x => x.id !== (i && i.id) && String(x.code || '').trim().toLowerCase() === v.code.toLowerCase());
       if (dupe && (!i || 'code' in ch) && FM.dupeOk !== v.code){ FM.dupeOk = v.code; return {code: `Already used by “${dupe.name}”. Press ${i ? 'Save' : 'Create'} again to keep it.`}; }
@@ -3840,7 +3843,7 @@ function formProject(id){
       {k:'kiv', label:'Keep in view (KIV)', type:'check', value: p ? !!p.kiv : false, hint:'Parked for now. It stays visible with a KIV tag.'},
       {k:'kivComment', label:'KIV reason', type:'textarea', rows:2, value: p ? p.kivComment || '' : '', ph:'Why is this project on KIV?', show: v => v.kiv},
     ],
-    del: p && can('projects','delete') ? {label:'Delete project', run: () => { const u = deleteRecord('projects', p.id); if (S.page === 'project') go('projects'); done1(`Deleted ${esc(p.code || p.name)}. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    del: p && can('projects','delete') ? {label:'Delete project', run: () => { const u = deleteRecord('projects', p.id); if (S.page === 'project') go('projects'); done1(`Deleted ${esc(p.code || p.name)}.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
       if (!p){ const nid = createProject({...v, links: textToLinks(v.links)}); done1(`Project ${esc(v.code)} created`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
       const patch = {};
@@ -3881,7 +3884,7 @@ function formMTask(id, preset){
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
     ],
     extra: t && can('tasks','add') ? {label:'Duplicate', icon:'plus', run: () => { const nid = duplicateMTask(t.id); done1('Task duplicated'); if (nid) setTimeout(() => formMTask(nid), 80); }} : null,
-    del: t && can('tasks','delete') ? {label:'Delete', run: () => { if (deleteWouldBeBlocked(1)){ toast('The Sheet would block this delete (too few records left).', {icon:'x'}); return; } const u = deleteMTasks([t.id]); done1(`Deleted “${esc(t.title)}”. It is in V1's Recycle Bin.`, u, 'trash'); }} : null,
+    del: t && can('tasks','delete') ? {label:'Delete', run: () => { if (deleteWouldBeBlocked(1)){ toast('The Sheet would block this delete (too few records left).', {icon:'x'}); return; } const u = deleteMTasks([t.id]); done1(`Deleted “${esc(t.title)}”.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
       if (!t){ createMTask({...v, followupOf: preset && preset.followupOf}); done1(`Task added${v.deadline ? ' · due ' + fmtDate(v.deadline) : ''}`); return; }
       if (!Object.keys(ch).length) return;
@@ -3960,7 +3963,7 @@ let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
   const pages = ORDER.filter(p => p !== 'styles' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
-  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'},{g:'Actions', t:'Open V1', run:() => { location.href = V1_URL; }, ic:'arrowup'}];
+  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
@@ -3988,7 +3991,7 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
-  <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button><a class="btn" href="${V1_URL}" style="flex:1;justify-content:center;text-decoration:none">Open V1</a></div>`; }
+  <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
 const SL_IC = { solid:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   clear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   sharp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>',
@@ -4141,18 +4144,25 @@ function showLogin(){
 }
 async function onSignedIn(user){
   AUTH.user = user;
-  let profile = null;
+  let profile = null, noProfile = false;   // noProfile only when Firestore answered "no such profile", never on a timeout or error
   try {
     const doc = await Promise.race([AUTH.db.collection('users').doc(user.uid).get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))]);
-    if (doc.exists) profile = doc.data();
+    if (doc.exists) profile = doc.data(); else noProfile = true;
   } catch(e){ console.warn('profile', e); }
   const isMaster = user.email === MASTER_EMAIL;
   AUTH.profile = profile || { uid: user.uid, email: user.email, name: isMaster ? 'Adam' : (user.displayName || String(user.email).split('@')[0]), role: isMaster ? 'master' : 'member' };
   if (isMaster) AUTH.profile.role = 'master';
+  /* first sign-in: create the profile so the person shows up in people pickers (V1 used to do this) */
+  if (noProfile){
+    const rec = { ...AUTH.profile, permissions: DEFAULT_PERMISSIONS[AUTH.profile.role] || DEFAULT_PERMISSIONS.member, createdAt: new Date().toISOString() };
+    AUTH.db.collection('users').doc(user.uid).set(rec).catch(e => console.warn('profile create', e));
+  } else if (profile && isMaster && profile.role !== 'master'){
+    AUTH.db.collection('users').doc(user.uid).update({ role: 'master', permissions: DEFAULT_PERMISSIONS.master }).catch(e => console.warn('profile role', e));
+  }
   if (LG.viaForm) store.set(LG_LAST, LG.keep ? JSON.stringify({ email: user.email, name: AUTH.profile.name || '' }) : '');
   else { const u = lgLast(); if (u && u.email === user.email && AUTH.profile.name && u.name !== AUTH.profile.name) store.set(LG_LAST, JSON.stringify({ email: user.email, name: AUTH.profile.name })); }
   setMe(); loadUsers();
-  if (!DB.data) loadV1Cache();
+  if (!DB.data) loadCache();
   enterApp();
   pull({first:true});
 }
@@ -4162,7 +4172,7 @@ function onSignedOut(){
 }
 function signOut(){
   if (DB.ops.length || DB.saving){ toast('Saving your last change first…', {icon:'clock'}); return; }
-  toast('Sign out of NPD Tracker on this device? This also signs you out of V1 here.', {label:'Sign out', icon:'logout', ms:7000, undo: () => firebase.auth().signOut()});
+  toast('Sign out of NPD Tracker on this device?', {label:'Sign out', icon:'logout', ms:7000, undo: () => { try { localStorage.removeItem(CACHE_KEY); } catch(e){} firebase.auth().signOut(); }});   // a deliberate sign-out also clears this device's data copy
 }
 
 /* ══════════ EVENTS ══════════ */
@@ -4231,7 +4241,7 @@ document.addEventListener('click', e => {
     else if (act === 'tbulk-delete'){ const ids = [...S.tsel]; if (!ids.length) return;
       if (deleteWouldBeBlocked(ids.length)){ toast('The Sheet would block deleting this many at once. Delete them in smaller batches.', {icon:'x'}); return; }
       if (!a.classList.contains('armed')){ a.classList.add('armed'); a.textContent = `Tap again to delete ${ids.length}`; setTimeout(() => { if (a.isConnected){ a.classList.remove('armed'); a.textContent = 'Delete'; } }, 3500); return; }
-      const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`${ids.length} task${ids.length === 1 ? '' : 's'} moved to V1's Recycle Bin`, {icon:'trash', undo: u}); }
+      const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`Deleted ${ids.length} task${ids.length === 1 ? '' : 's'}`, {icon:'trash', undo: u}); }
     else if (act === 'toggledone'){ S.showDone = !S.showDone; vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); }
     else if (act === 'pin-inq'){ const i = findRec(DB.data, 'inquiries', sheetId); if (i){ const on = !i.pinned; setPin('inquiries', i.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('inquiries', i.id, !on)}); } }
     else if (act === 'pin-proj'){ const p = findRec(DB.data, 'projects', S.proj); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } }

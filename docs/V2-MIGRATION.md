@@ -9,7 +9,7 @@ Sign-in, Dashboard (KPIs, chart, SLA, won/lost, factory load, "Needs you"), Inqu
 factory filter, pins, SLA sheet, tasks, next actions, ball in court, outcome, products, links, pipeline
 statuses), Projects (cards / board, project page with milestones, actions, updates, overview, history,
 KIV), Notifications (missed / due soon / awaiting reply, swipe done / snooze), create / edit / delete for
-inquiries, projects, actions, tasks, next actions, updates and milestones (deletes go to V1's Recycle Bin
+inquiries, projects, actions, tasks, next actions, updates and milestones (deletes go to the recycle bin
 with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, merge-safe saving.
 
 ## Still only in V1
@@ -35,7 +35,7 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 ### Wave 3 — reporting (~3 days)
 | Feature | Size |
 |---|---|
-| Full Excel export | S |
+| ~~Full Excel export~~ (done: Settings → Data → Export to Excel) | S |
 | Inquiry report (date range, choose fields) → Excel / PDF | M |
 | Project report → PDF | M |
 | Delivery Matrix tab + yellow / red day thresholds setting | M |
@@ -45,10 +45,10 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 ### Wave 4 — safety and housekeeping (~2 days)
 | Feature | Size |
 |---|---|
-| Recycle Bin page: restore, permanent delete | M |
+| ~~Recycle Bin page: restore, permanent delete~~ (done: Settings → Data → Recycle bin) | M |
 | Changelog viewer | S |
 | Inactivity auto-logout + timeout setting | S |
-| Backup Now (snapshot to Firestore) | S |
+| ~~Backup Now~~ (done as a JSON download: Settings → Data → Backup) | S |
 | Change own password | S |
 | Presence (who's online) + display name | S |
 

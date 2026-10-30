@@ -1693,6 +1693,24 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .fm-card,:root[data-look="K"] #sheet{border-radius:var(--r-card)}
 }
 
+/* ───────── RECYCLE BIN + DATA (every style) ───────── */
+.bin-list{padding:4px 0;display:grid}
+.bin-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:64px;padding:10px 16px}
+.bin-row + .bin-row{border-top:1px solid var(--line)}
+.bin-ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--hover);color:var(--mu)}
+.bin-tx{min-width:0;display:grid;gap:2px}
+.bin-tx b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bin-tx span{font-size:13px;line-height:18px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bin-acts{display:flex;align-items:center;gap:8px}
+.bin-why{font-size:13px;color:var(--mu);text-align:right;max-width:200px}
+.bin-wipe.armed,.bin-empty.armed{width:auto;padding:0 14px;border-radius:999px;background:var(--bad);border-color:transparent;color:#fff;font:600 13px/1 var(--fb)}
+.bin-list .empty{padding:32px 20px}
+.pop-data{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pop-data .btn{justify-content:center}
+.pop-data .wide{grid-column:1/-1}
+.pop-data .n{font:600 12px/1 var(--fm);padding:3px 7px;border-radius:999px;background:var(--hover);color:var(--mu)}
+@media (max-width:600px){ .bin-row{grid-template-columns:36px minmax(0,1fr)} .bin-acts{grid-column:2;justify-content:flex-start} .bin-why{text-align:left} }
+
 /* ───────── LOGIN (every style) ─────────
    Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
    Phone: brand on top, the form in a sheet at the bottom within thumb reach; it moves up while the keyboard is open. */
@@ -2810,7 +2828,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], tasks:['Tasks',''], notifications:['Notifications',''], styles:['Styles',''] };
+const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], tasks:['Tasks',''], notifications:['Notifications',''], styles:['Styles',''], bin:['Recycle bin',''] };
 const RANGE = {today:'Today', week:'This week', month:'This month', year:'This year'};
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function words(str){ let i = 0; return str.replace(/(<em>.*?<\/em>|[^\s<]+)/g, w => `<span class="w"><span style="--i:${i++}">${w}</span></span>`); }
@@ -3233,6 +3251,146 @@ function pageProject(){
 const RING = {};   // last % drawn per project, so a refresh only animates the change
 function setRing(pct){ const fg = $('#pfg'); if (!fg) return; const C = 2*Math.PI*50; RING[S.proj] = pct; requestAnimationFrame(() => fg.style.strokeDashoffset = (C*(1-pct/100)).toFixed(1)); const el = $('#ppct'); if (el) el.textContent = pct; }
 
+/* ── Recycle bin: everything deleted lands in data.bin (V1's format); restore it or remove it for good ── */
+const BIN_KIND = { inquiry:{l:'Inquiry', ic:'inbox', coll:'inquiries', g:'inquiries'}, project:{l:'Project', ic:'folder', coll:'projects', g:'projects'},
+  task:{l:'Action', ic:'tasks', coll:null, g:'tasks'}, mtask:{l:'Task', ic:'check', coll:'mtasks', g:'tasks'} };
+function binName(b){ return (b.kind === 'task' ? b.task && b.task.name : b.name || (b.item && (b.item.name || b.item.title))) || 'Untitled'; }
+function binWhere(b){
+  if (b.kind === 'task') return `${b.parentType === 'inquiry' ? 'Inquiry task' : 'Project action'} · ${esc([b.parentCode, b.parentName].filter(Boolean).join(' '))}`;
+  if (b.kind === 'mtask') return 'Personal task';
+  return `${BIN_KIND[b.kind] ? BIN_KIND[b.kind].l : 'Item'}${b.code ? ' · ' + esc(b.code) : ''}`;
+}
+/* [can restore, reason when not] */
+function binRestorable(b){
+  const k = BIN_KIND[b.kind]; if (!k) return [false, 'Unknown item'];
+  if (b.kind === 'task'){
+    const inq = b.parentType === 'inquiry', parent = findRec(DB.data, inq ? 'inquiries' : 'projects', b.parentId);
+    if (!(inq ? can('inquiries','edit') : can('actions','add'))) return [false, 'Needs edit rights'];
+    if (!parent) return [false, (DB.data.bin || []).some(x => x.item && x.item.id === b.parentId) ? `Restore ${inq ? 'its inquiry' : 'its project'} first` : `Its ${inq ? 'inquiry' : 'project'} no longer exists`];
+    return [true, ''];
+  }
+  return can(b.kind === 'mtask' ? 'tasks' : k.coll, 'add') ? [true, ''] : [false, 'Needs add rights'];
+}
+const binWipeable = b => isLead() || can(b.kind === 'task' ? (b.parentType === 'inquiry' ? 'inquiries' : 'actions') : b.kind === 'mtask' ? 'tasks' : BIN_KIND[b.kind] ? BIN_KIND[b.kind].coll : 'projects', 'delete');
+function binList(){
+  const q = (S.binq || '').trim().toLowerCase(), f = S.binf || 'all', today = todayStr();
+  const items = [...(DB.data.bin || [])].filter(b => (f === 'all' || (BIN_KIND[b.kind] || {}).g === f) && (!q || (binName(b) + ' ' + (b.code || '') + ' ' + (b.parentCode || '') + ' ' + (b.parentName || '')).toLowerCase().includes(q)))
+    .sort((a, b) => (b.deletedAt || '') < (a.deletedAt || '') ? -1 : (b.deletedAt || '') > (a.deletedAt || '') ? 1 : 0);
+  if (!items.length) return `<div class="empty"><b>${(DB.data.bin || []).length ? 'Nothing matches' : 'The recycle bin is empty'}</b>${(DB.data.bin || []).length ? 'Try another filter or search.' : 'Deleted inquiries, projects, actions and tasks come here, so they can be restored.'}</div>`;
+  return items.map(b => { const k = BIN_KIND[b.kind] || {ic:'file'}, [ok, why] = binRestorable(b);
+    return `<div class="bin-row"><span class="bin-ic">${ico(k.ic, 18)}</span>
+      <div class="bin-tx"><b>${esc(binName(b))}</b><span>${binWhere(b)} · deleted ${b.deletedAt ? fmtDate(b.deletedAt) : 'earlier'}${b.deletedAt === today ? ' (today)' : ''}</span></div>
+      <div class="bin-acts">${ok ? `<button class="btn" type="button" data-binrestore="${esc(b.id)}">${ico('refresh',15)} Restore</button>` : `<span class="bin-why">${esc(why)}</span>`}${binWipeable(b) ? `<button class="ibtn bin-wipe" type="button" data-binwipe="${esc(b.id)}" aria-label="Delete forever: ${esc(binName(b))}" title="Delete forever">${ico('trash',16)}</button>` : ''}</div></div>`; }).join('');
+}
+function pageBin(){
+  const all = DB.data.bin || [], c = g => all.filter(b => g === 'all' || (BIN_KIND[b.kind] || {}).g === g).length;
+  return `<div class="toolbar st" style="--i:0">${segHTML('binseg', [['all','All',c('all')],['inquiries','Inquiries',c('inquiries')],['projects','Projects',c('projects')],['tasks','Tasks',c('tasks')]], S.binf || 'all')}
+    <label class="search">${ico('search',17)}<input id="binq" placeholder="Search deleted items" value="${esc(S.binq || '')}" aria-label="Search the recycle bin"></label>
+    ${all.length && isLead() ? `<button class="btn bin-empty" type="button" data-act="bin-empty">${ico('trash',15)} Empty bin</button>` : ''}</div>
+    <div class="card bin-list st" style="--i:1" id="binlist">${binList()}</div>`;
+}
+function restoreBin(id){
+  const b = (DB.data.bin || []).find(x => x.id === id); if (!b) return;
+  const [ok, why] = binRestorable(b); if (!ok){ toast(why, {icon:'x'}); return; }
+  const entry = clone(b), nm = binName(b);
+  let ops, undo;
+  if (b.kind === 'task'){
+    const coll = b.parentType === 'inquiry' ? 'inquiries' : 'projects', task = clone(b.task || {}); if (!task.id) task.id = uid();
+    ops = [{coll, id: b.parentId, fn: r => { r.tasks = r.tasks || []; if (!r.tasks.some(t => t.id === task.id)) r.tasks.push(clone(task)); }}, {coll:'bin', remove: id}];
+    undo = [{coll, id: b.parentId, fn: r => { r.tasks = (r.tasks || []).filter(t => t.id !== task.id); }}, {coll:'bin', add: entry, at:'end'}];
+  } else {
+    const coll = BIN_KIND[b.kind].coll, item = clone(b.item);
+    ops = [{coll, add: item, at:'start'}, {coll:'bin', remove: id}];
+    undo = [{coll, remove: item.id}, {coll:'bin', add: entry, at:'end'}];
+  }
+  mutate(ops);
+  changelog({type:'update', icon:'refresh', text:`Restored from the recycle bin: ${strong(nm)}`, section: BIN_KIND[b.kind].g});
+  toast(`Restored “${esc(nm)}”`, {icon:'refresh', undo: () => mutate(undo)});
+}
+/* delete for good: first tap arms the button, a second tap within 3 seconds deletes (Undo still offered) */
+function wipeBin(id, btn){
+  const b = (DB.data.bin || []).find(x => x.id === id); if (!b) return;
+  if (btn && !btn.classList.contains('armed')){ btn.classList.add('armed'); btn.textContent = 'Delete forever'; clearTimeout(btn._t);
+    btn._t = setTimeout(() => { if (btn.isConnected){ btn.classList.remove('armed'); btn.innerHTML = ico('trash',16); } }, 3000); return; }
+  const entry = clone(b);
+  mutate([{coll:'bin', remove: id}]);
+  changelog({type:'delete', icon:'trash', text:`Deleted for good: ${strong(binName(b))}`, section:'bin'});
+  toast(`Deleted “${esc(binName(b))}” for good`, {icon:'trash', undo: () => mutate([{coll:'bin', add: entry, at:'end'}])});
+}
+function emptyBin(btn){
+  const all = DB.data.bin || []; if (!all.length || !isLead()) return;
+  if (!btn.classList.contains('armed')){ btn.classList.add('armed'); btn.textContent = `Delete all ${all.length} for good`; clearTimeout(btn._t);
+    btn._t = setTimeout(() => { if (btn.isConnected){ btn.classList.remove('armed'); btn.innerHTML = ico('trash',15) + ' Empty bin'; } }, 3500); return; }
+  const copies = clone(all);
+  mutate(copies.map(b => ({coll:'bin', remove: b.id})));
+  changelog({type:'delete', icon:'trash', text:`Emptied the recycle bin (${copies.length} item${copies.length === 1 ? '' : 's'})`, section:'bin'});
+  toast(`Emptied the recycle bin`, {icon:'trash', undo: () => mutate(copies.map(b => ({coll:'bin', add: b, at:'end'})))});
+}
+
+/* ── Export: an Excel workbook (SheetJS, loaded on first use) and a full JSON backup of everything ── */
+let XLSX_P = null;
+function loadXLSX(){
+  return XLSX_P = XLSX_P || new Promise((res, rej) => { if (window.XLSX) return res(window.XLSX);
+    const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    sc.onload = () => window.XLSX ? res(window.XLSX) : rej(new Error('no XLSX')); sc.onerror = () => { XLSX_P = null; rej(new Error('load')); }; document.head.appendChild(sc); });
+}
+function xlDate(v){ const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : (v || ''); }
+function exportSheets(){
+  const d = DB.data, D = xlDate, yes = v => v ? 'Yes' : '', links = ls => (ls || []).map(l => l.label ? `${l.label}: ${l.url}` : l.url).join('\n');
+  const taskSt = t => t.done ? 'Done' : (TASK_ST.find(x => x[0] === t.status) || [0, ''])[1];
+  const pipe = (p, k) => (p && p[k]) || {};
+  return [
+    ['Inquiries', ['Code','Name','Customer','Factory','BD person','BD #','Received','Type','Priority','Status','SLA','Ball with','Outcome','Material','Remark',
+      'Mold inquiry','Mold inquiry remark','Mold inquiry date','Costing','Costing remark','Costing date','Price submission','Price submission remark','Price submission date','Tasks done','Tasks total','Links'],
+      d.inquiries.map(i => { const mi = pipe(i.pipeline,'moldInquiry'), co = pipe(i.pipeline,'costing'), pr = pipe(i.pipeline,'priceSubmission');
+        return [i.code||'', i.name||'', i.customer||'', facOf(i)||'', i.bdPerson||'', i.bdNum||'', D(i.date), i.type||'', PRIO_LABEL[prioKey(i.priority)]||'', (INQ_ST.find(x => x[0] === String(i.status||'').toUpperCase()) || [0, i.status||''])[1],
+          inqStateLabel(i).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2'), BALL_LABELS[i.ballWith]||'', OUTCOME_LABELS[i.outcome]||'', i.material||'', i.remark||'',
+          mi.status||'', mi.remark||'', D(mi.date), co.status||'', co.remark||'', D(co.date), pr.status||'', pr.remark||'', D(pr.date),
+          (i.tasks||[]).filter(t => t.done).length, (i.tasks||[]).length, links(i.links)]; })],
+    ['Inquiry tasks', ['Code','Inquiry','Task','PIC','Deadline','Status','Completed'],
+      d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt)]))],
+    ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed'],
+      d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt)]))],
+    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links'],
+      d.projects.map(p => { const ss = [...(p.subStatuses||[])].sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1)[0];
+        return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), HEALTH_LABEL[projHealth(p)]||'',
+          D(p.date), D(p.deliveryDate), BALL_LABELS[p.ballWith]||'', p.kiv ? (p.kivComment || 'Yes') : '', p.brief||'',
+          (p.tasks||[]).filter(t => t.done).length, (p.tasks||[]).length, projPct(p), (p.pics||[]).map(x => x.name + (x.role ? ` (${x.role})` : '')).join(', '),
+          ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links)]; })],
+    ['Project actions', ['Project code','Project','Factory','Action','PIC','Deadline','Status','Completed'],
+      d.projects.flatMap(p => (p.tasks||[]).map(t => [p.code||'', p.name||'', facOf(p)||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt)]))],
+    ['Milestones', ['Project code','Project','Milestone','Category','Date','Status','Note'],
+      d.projects.flatMap(p => (p.milestones||[]).map(m => [p.code||'', p.name||'', m.title||'', m.category||'', D(m.date), (MS_ST.find(x => x[0] === m.status) || [0, m.status||''])[1], m.note||'']))],
+    ['Updates', ['Project code','Project','Update','Status','Date','Note'],
+      d.projects.flatMap(p => (p.subStatuses||[]).map(u => [p.code||'', p.name||'', u.title||'', (SS_ST.find(x => x[0] === u.status) || [0, u.status||''])[1], D(u.date), u.note||'']))],
+    ['People', ['Project code','Project','Name','Role'], d.projects.flatMap(p => (p.pics||[]).map(x => [p.code||'', p.name||'', x.name||'', x.role||'']))],
+    ['Tasks', ['Task','Owner','Category','Priority','Status','Due','Chase on','Description','Completed','Archived'],
+      (d.mtasks||[]).map(t => [t.title||'', t.owner||'', (MT_CATS.find(x => x[0] === t.category) || [0, t.category||''])[1], (MT_PRIO.find(x => x[0] === t.priority) || [0, t.priority||''])[1],
+        (TASK_ST.find(x => x[0] === t.status) || [0, t.status||''])[1], D(t.deadline), D(t.reminder), t.description||'', D(t.completedAt), yes(t.archived)])],
+  ];
+}
+async function exportExcel(){
+  if (!DB.data) return;
+  toast('Preparing the Excel file…', {icon:'file'});
+  let X; try { X = await loadXLSX(); } catch(e){ toast('Could not load the Excel tool. Check your connection and try again.', {icon:'x'}); return; }
+  const wb = X.utils.book_new(), sheets = exportSheets();
+  sheets.forEach(([name, head, rows]) => {
+    const ws = X.utils.aoa_to_sheet([head, ...rows], {cellDates: true, dateNF: 'dd mmm yyyy'});
+    ws['!cols'] = head.map((h, c) => ({ wch: Math.min(60, Math.max(h.length, ...rows.slice(0, 300).map(r => r[c] instanceof Date ? 11 : String(r[c] == null ? '' : r[c]).split('\n')[0].length)) + 2) }));
+    if (ws['!ref']) ws['!autofilter'] = { ref: ws['!ref'] };
+    X.utils.book_append_sheet(wb, ws, name);
+  });
+  X.writeFile(wb, `NPD_Tracker_${todayStr()}.xlsx`, {compression: true});
+  toast(`Exported ${DB.data.inquiries.length} inquiries, ${DB.data.projects.length} projects and ${(DB.data.mtasks||[]).length} tasks to Excel`, {icon:'check'});
+}
+function exportBackup(){
+  if (!DB.data) return;
+  const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), exportedBy: meName(), sheetSavedAt: DB.ts || '', data: DB.data }, null, 1)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `NPD_Tracker_Backup_${todayStr()}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast('Backup downloaded: everything, including the recycle bin', {icon:'check'});
+}
+
 /* ── Notifications ── */
 let NOTI = [];
 function pageNotifications(){
@@ -3294,7 +3452,7 @@ function pageStyles(){
 }
 
 /* ══════════ RENDER + NAVIGATION ══════════ */
-const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles'];
+const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles','bin'];
 function render(opts = {}){
   const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
@@ -3303,7 +3461,7 @@ function render(opts = {}){
   $('#topx').innerHTML = !DB.data ? '' : S.page === 'dashboard' ? (inqOn() ? segHTML('rseg', Object.entries(RANGE), S.range) : '')
     : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'tasks' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
-  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, tasks: pageTasks, notifications: pageNotifications, styles: pageStyles })[S.page]();
+  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, tasks: pageTasks, notifications: pageNotifications, styles: pageStyles, bin: pageBin })[S.page]();
   if (!opts.keep) v.scrollTop = 0;
   if (aeId === 'q'){ const q = $('#q'); if (q){ q.focus(); try { q.setSelectionRange(sel, sel); } catch(e){} } }
   hydrateIcons(v); counts(); moveNav(!opts.keep);
@@ -3962,8 +4120,8 @@ document.addEventListener('pointerup', swipeEnd); document.addEventListener('poi
 let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
-  const pages = ORDER.filter(p => p !== 'styles' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
-  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
+  const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
+  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
@@ -3991,6 +4149,8 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
+  <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx">${ico('file',15)} Export to Excel</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
+    <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
 const SL_IC = { solid:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   clear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
@@ -4180,6 +4340,8 @@ document.addEventListener('click', e => {
   const t = e.target;
   if (t.closest('#form')) return;
   const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
+  const br = t.closest('[data-binrestore]'); if (br){ restoreBin(br.dataset.binrestore); return; }
+  const bw = t.closest('[data-binwipe]'); if (bw){ wipeBin(bw.dataset.binwipe, bw); return; }
   const nad = t.closest('[data-na]'); if (nad){ toggleNA(nad.dataset.na, nad.dataset.done === '1', nad); return; }
   const mt = t.closest('[data-mt]'); if (mt){ toggleMT(mt.dataset.mt, mt.dataset.done === '1', mt); return; }
   const ms = t.closest('[data-mtsel]'); if (ms){ const id = ms.dataset.mtsel; S.tsel.has(id) ? S.tsel.delete(id) : S.tsel.add(id); refresh(); return; }
@@ -4220,6 +4382,7 @@ document.addEventListener('click', e => {
       vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
     else if (seg.id === 'motionseg'){ S.motion = v; store.set('npd2-motion', v); applyPrefs(); toast(`Motion: ${sb.textContent}`, {icon:'spark'}); }
+    else if (seg.id === 'binseg'){ S.binf = v; const from = indNow(seg); vt(() => { refresh(); slideInd('binseg', from); }, 'list'); }
     else if (seg.id === 'matseg'){ S.mat = v; store.set('npd2-mat', v); applyPrefs(); }
     return; }
   const a = t.closest('[data-act]'); if (a){ const act = a.dataset.act;
@@ -4227,6 +4390,10 @@ document.addEventListener('click', e => {
     else if (act === 'settings'){ $('#pop').classList.contains('open') ? closePop() : openPop(a); }
     else if (act === 'shelf'){ $('#shelf').classList.contains('open') ? closeShelf() : openShelf(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
+    else if (act === 'open-bin'){ closePop(); go('bin'); }
+    else if (act === 'export-xlsx'){ closePop(); exportExcel(); }
+    else if (act === 'export-json'){ closePop(); exportBackup(); }
+    else if (act === 'bin-empty'){ emptyBin(a); }
     else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();
       const ms = $('#matseg'); if (ms){ $$('button', ms).forEach(b => b.classList.toggle('on', b.dataset.v === 'thin')); placeInd(ms, true); } }
     else if (act === 'dismiss-banner'){ BANNER_TODAY = false; const b = $('.dbanner'); if (b){ b.style.height = b.offsetHeight + 'px'; b.classList.add('collapse'); setTimeout(() => refresh(), 260); } }
@@ -4260,6 +4427,7 @@ document.addEventListener('keydown', e => {
 });
 $('#scrim').addEventListener('click', closeSheet);
 $('#fscrim').addEventListener('click', () => closeForm());
+document.addEventListener('input', e => { if (e.target.id === 'binq'){ S.binq = e.target.value; clearTimeout(S._bq); S._bq = setTimeout(() => { const l = $('#binlist'); if (l) l.innerHTML = binList(); }, 140); return; } });
 document.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; clearTimeout(S._qt); S._qt = setTimeout(() => vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'), 160); } });
 addEventListener('resize', () => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); wireScroll(); });
 $('#totop').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>`;

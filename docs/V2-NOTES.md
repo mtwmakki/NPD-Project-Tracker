@@ -61,8 +61,14 @@ Every date is picked from V2's own calendar (never the phone's or Windows' date 
 on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next
 Monday. Optional dates have a small × to clear them.
 
-Deletes go to the recycle bin (`data.bin`, same format V1 used) and every delete has an Undo; V2 has no bin
-page yet, so after the Undo is gone a restore means editing the Sheet.
+Deletes go to the recycle bin (`data.bin`, same format V1 used) and every delete has an Undo.
+Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists everything deleted, newest first, with
+filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its
+project or inquiry; if that was deleted too, restore it first). Delete forever needs a second tap within 3 s;
+managers and the master can empty the whole bin. Restores and deletes are logged and offer Undo.
+Settings → Data → Export to Excel downloads a workbook (inquiries, inquiry tasks, next actions, projects, project
+actions, milestones, updates, people, personal tasks; real dates, filters on every sheet). The Excel tool (SheetJS
+0.18.5) loads from jsDelivr the first time. Backup downloads everything as JSON, including the bin.
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

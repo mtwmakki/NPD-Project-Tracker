@@ -60,7 +60,12 @@ The full playbook with a live specimen is `docs/liquid-glass-playbook.html`. Wha
   Shine in three layers: gradient rim (::before, light .95 → .10 → .55, dark .42 → .05 → .16), top sheen + pointer glint
   (::after, soft-light; the glint follows the pointer via --mx / --my), inner specular lines in the shadow.
   Shadow 0 8px 32px rgba(0,0,0,.12) + inset 0 1px 1px rgba(255,255,255,.6) (dark .45 / .28).
-- Content: thin frosted material, light rgba(255,255,255,.72) / dark rgba(28,28,30,.70), blur(30px) saturate(150%).
+- Content: thin frosted material, light rgba(255,255,255,.72) / dark rgba(28,28,30,.70), blur(12px) saturate(150%).
+  (12px instead of 30: only the page's already-blurred grey sits behind cards, so it looks the same for far less work.)
+- Performance, with the animations unchanged: forward / back page changes use the light slide on #view instead of a
+  view transition (a view transition first snapshots the whole page); opening a project card keeps its view transition.
+  Blur-ins clear by 40% of their animation, and animating pages and cards get a GPU layer (will-change) that is dropped
+  when the animation ends.
 - Backdrop: neutral grey page #D9DBE0 / #0A0A0C with soft grey light and shade, no colour (light was #E8E9ED in the playbook;
   made greyer after review so the glass stands out).
 - Settings → Glass (Liquid Glass style only): Transparency 0-100% (70 default) and Blur 0-40px (24 default) sliders, and

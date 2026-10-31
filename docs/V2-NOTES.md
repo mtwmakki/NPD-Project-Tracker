@@ -134,7 +134,8 @@ Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists every
 filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its
 project or inquiry; if that was deleted too, restore it first). Delete forever needs a second tap within 3 s;
 managers and the master can empty the whole bin. Restores and deletes are logged and offer Undo.
-Settings → Data → Excel · all data (or Ctrl K "Export everything to Excel") downloads the whole database as one
+Settings → Data → Excel · all data (or Ctrl K "Export everything to Excel"; master and managers only, like Backup, since it
+holds everyone's personal tasks and the bin — members get the PDF reports) downloads the whole database as one
 formatted workbook, every field of every record: Inquiries (plus computed SLA and estimated value), Inquiry tasks,
 Inquiry next actions, Inquiry products, Inquiry history, Projects (plus Health and Progress %), Project actions,
 Milestones, Updates, People, Project history, Personal tasks, Tags, Recycle bin (with each saved record as JSON), and

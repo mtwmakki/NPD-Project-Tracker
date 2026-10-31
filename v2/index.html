@@ -3930,8 +3930,9 @@ function xlTone(sheet, h, v, row, H, today){
   }
   return '';
 }
+const leadOnly = () => { if (isLead()) return true; toast('Only the master and managers can export all data', {icon:'x'}); return false; };   // members get the PDF reports
 async function exportExcel(){
-  if (!DB.data) return;
+  if (!DB.data || !leadOnly()) return;
   toast('Preparing the Excel file…', {icon:'file'});
   let XL; try { XL = await loadExcelJS(); } catch(e){ toast('Could not load the Excel tool. Check your connection and try again.', {icon:'x'}); return; }
   const wb = new XL.Workbook(), today = xlDate(todayStr()); wb.creator = meName(); wb.created = new Date();
@@ -3953,7 +3954,7 @@ async function exportExcel(){
   toast(`Exported ${DB.data.inquiries.length} inquiries, ${DB.data.projects.length} projects and ${(DB.data.mtasks||[]).length} tasks to Excel`, {icon:'check'});
 }
 function exportBackup(){
-  if (!DB.data) return;
+  if (!DB.data || !leadOnly()) return;
   const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), exportedBy: meName(), sheetSavedAt: DB.ts || '', data: DB.data }, null, 1)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `NPD_Tracker_Backup_${todayStr()}.json`;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
@@ -4834,7 +4835,7 @@ let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
   const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',work:'work'}[p]}));
-  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export everything to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Projects report (PDF)', run:() => exportPDF('projects'), ic:'file'},...(inqOn() ? [{g:'Actions', t:'Inquiries report (PDF)', run:() => exportPDF('inquiries'), ic:'file'}] : []),{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
+  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},...(isLead() ? [{g:'Actions', t:'Export everything to Excel', run:() => exportExcel(), ic:'file'}] : []),{g:'Actions', t:'Projects report (PDF)', run:() => exportPDF('projects'), ic:'file'},...(inqOn() ? [{g:'Actions', t:'Inquiries report (PDF)', run:() => exportPDF('inquiries'), ic:'file'}] : []),...(isLead() ? [{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'}] : []),{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
@@ -4862,8 +4863,8 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
-  <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
-    <button class="btn" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
+  <div><h4>Data</h4><div class="pop-data">${isLead() ? `<button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>` : ''}
+    <button class="btn${inqOn() ? '' : ' wide'}" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
   ${DB.data ? tagsPopHTML() : ''}
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }

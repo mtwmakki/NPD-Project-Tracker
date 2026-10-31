@@ -51,7 +51,22 @@ Present mode shows the TPAC logo.
   whichever reads), Done bars green, late work outlined red, milestones as diamonds, a red Today pill, month + week
   header, a tooltip on every bar, a 10px inset so a first-day milestone isn't cut. Legend under the plan.
 
+## Phase 3 (done): customer status page and Present
+- Status-only projects get a new on-screen page (`stScreenHTML`, `.sv2`); the 1-page status PDF (`statusPagerHTML`)
+  and the timeline dashboard still use the older builders, so customer printouts don't change.
+- Summary card: health chip (click to change), "Updated …" and "since the last meeting", 24px name, a summary for
+  the customer, the 7 stage gates (click a gate to set it).
+- Meetings and dates: last meeting, next meeting and decision needed by on the shared calendar, with "in 2 days";
+  the decision date turns amber within 3 days and red when passed; target launch as text.
+- Needed from <customer>: Decision / Info tag (click to switch), what's needed, who, asked date, due date on the
+  calendar and a chip: "N days late", "Due Tue 3 Nov" (amber within 3 days) or "Open · waiting N days"; a count
+  in the card header.
+- What TPAC has done: everything, newest first. What TPAC will do next: owner avatar, date, the circle moves it to
+  done. Other notes when there are any. New tags mark items added since the last meeting.
+- Toolbar (status-only projects): Start a timeline, undo, redo, Start next cycle (after a meeting), Project settings.
+- The date picker is shared (`gvDpShow`): tasks, meetings, asks and lists all use it.
+- Present: the same page read-only, with the TPAC logo; no inputs or add buttons.
+
 ## Next phases
-3. Customer status page and Present mode.
 4. Dashboard: four tiles, task bar, stage gates with remarks.
 Later: phone layout.

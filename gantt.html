@@ -1127,6 +1127,113 @@ body,body.dark{background:transparent!important;color:var(--tx)}
 @media (max-width:760px){ .gv-legend{margin:-4px 12px 12px} }
 @media (prefers-reduced-motion: reduce){ #gvTbl *{transition:none!important} }
 </style>
+<!-- ═══ Phase 3 (Oct 2026): the customer status page on screen, in V2's style (the 1-page PDF keeps its TPAC layout). ═══ -->
+<style id="v2status">
+.gv-statusonly{display:none!important}
+body[data-kind=status] .gv-statusonly{display:inline-flex!important}
+.tb-btn[disabled]{opacity:.45;cursor:default}
+#statusView{padding:4px 24px 32px!important}
+.sv2{max-width:1240px;margin:0 auto;display:grid;gap:16px;font:400 14px/20px var(--fb);color:var(--tx)}
+.sv-card{background:var(--surf-solid);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);min-width:0}
+.sv-top{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+.sv-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.sv-banner{padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surf-solid));color:color-mix(in srgb,var(--warn) 50%,var(--tx));font-size:13px}
+/* summary */
+.sv-sum{padding:20px 24px 22px;display:grid;gap:12px}
+.sv-eye{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--mu)}
+.sv-health{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px 0 9px;border-radius:14px;border:0;font:600 13px/1 var(--fb);white-space:nowrap}
+button.sv-health{cursor:pointer}
+.sv-health .gi{width:15px;height:15px;flex:none}
+.sv-health .gi.cv{width:13px;height:13px;opacity:.6;margin-right:-3px}
+.sv-health.ok{background:color-mix(in srgb,var(--ok) 17%,transparent);color:color-mix(in srgb,var(--ok) 52%,var(--tx))}
+.sv-health.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+.sv-health.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:color-mix(in srgb,var(--bad) 52%,var(--tx))}
+.sv-health.hold{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+.sv-name{margin:0;font-family:var(--fd)!important;font-weight:var(--h-w);letter-spacing:var(--h-ls);font-size:24px;line-height:32px;color:var(--tx)}
+.sv-head{margin:0;font-size:15px;line-height:22px;color:var(--tx);max-width:68ch}
+textarea.sv-head{width:100%;max-width:none;min-height:48px;resize:vertical;border:1px solid transparent!important;background:transparent!important;border-radius:10px!important;padding:6px 8px;margin:-6px -8px;font:400 15px/22px var(--fb)!important;color:var(--tx)!important}
+textarea.sv-head:hover{border-color:var(--line-2)!important}
+textarea.sv-head:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+.sv-steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
+.sv-steps i{height:6px;border-radius:3px;background:var(--track)}
+.sv-steps i.d{background:var(--ac)} .sv-steps i.c{background:var(--ac);box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 28%,transparent)}
+.sv-gl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.sv-gl>*{font:400 12px/16px var(--fb);color:var(--mu);text-align:left;padding:2px 0;background:none;border:0;min-width:0;overflow-wrap:anywhere}
+.sv-gl>.c{color:var(--tx);font-weight:600}
+.sv-gl button{cursor:pointer;border-radius:6px}
+.sv-gl button:hover{color:var(--tx);text-decoration:underline;text-underline-offset:3px}
+/* meetings and dates */
+.sv-dates{padding:14px 20px 8px}
+.sv-ch{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 0 6px}
+.sv-ch h3{margin:0;display:flex;align-items:center;gap:8px;font:600 16px/22px var(--fb);color:var(--tx)}
+.sv-ch h3 .gi{width:18px;height:18px;color:var(--mu)}
+.sv-cm{font:400 13px/16px var(--fb);color:var(--mu);white-space:nowrap}
+.sv-kv{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:48px;border-top:1px solid var(--line)}
+.sv-kv .k{color:var(--mu);font-size:14px}
+.sv-kv .v{text-align:right;font-weight:600;font-size:14px;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.sv-kv .v small{font:400 12px/16px var(--fb);color:var(--mu)}
+.sv-kv.warn .v small{color:color-mix(in srgb,var(--warn) 55%,var(--tx));font-weight:600}
+.sv-kv.bad .v small{color:color-mix(in srgb,var(--bad) 55%,var(--tx));font-weight:600}
+/* inputs, date buttons, chips */
+.sv-in{width:100%;min-width:0;height:30px;border:1px solid transparent!important;background:transparent!important;border-radius:8px!important;padding:0 8px;margin-left:-8px;font:400 14px/20px var(--fb)!important;color:var(--tx)!important}
+.sv-in::placeholder{color:var(--mu);opacity:.85}
+.sv-in:hover{border-color:var(--line-2)!important}
+.sv-in:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+.sv-in.t{font-weight:500!important}
+.sv-in.s{height:26px;font-size:13px!important;color:var(--mu)!important;max-width:220px}
+.sv-in.r{text-align:right;width:140px;margin:0 -8px 0 0}
+.sv-date{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:15px;border:1px solid var(--line-2);background:transparent;color:var(--tx);font:500 13px/1 var(--fb);font-variant-numeric:tabular-nums;cursor:pointer;white-space:nowrap}
+.sv-date .gi{width:14px;height:14px;color:var(--mu)}
+.sv-date:hover,.sv-date.open{border-color:var(--ac);background:var(--surf-solid)}
+.sv-date.open{box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+.sv-date.none{color:var(--mu);border-style:dashed}
+.sv-chip{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 8px;border-radius:13px;font:600 12.5px/1 var(--fb);white-space:nowrap}
+.sv-chip .gi{width:14px;height:14px}
+.sv-chip.sm{height:22px;padding:0 9px;font-size:12px}
+.sv-chip.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:color-mix(in srgb,var(--bad) 52%,var(--tx))}
+.sv-chip.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+.sv-chip.neu{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+.sv-new{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:5px;background:color-mix(in srgb,var(--ac) 15%,transparent);color:color-mix(in srgb,var(--ac) 55%,var(--tx));font:600 10.5px/18px var(--fb);letter-spacing:.03em;text-transform:uppercase;flex:none}
+.sv-tag{display:inline-flex;align-items:center;justify-content:center;height:22px;min-width:66px;padding:0 8px;border-radius:6px;border:0;font:600 11.5px/1 var(--fb);flex:none;margin-top:4px}
+button.sv-tag{cursor:pointer}
+.sv-tag.dec{background:color-mix(in srgb,var(--c2) 18%,transparent);color:color-mix(in srgb,var(--c2) 48%,var(--tx))}
+.sv-tag.inf{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+.sv-add{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px 0 10px;margin-left:auto;border-radius:16px;border:0;background:var(--hover);color:var(--ac);font:600 13px/1 var(--fb);cursor:pointer;white-space:nowrap}
+.sv-add .gi{width:15px;height:15px}
+.sv-add:hover{background:var(--sel)}
+.sv-ch .sv-cm+.sv-add,.sv-ch .sv-chip+.sv-add{margin-left:auto}
+.sv-ch h3+.sv-add{margin-left:auto}
+/* lists */
+.sv-asks,.sv-two .sv-card,.sv2>.sv-card{padding:14px 18px 10px 20px}
+.sv-list{display:grid}
+.sv-row{position:relative;display:flex;align-items:flex-start;gap:12px;padding:10px 0;min-height:56px;border-top:1px solid var(--line)}
+.sv-row>.gv-av{margin-top:3px}
+.sv-main{flex:1;min-width:0;display:grid;gap:2px;align-content:start}
+.sv-main>.t{font-weight:500;font-size:15px;line-height:22px;overflow-wrap:anywhere}
+.sv-sub{display:flex;align-items:center;gap:8px;min-width:0;font-size:13px;line-height:18px;color:var(--mu);flex-wrap:wrap}
+.sv-sub.sv-own .gv-av{width:20px;height:20px;font-size:9.5px}
+.sv-end{display:flex;align-items:center;gap:8px;flex:none;margin-top:1px;flex-wrap:wrap;justify-content:flex-end}
+.sv-dt{font:500 13px/26px var(--fb);color:var(--mu);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sv-ok{width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;flex:none;margin-top:4px}
+.sv-ok .gi{width:13px;height:13px;stroke-width:2.6}
+.sv-ring{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-2);background:transparent;flex:none;margin-top:4px;cursor:pointer;padding:0}
+.sv-ring:hover{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.sv-x,.sv-mv button{width:28px;height:28px;border-radius:8px;border:0;background:transparent;color:var(--mu);display:grid;place-items:center;cursor:pointer;opacity:0;flex:none;margin-top:1px;padding:0}
+.sv-x .gi,.sv-mv .gi{width:15px;height:15px}
+.sv-mv{display:flex;flex:none}
+.sv-row:hover .sv-x,.sv-row:hover .sv-mv button,.sv-row:focus-within .sv-x,.sv-row:focus-within .sv-mv button{opacity:.75}
+.sv-x:hover{opacity:1!important;background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.sv-mv button:hover{opacity:1!important;background:var(--hover);color:var(--tx)}
+.sv-empty{margin:0;padding:10px 0 12px;border-top:1px solid var(--line);color:var(--mu);font-size:14px}
+.sv-notes-add{display:flex}
+.sv-notes-add .sv-add{margin-left:0}
+.sv-hi .sv-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.sv-hi.h-ok .sv-dot{background:var(--ok)} .sv-hi.h-warn .sv-dot{background:var(--warn)} .sv-hi.h-bad .sv-dot{background:var(--bad)} .sv-hi.h-hold .sv-dot{background:var(--mu)}
+/* Present: read-only for the customer meeting (TPAC logo in the header) */
+.sv2.present .sv-row{min-height:52px}
+@media (max-width:980px){ .sv-top,.sv-two{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:760px){ #statusView{padding:4px 12px 24px!important} .sv-sum{padding:16px} .sv-gl{font-size:11px} .sv-row{flex-wrap:wrap} .sv-end{width:100%;justify-content:flex-start;padding-left:34px} .sv-x,.sv-mv button{opacity:.6} }
+</style>
 <script>
 /* follow V2's light / dark (set on <html> by the boot script) when the Gantt opens, and when V2 changes it in another tab */
 document.addEventListener('DOMContentLoaded', function(){
@@ -1211,12 +1318,14 @@ window.addEventListener('storage', function(e){
     <div class="gv-toolbar">
       <span class="tb-seg gv-ganttonly" id="dashToggleBtn" role="group" aria-label="View"><button type="button" id="vwGantt" class="on" onclick="setGanttView(false)">Gantt</button><button type="button" id="vwDash" onclick="setGanttView(true)">Dashboard</button></span>
       <span class="tb-seg tb-mode gv-ganttonly" role="group" aria-label="Plan or actual dates" title="Plan: edit the planned dates. Actual: record what really happened."><button type="button" id="tbModeBase" class="on" onclick="setMode('baseline')">Plan</button><button type="button" id="tbModeAct" onclick="setMode('actual')">Actual</button></span>
+      <button type="button" class="tb-btn gv-statusonly" onclick="startTimeline()" title="Turn this project into a Gantt timeline from the stage-gate template"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="l">Start a timeline</span></button>
       <button type="button" class="tb-ic gv-undo" id="gvUndoBtn" onclick="undo()" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
       <button type="button" class="tb-ic gv-undo" id="gvRedoBtn" onclick="redo()" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
       <span class="tb-grow"></span>
       <span id="gvMeta" hidden></span>
       <button type="button" class="tb-btn gh gv-ganttonly" id="gvTodayBtn" onclick="gvScrollToday()" title="Scroll the timeline to today" aria-label="Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></svg><span class="l">Today</span></button>
       <span class="tb-seg zctrl gv-ganttonly" id="gvScale" role="group" aria-label="Timeline scale"><button type="button" id="gvScaleW" class="on" onclick="setChartScale('weeks')">Weeks</button><button type="button" id="gvScaleM" onclick="setChartScale('months')">Months</button></span>
+      <button type="button" class="tb-btn gh gv-statusonly" id="gvNextCycle" onclick="stNextCycle()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></svg><span class="l">Start next cycle</span></button>
       <span class="v3dd gv-colbtn"><button type="button" class="tb-btn" id="gvGearBtn" onclick="openSettings()" title="Project name, dates, phases and logo" aria-label="Project settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="l">Project settings</span></button>
         <div class="gv-colmenu" id="gvColMenu"></div>
       </span>
@@ -1846,15 +1955,131 @@ function stEnsureCss(){
   if(document.getElementById('stCss')) return;
   var s=document.createElement('style'); s.id='stCss'; s.textContent=ST_CSS; document.head.appendChild(s);
 }
+/* ── Customer status page on screen (Phase 3, Oct 2026), in V2's style. Edit and Present share this markup;
+   Present is read-only. The 1-page PDF (statusPagerHTML) and the timeline dashboard keep the older builders above,
+   so customer printouts don't change. Edits go through the same st* actions. ── */
+var SV_I={check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',x:'<path d="M7 7l10 10M17 7L7 17"/>',up:'<path d="M12 19V5M6 11l6-6 6 6"/>',down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  cal:'<rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'};
+function svDays(iso,today){ var a=stDayNum(iso), b=stDayNum(today); return (isNaN(a)||isNaN(b))?null:Math.round(a-b); }
+function svRel(n){ if(n==null) return ''; if(n===0) return 'today'; if(n===1) return 'tomorrow'; if(n===-1) return 'yesterday'; return n>0?'in '+n+' days':Math.abs(n)+' days ago'; }
+function svDayLong(iso){ var d=parseDateLocal(iso); return d?gvDayLong(d):''; }
+/* a date that opens the shared calendar; tgt says what it sets: 'meeting', 'decision' or [list, id, field] */
+function svDateBtn(iso,tgt,opts){
+  opts=opts||{};
+  var data=Array.isArray(tgt)?' data-tgt="item" data-list="'+tgt[0]+'" data-id="'+gvEsc(tgt[1])+'" data-field="'+tgt[2]+'"':' data-tgt="'+tgt+'"';
+  return '<button type="button" class="sv-date'+(iso?'':' none')+(opts.cls?' '+opts.cls:'')+'"'+data+' data-iso="'+gvEsc(iso||'')+'" data-kind="'+(opts.kind||'due')+'"'+(opts.clear?' data-clear="1"':'')
+    +' aria-label="'+gvEsc((opts.label||'Date')+': '+(iso?svDayLong(iso):'not set')+'. Change')+'" onclick="event.stopPropagation();svPickDate(this)">'
+    +gvIco('sv_cal')+'<span>'+(iso?gvDay(parseDateLocal(iso)):(opts.ph||'Add date'))+'</span></button>';
+}
+function svPickDate(btn){
+  var ds=btn.dataset, iso=ds.iso||'';
+  var run=function(v){ if(ds.tgt==='meeting') svSetMeeting(v); else if(ds.tgt==='decision') svSetDecision(v); else svSetItemDate(ds.list,ds.id,ds.field,v); };
+  gvDpShow(btn,iso,{quick:gvDpQuick(ds.kind==='start'?'start':'due',parseDateLocal(iso)||null),clear:ds.clear==='1'&&iso?{label:'Clear',fn:function(){ run(''); }}:null,onPick:run});
+}
+/* setters used by the date buttons (dates re-draw the page, text keeps focus while typing) */
+function svSetItemDate(list,id,field,v){ stSet(list,id,field,v); stStructural(); }
+function svSetMeeting(v){ bookSetMeeting(v,true); renderBookBar(); renderStatusPage(); }
+function svSetDecision(v){ stSetField('keyDates.decisionBy',v); renderStatusPage(); }
+function svAskType(id){ var f=stFind('asks',id); if(!f) return; stSet('asks',id,'type',f.item.type==='decision'?'info':'decision'); }
+function svHealthOpen(ev,btn){
+  ev.stopPropagation(); var ctx=stCtx(), cur=curStatus.health, m=gvPop('svHealth','gv-stmenu'), h='<div class="v3lab">How is it going?</div>';
+  Object.keys(ST_HEALTH).forEach(function(k){ var c=ST_HEALTH[k].color;
+    h+='<button type="button" class="sv-hi h-'+(c==='ok'||c==='warn'||c==='bad'?c:'hold')+(k===cur?' cur':'')+'" onclick="v3CloseMenus();stSetField(\'health\',\''+k+'\')"><i class="sv-dot"></i><span>'+gvEsc(stHealthLabel(k,ctx.customer))+'</span></button>'; });
+  m.innerHTML=h; gvPopAt(m,btn); var f=m.querySelector('.cur')||m.querySelector('button'); if(f) f.focus({preventScroll:true});
+}
+function svHealthTone(k){ var c=(ST_HEALTH[k]||ST_HEALTH.ontrack).color; return c==='ok'||c==='warn'||c==='bad'?c:'hold'; }
+function svHealthIcon(t){ return t==='ok'?'st5':t==='warn'?'sv_clock':t==='bad'?'st4':'st1'; }
+
+function stScreenHTML(status,ctx){
+  var ed=ctx.mode==='edit', cust=String(ctx.customer||'').trim()||'the customer', today=ctx.today, lm=ctx.lastMeeting||'';
+  var NEW='<span class="sv-new" title="Added since the last meeting">New</span>';
+  var hk=ST_HEALTH[status.health]?status.health:'ontrack', ht=svHealthTone(hk), hl=stHealthLabel(hk,ctx.customer);
+  /* summary card */
+  var since=[]; if(status.updatedAt) since.push('Updated '+svDayLong(status.updatedAt));
+  if(lm){ var sc=stSince(status,lm); since.push('since the last meeting: '+sc.done+' done, '+sc.newAsks+' new ask'+(sc.newAsks===1?'':'s')); }
+  var chip=ed?'<button type="button" class="sv-health '+ht+'" aria-label="Health: '+gvEsc(hl)+'. Change" onclick="svHealthOpen(event,this)">'+gvIco(svHealthIcon(ht))+'<span>'+gvEsc(hl)+'</span>'+gvIco('chev','gi cv')+'</button>'
+             :'<span class="sv-health '+ht+'">'+gvIco(svHealthIcon(ht))+'<span>'+gvEsc(hl)+'</span></span>';
+  var gi=0; ST_GATES.forEach(function(g,i){ if(g.k===status.gate) gi=i; });
+  var steps=ST_GATES.map(function(g,i){ return '<i class="'+(i<gi?'d':i===gi?'c':'')+'"></i>'; }).join('');
+  var gl=ST_GATES.map(function(g,i){ var lbl=gvEsc(g.label.replace(' · Concept',''));
+    return ed?'<button type="button" class="'+(i===gi?'c':'')+'" aria-pressed="'+(i===gi)+'" title="Set the current stage to '+gvEsc(g.label)+'" onclick="stSetField(\'gate\',\''+g.k+'\')">'+lbl+'</button>':'<span class="'+(i===gi?'c':'')+'">'+lbl+'</span>'; }).join('');
+  var head=ed?'<textarea class="sv-head" data-f="headline" rows="2" placeholder="One or two sentences for '+gvEsc(cust)+': where things stand and what happens next" aria-label="Summary for the customer" oninput="stSetField(\'headline\',this.value)">'+gvEsc(status.headline||'')+'</textarea>'
+             :(status.headline?'<p class="sv-head">'+gvEsc(status.headline)+'</p>':'');
+  var summary='<section class="sv-card sv-sum"><div class="sv-eye">'+chip+(since.length?'<span>'+gvEsc(since.join(' · '))+'</span>':'')+'</div>'
+    +'<h2 class="sv-name">'+gvEsc(ctx.project||'Untitled project')+'</h2>'+head
+    +'<div class="sv-steps" aria-hidden="true">'+steps+'</div><div class="sv-gl" role="group" aria-label="Stage gates">'+gl+'</div></section>';
+  /* meetings and dates */
+  var kd=status.keyDates||{}, nd=svDays(ctx.nextMeeting,today), dd=svDays(kd.decisionBy,today);
+  var kv=function(k,v,sub,cls){ return '<div class="sv-kv'+(cls?' '+cls:'')+'"><span class="k">'+k+'</span><span class="v">'+v+(sub?'<small>'+sub+'</small>':'')+'</span></div>'; };
+  var dates='<section class="sv-card sv-dates"><div class="sv-ch"><h3>'+gvIco('sv_cal')+'Meetings and dates</h3></div>'
+    +(lm?kv('Last meeting',svDayLong(lm),svRel(svDays(lm,today))):'')
+    +kv('Next meeting',ed?svDateBtn(ctx.nextMeeting,'meeting',{label:'Next meeting',kind:'start',clear:true,ph:'Set a date'}):(ctx.nextMeeting?svDayLong(ctx.nextMeeting):'–'),ctx.nextMeeting?svRel(nd):'')
+    +kv('Decision needed by',ed?svDateBtn(kd.decisionBy,'decision',{label:'Decision needed by',clear:true,ph:'Set a date'}):(kd.decisionBy?svDayLong(kd.decisionBy):'–'),kd.decisionBy?svRel(dd):'',dd!=null&&dd<=3?(dd<0?'bad':'warn'):'')
+    +kv('Target launch',ed?'<input class="sv-in r" data-f="keyDates.targetLaunch" placeholder="e.g. Q2 2027" aria-label="Target launch" value="'+gvEsc(kd.targetLaunch||'')+'" oninput="stSetField(\'keyDates.targetLaunch\',this.value)">':(kd.targetLaunch?gvEsc(kd.targetLaunch):'–'))
+    +'</section>';
+  /* needed from the customer: due date and how late */
+  var rows=stAskRows(status.asks,today), late=rows.filter(function(r){ return r.overdue; }).length, soon=rows.filter(function(r){ return r.dueSoon; }).length;
+  var askRow=function(r){
+    var dec=r.type==='decision', n=svDays(r.due,today), chipA;
+    if(r.overdue) chipA='<span class="sv-chip bad">'+gvIco('st4')+Math.abs(n)+' day'+(Math.abs(n)===1?'':'s')+' late</span>';
+    else if(r.due) chipA='<span class="sv-chip '+(r.dueSoon?'warn':'neu')+'">'+gvIco('sv_clock')+(n===0?'Due today':'Due '+svDayLong(r.due))+'</span>';
+    else chipA='<span class="sv-chip neu">'+(r.waitingDays?'Open · waiting '+r.waitingDays+' day'+(r.waitingDays===1?'':'s'):'Open')+'</span>';
+    var sub=[r.added?'Asked '+svDayLong(r.added):'', r.owner&&!ed?'from '+gvEsc(r.owner):''].filter(Boolean).join(' · ');
+    var tag=ed?'<button type="button" class="sv-tag '+(dec?'dec':'inf')+'" title="Click to switch to '+(dec?'Info':'Decision')+'" onclick="svAskType('+stJs(r.id)+')">'+(dec?'Decision':'Info')+'</button>':'<span class="sv-tag '+(dec?'dec':'inf')+'">'+(dec?'Decision':'Info')+'</span>';
+    if(ed) return '<div class="sv-row ask" data-id="'+gvEsc(r.id)+'">'+tag
+      +'<div class="sv-main"><input class="sv-in t" data-f="text" placeholder="What we need from '+gvEsc(cust)+'" aria-label="What we need" value="'+gvEsc(r.text||'')+'" oninput="stSet(\'asks\','+stJs(r.id)+',\'text\',this.value)">'
+      +'<div class="sv-sub"><input class="sv-in s" data-f="owner" placeholder="Who at '+gvEsc(cust)+'" aria-label="Who" value="'+gvEsc(r.owner||'')+'" oninput="stSet(\'asks\','+stJs(r.id)+',\'owner\',this.value)">'+(sub?'<span>'+sub+'</span>':'')+(stIsNew({added:r.added},lm)?NEW:'')+'</div></div>'
+      +'<div class="sv-end">'+svDateBtn(r.due,['asks',r.id,'due'],{label:'Due',clear:true,ph:'Due date'})+chipA+'</div>'
+      +'<button type="button" class="sv-x" title="Remove this ask" aria-label="Remove this ask" onclick="stDel(\'asks\','+stJs(r.id)+')">'+gvIco('sv_x')+'</button></div>';
+    return '<div class="sv-row ask" data-id="'+gvEsc(r.id)+'">'+tag+'<div class="sv-main"><span class="t">'+gvEsc(r.text||'')+'</span>'+(sub||stIsNew({added:r.added},lm)?'<div class="sv-sub">'+(sub?'<span>'+sub+'</span>':'')+(stIsNew({added:r.added},lm)?NEW:'')+'</div>':'')+'</div><div class="sv-end">'+chipA+'</div></div>';
+  };
+  var cnt=rows.length?'<span class="sv-chip '+(late?'bad':soon?'warn':'neu')+' sm">'+rows.length+' open'+(late?' · '+late+' late':'')+'</span>':'';
+  var asks='<section class="sv-card sv-asks'+(rows.length?'':' empty')+'"><div class="sv-ch"><h3>Needed from '+gvEsc(cust)+'</h3>'+cnt
+    +(ed?'<button type="button" class="sv-add" onclick="stAdd(\'asks\')">'+gvIco('plus')+'Add ask</button>':'')+'</div>'
+    +(rows.length?'<div class="sv-list">'+rows.map(askRow).join('')+'</div>':'<p class="sv-empty">Nothing needed from '+gvEsc(cust)+' right now.</p>')+'</section>';
+  /* done: everything, newest first */
+  var done=(Array.isArray(status.done)?status.done:[]).slice().sort(function(a,b){ var x=(b.date||b.added||''), y=(a.date||a.added||''); return x<y?-1:x>y?1:0; });
+  var doneRow=function(d){
+    if(ed) return '<div class="sv-row" data-id="'+gvEsc(d.id)+'"><i class="sv-ok">'+gvIco('sv_check')+'</i><div class="sv-main"><input class="sv-in t" data-f="text" placeholder="What TPAC did" aria-label="What TPAC did" value="'+gvEsc(d.text||'')+'" oninput="stSet(\'done\','+stJs(d.id)+',\'text\',this.value)">'+(stIsNew(d,lm)?'<div class="sv-sub">'+NEW+'</div>':'')+'</div>'
+      +'<div class="sv-end">'+svDateBtn(d.date,['done',d.id,'date'],{label:'Done on',kind:'start'})+'</div>'
+      +'<button type="button" class="sv-x" title="Delete" aria-label="Delete this item" onclick="stDel(\'done\','+stJs(d.id)+')">'+gvIco('sv_x')+'</button></div>';
+    return '<div class="sv-row" data-id="'+gvEsc(d.id)+'"><i class="sv-ok">'+gvIco('sv_check')+'</i><div class="sv-main"><span class="t">'+gvEsc(d.text||'')+'</span>'+(stIsNew(d,lm)?'<div class="sv-sub">'+NEW+'</div>':'')+'</div><div class="sv-end"><span class="sv-dt">'+(d.date?svDayLong(d.date):'')+'</span></div></div>';
+  };
+  var doneCard='<section class="sv-card"><div class="sv-ch"><h3>What TPAC has done</h3><span class="sv-cm">'+(done.length?done.length+' item'+(done.length===1?'':'s')+', newest first':'')+'</span>'
+    +(ed?'<button type="button" class="sv-add" onclick="stAdd(\'done\')">'+gvIco('plus')+'Add</button>':'')+'</div>'
+    +(done.length?'<div class="sv-list">'+done.map(doneRow).join('')+'</div>':'<p class="sv-empty">Nothing recorded yet.</p>')+'</section>';
+  /* next steps: owner + date; the circle marks it done */
+  var nx=Array.isArray(status.next)?status.next:[];
+  var nextRow=function(x,i){
+    var ini=gvInitials(x.pic), av='<span class="gv-av '+(ini?'a'+gvAvTone(x.pic):'none')+'" aria-hidden="true">'+(ini||'+')+'</span>';
+    if(ed) return '<div class="sv-row" data-id="'+gvEsc(x.id)+'"><button type="button" class="sv-ring" title="Mark done: moves it to What TPAC has done" aria-label="Mark done" onclick="stMarkDone('+stJs(x.id)+')"></button>'
+      +'<div class="sv-main"><input class="sv-in t" data-f="text" placeholder="What TPAC will do" aria-label="What TPAC will do" value="'+gvEsc(x.text||'')+'" oninput="stSet(\'next\','+stJs(x.id)+',\'text\',this.value)">'
+      +'<div class="sv-sub sv-own">'+av+'<input class="sv-in s" data-f="pic" placeholder="Owner" aria-label="Owner" value="'+gvEsc(x.pic||'')+'" oninput="stSet(\'next\','+stJs(x.id)+',\'pic\',this.value)">'+(stIsNew({added:x.added},lm)?NEW:'')+'</div></div>'
+      +'<div class="sv-end">'+svDateBtn(x.date,['next',x.id,'date'],{label:'Planned for',clear:true,ph:'When'})+'</div>'
+      +'<span class="sv-mv">'+(i>0?'<button type="button" title="Move up" aria-label="Move up" onclick="stMove(\'next\','+stJs(x.id)+',-1)">'+gvIco('sv_up')+'</button>':'')+(i<nx.length-1?'<button type="button" title="Move down" aria-label="Move down" onclick="stMove(\'next\','+stJs(x.id)+',1)">'+gvIco('sv_down')+'</button>':'')+'</span>'
+      +'<button type="button" class="sv-x" title="Delete" aria-label="Delete this step" onclick="stDel(\'next\','+stJs(x.id)+')">'+gvIco('sv_x')+'</button></div>';
+    return '<div class="sv-row" data-id="'+gvEsc(x.id)+'">'+(ini?av:'<i class="sv-ring" aria-hidden="true"></i>')+'<div class="sv-main"><span class="t">'+gvEsc(x.text||'')+'</span>'+(x.pic||stIsNew({added:x.added},lm)?'<div class="sv-sub">'+(x.pic?'<span>'+gvEsc(x.pic)+'</span>':'')+(stIsNew({added:x.added},lm)?NEW:'')+'</div>':'')+'</div><div class="sv-end"><span class="sv-dt">'+(x.date?svDayLong(x.date):'')+'</span></div></div>';
+  };
+  var nextCard='<section class="sv-card"><div class="sv-ch"><h3>What TPAC will do next</h3><span class="sv-cm">'+(nx.length?nx.length+' step'+(nx.length===1?'':'s'):'')+'</span>'
+    +(ed?'<button type="button" class="sv-add" onclick="stAdd(\'next\')">'+gvIco('plus')+'Add</button>':'')+'</div>'
+    +(nx.length?'<div class="sv-list">'+nx.map(nextRow).join('')+'</div>':'<p class="sv-empty">Nothing planned yet.</p>')+'</section>';
+  /* other notes, only when there are some (or a small add button while editing) */
+  var nt=Array.isArray(status.notes)?status.notes:[], notes='';
+  if(nt.length) notes='<section class="sv-card"><div class="sv-ch"><h3>Other notes</h3>'+(ed?'<button type="button" class="sv-add" onclick="stAdd(\'notes\')">'+gvIco('plus')+'Add note</button>':'')+'</div><div class="sv-list">'
+    +nt.map(function(x){ return ed?'<div class="sv-row" data-id="'+gvEsc(x.id)+'"><div class="sv-main"><input class="sv-in t" data-f="text" placeholder="Note" aria-label="Note" value="'+gvEsc(x.text||'')+'" oninput="stSet(\'notes\','+stJs(x.id)+',\'text\',this.value)"></div><button type="button" class="sv-x" title="Delete" aria-label="Delete this note" onclick="stDel(\'notes\','+stJs(x.id)+')">'+gvIco('sv_x')+'</button></div>'
+      :'<div class="sv-row" data-id="'+gvEsc(x.id)+'"><div class="sv-main"><span class="t">'+gvEsc(x.text||'')+'</span></div></div>'; }).join('')+'</div></section>';
+  else if(ed) notes='<div class="sv-notes-add"><button type="button" class="sv-add" onclick="stAdd(\'notes\')">'+gvIco('plus')+'Add a note</button></div>';
+  return '<div class="sv-top">'+summary+dates+'</div>'+asks+'<div class="sv-two">'+doneCard+nextCard+'</div>'+notes;
+}
 function renderStatusPage(){
   var sv=document.getElementById('statusView'); if(!sv||!curStatus) return;
   stEnsureCss();
   var ctx=stCtx(), top=sv.scrollTop, banner='';
-  if(ctx.mode==='edit'){ var z=stFitCheck(); if(z<0.8) banner='<div class="st-banner v3-edit-only">This page will print at '+Math.round(z*100)+'% — consider trimming older items.</div>'; }
-  var acts=ctx.mode==='edit'?'<div class="st-actions v3-edit-only"><button type="button" class="st-add" onclick="startTimeline()" title="Turn this project into a Gantt timeline from the 6-stage-gate template">&#65291; Start timeline</button></div>':'';
-  sv.innerHTML='<div class="stp">'+banner+acts+'<div class="hero">'+stHeroHTML(curStatus,ctx)+'<aside class="side">'+stDatesHTML(curStatus,ctx)+'</aside></div>'
-    +stListsHTML(curStatus,ctx)+'</div>';
+  if(ctx.mode==='edit'){ var z=stFitCheck(); if(z<0.8) banner='<div class="sv-banner v3-edit-only">The 1-page PDF of this page will print at '+Math.round(z*100)+'%. Shorter lists keep it readable.</div>'; }
+  sv.innerHTML='<div class="sv2'+(ctx.mode==='edit'?'':' present')+'">'+banner+stScreenHTML(curStatus,ctx)+'</div>';
   sv.scrollTop=top;
+  var nc=document.getElementById('gvNextCycle');
+  if(nc){ nc.disabled=!(book&&book.nextMeeting); nc.title=nc.disabled?'Set the next meeting first':'After the meeting: New tags and "since the last meeting" then count from it'; }
 }
 /* How much smaller than its normal print size the status 1-page PDF must go to fit one A4 portrait sheet
    (1 = normal size). Measured at the normal layout width, the same way fitSheet() does it. */
@@ -3800,7 +4025,8 @@ var GV_I={
   chev:'<path d="M6 9l6 6 6-6"/>', left:'<path d="M15 6l-6 6 6 6"/>', right:'<path d="M9 6l6 6-6 6"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', dia:'<path d="M12 3.5l8.5 8.5-8.5 8.5L3.5 12z"/>', alert:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>'
 };
-function gvIco(k,cls){ return '<svg class="'+(cls||'gi')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(GV_I[k]||k)+'</svg>'; }
+function gvIco(k,cls){ var d=GV_I[k]||(k.slice(0,3)==='sv_'&&typeof SV_I!=='undefined'&&SV_I[k.slice(3)])||k;   /* sv_ icons belong to the status page */
+  return '<svg class="'+(cls||'gi')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>'; }
 var GV_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], GV_MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
 /* "23 Nov" ("4 Jan ’27" in another year); long form "Mon 23 Nov" */
 function gvDay(d){ if(!d||isNaN(d.getTime())) return '–'; return d.getDate()+' '+GV_MON[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' ’'+String(d.getFullYear()).slice(2):''); }
@@ -3956,7 +4182,22 @@ function gvStOpen(ev,id,btn){
 }
 function gvStSet(id,v){ v3CloseMenus(); setTaskStatus(id,v); }
 
-var GV_DP=null;   /* the open date picker: {id, field, y, m, sel} */
+var GV_DP=null;   /* the open date picker: {y, m, sel, has, anchor, quick:[[label, iso]], note, clear:{label, fn}, onPick} */
+/* One calendar for every date in the Gantt (tasks, meetings, asks, lists). onPick gets 'YYYY-MM-DD'. */
+function gvDpShow(anchor,iso,opts){
+  opts=opts||{}; var d=parseDateLocal(iso), has=!!d; if(!d) d=stToday();
+  GV_DP={y:d.getFullYear(),m:d.getMonth(),sel:d,has:has,anchor:anchor,quick:opts.quick||[],note:opts.note||'',clear:opts.clear||null,onPick:opts.onPick||function(){}};
+  gvDpRender();
+}
+/* quick picks around a date: kind 'start' | 'finish' | 'due' */
+function gvDpQuick(kind,cur,extra){
+  var today=stToday(), base=cur||today, add=function(n){ return toISODate(new Date(base.getFullYear(),base.getMonth(),base.getDate()+n)); };
+  var nm=new Date(today.getFullYear(),today.getMonth(),today.getDate()+((8-today.getDay())%7||7));
+  if(kind==='finish') return [['+1 wk',add(7)],['+2 wks',add(14)],['End of month',toISODate(new Date(base.getFullYear(),base.getMonth()+1,0))]].concat(extra||[]);
+  if(kind==='due'){ var t3=new Date(today.getFullYear(),today.getMonth(),today.getDate()+3), t7=new Date(today.getFullYear(),today.getMonth(),today.getDate()+7), t14=new Date(today.getFullYear(),today.getMonth(),today.getDate()+14);
+    return [['Today',toISODate(today)],['In 3 days',toISODate(t3)],['In 1 wk',toISODate(t7)],['In 2 wks',toISODate(t14)]]; }
+  return [['Today',toISODate(today)],['Next Monday',toISODate(nm)],['+1 wk',add(7)],['+2 wks',add(14)]];
+}
 function gvDpValue(t,field){
   var starts=computeStarts();
   if(field==='start') return taskStartDate(t,starts);
@@ -3968,15 +4209,22 @@ function gvDpOpen(ev,id,field,btn){
   ev.stopPropagation();
   var t=getById(id); if(!t) return;
   var cur=gvDpValue(t,field); if(!cur||isNaN(cur.getTime())) cur=stToday();
-  GV_DP={id:id,field:field,y:cur.getFullYear(),m:cur.getMonth(),sel:cur};
-  gvDpRender(btn);
+  var q, note='', clear=null;
+  if(field==='start'||field==='astart') q=gvDpQuick('start',cur);
+  else q=gvDpQuick('finish',cur,[['Same as start',toISODate(gvDpValue(t,field==='finish'?'start':'astart'))]]);
+  if(field==='start'){ note=t.pinDate?'pinned to this date':'follows its predecessors'; if(t.pinDate) clear={label:'Unpin',fn:function(){ setTaskStart(id,''); }}; }
+  else if(field==='finish') note=gvLenText(t)+' after the start';
+  else if(field==='astart'){ note=t.actPin?'actual start':'follows the links'; if(t.actPin) clear={label:'Clear',fn:function(){ setTaskActStart(id,''); }}; }
+  else note='actual finish';
+  gvDpShow(btn,toISODate(cur),{quick:q,note:note,clear:clear,onPick:function(iso){
+    if(field==='start') setTaskStart(id,iso); else if(field==='finish') setTaskFinish(id,iso);
+    else if(field==='astart') setTaskActStart(id,iso); else setTaskActFinish(id,iso);
+  }});
 }
-function gvDpAnchor(){ var P=GV_DP; return P&&document.querySelector('#gvTbl tr[data-tid="'+P.id+'"] .gv-date[data-f="'+P.field+'"]'); }
-function gvDpRender(anchor){
-  var P=GV_DP; if(!P) return; var t=getById(P.id); if(!t) return;
-  anchor=anchor||gvDpAnchor(); if(!anchor) return;
-  var m=gvPop('gvDp','v3pop gv-dp'); anchor.classList.add('open');
-  var first=new Date(P.y,P.m,1), off=(first.getDay()+6)%7, today=stToday(), selISO=toISODate(P.sel), tdISO=toISODate(today);
+function gvDpRender(){
+  var P=GV_DP; if(!P||!P.anchor||!document.body.contains(P.anchor)) return;
+  var m=gvPop('gvDp','v3pop gv-dp'); P.anchor.classList.add('open');
+  var first=new Date(P.y,P.m,1), off=(first.getDay()+6)%7, selISO=P.has?toISODate(P.sel):'', tdISO=toISODate(stToday());
   var h='<div class="dp-h"><b>'+GV_MONL[P.m]+' '+P.y+'</b><button type="button" class="dp-nav" aria-label="Previous month" onclick="gvDpMove(-1)">'+gvIco('left')+'</button><button type="button" class="dp-nav" aria-label="Next month" onclick="gvDpMove(1)">'+gvIco('right')+'</button></div>'
     +'<div class="dp-g" role="grid">'+['M','T','W','T','F','S','S'].map(function(x){ return '<span class="dp-wd">'+x+'</span>'; }).join('');
   for(var i=0;i<42;i++){
@@ -3984,31 +4232,14 @@ function gvDpRender(anchor){
     h+='<button type="button" class="dp-d'+cls+'" aria-label="'+gvDayLong(d)+'"'+(iso===selISO?' aria-pressed="true"':'')+' onclick="gvDpPick(\''+iso+'\')">'+d.getDate()+'</button>';
   }
   h+='</div>';
-  var add=function(days){ return toISODate(new Date(P.sel.getFullYear(),P.sel.getMonth(),P.sel.getDate()+days)); };
-  var q=[];
-  if(P.field==='start'||P.field==='astart'){
-    var nm=new Date(today.getFullYear(),today.getMonth(),today.getDate()+((8-today.getDay())%7||7));
-    q=[['Today',tdISO],['Next Monday',toISODate(nm)],['+1 wk',add(7)],['+2 wks',add(14)]];
-  } else {
-    var eom=new Date(P.sel.getFullYear(),P.sel.getMonth()+1,0), sd=gvDpValue(t,P.field==='finish'?'start':'astart');
-    q=[['+1 wk',add(7)],['+2 wks',add(14)],['End of month',toISODate(eom)],['Same as start',toISODate(sd)]];
-  }
-  h+='<div class="dp-q">'+q.map(function(x){ return '<button type="button" onclick="gvDpPick(\''+x[1]+'\')">'+x[0]+'</button>'; }).join('')+'</div>';
-  var note='', clr='';
-  if(P.field==='start'){ note=t.pinDate?'pinned to this date':'follows its predecessors'; if(t.pinDate) clr='<button type="button" class="dp-clr" onclick="gvDpPick(\'\')">Unpin</button>'; }
-  else if(P.field==='finish') note=gvLenText(t)+' after the start';
-  else if(P.field==='astart'){ note=t.actPin?'actual start':'follows the links'; if(t.actPin) clr='<button type="button" class="dp-clr" onclick="gvDpPick(\'\')">Clear</button>'; }
-  else note='actual finish';
-  h+='<div class="dp-f"><span><b>'+gvDayLong(P.sel)+'</b> &middot; '+note+'</span>'+clr+'</div>';
-  m.innerHTML='<div class="dp-in">'+h+'</div>'; gvPopAt(m,anchor);
+  if(P.quick.length) h+='<div class="dp-q">'+P.quick.map(function(x){ return '<button type="button" onclick="gvDpPick(\''+x[1]+'\')">'+x[0]+'</button>'; }).join('')+'</div>';
+  h+='<div class="dp-f"><span>'+(P.has?'<b>'+gvDayLong(P.sel)+'</b>':'No date yet')+(P.note?' &middot; '+P.note:'')+'</span>'+(P.clear?'<button type="button" class="dp-clr" onclick="gvDpClear()">'+P.clear.label+'</button>':'')+'</div>';
+  m.innerHTML='<div class="dp-in">'+h+'</div>'; gvPopAt(m,P.anchor);
   var f=m.querySelector('.dp-d.sel')||m.querySelector('.dp-d.td'); if(f) f.focus({preventScroll:true});
 }
 function gvDpMove(k){ var P=GV_DP; if(!P) return; P.m+=k; if(P.m<0){ P.m=11; P.y--; } if(P.m>11){ P.m=0; P.y++; } gvDpRender(); }
-function gvDpPick(iso){
-  var P=GV_DP; if(!P) return; GV_DP=null; v3CloseMenus();
-  if(P.field==='start') setTaskStart(P.id,iso); else if(P.field==='finish'){ if(iso) setTaskFinish(P.id,iso); }
-  else if(P.field==='astart') setTaskActStart(P.id,iso); else if(iso) setTaskActFinish(P.id,iso);
-}
+function gvDpPick(iso){ var P=GV_DP; if(!P) return; GV_DP=null; v3CloseMenus(); if(iso) P.onPick(iso); }
+function gvDpClear(){ var P=GV_DP; if(!P||!P.clear) return; GV_DP=null; v3CloseMenus(); P.clear.fn(); }
 /* arrow keys move through the calendar, Enter picks (buttons already pick on Enter / Space) */
 document.addEventListener('keydown',function(e){
   var m=document.getElementById('gvDp'); if(!m||!m.classList.contains('open')||!GV_DP) return;

@@ -107,7 +107,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-body);color:var(--text
    scroll is mirrored in JS (the standard approach: the timeline needs
    its own horizontal scroll, which a single shared scroller can't give).
    ══════════════════════════════════════════════ */
-:root{--gv-row:30px;--gv-head:52px}
+:root{--gv-row:36px;--gv-head:52px}
 .gv{display:flex;flex-direction:column;height:100%;background:var(--bg-body)}
 .gv-toolbar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--bg-sb);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .gv-body{flex:1;display:flex;min-height:0;overflow:hidden}
@@ -971,6 +971,162 @@ body,body.dark{background:transparent!important;color:var(--tx)}
 [data-mode=present] .nb-back,[data-mode=present] .nb-vr{display:none!important}
 @media print{.v2-orbs{display:none}}
 </style>
+<!-- ═══ Phase 2 (Oct 2026): the task table and timeline in V2's style. ═══ -->
+<style id="v2gantt">
+/* table: sentence-case header, 36px rows, the look's surfaces */
+#gvTbl{font:400 13.5px/18px var(--fb)}
+#gvTbl th{height:var(--gv-head);background:var(--surf-solid)!important;color:var(--mu)!important;font:500 12.5px/16px var(--fb)!important;letter-spacing:0!important;text-transform:none!important;border-bottom:1px solid var(--line-2)!important;border-right:0!important;padding:0 8px!important;text-align:left}
+#gvTbl th:first-child{text-align:center}
+#gvTbl th.gv-th-click:hover{background:var(--surf-solid)!important;color:var(--tx)!important}
+#gvTbl .gv-th-chev{opacity:0;transition:opacity .15s;background:none!important}
+#gvTbl th:hover .gv-th-chev{opacity:1}
+#gvTbl th.gv-th-end{text-align:center;padding:0!important}
+#gvTbl .gv-th-more{height:26px;min-width:30px;border-radius:13px!important;background:transparent!important;border:1px solid var(--line-2)!important;color:var(--mu)!important;font:600 12px/1 var(--fb)!important;cursor:pointer}
+#gvTbl .gv-th-more.has{background:color-mix(in srgb,var(--ac) 14%,transparent)!important;border-color:transparent!important;color:var(--ac)!important}
+#gvTbl td{height:var(--gv-row);background:var(--surf-solid);border-bottom:1px solid var(--line);color:var(--tx);padding:0 8px;vertical-align:middle}
+#gvTbl .gv-row:hover td{background:color-mix(in srgb,var(--tx) 3.5%,var(--surf-solid))}
+#gvTbl .gv-row.sel td{background:color-mix(in srgb,var(--ac) 9%,var(--surf-solid))}
+#gvTbl .gv-row.drop-above td{box-shadow:inset 0 2px 0 var(--ac)} #gvTbl .gv-row.drop-below td{box-shadow:inset 0 -2px 0 var(--ac)}
+#gvTbl td.gv-num{text-align:center;padding:0 4px;color:var(--mu);font:500 12px/1 var(--fm)}
+#gvTbl .gv-num{white-space:nowrap}
+#gvTbl .gv-grip{display:inline-grid;place-items:center;width:16px;height:22px;vertical-align:middle;color:var(--mu);opacity:0;margin-right:2px;transition:opacity .15s}
+#gvTbl .gv-grip .gi{width:14px;height:14px}
+#gvTbl .gv-row:hover .gv-grip{opacity:.8}
+#gvTbl .gv-n{display:inline-block;min-width:16px;vertical-align:middle}
+#gvTbl .gv-in{height:28px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--tx);font:400 13.5px/18px var(--fb);padding:0 8px}
+#gvTbl .gv-in::placeholder{color:var(--mu);opacity:.8}
+#gvTbl .gv-in:hover{border-color:var(--line-2)}
+#gvTbl .gv-in:focus{border-color:var(--ac);background:var(--surf-solid);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent);outline:none}
+/* the Task cell is sticky (an older rule made it relative but kept left:58px, which pushed it over Status) */
+#gvTbl td.c-name{position:sticky;left:58px;z-index:3}
+#gvTbl .c-name .gv-name{display:flex;align-items:center;gap:6px;min-width:0;padding-right:26px}
+#gvTbl .c-name .gv-in{font-weight:500;min-width:0;flex:1}
+#gvTbl .gv-dia{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;border:2px solid var(--ac);flex:none;margin-left:4px}
+#gvTbl .gv-conf{color:var(--bad);display:inline-grid;place-items:center} #gvTbl .gv-conf .gi{width:15px;height:15px}
+#gvTbl .gv-more{background:transparent;color:var(--mu);border-radius:8px;width:26px;height:26px}
+#gvTbl .gv-more:hover{background:var(--hover);color:var(--tx)}
+/* status chips: a word and an icon, never colour alone; a pin marks a status set by hand */
+.gv-st{display:inline-flex;align-items:center;gap:5px;height:24px;max-width:100%;padding:0 10px 0 7px;border-radius:12px;border:0;font:600 12px/1 var(--fb);cursor:pointer;white-space:nowrap;overflow:hidden}
+.gv-st span{overflow:hidden;text-overflow:ellipsis}
+.gv-st .gi{width:14px;height:14px;flex:none}
+.gv-st .gi.pin{width:12px;height:12px;margin:0 -2px 0 1px;opacity:.85}
+.gv-st.s1{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+/* the look's status colours are made for fills; the words are mixed toward the text colour so they pass AA in every look */
+.gv-st.s2{background:color-mix(in srgb,var(--c1) 16%,transparent);color:color-mix(in srgb,var(--c1) 52%,var(--tx))}
+.gv-st.s3{background:color-mix(in srgb,var(--warn) 18%,transparent);color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+.gv-st.s4{background:color-mix(in srgb,var(--bad) 16%,transparent);color:color-mix(in srgb,var(--bad) 52%,var(--tx))}
+.gv-st.s5{background:color-mix(in srgb,var(--ok) 17%,transparent);color:color-mix(in srgb,var(--ok) 52%,var(--tx))}
+.gv-st:hover{box-shadow:inset 0 0 0 1px currentColor}
+.gv-st.man{box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 45%,transparent)}
+/* owner: initials avatar + free text */
+#gvTbl .gv-own{display:flex;align-items:center;gap:4px;min-width:0}
+#gvTbl .gv-own .gv-in{min-width:0;flex:1;padding:0 6px}
+.gv-av{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;font:600 10.5px/1 var(--fb);letter-spacing:0}
+.gv-av.a0{background:color-mix(in srgb,var(--c1) 20%,var(--surf-solid));color:color-mix(in srgb,var(--c1) 52%,var(--tx))}
+.gv-av.a1{background:color-mix(in srgb,var(--info) 20%,var(--surf-solid));color:color-mix(in srgb,var(--info) 52%,var(--tx))}
+.gv-av.a2{background:color-mix(in srgb,var(--ok) 20%,var(--surf-solid));color:color-mix(in srgb,var(--ok) 52%,var(--tx))}
+.gv-av.a3{background:color-mix(in srgb,var(--warn) 20%,var(--surf-solid));color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+.gv-av.a4{background:color-mix(in srgb,var(--c2) 22%,var(--surf-solid));color:var(--tx)}
+.gv-av.none{background:transparent;border:1.5px dashed var(--line-2);color:var(--mu);font-size:13px}
+/* dates: "23 Nov", opens the picker */
+.gv-date{display:inline-flex;align-items:center;gap:4px;height:28px;max-width:100%;padding:0 8px;margin-left:-8px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--tx);font:500 13px/1 var(--fb);font-variant-numeric:tabular-nums;cursor:pointer;white-space:nowrap}
+.gv-date:hover{border-color:var(--line-2);background:var(--surf-solid)}
+.gv-date.open{border-color:var(--ac);background:var(--surf-solid);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent)}
+.gv-date .gi{width:12px;height:12px;color:var(--ac);flex:none}
+.gv-date.late{color:color-mix(in srgb,var(--bad) 60%,var(--tx));font-weight:600}
+#gvTbl td.gv-act{background:color-mix(in srgb,var(--c1) 6%,var(--surf-solid))}
+/* length + unit */
+.gv-len{display:flex;align-items:center;gap:0;margin-left:-6px}
+.gv-len input{width:46px;height:28px;text-align:right;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--tx);font:500 13px/1 var(--fb);font-variant-numeric:tabular-nums;padding:0 6px;-moz-appearance:textfield}
+.gv-len input::-webkit-inner-spin-button,.gv-len input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.gv-len input:hover{border-color:var(--line-2)}
+.gv-len input:focus{border-color:var(--ac);background:var(--surf-solid);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+.gv-len select{height:28px;border:0;background:transparent;color:var(--mu);font:400 13px/1 var(--fb)!important;padding:0 4px;cursor:pointer;-webkit-appearance:none;appearance:none;border-radius:8px}
+.gv-len select:hover{background:var(--hover);color:var(--tx)}
+.gv-len .u{color:var(--mu);font-size:13px;padding-left:2px}
+/* the skin's global input style is !important, so the table's quiet inputs are too */
+#gvTbl .gv-len input,#gvTbl .gv-len select{background:transparent!important;border-color:transparent!important;border-radius:8px!important}
+#gvTbl .gv-len select{color:var(--mu)!important}
+#gvTbl .gv-len input:hover{border-color:var(--line-2)!important}
+#gvTbl .gv-len input:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important}
+#gvTbl .gv-len select:hover{background:var(--hover)!important;color:var(--tx)!important}
+.gv-mslbl{color:var(--mu);font-size:13px}
+/* depends on: row numbers */
+#gvTbl .gv-dep-trigger{height:28px;width:auto;max-width:100%;margin-left:-8px;padding:0 8px;border:1px solid transparent;border-radius:8px;background:transparent;font:500 13px/1 var(--fb)!important;color:var(--tx);justify-content:flex-start;gap:4px}
+#gvTbl .gv-dep-trigger:hover,#gvTbl .gv-dep-trigger.open{border-color:var(--line-2);background:var(--surf-solid);box-shadow:none}
+#gvTbl .gv-dep-trigger .lbl.none,#gvTbl .gv-dep-trigger .lbl.auto{color:var(--mu);font-weight:400}
+#gvTbl .gv-dep-trigger .chev{display:inline-grid;opacity:0;color:var(--mu)} #gvTbl .gv-dep-trigger .chev .gi{width:13px;height:13px}
+#gvTbl tr:hover .gv-dep-trigger .chev{opacity:.8}
+/* segment chip, milestone toggle, delete */
+#gvTbl .gv-segbtn{display:inline-flex;align-items:center;gap:3px;height:24px;padding:0 8px 0 10px;border-radius:12px;border:0;background:color-mix(in srgb,var(--sc) 16%,transparent);color:var(--tx);font:600 12px/1 var(--fb)!important}
+#gvTbl .gv-segbtn::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--sc);margin-right:3px}
+#gvTbl .gv-segbtn .gi{width:12px;height:12px;opacity:.6}
+#gvTbl .gv-ms{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--line-2);margin:0 auto}
+#gvTbl .gv-ms .gi{width:16px;height:16px}
+#gvTbl .gv-ms.on{color:var(--ac)} #gvTbl .gv-ms.on .gi{fill:currentColor}
+#gvTbl .gv-ms:hover{background:var(--hover);color:var(--tx)}
+#gvTbl td.c-del{padding:0;text-align:center}
+#gvTbl .gv-del{width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;opacity:0;filter:none;color:var(--mu);padding:0}
+#gvTbl .gv-del .gi{width:16px;height:16px}
+#gvTbl .gv-row:hover .gv-del,#gvTbl .gv-del:focus-visible{opacity:.75}
+#gvTbl .gv-del:hover{opacity:1!important;background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+#gvTbl td.gv-empty{text-align:center;color:var(--mu);height:72px;white-space:normal}
+/* phase rows: swatch, name, count, dates; ＋ Task / Milestone on hover */
+#gvTbl tr.gv-phaserow td{background:color-mix(in srgb,var(--pc,var(--mu)) 9%,var(--surf-solid))!important;color:var(--tx)!important;font:400 13px/18px var(--fb)!important;letter-spacing:0!important;text-transform:none!important;border-bottom:1px solid var(--line)!important;border-left:0!important;padding:0 8px 0 10px!important}
+#gvTbl .gv-phase-bar{display:flex;align-items:center;gap:8px;min-width:0;position:sticky;left:10px;max-width:calc(100vw - 80px)}
+#gvTbl .gv-phase-bar .pcv{display:inline-grid;color:var(--mu)} #gvTbl .gv-phase-bar .pcv .gi{width:16px;height:16px;transition:transform .15s}
+#gvTbl tr.gv-phaserow.col .pcv .gi{transform:rotate(-90deg)}
+#gvTbl .gv-phase-bar .psw{width:10px;height:10px;border-radius:3px;background:var(--pc);flex:none}
+#gvTbl .gv-phase-bar b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:72px;flex:0 1 auto}
+#gvTbl .gv-phase-bar .pn{font:500 12px/1 var(--fm);color:var(--mu)}
+#gvTbl .gv-phase-bar .prng{color:var(--mu);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 4 auto}   /* the dates give way before the name */
+#gvTbl .gv-phase-bar .pacts{margin-left:auto;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+#gvTbl tr.gv-phaserow:hover .pacts,#gvTbl tr.gv-phaserow:focus-within .pacts{opacity:1}
+#gvTbl .gv-phase-add{width:auto;height:26px;padding:0 10px 0 8px;margin:0;border-radius:13px;background:var(--surf-solid);border:1px solid var(--line-2);color:var(--ac);font:600 12px/1 var(--fb)!important;display:inline-flex;align-items:center;gap:4px;transform:none!important;cursor:pointer}
+#gvTbl .gv-phase-add:hover{background:var(--sel)}
+#gvTbl .gv-phase-add .gi{width:13px;height:13px}
+/* timeline pane + legend */
+.gv-chartwrap{background:var(--surf-solid)!important}
+.gv-chart-empty{padding:32px;color:var(--mu);font-size:13px}
+.gv-legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin:-6px 24px 14px;padding:0 4px;font:400 12.5px/16px var(--fb);color:var(--mu)}
+.gv-legend[hidden]{display:none}
+.gv-legend span{display:inline-flex;align-items:center;gap:6px}
+.gv-legend .sw{width:10px;height:10px;border-radius:3px}
+.gv-legend .dm{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;background:var(--c1)}
+.gv-legend .lt{width:16px;height:10px;border-radius:3px;border:2px solid var(--bad)}
+.gv-legend .td{width:2px;height:12px;background:repeating-linear-gradient(var(--bad) 0 3px,transparent 3px 5px)}
+/* popovers: status menu and date picker */
+.gv-pop{position:fixed;z-index:400;min-width:0}
+.gv-stmenu{width:230px}
+.gv-stmenu>button{gap:10px}
+.gv-stmenu>button .gi{width:16px;height:16px;flex:none}
+.gv-stmenu>button span{display:flex;flex-direction:column;gap:1px;align-items:flex-start}
+.gv-stmenu>button small{margin:0;padding:0;font:400 12px/16px var(--fb)!important;color:var(--mu)}
+.gv-stmenu>button.cur{background:var(--hover);font-weight:600}
+.gv-sti.s1 .gi{color:var(--mu)} .gv-sti.s2 .gi{color:var(--c1)} .gv-sti.s3 .gi{color:var(--warn)} .gv-sti.s4 .gi{color:var(--bad)} .gv-sti.s5 .gi{color:var(--ok)}
+.gv-dp{padding:12px;width:292px}
+.gv-dp .dp-in{display:grid;gap:10px;width:100%}
+.gv-dp .dp-h{display:flex;align-items:center;gap:2px}
+.gv-dp .dp-h b{font:600 15px/20px var(--fb);color:var(--tx);margin-right:auto;padding-left:4px}
+.gv-dp .dp-nav{width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--tx);display:grid;place-items:center;cursor:pointer}
+.gv-dp .dp-nav:hover{background:var(--hover)} .gv-dp .dp-nav .gi{width:18px;height:18px}
+.gv-dp .dp-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.gv-dp .dp-wd{font:500 11px/20px var(--fb);color:var(--mu)}
+.gv-dp .dp-d{height:34px;border:0;border-radius:17px;background:transparent;color:var(--tx);font:500 13px/1 var(--fb);font-variant-numeric:tabular-nums;cursor:pointer}
+.gv-dp .dp-d:hover{background:var(--hover)}
+.gv-dp .dp-d.we{color:var(--mu)} .gv-dp .dp-d.o{color:var(--mu);opacity:.55}
+.gv-dp .dp-d.td{box-shadow:inset 0 0 0 1.5px var(--ac);color:var(--ac);font-weight:600}
+.gv-dp .dp-d.sel{background:var(--ac);color:var(--on-ac);font-weight:600;box-shadow:none;opacity:1}
+.gv-dp .dp-q{display:flex;flex-wrap:wrap;gap:6px}
+.gv-dp .dp-q button{height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--line);background:var(--hover);color:var(--tx);font:500 12.5px/1 var(--fb);cursor:pointer}
+.gv-dp .dp-q button:hover{background:var(--sel)}
+.gv-dp .dp-f{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:10px;font:400 12.5px/16px var(--fb);color:var(--mu)}
+.gv-dp .dp-f b{color:var(--tx);font-weight:600}
+.gv-dp .dp-clr{border:0;background:transparent;color:var(--ac);font:600 12.5px/1 var(--fb);cursor:pointer;padding:6px 8px;border-radius:8px}
+.gv-dp .dp-clr:hover{background:var(--hover)}
+@media (max-width:760px){ .gv-legend{margin:-4px 12px 12px} }
+@media (prefers-reduced-motion: reduce){ #gvTbl *{transition:none!important} }
+</style>
 <script>
 /* follow V2's light / dark (set on <html> by the boot script) when the Gantt opens, and when V2 changes it in another tab */
 document.addEventListener('DOMContentLoaded', function(){
@@ -1070,6 +1226,7 @@ window.addEventListener('storage', function(e){
       <div class="gv-split" id="gvSplit" title="Drag to resize"></div>
       <div class="gv-chartwrap" id="gvChartWrap"><div id="gvChart"></div></div>
     </div>
+    <div class="gv-legend gv-ganttonly" id="gvLegend" aria-label="Timeline legend" hidden></div>
     <div id="dashView" class="db-view" style="display:none"></div>
     <div id="statusView" class="st-view" style="display:none"></div>
   </main>
@@ -1265,6 +1422,7 @@ function syncViewPills(){
 /* ===== Header drop-down menus (Share, ⋯, File, ⚙, ✎) ===== */
 function v3CloseMenus(except){
   [].forEach.call(document.querySelectorAll('.v3menu.open'),function(m){ if(m!==except) m.classList.remove('open'); });
+  if(!except||except.id!=='gvDp'){ [].forEach.call(document.querySelectorAll('.gv-date.open'),function(b){ b.classList.remove('open'); }); if(typeof GV_DP!=='undefined') GV_DP=null; }
 }
 function v3Menu(ev,btn){
   ev.stopPropagation();
@@ -2392,7 +2550,7 @@ var SVG_FONTS='@font-face{font-family:"DM Sans";font-weight:400;src:url("data:fo
 var tasks=[],tid=1,activePhases={pilot:true,commercial:true},expanded={},zoom=1;
 var phaseCollapsed={}; /* per-phase collapse state for the task grid (view-only) */
 var defaultDurUnit='weeks'; /* tool-wide default duration unit for new tasks */
-var colVis={gvStart:true,status:true,gvFinish:true,gvDur:true,lag:false,milestone:true,phase:false,seg:true,resp:true,link:true,start:false,dur:false,pred:false,arrows:true,crit:false,year:true,variance:true,calweek:true,grid_week:false,grid_2week:true,grid_4week:true,grid_month:true,today_col:true};
+var colVis={gvStart:true,status:true,gvFinish:true,gvDur:true,lag:false,milestone:false,phase:false,seg:true,resp:true,link:false,gvSeg:false,gvPred:true,start:false,dur:false,pred:false,arrows:true,crit:false,year:true,variance:true,calweek:true,grid_week:false,grid_2week:true,grid_4week:true,grid_month:true,today_col:true};
 var notes=['Modifications loop of T1 will only be triggered if dimension and functional aspect on the product is not achieved by T0 stage','Meeting project milestones is contingent upon timely approvals and actions from both Combi-Pack and the customer','Phases execute in fixed order: Study > Pilot > Commercial. Each phase starts only after the previous phase fully completes.','Bar colours indicate segment: Purple = Mold, Yellow = Label, Green = Machine'];
 var dragSrcId=null;
 var isDark=false;
@@ -2735,9 +2893,9 @@ function bbWatchSave() {
 }
 /* Today: scroll the timeline so the today line sits a little in from the left */
 function gvScrollToday() {
-  var wrap = document.getElementById('gvChartWrap'), ln = wrap && wrap.querySelector('#gvChart line[stroke="#EA4335"]');
+  var wrap = document.getElementById('gvChartWrap'), ln = wrap && wrap.querySelector('#gvChart line.gv-today');
   if (!ln) { if (typeof gvToast === 'function') gvToast('Today is outside this plan'); return; }
-  wrap.scrollTo({ left: Math.max(0, (+ln.getAttribute('x1') || 0) - wrap.clientWidth * 0.2), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  wrap.scrollTo({ left: Math.max(0, (+ln.getAttribute('x1') || 0) + 10 - wrap.clientWidth * 0.2), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 }
 /* Weeks / Months: two timeline scales instead of a zoom percentage (remembered on this device) */
 var GV_SCALE = (function(){ try { return localStorage.getItem('gantt3:scale') === 'months' ? 'months' : 'weeks'; } catch (e) { return 'weeks'; } })();
@@ -2932,6 +3090,7 @@ function ganttLoadFromFirebase() {
         if (d.gvPhaseSummaryIn) gvPhaseSummaryIn = d.gvPhaseSummaryIn;
         if (d.gvCut) gvCut = d.gvCut;
         if (d.colVis) for (var ck in d.colVis) colVis[ck] = d.colVis[ck];
+        if (d.colVer !== GV_COL_VER) gvApplyColDefaults();   /* Phase 2 table columns, once per plan */
         if (d.activeLogo) { activeLogo = d.activeLogo; }
         PORDER.forEach(function(p) {
           var el = document.querySelector('.ppill[data-ph="'+p+'"]');
@@ -2993,6 +3152,7 @@ function ganttBuildPayload() {
     gvPhaseSummaryIn: gvPhaseSummaryIn,
     gvCut: gvCut,
     colVis: colVis,
+    colVer: GV_COL_VER,
     status: curStatus,
     savedAt: new Date().toISOString()
   };
@@ -3228,9 +3388,9 @@ function refreshAll(){
    with the grid. Shared geometry constants keep the two panes in
    lockstep — change GV_ROW in one place and both follow.
    ══════════════════════════════════════════════════════ */
-var GV_ROW=30, GV_HEAD=52, GV_WW=26, selectedTaskId=null;
+var GV_ROW=36, GV_HEAD=52, GV_WW=26, selectedTaskId=null;
 /* Task Name column width, set by the splitter; the pane is this plus the visible columns. */
-var gvNameW=240, gvFixedW=0;
+var gvNameW=300, gvFixedW=0;   /* Task column, until the splitter is dragged */
 
 /* Where the phase start/finish/duration summary is shown: 'chart' | 'list' | 'both' | 'off' */
 var gvPhaseSummaryIn='chart';
@@ -3243,14 +3403,14 @@ var gvPhaseSummaryIn='chart';
    share colVis keys and stay in step with the Settings panel. */
 var GV_COLUMNS=[
   {key:'status',    label:'Status'},
-  {key:'seg',       label:'Segment'},
-  {key:'milestone', label:'Milestone'},
+  {key:'resp',      label:'Owner'},
   {key:'gvStart',   label:'Start'},
   {key:'gvFinish',  label:'Finish'},
-  {key:'gvDur',     label:'Duration'},
+  {key:'gvDur',     label:'Length'},
+  {key:'gvPred',    label:'Depends on'},
+  {key:'gvSeg',     label:'Segment'},
+  {key:'milestone', label:'Milestone'},
   {key:'lag',       label:'Delay'},
-  {key:'pred',      label:'Dependencies'},
-  {key:'resp',      label:'Responsible'},
   {key:'link',      label:'Linkage'}
 ];
 function gvColOn(k){ return colVis[k]!==false; }
@@ -3259,7 +3419,7 @@ function gvColOn(k){ return colVis[k]!==false; }
    collapse, click the strip to expand. (Fully hiding a column is still
    available from the Columns menu.) */
 var gvCut={};
-var GV_COL_W={status:96,seg:84,milestone:44,gvStart:132,gvFinish:132,gvDur:98,lag:62,pred:132,resp:150,link:150};
+var GV_COL_W={status:134,resp:128,gvStart:78,gvFinish:78,gvDur:88,gvPred:104,gvSeg:110,milestone:88,lag:84,link:150};
 var GV_CUT_W=24;
 var GV_CUT_TD='<td class="gv-cut-td"></td>';
 function gvColW(k){ return gvCut[k]?GV_CUT_W:(GV_COL_W[k]||80); }
@@ -3623,263 +3783,403 @@ function phaseSummaryFor(ph,starts){
   if(!isFinite(mn)) return null;
   return {start:dateFromWeek(mn),finish:new Date(dateFromWeek(mx).getTime()-86400000),weeks:Math.round(mx-mn)};
 }
+/* ── Task table (Phase 2, Oct 2026): status chips, owner avatars, "23 Nov" dates with a picker, row numbers for
+   dependencies, 36px rows. Columns follow colVis; the table's Segment and Depends-on columns use their own keys
+   (gvSeg, gvPred) so the preview / export keeps its own column choice. ── */
+var GV_ST_LABEL={1:'Not started',2:'In progress',3:'Running late',4:'Late start',5:'Done'};
+var GV_I={
+  st1:'<circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/>',
+  st2:'<circle cx="12" cy="12" r="8.5"/><path d="M10.5 9v6l4.5-3z" fill="currentColor"/>',
+  st3:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  st4:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+  st5:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  auto:'<path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/>',
+  pin:'<path d="M12 16v5M8 3h8l-1 6 3 3H6l3-3z"/>',
+  grip:'<circle cx="9" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.3" fill="currentColor" stroke="none"/>',
+  trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/>',
+  chev:'<path d="M6 9l6 6 6-6"/>', left:'<path d="M15 6l-6 6 6 6"/>', right:'<path d="M9 6l6 6-6 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', dia:'<path d="M12 3.5l8.5 8.5-8.5 8.5L3.5 12z"/>', alert:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>'
+};
+function gvIco(k,cls){ return '<svg class="'+(cls||'gi')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(GV_I[k]||k)+'</svg>'; }
+var GV_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], GV_MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+/* "23 Nov" ("4 Jan ’27" in another year); long form "Mon 23 Nov" */
+function gvDay(d){ if(!d||isNaN(d.getTime())) return '–'; return d.getDate()+' '+GV_MON[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' ’'+String(d.getFullYear()).slice(2):''); }
+function gvDayLong(d){ if(!d||isNaN(d.getTime())) return ''; return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+GV_MON[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():''); }
+function gvWks(w){ w=Math.round(w*10)/10; return w+' wk'+(w===1?'':'s'); }
+function gvLenText(t){ if(t.milestone) return 'Milestone'; var n=+t.dur||0; return t.durUnit==='days'?n+' day'+(n===1?'':'s'):gvWks(n); }
+function gvInitials(n){ var w=String(n||'').trim().split(/[\s,\/&+]+/).filter(Boolean); if(!w.length) return ''; return (w[0].charAt(0)+(w[1]?w[1].charAt(0):w[0].charAt(1))).toUpperCase(); }
+function gvAvTone(n){ var h=0; n=String(n||'').toLowerCase(); for(var i=0;i<n.length;i++) h=(h*31+n.charCodeAt(i))>>>0; return h%5; }
+/* the table's own defaults for the columns (applied once to plans saved before Phase 2) */
+var GV_COL_DEFAULTS={status:true,resp:true,gvStart:true,gvFinish:true,gvDur:true,gvPred:true,gvSeg:false,milestone:false,lag:false,link:false};
+var GV_COL_VER=2;
+function gvApplyColDefaults(){ for(var k in GV_COL_DEFAULTS) colVis[k]=GV_COL_DEFAULTS[k]; }
+
+function gvStatusChip(t,starts,today){
+  var eff=taskStatus(t,starts,today), man=taskStatusManual(t);
+  return '<button type="button" class="gv-st s'+eff+(man?' man':'')+'" title="'+GV_ST_LABEL[eff]+(man?' (set by hand: choose Auto to follow the dates)':' (from the dates)')+'"'
+    +' aria-label="Status: '+GV_ST_LABEL[eff]+(man?', set by hand':'')+'. Change" onclick="event.stopPropagation();gvStOpen(event,'+t.id+',this)">'
+    +gvIco('st'+eff)+'<span>'+GV_ST_LABEL[eff]+'</span>'+(man?gvIco('pin','gi pin'):'')+'</button>';
+}
+function gvDateBtn(id,field,d,opts){
+  opts=opts||{};
+  return '<button type="button" class="gv-date'+(opts.cls?' '+opts.cls:'')+'" data-f="'+field+'" title="'+gvEsc(opts.title||gvDayLong(d))+'"'
+    +' aria-label="'+gvEsc((opts.label||'Date')+': '+gvDayLong(d)+'. Change')+'" onclick="event.stopPropagation();gvDpOpen(event,'+id+',\''+field+'\',this)">'
+    +(opts.pin?gvIco('pin'):'')+'<span>'+gvDay(d)+'</span></button>';
+}
+function gvPredText(t,idx){
+  var raw=gvPredLabel(t,idx);
+  if(raw==='—') return {txt:'None',none:true,title:'No dependency: click to set one'};
+  var auto=/\(auto\)/.test(raw), nums=raw.replace(/\s*\(auto\)/,'').replace(/#/g,'');
+  var names=nums.split(/,\s*/).map(function(n){ var tk=tasks[+n-1]; return tk?n+' '+tk.name:n; }).join(', ');
+  return {txt:nums+(auto?' auto':''),auto:auto,title:(auto?'Follows the task before it: ':'Waits for: ')+names};
+}
+
 function renderTaskGrid(starts){
   var tbl=document.getElementById('gvTbl'); if(!tbl) return;
-  var rows=gvRows(), n=0;
-  var showSeg=!!colVis.seg, showPred=!!colVis.pred, showLag=!!colVis.lag, showMs=!!colVis.milestone;
-  var showStart=!!colVis.gvStart, showFin=!!colVis.gvFinish, showDur=!!colVis.gvDur;
-  var showResp=!!colVis.resp, showLink=!!colVis.link;
-  var showStatus=!!colVis.status, stTd=stToday();
-  var cols=1+1+1+1+1; /* grip+#, name, start, finish, duration */
+  var rows=gvRows(), n=0, stTd=stToday(), act=(scheduleMode==='actual'), pal=gvSegPalette();
+  var COLS=GV_COLUMNS.filter(function(c){ return !!colVis[c.key]; });
   var h='<colgroup><col style="width:58px"><col>';
-  if(showStatus) h+='<col style="width:'+gvColW('status')+'px">';
-  if(showSeg)  h+='<col style="width:'+gvColW('seg')+'px">';
-  if(showMs)   h+='<col style="width:'+gvColW('milestone')+'px">';
-  if(showStart) h+='<col style="width:'+gvColW('gvStart')+'px">';
-  if(showFin)   h+='<col style="width:'+gvColW('gvFinish')+'px">';
-  if(showDur)   h+='<col style="width:'+gvColW('gvDur')+'px">';
-  if(showLag)  h+='<col style="width:'+gvColW('lag')+'px">';
-  if(showPred) h+='<col style="width:'+gvColW('pred')+'px">';
-  if(showResp) h+='<col style="width:'+gvColW('resp')+'px">';
-  if(showLink) h+='<col style="width:'+gvColW('link')+'px">';
-  h+='<col style="width:36px">'; /* delete */
-  h+='</colgroup><thead><tr><th>#</th><th>Task Name</th>';
-
-  /* Size the table pane to the columns actually showing, so hiding a column
-     hands its width to the timeline instead of just stretching Task Name.
-     The Task Name width itself is whatever the user last set with the
-     splitter (gvNameW), so their layout choice survives column toggles. */
-  gvFixedW=58+GV_COLUMNS.reduce(function(a,c){return a+(colVis[c.key]?gvColW(c.key):0);},0)+36;
+  COLS.forEach(function(c){ h+='<col style="width:'+gvColW(c.key)+'px">'; });
+  h+='<col style="width:40px"></colgroup>';
+  /* Size the table pane to the columns showing; the Task width is whatever was last set with the splitter (gvNameW). */
+  gvFixedW=58+COLS.reduce(function(a,c){ return a+gvColW(c.key); },0)+40;
   var twrap=document.getElementById('gvTableWrap');
-  if(twrap&&window.innerWidth>760){
-    var want=gvFixedW+gvNameW;
-    twrap.style.width=Math.max(260,Math.min(want,Math.floor(window.innerWidth*0.7)))+'px';
+  if(twrap&&window.innerWidth>760){ var want=gvFixedW+gvNameW; twrap.style.width=Math.max(260,Math.min(want,Math.floor(window.innerWidth*0.7)))+'px'; }
+  var gtbl=document.getElementById('gvTbl'); if(gtbl) gtbl.style.minWidth=(gvFixedW+Math.max(gvNameW,220))+'px';
+  var LBL={status:'Status',resp:'Owner',gvStart:act?'Actual start':'Start',gvFinish:act?'Actual finish':'Finish',gvDur:act?'Actual length':'Length',gvPred:'Depends on',gvSeg:'Segment',milestone:'Milestone',lag:'Delay',link:'Linkage'};
+  function th(key){
+    var label=LBL[key];
+    if(gvCut[key]) return '<th class="gv-th-cut" title="'+label+' (collapsed): click to expand" onclick="toggleColCollapse(\''+key+'\')"><span class="gv-th-vert">'+label+'</span></th>';
+    return '<th class="gv-th-click" title="Click to collapse '+label+'" onclick="toggleColCollapse(\''+key+'\')"><span class="gv-th"><span>'+label+'</span><span class="gv-th-chev">&lsaquo;</span></span></th>';
   }
-  /* Task Name always keeps a readable width; when the pane is narrower than all the columns,
-     the grid scrolls sideways inside its pane (# and Task Name stay pinned on the left). */
-  var gtbl=document.getElementById('gvTbl');
-  if(gtbl) gtbl.style.minWidth=(gvFixedW+Math.max(gvNameW,220))+'px';
-  /* Each optional header carries its own hide control; the last header cell
-     lists how many are hidden and reopens them. */
-  function gvTh(label,key){
-    if(gvCut[key]){
-      return '<th class="gv-th-cut" title="'+label+' (collapsed) — click to expand" onclick="toggleColCollapse(\''+key+'\')">'
-        +'<span class="gv-th-vert">'+label+'</span></th>';
-    }
-    return '<th class="gv-th-click" title="Click to collapse '+label+'" onclick="toggleColCollapse(\''+key+'\')">'
-      +'<span class="gv-th"><span>'+label+'</span><span class="gv-th-chev">&lsaquo;</span></span></th>';
-  }
-  if(showStatus) h+=gvTh('Status','status');
-  if(showSeg)   h+=gvTh('Segment','seg');
-  if(showMs)    h+=gvTh('Mile','milestone');
-  var _act=(scheduleMode==='actual');
-  if(showStart) h+=gvTh(_act?'Act. start':'Start','gvStart');
-  if(showFin)   h+=gvTh(_act?'Act. finish':'Finish','gvFinish');
-  if(showDur)   h+=gvTh(_act?'Act. duration':'Duration','gvDur');
-  if(showLag)   h+=gvTh('Delay','lag');
-  if(showPred)  h+=gvTh('Depends','pred');
-  if(showResp)  h+=gvTh('Responsible','resp');
-  if(showLink)  h+=gvTh('Linkage','link');
-  var hiddenN=GV_COLUMNS.filter(function(c){return !colVis[c.key];}).length;
-  h+='<th style="padding:0;text-align:center"><button class="gv-th-more'+(hiddenN?' has':'')+'" title="'+(hiddenN?hiddenN+' hidden column'+(hiddenN>1?'s':'')+' — click to show':'Show / hide columns')+'" onclick="openColMenuAt(event,this)">'+(hiddenN?'+'+hiddenN:'&#9776;')+'</button></th>';
-  h+='</tr></thead><tbody>';
-  var span=2+(showStatus?1:0)+(showSeg?1:0)+(showMs?1:0)+(showStart?1:0)+(showFin?1:0)+(showDur?1:0)+(showLag?1:0)+(showPred?1:0)+(showResp?1:0)+(showLink?1:0)+1;
+  var hiddenN=GV_COLUMNS.length-COLS.length;
+  h+='<thead><tr><th>#</th><th>Task</th>'+COLS.map(function(c){ return th(c.key); }).join('')
+    +'<th class="gv-th-end"><button type="button" class="gv-th-more'+(hiddenN?' has':'')+'" title="'+(hiddenN?hiddenN+' hidden column'+(hiddenN>1?'s':'')+': click to show':'Show or hide columns')+'" aria-label="Table columns" onclick="openColMenuAt(event,this)">'+(hiddenN?'+'+hiddenN:'&#8943;')+'</button></th></tr></thead><tbody>';
+  var span=2+COLS.length+1;
 
   rows.forEach(function(r){
     if(r.type==='phase'){
-      var pc=PC[r.phase], sum=phaseSummaryFor(r.phase,starts);
-      var sumTxt=(sum&&(gvPhaseSummaryIn==='list'||gvPhaseSummaryIn==='both'))
-        ? '<span class="gv-phase-sum">'+fmtDateShort(sum.start)+' &rarr; '+fmtDateShort(sum.finish)+' &middot; '+sum.weeks+'w</span>' : '';
-      var chev=r.collapsed?'&#9656;':'&#9662;'; /* ▸ collapsed / ▾ expanded */
-      h+='<tr class="gv-phaserow" style="cursor:pointer" title="Click to '+(r.collapsed?'expand':'collapse')+' this phase" onclick="togglePhaseCollapse(\''+r.phase+'\')"><td colspan="'+span+'" style="background:'+pc.light+';color:'+pc.text+';border-left:3px solid '+pc.bar+'">'
-        +'<div class="gv-phase-bar"><span class="gv-phase-chev" style="font-size:10px;margin-right:2px">'+chev+'</span><span>'+PLABEL[r.phase]+' Phase</span>'
-        +'<span style="opacity:.7;font-weight:600;margin-left:2px">('+r.count+')</span>'
-        +'<button class="gv-phase-add" title="Add task to '+PLABEL[r.phase]+'" onclick="event.stopPropagation();addTaskToPhase(\''+r.phase+'\')">+</button>'
-        +'<button class="gv-phase-add" title="Add milestone to '+PLABEL[r.phase]+'" onclick="event.stopPropagation();addTaskToPhase(\''+r.phase+'\',true)" style="font-size:9px">&#9670;</button>'
-        +sumTxt+'</div></td></tr>';
+      var pc=PC[r.phase]||{bar:'#98A2AE'}, sum=phaseSummaryFor(r.phase,starts), nm=PLABEL[r.phase]||r.phase;
+      var rng=(sum&&(gvPhaseSummaryIn==='list'||gvPhaseSummaryIn==='both'||gvPhaseSummaryIn==='chart'))?gvDay(sum.start)+' &rarr; '+gvDay(sum.finish)+' &middot; '+gvWks(sum.weeks):'';
+      h+='<tr class="gv-phaserow'+(r.collapsed?' col':'')+'" title="Click to '+(r.collapsed?'show':'hide')+' the tasks in '+gvEsc(nm)+'" onclick="togglePhaseCollapse(\''+r.phase+'\')">'
+        +'<td colspan="'+span+'" style="--pc:'+pc.bar+'"><div class="gv-phase-bar">'
+        +'<span class="pcv">'+gvIco('chev')+'</span><i class="psw"></i><b>'+gvEsc(nm)+' phase</b><span class="pn">'+r.count+'</span>'
+        +(rng?'<span class="prng">'+rng+'</span>':'')
+        +'<span class="pacts"><button type="button" class="gv-phase-add" aria-label="Add a task to '+gvEsc(nm)+'" onclick="event.stopPropagation();addTaskToPhase(\''+r.phase+'\')">'+gvIco('plus')+'Task</button>'
+        +'<button type="button" class="gv-phase-add" aria-label="Add a milestone to '+gvEsc(nm)+'" onclick="event.stopPropagation();addTaskToPhase(\''+r.phase+'\',true)">'+gvIco('dia')+'Milestone</button></span>'
+        +'</div></td></tr>';
       return;
     }
     var t=r.task; n++;
-    var idx=getIdx(t.id);
-    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts);
-    var pinned=!!t.pinDate, conf=pinConflicts[t.id];
-    var flag=conf?'<span class="gv-pin" style="color:#D93025" title="Pinned earlier than its predecessors can finish">&#9888;</span>'
-                 :(pinned?'<span class="gv-pin" title="Pinned to a fixed start date">&#9679;</span>':'');
+    var idx=getIdx(t.id), sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), conf=pinConflicts[t.id];
     h+='<tr class="gv-row'+(selectedTaskId===t.id?' sel':'')+'" data-tid="'+t.id+'" draggable="true"'
       +' ondragstart="gvDragStart(event,'+t.id+')" ondragover="gvDragOver(event,'+t.id+')" ondragleave="gvDragLeave(event)"'
       +' ondrop="gvDrop(event,'+t.id+')" ondragend="gvDragEnd(event)" onclick="selectTask('+t.id+')" ondblclick="openTaskDetails('+t.id+')">';
-    h+='<td class="gv-num"><span class="gv-grip" title="Drag to reorder">&#8942;&#8942;</span> '+n+'</td>';
-    var _tt=((t.code?('['+t.code+'] '):'')+(t.resp?('· '+t.resp):'')+(t.desc?('\n'+t.desc):'')+(t.risk?('\n⚠ '+t.risk):'')).trim();
-    h+='<td><input class="gv-in" value="'+gvEsc(t.name)+'"'+(_tt?(' title="'+gvEsc(_tt)+'"'):'')+' onclick="event.stopPropagation()" onchange="setTaskName('+t.id+',this.value)">'+flag+'<button type="button" class="gv-more" title="Task details" onclick="event.stopPropagation();openTaskDetails('+t.id+')">&#8943;</button></td>';
-    if(showStatus&&gvCut.status) h+=GV_CUT_TD; else if(showStatus) h+='<td style="padding:0 4px">'+statusSelectHTML(t,starts,stTd,'st-sel')+'</td>';
-    if(showSeg&&gvCut.seg) h+=GV_CUT_TD; else if(showSeg){
-      var sc=SC[t.seg]||{bg:'#EEF0F5',text:'#5C6478'};
-      h+='<td><button type="button" class="gv-chip gv-segbtn" style="background:'+sc.bg+';color:'+sc.text+'" title="Change segment" onclick="event.stopPropagation();gvSegOpen(event,'+t.id+',this)">'+gvEsc(t.seg||'—')+' <span class="gv-car">&#9662;</span></button></td>';
+    h+='<td class="gv-num"><span class="gv-grip" title="Drag to reorder">'+gvIco('grip')+'</span><span class="gv-n">'+n+'</span></td>';
+    var _tt=((t.code?('['+t.code+'] '):'')+(t.desc?('\n'+t.desc):'')+(t.risk?('\n⚠ '+t.risk):'')).trim();
+    h+='<td class="c-name"><div class="gv-name">'+(t.milestone?'<i class="gv-dia" title="Milestone"></i>':'')
+      +'<input class="gv-in" value="'+gvEsc(t.name)+'" aria-label="Task name" title="'+gvEsc(_tt||t.name)+'" onclick="event.stopPropagation()" onchange="setTaskName('+t.id+',this.value)">'
+      +(conf?'<span class="gv-conf" title="Pinned earlier than its predecessors can finish">'+gvIco('alert')+'</span>':'')
+      +'</div><button type="button" class="gv-more" title="Task details" aria-label="Task details" onclick="event.stopPropagation();openTaskDetails('+t.id+')">&#8943;</button></td>';
+    /* actual mode edits the actual schedule in the same three columns; the plan shows in the tooltip */
+    var aS, aDw, aSD, aFD, slipD=0;
+    if(act){
+      aS=t.actStart>0?t.actStart:(starts[t.id]||1); aDw=t.actDur>0?t.actDur:durW(t);
+      aSD=dateFromWeek(aS); aFD=new Date(dateFromWeek(aS+aDw).getTime()-86400000); slipD=Math.round((aFD-fD)/86400000);
     }
-    if(showMs&&gvCut.milestone) h+=GV_CUT_TD; else if(showMs){
-      h+='<td style="text-align:center"><button class="gv-ms" title="'+(t.milestone?'Milestone — click to make a normal task':'Click to mark as milestone')+'" onclick="event.stopPropagation();toggleMilestone('+t.id+')">'+(t.milestone?'<span style="color:#7C3AED">&#9670;</span>':'<span style="color:#C7CCD8">&#9671;</span>')+'</button></td>';
-    }
-    if(scheduleMode==='actual'){
-      /* Actual mode: the same three columns edit the ACTUAL schedule (actStart = week, actDur = weeks). The plan shows in the tooltip. */
-      var aS=t.actStart>0?t.actStart:(starts[t.id]||1), aDw=t.actDur>0?t.actDur:durW(t);
-      var aSD=dateFromWeek(aS), aFD=new Date(dateFromWeek(aS+aDw).getTime()-86400000);
-      var aDv=(t.durUnit==='days')?r1(aDw*5):r1(aDw);
-      var slipD=Math.round((aFD-fD)/86400000);
-      var planTip='Plan: '+fmtDateShort(sD)+' \u2192 '+fmtDateShort(fD)+(slipD?(' \u00b7 actual is '+Math.abs(slipD)+(slipD>0?' days later':' days earlier')):' \u00b7 on plan');
-      if(showStart&&gvCut.gvStart) h+=GV_CUT_TD; else if(showStart) h+='<td class="gv-act'+(t.actPin?' pinned':'')+'"><input type="date" class="gv-in date" value="'+toISODate(aSD)+'" onclick="event.stopPropagation()" onchange="setTaskActStart('+t.id+',this.value)" title="Actual start \u2014 '+planTip+(t.actPin?' \u00b7 fixed by you (clear the date to follow its links again)':' \u00b7 follows its links')+'"></td>';
-      if(showFin&&gvCut.gvFinish) h+=GV_CUT_TD; else if(showFin)   h+='<td class="gv-act'+(slipD>0?' late':'')+'"><input type="date" class="gv-in date" value="'+toISODate(aFD)+'" onclick="event.stopPropagation()" onchange="setTaskActFinish('+t.id+',this.value)" title="Actual finish \u2014 '+planTip+'"></td>';
-      if(showDur&&gvCut.gvDur) h+=GV_CUT_TD; else if(showDur)   h+='<td class="gv-act"><div class="gv-durcell" onclick="event.stopPropagation()">'
-        +'<input class="gv-in mono" style="flex:1 1 auto;min-width:0" type="number" min="0" step="0.1" value="'+aDv+'" onchange="setTaskActDur('+t.id+',this.value)" title="Actual duration \u2014 plan '+(+t.dur||0)+' '+(t.durUnit==='days'?'days':'wks')+'">'
-        +'<select onchange="setTaskDurUnit('+t.id+',this.value)"><option value="weeks"'+((t.durUnit||'weeks')==='weeks'?' selected':'')+'>wks</option><option value="days"'+(t.durUnit==='days'?' selected':'')+'>days</option></select>'
-        +'</div></td>';
-    } else {
-    if(showStart&&gvCut.gvStart) h+=GV_CUT_TD; else if(showStart) h+='<td><input type="date" class="gv-in date" value="'+toISODate(sD)+'" onclick="event.stopPropagation()" onchange="setTaskStart('+t.id+',this.value)" title="Setting a start date pins this task to it"></td>';
-    if(showFin&&gvCut.gvFinish) h+=GV_CUT_TD; else if(showFin)   h+='<td><input type="date" class="gv-in date" value="'+toISODate(fD)+'" onclick="event.stopPropagation()" onchange="setTaskFinish('+t.id+',this.value)" title="Changing finish adjusts duration"></td>';
-    if(showDur&&gvCut.gvDur) h+=GV_CUT_TD; else if(showDur)   h+='<td><div class="gv-durcell" onclick="event.stopPropagation()">'
-      +'<input class="gv-in mono" style="flex:1 1 auto;min-width:0" type="number" min="0" step="0.1" value="'+(+t.dur||0)+'" onchange="setTaskDuration('+t.id+',this.value)">'
-      +'<select onchange="setTaskDurUnit('+t.id+',this.value)"><option value="weeks"'+((t.durUnit||'weeks')==='weeks'?' selected':'')+'>wks</option><option value="days"'+(t.durUnit==='days'?' selected':'')+'>days</option></select>'
-      +'</div></td>';
-    }
-    if(showLag&&gvCut.lag) h+=GV_CUT_TD; else if(showLag){
-      h+='<td><input class="gv-in mono" type="number" step="1" value="'+(+t.lag||0)+'" onclick="event.stopPropagation()" onchange="setTaskLag('+t.id+',this.value)" title="Delay before this task starts (negative overlaps it with its predecessor)"></td>';
-    }
-    if(showPred&&gvCut.pred) h+=GV_CUT_TD; else if(showPred){
-      /* Editable inline — opens the same picker the side panel uses, anchored
-         to this cell, so dependencies can be set without leaving the table. */
-      var dl=gvPredLabel(t,idx), isNone=(dl==='—');
-      h+='<td onclick="event.stopPropagation()"><div class="pred-dd-wrap">'
-        +'<div class="gv-dep-trigger" onclick="openPredDD(event,'+t.id+',this)" title="Click to set dependencies">'
-        +'<span class="lbl'+(isNone?' none':'')+'">'+(isNone?'None':gvEsc(dl))+'</span>'
-        +'<span class="chev">&#9660;</span></div></div></td>';
-    }
-    if(showResp&&gvCut.resp) h+=GV_CUT_TD; else if(showResp){
-      h+='<td><input class="gv-in" value="'+gvEsc(t.resp||'')+'" placeholder="PIC…" onclick="event.stopPropagation()" onchange="setTaskResp('+t.id+',this.value)" title="Responsible — person in charge of this action"></td>';
-    }
-    if(showLink&&gvCut.link) h+=GV_CUT_TD; else if(showLink){
-      h+='<td><input class="gv-in" value="'+gvEsc(t.linkage||'')+'" placeholder="Related…" onclick="event.stopPropagation()" onchange="setTaskLink('+t.id+',this.value)" title="Linkage — related personnel for this action"></td>';
-    }
-    h+='<td style="text-align:center;padding:0"><button class="gv-del" title="Delete task (Ctrl+Z to undo)" onclick="event.stopPropagation();gvDeleteTask('+t.id+')">&#128465;</button></td>';
-    h+='</tr>';
+    var planTip='Plan: '+gvDayLong(sD)+' → '+gvDayLong(fD)+(act?(slipD?(' · actual is '+Math.abs(slipD)+(slipD>0?' days later':' days earlier')):' · on plan'):'');
+    COLS.forEach(function(c){
+      var k=c.key;
+      if(gvCut[k]){ h+=GV_CUT_TD; return; }
+      if(k==='status') h+='<td class="c-st">'+gvStatusChip(t,starts,stTd)+'</td>';
+      else if(k==='resp'){
+        var ini=gvInitials(t.resp);
+        h+='<td class="c-own"><div class="gv-own"><span class="gv-av '+(ini?'a'+gvAvTone(t.resp):'none')+'" aria-hidden="true">'+(ini||'+')+'</span>'
+          +'<input class="gv-in" value="'+gvEsc(t.resp||'')+'" placeholder="Add owner" aria-label="Owner" onclick="event.stopPropagation()" onchange="setTaskResp('+t.id+',this.value)"></div></td>';
+      }
+      else if(k==='gvStart') h+=act?'<td class="gv-act'+(t.actPin?' pinned':'')+'">'+gvDateBtn(t.id,'astart',aSD,{pin:t.actPin,label:'Actual start',title:planTip})+'</td>'
+                                 :'<td>'+gvDateBtn(t.id,'start',sD,{pin:!!t.pinDate,cls:conf?'late':'',label:'Start',title:t.pinDate?'Pinned to '+gvDayLong(sD):'Follows its predecessors · '+gvDayLong(sD)})+'</td>';
+      else if(k==='gvFinish') h+=act?'<td class="gv-act">'+gvDateBtn(t.id,'afinish',aFD,{cls:slipD>0?'late':'',label:'Actual finish',title:planTip})+'</td>'
+                                    :'<td>'+gvDateBtn(t.id,'finish',fD,{label:'Finish'})+'</td>';
+      else if(k==='gvDur'){
+        if(t.milestone&&!act){ h+='<td><span class="gv-mslbl">Milestone</span></td>'; return; }
+        var dv=act?((t.durUnit==='days')?r1(aDw*5):r1(aDw)):(+t.dur||0);
+        h+='<td'+(act?' class="gv-act"':'')+'><div class="gv-len" onclick="event.stopPropagation()">'
+          +'<input type="number" min="0" step="0.1" value="'+dv+'" aria-label="'+(act?'Actual length':'Length')+'" onchange="'+(act?'setTaskActDur':'setTaskDuration')+'('+t.id+',this.value)"'+(act?' title="Plan: '+(+t.dur||0)+' '+(t.durUnit==='days'?'days':'wks')+'"':'')+'>'
+          +'<select aria-label="Unit" onchange="setTaskDurUnit('+t.id+',this.value)"><option value="weeks"'+((t.durUnit||'weeks')==='weeks'?' selected':'')+'>wks</option><option value="days"'+(t.durUnit==='days'?' selected':'')+'>days</option></select>'
+          +'</div></td>';
+      }
+      else if(k==='gvPred'){
+        var pt=gvPredText(t,idx);
+        h+='<td onclick="event.stopPropagation()"><div class="pred-dd-wrap"><button type="button" class="gv-dep-trigger" onclick="openPredDD(event,'+t.id+',this)" title="'+gvEsc(pt.title)+'" aria-label="Depends on: '+gvEsc(pt.title)+'">'
+          +'<span class="lbl'+(pt.none?' none':'')+(pt.auto?' auto':'')+'">'+gvEsc(pt.txt)+'</span><span class="chev">'+gvIco('chev')+'</span></button></div></td>';
+      }
+      else if(k==='gvSeg'){
+        var sc=pal[t.seg]||pal._;
+        h+='<td><button type="button" class="gv-chip gv-segbtn" style="--sc:'+sc.fill+'" title="Change segment" onclick="event.stopPropagation();gvSegOpen(event,'+t.id+',this)">'+gvEsc(t.seg||'–')+' '+gvIco('chev','gi gv-car')+'</button></td>';
+      }
+      else if(k==='milestone') h+='<td class="c-ms"><button type="button" class="gv-ms'+(t.milestone?' on':'')+'" aria-pressed="'+!!t.milestone+'" title="'+(t.milestone?'Milestone: click to make it a normal task':'Click to make it a milestone')+'" onclick="event.stopPropagation();toggleMilestone('+t.id+')">'+gvIco('dia')+'</button></td>';
+      else if(k==='lag') h+='<td><div class="gv-len"><input type="number" step="1" value="'+(+t.lag||0)+'" aria-label="Delay in weeks" onclick="event.stopPropagation()" onchange="setTaskLag('+t.id+',this.value)" title="Delay before this task starts (negative overlaps it with its predecessor)"><span class="u">wks</span></div></td>';
+      else if(k==='link') h+='<td><input class="gv-in" value="'+gvEsc(t.linkage||'')+'" placeholder="Related people" aria-label="Linkage" onclick="event.stopPropagation()" onchange="setTaskLink('+t.id+',this.value)"></td>';
+    });
+    h+='<td class="c-del"><button type="button" class="gv-del" title="Delete task (Ctrl+Z to undo)" aria-label="Delete '+gvEsc(t.name)+'" onclick="event.stopPropagation();gvDeleteTask('+t.id+')">'+gvIco('trash')+'</button></td></tr>';
   });
+  if(!rows.length) h+='<tr><td colspan="'+span+'" class="gv-empty">No tasks yet. Use ＋ Task on a phase, or start from the NPD template in the ⋯ menu.</td></tr>';
   h+='</tbody>';
   tbl.innerHTML=h;
+}
+
+/* ── small popovers next to a cell: the status menu and the date picker (V2's calendar) ── */
+function gvPop(id,extra){
+  var m=document.getElementById(id);
+  if(!m){ m=document.createElement('div'); m.id=id; document.body.appendChild(m); m.addEventListener('click',function(e){ e.stopPropagation(); }); }
+  m.className='v3menu gv-pop'+(extra?' '+extra:'');
+  v3CloseMenus(m); var gc=document.getElementById('gvColMenu'); if(gc) gc.classList.remove('open');
+  [].forEach.call(document.querySelectorAll('.gv-date.open'),function(b){ b.classList.remove('open'); });
+  return m;
+}
+function gvPopAt(m,anchor){
+  m.classList.add('open'); m.style.position='fixed'; m.style.right='auto';
+  var r=anchor.getBoundingClientRect(), w=m.offsetWidth, hh=m.offsetHeight;
+  var top=r.bottom+6; if(top+hh>window.innerHeight-8) top=Math.max(8,r.top-hh-6);
+  m.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+'px'; m.style.top=top+'px';
+}
+function gvStOpen(ev,id,btn){
+  ev.stopPropagation();
+  var t=getById(id); if(!t) return;
+  var starts=computeStarts(), td=stToday(), auto=taskAutoStatus(t,starts,td), man=taskStatusManual(t), cur=taskStatus(t,starts,td);
+  var m=gvPop('gvStMenu','gv-stmenu'), h='<div class="v3lab">Status</div>'
+    +'<button type="button" class="'+(man?'':'cur')+'" onclick="gvStSet('+id+',\'auto\')">'+gvIco('auto')+'<span>Auto<small>follows the dates: '+GV_ST_LABEL[auto]+'</small></span></button><hr>';
+  for(var k=1;k<=5;k++) h+='<button type="button" class="gv-sti s'+k+(man&&cur===k?' cur':'')+'" onclick="gvStSet('+id+','+k+')">'+gvIco('st'+k)+'<span>'+GV_ST_LABEL[k]+(man&&cur===k?'<small>set by hand</small>':'')+'</span></button>';
+  m.innerHTML=h; gvPopAt(m,btn);
+  var f=m.querySelector('button.cur')||m.querySelector('button'); if(f) f.focus({preventScroll:true});
+}
+function gvStSet(id,v){ v3CloseMenus(); setTaskStatus(id,v); }
+
+var GV_DP=null;   /* the open date picker: {id, field, y, m, sel} */
+function gvDpValue(t,field){
+  var starts=computeStarts();
+  if(field==='start') return taskStartDate(t,starts);
+  if(field==='finish') return taskFinishDate(t,starts);
+  var aS=t.actStart>0?t.actStart:(starts[t.id]||1), aDw=t.actDur>0?t.actDur:durW(t);
+  return field==='astart'?dateFromWeek(aS):new Date(dateFromWeek(aS+aDw).getTime()-86400000);
+}
+function gvDpOpen(ev,id,field,btn){
+  ev.stopPropagation();
+  var t=getById(id); if(!t) return;
+  var cur=gvDpValue(t,field); if(!cur||isNaN(cur.getTime())) cur=stToday();
+  GV_DP={id:id,field:field,y:cur.getFullYear(),m:cur.getMonth(),sel:cur};
+  gvDpRender(btn);
+}
+function gvDpAnchor(){ var P=GV_DP; return P&&document.querySelector('#gvTbl tr[data-tid="'+P.id+'"] .gv-date[data-f="'+P.field+'"]'); }
+function gvDpRender(anchor){
+  var P=GV_DP; if(!P) return; var t=getById(P.id); if(!t) return;
+  anchor=anchor||gvDpAnchor(); if(!anchor) return;
+  var m=gvPop('gvDp','v3pop gv-dp'); anchor.classList.add('open');
+  var first=new Date(P.y,P.m,1), off=(first.getDay()+6)%7, today=stToday(), selISO=toISODate(P.sel), tdISO=toISODate(today);
+  var h='<div class="dp-h"><b>'+GV_MONL[P.m]+' '+P.y+'</b><button type="button" class="dp-nav" aria-label="Previous month" onclick="gvDpMove(-1)">'+gvIco('left')+'</button><button type="button" class="dp-nav" aria-label="Next month" onclick="gvDpMove(1)">'+gvIco('right')+'</button></div>'
+    +'<div class="dp-g" role="grid">'+['M','T','W','T','F','S','S'].map(function(x){ return '<span class="dp-wd">'+x+'</span>'; }).join('');
+  for(var i=0;i<42;i++){
+    var d=new Date(P.y,P.m,1-off+i), iso=toISODate(d), cls=(d.getMonth()!==P.m?' o':'')+(d.getDay()===0||d.getDay()===6?' we':'')+(iso===tdISO?' td':'')+(iso===selISO?' sel':'');
+    h+='<button type="button" class="dp-d'+cls+'" aria-label="'+gvDayLong(d)+'"'+(iso===selISO?' aria-pressed="true"':'')+' onclick="gvDpPick(\''+iso+'\')">'+d.getDate()+'</button>';
+  }
+  h+='</div>';
+  var add=function(days){ return toISODate(new Date(P.sel.getFullYear(),P.sel.getMonth(),P.sel.getDate()+days)); };
+  var q=[];
+  if(P.field==='start'||P.field==='astart'){
+    var nm=new Date(today.getFullYear(),today.getMonth(),today.getDate()+((8-today.getDay())%7||7));
+    q=[['Today',tdISO],['Next Monday',toISODate(nm)],['+1 wk',add(7)],['+2 wks',add(14)]];
+  } else {
+    var eom=new Date(P.sel.getFullYear(),P.sel.getMonth()+1,0), sd=gvDpValue(t,P.field==='finish'?'start':'astart');
+    q=[['+1 wk',add(7)],['+2 wks',add(14)],['End of month',toISODate(eom)],['Same as start',toISODate(sd)]];
+  }
+  h+='<div class="dp-q">'+q.map(function(x){ return '<button type="button" onclick="gvDpPick(\''+x[1]+'\')">'+x[0]+'</button>'; }).join('')+'</div>';
+  var note='', clr='';
+  if(P.field==='start'){ note=t.pinDate?'pinned to this date':'follows its predecessors'; if(t.pinDate) clr='<button type="button" class="dp-clr" onclick="gvDpPick(\'\')">Unpin</button>'; }
+  else if(P.field==='finish') note=gvLenText(t)+' after the start';
+  else if(P.field==='astart'){ note=t.actPin?'actual start':'follows the links'; if(t.actPin) clr='<button type="button" class="dp-clr" onclick="gvDpPick(\'\')">Clear</button>'; }
+  else note='actual finish';
+  h+='<div class="dp-f"><span><b>'+gvDayLong(P.sel)+'</b> &middot; '+note+'</span>'+clr+'</div>';
+  m.innerHTML='<div class="dp-in">'+h+'</div>'; gvPopAt(m,anchor);
+  var f=m.querySelector('.dp-d.sel')||m.querySelector('.dp-d.td'); if(f) f.focus({preventScroll:true});
+}
+function gvDpMove(k){ var P=GV_DP; if(!P) return; P.m+=k; if(P.m<0){ P.m=11; P.y--; } if(P.m>11){ P.m=0; P.y++; } gvDpRender(); }
+function gvDpPick(iso){
+  var P=GV_DP; if(!P) return; GV_DP=null; v3CloseMenus();
+  if(P.field==='start') setTaskStart(P.id,iso); else if(P.field==='finish'){ if(iso) setTaskFinish(P.id,iso); }
+  else if(P.field==='astart') setTaskActStart(P.id,iso); else if(iso) setTaskActFinish(P.id,iso);
+}
+/* arrow keys move through the calendar, Enter picks (buttons already pick on Enter / Space) */
+document.addEventListener('keydown',function(e){
+  var m=document.getElementById('gvDp'); if(!m||!m.classList.contains('open')||!GV_DP) return;
+  var mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key]; if(!mv) return;
+  var a=document.activeElement; if(!a||!a.classList.contains('dp-d')) return;
+  e.preventDefault(); var ds=[].slice.call(m.querySelectorAll('.dp-d')), i=ds.indexOf(a)+mv;
+  if(i>=0&&i<ds.length) ds[i].focus(); else { gvDpMove(mv>0?1:-1); }
+});
+
+/* ── Timeline colours from the V2 look (Phase 2): the SVG can't read CSS variables, so the look's tokens are resolved
+   to plain colours at draw time. Segment colours come from the look's palette, with readable text on each bar. ── */
+function gvCss(n,fb){ var v=getComputedStyle(document.body).getPropertyValue(n).trim(); return v||fb||''; }
+function gvRGB(c){
+  c=String(c||'').trim(); var m;
+  if((m=/^#([0-9a-f]{3,8})$/i.exec(c))){ var h=m[1]; if(h.length<6) h=h.split('').map(function(x){ return x+x; }).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16),h.length>=8?parseInt(h.slice(6,8),16)/255:1]; }
+  if((m=/^rgba?\(([^)]+)\)/i.exec(c))){ var p=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat); return [p[0],p[1],p[2],p[3]==null?1:p[3]]; }
+  return null;
+}
+function gvMix(a,b,t){ var A=gvRGB(a), B=gvRGB(b); if(!A||!B) return a||b; return 'rgb('+[0,1,2].map(function(i){ return Math.round(A[i]*t+B[i]*(1-t)); }).join(',')+')'; }
+function gvLum(c){ var A=gvRGB(c); if(!A) return 0.5; var f=function(x){ x/=255; return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4); }; return 0.2126*f(A[0])+0.7152*f(A[1])+0.0722*f(A[2]); }
+function gvInk(fill){ var L=gvLum(fill); return (1.05/(L+0.05))>=((L+0.05)/0.0615)?'#FFFFFF':'#0B1220'; }   /* white or near-black, whichever reads better */
+function gvTheme(){
+  var bg=gvCss('--surf-solid','#FFFFFF'), tx=gvCss('--tx','#14191F');
+  return { bg:bg, tx:tx, mu:gvCss('--mu','#5F6B78'), line:gvCss('--line','rgba(16,24,40,.08)'), line2:gvCss('--line-2','rgba(16,24,40,.16)'),
+    alt:gvMix(tx,bg,0.025), bad:gvCss('--bad','#E5484D'), ac:gvCss('--ac','#0088FF'), ok:gvCss('--ok','#16A34A'),
+    fb:gvCss('--fb','system-ui,sans-serif').replace(/"/g,"'"), fm:gvCss('--fm','ui-monospace,monospace').replace(/"/g,"'") };
+}
+var GV_SEG_ORDER=['Mold','Label','Machine','Assembly','Packaging','Logistics'];
+function gvSegPalette(){
+  var base=[gvCss('--c1'),gvCss('--info'),gvCss('--ok'),gvCss('--c2'),gvCss('--warn'),gvCss('--mu')].filter(Boolean), seen={}, out=[];
+  base.forEach(function(x){ var k=x.toLowerCase(); if(!seen[k]){ seen[k]=1; out.push(x); } });
+  var c1=base[0]||'#0088FF', ok=gvCss('--ok','#16A34A'), warn=gvCss('--warn','#E8740C'), extra=[gvMix(c1,ok,0.5),gvMix(c1,warn,0.5),gvMix(ok,warn,0.5)];
+  while(out.length<GV_SEG_ORDER.length) out.push(extra.shift()||'#98A2AE');
+  var P={}, list=GV_SEG_ORDER.concat((typeof SEGMENTS!=='undefined'?SEGMENTS:[]).filter(function(s){ return GV_SEG_ORDER.indexOf(s)<0; }));
+  list.forEach(function(s,i){ var f=out[i%out.length]; P[s]={fill:f,ink:gvInk(f)}; });
+  var o=gvCss('--mu','#98A2AE'); P._={fill:o,ink:gvInk(o)};
+  return P;
 }
 
 /* ---- right timeline, row-aligned to the grid ---- */
 function renderChartPane(starts){
   var host=document.getElementById('gvChart'); if(!host) return;
-  var rows=gvRows();
-  if(!rows.length){ host.innerHTML='<div class="empty" style="padding:30px;font-size:12px;color:#9AA0B2">No tasks yet — add one to begin.</div>'; return; }
+  var rows=gvRows(), th=gvTheme(), pal=gvSegPalette(), today=stToday(), used={};
+  if(!rows.length){ host.innerHTML='<div class="gv-chart-empty">No tasks yet. Add one to begin.</div>'; renderGvLegend(pal,used); return; }
   var sd=projStartDate();
   var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); });
   var WW=GV_WW;
-  /* Draw at least far enough to fill the visible pane, not just far enough to
-     cover the last task — otherwise the calendar stops dead after the final
-     bar and leaves the rest of the pane blank. */
-  var wrapEl=document.getElementById('gvChartWrap');
-  var availW=wrapEl?wrapEl.clientWidth:900;
+  /* draw at least far enough to fill the visible pane */
+  var wrapEl=document.getElementById('gvChartWrap'), availW=wrapEl?wrapEl.clientWidth:900;
   var TW=Math.max(Math.ceil(maxW)+4,12,Math.ceil(availW/WW));
   var W=TW*WW, H=GV_HEAD+rows.length*GV_ROW;
-  var dark=document.body.classList.contains('dark');
-  var line=dark?'#2A3139':'#E9ECF0', rowAlt=dark?'#191E24':'#FAFBFC';
-  var hBg=dark?'#1F252C':'#FFFFFF', hTx=dark?'#F2F4F7':'#14191F', hMu=dark?'#9AA3AE':'#5F6B78', hLn=dark?'#2A3139':'#E3E7EC';
-  var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" style="display:block">';
+  var PADX=10;   /* inset so a milestone on the first day isn't cut off */
+  var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+(W+PADX)+'" height="'+H+'" style="display:block" font-family="'+th.fb+'"><rect x="0" y="0" width="'+PADX+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><g transform="translate('+PADX+',0)">';
 
-  /* calendar header — month band over week band */
-  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+hBg+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+hLn+'"/>';
+  /* calendar header: month band over week numbers (weeks only when there's room for them) */
+  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+th.line2+'"/>';
+  var grid='', bg='', fg='';   /* layers: row backgrounds, then grid lines, then bars */
   var mCur=new Date(sd.getTime()), mStart=0;
   for(var i=0;i<=TW;i++){
     var d=new Date(sd.getTime()+i*MS_WEEK);
     if(i===TW||d.getMonth()!==mCur.getMonth()){
       var mw=(i-mStart)*WW;
-      if(mw>28) s+='<text x="'+(mStart*WW+mw/2)+'" y="20" font-size="10.5" font-weight="500" font-family="Google Sans,Product Sans,system-ui,sans-serif" fill="'+hTx+'" text-anchor="middle">'+mCur.toLocaleDateString('en-MY',{month:'short',year:'2-digit'}).toUpperCase()+'</text>';
-      s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+hLn+'"/>';
+      var yr=(mCur.getMonth()===0||mStart===0)?(mw>=76?' '+mCur.getFullYear():(mw>=52?' \u2019'+String(mCur.getFullYear()).slice(2):'')):'';
+      if(mw>30) s+='<text x="'+(mStart*WW+8)+'" y="21" font-size="12" font-weight="600" fill="'+th.tx+'">'+GV_MON[mCur.getMonth()]+yr+'</text>';
+      if(i>0){ s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; grid+='<line x1="'+(i*WW)+'" y1="'+GV_HEAD+'" x2="'+(i*WW)+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; }
       mStart=i; mCur=d;
     }
   }
   for(var w=0;w<TW;w++){
-    s+='<line x1="'+(w*WW)+'" y1="30" x2="'+(w*WW)+'" y2="'+GV_HEAD+'" stroke="'+hLn+'" stroke-opacity=".7"/>';
-    if(WW>=22) s+='<text x="'+(w*WW+WW/2)+'" y="46" font-size="8" fill="'+hMu+'" text-anchor="middle" font-family="JetBrains Mono,ui-monospace,monospace">W'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    if(WW>=22){
+      s+='<line x1="'+(w*WW)+'" y1="'+(GV_HEAD-18)+'" x2="'+(w*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line+'"/>'; grid+='<line x1="'+(w*WW)+'" y1="'+GV_HEAD+'" x2="'+(w*WW)+'" y2="'+H+'" stroke="'+th.line+'"/>';
+      s+='<text x="'+(w*WW+WW/2)+'" y="'+(GV_HEAD-9)+'" font-size="10.5" fill="'+th.mu+'" text-anchor="middle" font-family="'+th.fm+'">'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    }
   }
 
-  var y=GV_HEAD, bpos={};
-  rows.forEach(function(r,ri){
+  var y=GV_HEAD, bpos={}, ri=0;
+  rows.forEach(function(r){
     if(r.type==='phase'){
-      var pc=PC[r.phase];
-      s+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+pc.light+'"'+(dark?' opacity="0.18"':'')+'/>';
-      var pt=tasks.filter(function(t){return t.phase===r.phase;});
+      var pc=PC[r.phase]||{bar:th.mu};
+      bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+gvMix(pc.bar,th.bg,0.09)+'"/>';
+      var pt=tasks.filter(function(t){ return t.phase===r.phase; });
       if(pt.length){
         var mn=Infinity,mx=0;
         pt.forEach(function(t){ var st2=starts[t.id]||1; mn=Math.min(mn,st2); mx=Math.max(mx,st2+durW(t)); });
         if(isFinite(mn)&&mx>mn){
           var pbx=(mn-1)*WW, pbw=(mx-mn)*WW;
-          s+='<rect x="'+pbx+'" y="'+(y+GV_ROW/2-4)+'" width="'+pbw+'" height="8" rx="2" fill="'+pc.bar+'" opacity="0.32"/>';
-          /* phase summary on the chart (start → finish · duration) */
+          fg+='<rect x="'+pbx+'" y="'+(y+GV_ROW/2-4)+'" width="'+pbw+'" height="8" rx="4" fill="'+pc.bar+'" opacity=".5"><title>'+gvEsc((PLABEL[r.phase]||r.phase)+' phase')+'</title></rect>';
           if(gvPhaseSummaryIn==='chart'||gvPhaseSummaryIn==='both'){
             var ps=phaseSummaryFor(r.phase,starts);
             if(ps){
-              var lbl=fmtDateShort(ps.start)+' → '+fmtDateShort(ps.finish)+' · '+ps.weeks+'w';
-              var lx=pbx+pbw+7, anchor='start';
-              if(lx+lbl.length*5.4>W){ lx=Math.max(2,pbx-7); anchor='end'; }
-              s+='<text x="'+lx+'" y="'+(y+GV_ROW/2+3.5)+'" font-size="8.5" font-family="DM Mono,monospace" fill="'+pc.text+'" text-anchor="'+anchor+'" font-weight="600">'+lbl+'</text>';
+              var lbl=gvDay(ps.start)+' → '+gvDay(ps.finish)+' · '+gvWks(ps.weeks), lx=pbx+pbw+8, anchor='start';
+              if(lx+lbl.length*6.2>W){ lx=Math.max(2,pbx-8); anchor='end'; }
+              fg+='<text x="'+lx+'" y="'+(y+GV_ROW/2+4)+'" font-size="11.5" fill="'+th.mu+'" text-anchor="'+anchor+'">'+lbl+'</text>';
             }
           }
         }
       }
-      s+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+line+'"/>';
+      bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
       y+=GV_ROW; return;
     }
-    var t=r.task, st=starts[t.id]||1, dw=durW(t);
-    if(ri%2) s+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+rowAlt+'"/>';
-    s+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+line+'"/>';
-    var bx=(st-1)*WW, bw=Math.max(dw*WW,2), by=y+7, bh=GV_ROW-14;
-    var col=(SC[t.seg]&&SC[t.seg].bar)||PC[t.phase].bar;
+    var t=r.task, st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today);
+    if(ri++%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+th.alt+'"/>';
+    bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
+    var bx=(st-1)*WW, bw=Math.max(dw*WW,2), by=y+8, bh=GV_ROW-16;
+    var sc=pal[t.seg]||pal._; used[t.seg&&pal[t.seg]?t.seg:'_']=1;
+    var fill=stt===5?th.ok:sc.fill, ink=stt===5?gvInk(th.ok):sc.ink, late=(stt===3||stt===4);
+    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts);
+    var tip=t.name+' · '+(dw===0||t.milestone?gvDayLong(sD):gvDayLong(sD)+' → '+gvDayLong(fD)+' · '+gvLenText(t))+' · '+GV_ST_LABEL[stt];
     bpos[t.id]={x:bx,w:bw,midY:y+GV_ROW/2};
+    fg+='<g><title>'+gvEsc(tip)+'</title>';
     if(dw===0||t.milestone){
       var cx=bx, cy=y+GV_ROW/2;
-      s+='<path d="M'+cx+' '+(cy-7)+' L'+(cx+7)+' '+cy+' L'+cx+' '+(cy+7)+' L'+(cx-7)+' '+cy+' Z" fill="'+col+'"/>';
+      fg+='<path d="M'+cx+' '+(cy-8)+' L'+(cx+8)+' '+cy+' L'+cx+' '+(cy+8)+' L'+(cx-8)+' '+cy+' Z" fill="'+fill+'" stroke="'+(late?th.bad:th.bg)+'" stroke-width="2"/>';
+      used._ms=1;
     } else {
       if(scheduleMode==='actual'&&(t.actStart||t.actDur)){
         var aS=t.actStart||st, aD=(t.actDur>0?t.actDur:dw);
-        s+='<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="3" fill="none" stroke="'+col+'" stroke-width="1.2" stroke-dasharray="3,2" opacity=".7"/>';
-        s+='<rect x="'+((aS-1)*WW)+'" y="'+by+'" width="'+Math.max(aD*WW,2)+'" height="'+bh+'" rx="3" fill="'+col+'"/>';
+        fg+='<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="6" fill="none" stroke="'+fill+'" stroke-width="1.5" stroke-dasharray="4,3" opacity=".8"/>';
+        fg+='<rect x="'+((aS-1)*WW)+'" y="'+by+'" width="'+Math.max(aD*WW,2)+'" height="'+bh+'" rx="6" fill="'+fill+'"'+(late?' stroke="'+th.bad+'" stroke-width="2"':'')+'/>';
       } else {
-        s+='<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="3" fill="'+col+'"/>';
+        fg+='<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="6" fill="'+fill+'"'+(late?' stroke="'+th.bad+'" stroke-width="2"':'')+'/>';
       }
-      if(bw>30) s+='<text x="'+(bx+bw/2)+'" y="'+(y+GV_ROW/2+3.5)+'" font-size="8" fill="#fff" text-anchor="middle" font-weight="600" font-family="DM Mono,monospace">'+durLabel(t)+'</text>';
+      var len=gvLenText(t), full=t.name+' · '+len, lab=bw>=full.length*6.3+18?full:(bw>=len.length*6.6+14?len:'');
+      if(lab) fg+='<text x="'+(bx+9)+'" y="'+(y+GV_ROW/2+4)+'" font-size="11" fill="'+ink+'" font-weight="600">'+gvEsc(lab)+'</text>';
     }
+    if(late) used._late=1;
     if(t.pinDate||pinnedStartWeek(t,sd)!==null){
-      var pcf=pinConflicts[t.id], pcol=pcf?'#D93025':'#0077CC';
-      s+='<line x1="'+bx+'" y1="'+y+'" x2="'+bx+'" y2="'+(y+GV_ROW)+'" stroke="'+pcol+'" stroke-width="1.5" stroke-dasharray="2,2"/>';
-      if(pcf) s+='<rect x="'+(bx-1)+'" y="'+(by-1)+'" width="'+(bw+2)+'" height="'+(bh+2)+'" rx="3" fill="none" stroke="#D93025" stroke-width="1.5"/>';
+      var pcf=pinConflicts[t.id];
+      fg+='<line x1="'+bx+'" y1="'+(y+3)+'" x2="'+bx+'" y2="'+(y+GV_ROW-3)+'" stroke="'+(pcf?th.bad:th.ac)+'" stroke-width="1.5" stroke-dasharray="2,2"/>';
+      if(pcf) fg+='<rect x="'+(bx-1)+'" y="'+(by-1)+'" width="'+(bw+2)+'" height="'+(bh+2)+'" rx="7" fill="none" stroke="'+th.bad+'" stroke-width="1.5"/>';
     }
+    fg+='</g>';
     y+=GV_ROW;
   });
 
+  s+=bg+grid+fg;
   /* dependency arrows */
   if(colVis.arrows){
     for(var ai=0;ai<tasks.length;ai++){
       var at=tasks[ai];
       resolvePredsForTask(at,ai).forEach(function(pid){
         var f=bpos[pid], to=bpos[at.id]; if(!f||!to) return;
-        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY;
-        var mx2=Math.max(x1+7,x2-7);
-        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+(dark?'#5A647A':'#9AA0B2')+'" stroke-width="1" opacity=".75"/>';
-        s+='<path d="M'+x2+' '+y2+' l-4 -3 l0 6 z" fill="'+(dark?'#5A647A':'#9AA0B2')+'"/>';
+        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+7,x2-7);
+        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+th.mu+'" stroke-width="1.2" opacity=".55"/>';
+        s+='<path d="M'+x2+' '+y2+' l-5 -3.5 l0 7 z" fill="'+th.mu+'" opacity=".7"/>';
       });
     }
   }
 
-  /* today marker */
+  /* today: a red line with a pill on the week row */
   var todayW=weekFromDate(toISODate(new Date()),sd);
   if(todayW!==null&&todayW>=1&&todayW<=TW+1){
     var tx=(todayW-1)*WW;
-    s+='<line x1="'+tx+'" y1="'+GV_HEAD+'" x2="'+tx+'" y2="'+H+'" stroke="#EA4335" stroke-width="1.4" stroke-dasharray="4,3"/>';
-    s+='<rect x="'+(tx-17)+'" y="'+(GV_HEAD-15)+'" width="34" height="13" rx="3" fill="#EA4335"/>';
-    s+='<text x="'+tx+'" y="'+(GV_HEAD-5)+'" font-size="7.5" fill="#fff" text-anchor="middle" font-weight="700" font-family="Tomorrow,DM Sans,sans-serif">TODAY</text>';
+    s+='<line class="gv-today" x1="'+tx+'" y1="'+(GV_HEAD-2)+'" x2="'+tx+'" y2="'+H+'" stroke="'+th.bad+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
+    s+='<rect x="'+(tx-23)+'" y="'+(GV_HEAD-21)+'" width="46" height="18" rx="9" fill="'+th.bad+'"/>';
+    s+='<text x="'+tx+'" y="'+(GV_HEAD-8)+'" font-size="10.5" fill="'+gvInk(th.bad)+'" text-anchor="middle" font-weight="600">Today</text>';
+    used._today=1;
   }
-  s+='</svg>';
+  s+='</g></svg>';
   host.innerHTML=s;
+  renderGvLegend(pal,used);
+}
+/* legend under the plan: the segments this plan uses, milestones, late work, today */
+function renderGvLegend(pal,used){
+  var el=document.getElementById('gvLegend'); if(!el) return;
+  var h=Object.keys(pal).filter(function(k){ return k!=='_'&&used[k]; }).map(function(k){ return '<span><i class="sw" style="background:'+pal[k].fill+'"></i>'+gvEsc(k)+'</span>'; }).join('');
+  if(used._) h+='<span><i class="sw" style="background:'+pal._.fill+'"></i>No segment</span>';
+  if(used._ms) h+='<span><i class="dm"></i>Milestone</span>';
+  if(used._late) h+='<span><i class="lt"></i>Late</span>';
+  if(used._today) h+='<span><i class="td"></i>Today</span>';
+  el.innerHTML=h; el.hidden=!h;
 }
 
 function renderWorkingView(){

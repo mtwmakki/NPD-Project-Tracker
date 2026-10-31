@@ -391,7 +391,6 @@ button{font:inherit;color:inherit}
 .rows{display:grid;gap:8px}
 .row{display:grid;grid-template-columns:4px minmax(0,2.2fr) minmax(0,1.5fr) minmax(0,1.1fr) auto;gap:16px;align-items:center;padding:14px 18px 14px 14px;cursor:pointer;text-align:left;width:100%;color:inherit;font:inherit}
 .row:active{transform:scale(.99)}
-.row .bar4{width:4px;align-self:stretch;border-radius:4px;background:var(--c)}
 .row .t{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .s{font-size:12.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .steps{display:flex;gap:4px;margin-top:6px}
@@ -399,13 +398,9 @@ button{font:inherit;color:inherit}
 .steps i.d{background:var(--ac)}
 .steps i.c{background:color-mix(in srgb,var(--ac) 45%,transparent);animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{50%{opacity:.4}}
-.slab{font-size:12.5px;color:var(--mu)}
-.slab b{color:var(--tx);font-weight:600}
 .wd{display:flex;gap:3px;margin-top:6px}
 .wd i{width:14px;height:6px;border-radius:3px;background:var(--track)}
 .wd i.on{background:var(--c)}
-.rv{text-align:right;font:var(--n-w) 20px/1 var(--fn);letter-spacing:var(--n-ls);white-space:nowrap}
-.rv small{display:block;margin-top:4px;font:500 11px var(--fm);color:var(--mu);letter-spacing:.02em}
 .empty{padding:48px 20px;text-align:center;color:var(--mu)}
 .empty b{display:block;font:var(--h-w) 24px var(--fd);color:var(--tx);margin-bottom:6px}
 
@@ -423,14 +418,6 @@ button{font:inherit;color:inherit}
 .sh-body{padding:4px 22px 22px;overflow:auto;display:grid;gap:16px;align-content:start}
 .sh-body>*{animation:rise calc(600ms*var(--k)) var(--ease-out) backwards;animation-delay:calc(140ms*var(--k) + var(--i,0)*60ms*var(--k))}
 .slabox{padding:16px;display:grid;gap:12px}
-.slabig{display:flex;align-items:baseline;gap:10px}
-.slabig b{font:var(--n-w) 46px/1 var(--fn);letter-spacing:var(--n-ls)}
-.wd5{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.wd5 i{height:10px;border-radius:4px;background:var(--track);position:relative;overflow:hidden}
-.wd5 i::after{content:"";position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;animation:grow2 calc(400ms*var(--k)) var(--ease-out) forwards;animation-delay:calc(300ms*var(--k) + var(--i)*90ms*var(--k))}
-.wd5 i.off::after{display:none}
-.wd5 i.lim{outline:1px dashed var(--line-2);outline-offset:2px}
-@keyframes grow2{to{transform:scaleX(1)}}
 .tl{display:grid;gap:0;position:relative}
 .tl .st2{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;position:relative;padding-bottom:16px}
 .tl .st2:not(:last-child)::before{content:"";position:absolute;left:13px;top:26px;bottom:2px;width:2px;background:var(--track)}
@@ -552,6 +539,7 @@ button{font:inherit;color:inherit}
 #totop{position:absolute;right:28px;bottom:24px;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:color-mix(in srgb,var(--surf-solid) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--tx);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity calc(250ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring)}
 #totop.show{opacity:1;transform:none;pointer-events:auto}
 @media (max-width:720px){#totop{right:16px;bottom:16px}}
+@media (max-width:720px){html .toolbar .btn.tb-pdf{display:none}}   /* phones: PDF reports are in Settings → Data, the toolbar stays one row shorter */
 @media (max-width:720px){#tseg,#bseg,#pseg,#nseg{display:flex;width:100%}#tseg button,#bseg button,#pseg button,#nseg button{flex:1;justify-content:center;padding-left:8px;padding-right:8px}.seg button{padding-left:12px;padding-right:12px}}
 .tok table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
 .tok th{text-align:left;font:600 11px var(--fb);letter-spacing:.12em;text-transform:uppercase;color:var(--mu);padding:10px 12px;border-bottom:1px solid var(--line)}
@@ -686,7 +674,7 @@ button{font:inherit;color:inherit}
 
 /* ───────── RESPONSIVE ───────── */
 @media (max-width:1180px){
-  .row{grid-template-columns:4px minmax(0,2fr) minmax(0,1.4fr) auto}.row .col-ball{display:none}
+  .row{grid-template-columns:4px minmax(0,2fr) minmax(0,1.4fr) auto}
 }
 @media (max-width:1040px){
   #app{grid-template-columns:76px minmax(0,1fr)}
@@ -707,7 +695,7 @@ button{font:inherit;color:inherit}
   .tabbar button{position:relative;z-index:1;display:grid;justify-items:center;gap:3px;border:0;background:none;color:var(--mu);font:600 10.5px var(--fb);padding:6px 4px;width:64px;cursor:pointer;transition:color .2s}
   .tabbar button.on{color:var(--tx)}
   .tab-ind{position:absolute;top:8px;left:0;width:64px;height:48px;border-radius:16px;background:var(--sel);transition:transform calc(var(--spring-d)*var(--k)) var(--spring)}
-  .row{grid-template-columns:4px minmax(0,1fr) auto;gap:12px}.row .col-stage{display:none}
+  .row{grid-template-columns:4px minmax(0,1fr) auto;gap:12px}
   .princ{grid-template-columns:minmax(0,1fr)}
   #sheet{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:84%;border-radius:28px;transform:translateY(calc(100% + 20px))}
   #sheet.open{transform:translateY(var(--drag,0px))}
@@ -743,22 +731,12 @@ body{padding:0}
 .banner.warn{border-color:color-mix(in srgb,var(--warn) 45%,var(--line));color:var(--tx)}
 .sync.err .pulse{background:var(--bad);animation:none}
 /* inquiry rows: live variant */
-.row .meta2{display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap}
 .pill.hold{background:color-mix(in srgb,var(--info) 18%,transparent);color:var(--info);border-color:transparent}
 .pill.pin{background:transparent;border-color:var(--line-2)}
-.stg{display:flex;gap:4px;margin-top:6px}
-.stg i{height:4px;flex:1;border-radius:4px;background:var(--track)}
-.stg i.done{background:var(--ok)}.stg i.ok{background:color-mix(in srgb,var(--ac) 55%,transparent)}.stg i.risk{background:var(--warn)}.stg i.overdue{background:var(--bad)}
 /* sheet sections */
 .shsec{display:grid;gap:10px}
 .shsec>h3{margin:0;font:var(--ph-w) 16px/1.2 var(--fd);letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .shsec>h3 span{font:600 11px/1 var(--fb);letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}
-.slarow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line)}
-.slarow .node{width:26px;height:26px}
-.slarow .nm{font-weight:600;font-size:14px}
-.slarow .when{font-size:12px;color:var(--mu)}
-.slarow.done .node{background:var(--ok);border-color:var(--ok);color:var(--on-ac)}
-.slarow.overdue .node{border-color:var(--bad)}.slarow.risk .node{border-color:var(--warn)}.slarow.ok .node{border-color:var(--ac)}
 .btn.sm,.b1.sm{padding:8px 12px;font-size:12.5px}
 .task.slim{padding:10px 12px}
 .task .who{display:flex;gap:8px;flex-wrap:wrap}
@@ -783,8 +761,6 @@ body{padding:0}
 .kv.wide{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .seg.acc button{padding-left:12px;padding-right:12px}
 :root[data-look="I"] .seg.acc button{padding:11px 14px;font-size:14px}
-.row .meta2 .stp{display:none}
-@media (max-width:1180px){.row .meta2 .stp{display:inline-flex}}
 /* ───────── add / edit ───────── */
 .tb-new{margin-left:auto}
 .toolbar .search+.tb-new{margin-left:0}
@@ -1868,6 +1844,13 @@ button.wd:hover{background:var(--hover);color:var(--tx)}
 .tdel::after{content:"";position:absolute;inset:-8px}
 .tdel:hover,.tdel:focus-visible{opacity:1;background:color-mix(in srgb,var(--tc) 24%,transparent)}
 .tagmgr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tname{border:0;background:none;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tname:hover{text-decoration:underline;text-underline-offset:2px}
+.tname:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:4px}
+.tagedit{flex-basis:100%;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--hover)}
+.tagedit input{min-width:0;height:36px;padding:0 10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surf-solid);color:var(--tx);font:400 14px/1 var(--fb)}
+.tagedit input:focus{outline:2px solid var(--ac);outline-offset:1px}
+.tagedit .tsw{grid-column:1/-1}
 .tagadd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 8px;align-items:center}
 .tagadd input{min-width:0;height:38px;padding:0 12px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--hover);color:var(--tx);font:400 14px/1 var(--fb)}
 .tagadd input:focus{outline:2px solid var(--ac);outline-offset:1px}
@@ -1876,6 +1859,7 @@ button.wd:hover{background:var(--hover);color:var(--tx)}
 .tsw button{position:relative;width:24px;height:24px;padding:0;border:0;border-radius:50%;background:var(--tc);cursor:pointer;transition:box-shadow .15s,transform calc(250ms*var(--k)) var(--spring)}
 .tsw button::after{content:"";position:absolute;inset:-6px}
 .tsw button.on{box-shadow:0 0 0 2px var(--surf-solid),0 0 0 4px var(--tc);transform:scale(1.05)}
+.tsw button[aria-checked="true"]{box-shadow:0 0 0 2px var(--surf-solid),0 0 0 4px var(--tc)}
 .tsw button:focus-visible{outline:2px solid var(--ac);outline-offset:5px}
 .fm-tags{display:flex;flex-wrap:wrap;gap:6px}
 .tpick{max-width:100%;min-height:36px;padding:6px 12px;border-color:var(--line-2);background:none;color:var(--mu);font-size:13px;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}
@@ -1886,6 +1870,68 @@ button.wd:hover{background:var(--hover);color:var(--tx)}
 .pc-tags{display:flex;min-width:0;margin-top:-4px}
 .tagsel select{max-width:150px}
 .wst .tchips{flex-wrap:nowrap}
+
+/* ───────── INQUIRIES (every style): what it is · next step · SLA meter · status top right; docked panel on wide screens ───────── */
+.seg button.zero{opacity:.45}
+.seg button.zero.on{opacity:1}
+.itools{flex-wrap:wrap}
+.row.irow{grid-template-columns:minmax(0,2.2fr) minmax(0,1.5fr) 128px auto;gap:20px;align-items:center;padding:12px 18px;text-align:left;font:inherit;color:inherit;width:100%}
+.irow .ic1,.irow .inx{display:grid;gap:2px;min-width:0}
+.irow .t .star{color:#F5C518}
+.irow .s{display:flex;align-items:center;gap:8px;min-width:0;font-size:12.5px;line-height:18px;color:var(--mu);white-space:nowrap}
+.irow .s .sx{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.irow .s .mono{font:500 12px/18px var(--fm);color:var(--tx)}
+.irow .s b{color:var(--tx);font-weight:600}
+.irow .s .prio{flex:none}
+.irow .tchips{margin-top:4px}
+.irow .inx .a{font:500 14px/20px var(--fb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow .inx .s{display:block;overflow:hidden;text-overflow:ellipsis}
+.isl{display:grid;gap:6px;font:500 12.5px/16px var(--fb);color:var(--mu);font-variant-numeric:tabular-nums}
+.irow>.pill{justify-self:end;flex:none}
+.irow>.pill svg{flex:none}
+.row.irow.sel,:root .rows>.row.irow.sel{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--surf))}
+.smt{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+.smt i{height:6px;border-radius:3px;background:var(--track)}
+.smt.big{gap:4px}
+.smt.big i{height:10px;border-radius:5px}
+.smt.bad i.on{background:var(--bad)}
+.smt.warn i.on{background:var(--warn)}
+.smt.ok i.on{background:var(--ok)}
+.smt.done i.on{background:color-mix(in srgb,var(--ok) 55%,transparent)}
+.smt.info i.on{background:var(--info)}
+.sh-head h2{font-size:24px;line-height:30px}
+.sh-sub{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font:400 13.5px/18px var(--fb);color:var(--mu)}
+.slabox{gap:10px}
+.slr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.slbig{font-family:var(--fd);font-size:24px;line-height:30px;font-weight:max(500,var(--h-w));letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.slr .pill svg{flex:none}
+.sls{font-size:12.5px;line-height:18px;color:var(--mu)}
+.slst{display:flex;flex-wrap:wrap;gap:6px}
+.slst span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--r-pill);background:var(--hover);font:500 12px/16px var(--fb);color:var(--mu)}
+.slst .done{color:var(--ok)}
+.slst .overdue{color:var(--bad)}
+.slst .risk{color:var(--warn)}
+.shsec>h3{justify-content:flex-start;align-items:center;gap:8px}
+.shsec>h3 .pj-add{margin:-12px -10px -12px auto}
+.sh-foot .sh-gap{flex:1}
+html.sheet-dock #scrim{display:none}
+:root.sheet-dock #sheet,:root.sheet-dock[data-look] #sheet{top:var(--sheet-top,96px);width:440px}
+#view{transition:padding-right calc(300ms*var(--k)) var(--ease-out)}
+:root.sheet-dock #view,:root.sheet-dock[data-look] #view{padding-right:484px}
+@media (max-width:1180px){.row.irow{grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) auto} .irow .isl{display:none}}
+@media (max-width:720px){
+  .row.irow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"c1 ch" "nx sl";gap:8px 12px;padding:12px 14px}
+  .irow .ic1{grid-area:c1}
+  .irow>.pill{grid-area:ch;align-self:start}
+  .irow .inx{grid-area:nx}
+  .irow .isl{display:grid;grid-area:sl;width:96px;align-self:center}
+  .irow .inx .s{display:none}
+  .itools .tagsel{order:2;flex:1 1 0;min-width:0}
+  .itools .psort:not(.tagsel){order:3;flex:1 1 0;min-width:0}
+  .itools .psort select{min-width:0;max-width:100%;text-overflow:ellipsis}
+  .itools .tb-new{order:4;margin-left:0}
+  .itools .search{order:5;flex-basis:100%}
+}
 
 /* ───────── LOGIN (every style) ─────────
    Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
@@ -2131,7 +2177,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions',
   mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
-  focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null, ptag: '', itag: '', wtag: '' };
+  focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null, ptag: '', itag: '', wtag: '', isort: store.get('npd2-isort', 'sla') };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus;
   root.dataset.mat = S.mat; root.style.setProperty('--lg-t', S.gt / 100); root.style.setProperty('--lg-b', S.gb); }
 const inqOn = () => S.focus !== 'projects';
@@ -2494,12 +2540,21 @@ function deleteTag(id){
   changelog({type:'delete', icon:'tag', text:`Deleted tag: ${strong(t.name)}${hit.length ? ` (removed from ${hit.length} item${hit.length === 1 ? '' : 's'})` : ''}`, section:'settings'});
   return { n: hit.length, undo: () => mutate([{coll:'tags', add: copy, at}, ...opsFor(true)]) };
 }
-let TAGC = '';   // colour picked for the next tag; by default the first colour not used yet
+let TAGC = '', TAGEDIT = '', TAGEC = '';   // TAGEDIT: the tag being renamed in Settings, TAGEC its colour while editing
+function editTag(id, patch){
+  const t = allTags().find(x => x.id === id); if (!t) return null;
+  const was = {name: t.name, color: t.color};
+  mutate([{coll:'tags', id, fn: r => Object.assign(r, patch)}]);
+  changelog({type:'update', icon:'tag', text: patch.name && patch.name !== was.name ? `Renamed tag ${strong(was.name)} → ${strong(patch.name)}` : `Changed the colour of tag ${strong(t.name)}`, section:'settings'});
+  return () => mutate([{coll:'tags', id, fn: r => Object.assign(r, was)}]);
+}   // colour picked for the next tag; by default the first colour not used yet
 const tagPick = () => TAGC || (TAG_COLORS.find(c => !allTags().some(t => t.color === c[0])) || TAG_COLORS[0])[0];
 function tagsPopHTML(){
   const lead = isLead(), ts = allTags();
   return `<div class="pop-tags"><h4>Tags</h4>
-    <div class="tagmgr">${ts.map(t => `<span class="tchip big" style="--tc:${tagHex(t.color)}"><i></i>${esc(t.name)}${lead ? `<button type="button" class="tdel" data-tagdel="${esc(t.id)}" aria-label="Delete tag ${esc(t.name)}" title="Delete tag">${ico('x',12)}</button>` : ''}</span>`).join('') || '<span class="pop-note">No tags yet.</span>'}</div>
+    <div class="tagmgr">${ts.map(t => lead && TAGEDIT === t.id ? `<form class="tagedit" data-tagid="${esc(t.id)}" autocomplete="off"><input id="tagedit-name" maxlength="24" value="${esc(t.name)}" aria-label="Tag name"><button class="btn sm" type="submit">Save</button><button class="btn sm" type="button" data-act="tag-cancel">Cancel</button>
+        <div class="tsw" role="radiogroup" aria-label="Tag colour">${TAG_COLORS.map(([k, hex, l]) => `<button type="button" role="radio" data-tagec="${k}" class="${k === (TAGEC || t.color) ? 'on' : ''}" aria-checked="${k === (TAGEC || t.color)}" aria-label="${l}" title="${l}" style="--tc:${hex}"></button>`).join('')}</div></form>`
+      : `<span class="tchip big" style="--tc:${tagHex(t.color)}"><i></i>${lead ? `<button type="button" class="tname" data-tagedit="${esc(t.id)}" aria-label="Rename or recolour ${esc(t.name)}" title="Rename or recolour">${esc(t.name)}</button><button type="button" class="tdel" data-tagdel="${esc(t.id)}" aria-label="Delete tag ${esc(t.name)}" title="Delete tag">${ico('x',12)}</button>` : esc(t.name)}</span>`).join('') || '<span class="pop-note">No tags yet.</span>'}</div>
     ${lead ? `<form class="tagadd" id="tagadd" autocomplete="off"><input id="tagname" maxlength="24" placeholder="New tag, e.g. Rush order" aria-label="New tag name"><button class="btn sm" type="submit">${ico('plus',14)} Add tag</button>
       <div class="tsw" role="radiogroup" aria-label="Tag colour">${TAG_COLORS.map(([k, hex, l]) => `<button type="button" role="radio" data-tagc="${k}" class="${k === tagPick() ? 'on' : ''}" aria-checked="${k === tagPick()}" aria-label="${l}" title="${l}" style="--tc:${hex}"></button>`).join('')}</div></form>`
       : '<p class="pop-note">The master and managers add and delete tags.</p>'}</div>`;
@@ -2510,6 +2565,13 @@ function refreshPop(focusAdd){
   if (focusAdd){ const i = $('#tagname'); if (i) i.focus({preventScroll: true}); }
 }
 document.addEventListener('submit', e => {
+  if (e.target.matches && e.target.matches('.tagedit')){ e.preventDefault(); if (!isLead()) return;
+    const id = e.target.dataset.tagid, t = allTags().find(x => x.id === id), inp = $('#tagedit-name'), name = inp.value.trim().replace(/\s+/g, ' '); if (!t) return;
+    if (!name){ inp.focus(); return; }
+    if (allTags().some(x => x.id !== id && x.name.toLowerCase() === name.toLowerCase())){ toast(`“${esc(name)}” is already a tag`, {icon:'x'}); inp.select(); return; }
+    const color = TAGEC || t.color; TAGEDIT = ''; TAGEC = '';
+    if (name === t.name && color === t.color){ refreshPop(); return; }
+    const renamed = name !== t.name, undo = editTag(id, {name, color}); refreshPop(); toast(renamed ? `Renamed to “${esc(name)}”` : `Colour changed`, {icon:'tag', undo: () => { undo(); refreshPop(); }}); return; }
   if (e.target.id !== 'tagadd') return; e.preventDefault(); if (!isLead() || !DB.data) return;
   const inp = $('#tagname'), name = inp.value.trim().replace(/\s+/g, ' ');
   if (!name){ inp.focus(); return; }
@@ -2776,7 +2838,7 @@ function editInquiry(id, patch){
 function createProject(v){
   const id = uid(), today = todayStr();
   const p = { id, code: v.code, name: v.name, date: v.date, status: v.status || 'not-started', classification: v.classification || 'new-mold', brief: v.brief || '', factory: v.factory || '',
-    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', stage: v.stage || '', ...withTags(v), ballWith: '', ballSince: '', links: v.links || [],
+    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', stage: v.stage || '', ...withTags(v), ...(v.fromInquiry ? {fromInquiry: v.fromInquiry} : {}), ballWith: '', ballSince: '', links: v.links || [],
     subStatuses: [], tasks: [], milestones: [], pics: [], expanded: true,
     activityLog: [{id: uid(), type:'add', icon:'circle-plus', text:`Project created: ${strong(v.name)}`, by: meName(), date: today, time: nowHM()}] };
   if (v.kiv){ p.kiv = true; p.kivComment = v.kivComment || ''; p.kivDate = today; }
@@ -2968,7 +3030,7 @@ function placeInd(container, animate = true){
   if (container.scrollWidth > container.clientWidth + 1){ const left = on.offsetLeft - (container.clientWidth - on.offsetWidth)/2; container.scrollTo({left, behavior: animate && S.motion !== 'off' ? 'smooth' : 'auto'}); }
   updFade(container);
 }
-function segHTML(id, items, cur, acc){ return `<div class="seg${acc ? ' acc' : ''}" id="${id}" role="tablist"><i class="ind"></i>${items.map(([k,l,n]) => `<button type="button" role="tab" data-v="${k}" class="${k===cur?'on':''}" aria-selected="${k===cur}">${l}${n!=null?` <span class="n">${n}</span>`:''}</button>`).join('')}</div>`; }
+function segHTML(id, items, cur, acc){ return `<div class="seg${acc ? ' acc' : ''}" id="${id}" role="tablist"><i class="ind"></i>${items.map(([k,l,n,c]) => `<button type="button" role="tab" data-v="${k}" class="${k===cur?'on':''}${c ? ' ' + c : ''}" aria-selected="${k===cur}">${l}${n!=null?` <span class="n">${n}</span>`:''}</button>`).join('')}</div>`; }
 function moveNav(animate = true){
   const key = S.page === 'project' ? 'projects' : S.page, lg = animate && lgMotion();
   $$('#nav button,#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === key));
@@ -3294,8 +3356,11 @@ function inqFiltered(){
   if (q) list = list.filter(({i}) => [i.name, i.code, i.customer, i.bdPerson, i.factory, i.material, i.remark, tagNames(i.tags)].join(' ').toLowerCase().includes(q));
   const f = S.filter;
   list = list.filter(({i, st}) => f === 'closed' ? st.k === 'closed' : f === 'hold' ? st.k === 'hold' : st.k !== 'closed' && st.k !== 'hold' && (f === 'open' || (f === 'over' && st.k === 'over') || (f === 'risk' && st.k === 'risk') || (f === 'us' && i.ballWith === 'us')));
-  list.sort((a, b) => f === 'closed' ? ((b.i.date||'') > (a.i.date||'') ? 1 : -1)
-    : (!!b.i.pinned - !!a.i.pinned) || (INQ_RANK[a.st.k] - INQ_RANK[b.st.k]) || ((b.st.sla?.elapsed||0) - (a.st.sla?.elapsed||0)) || ((b.i.date||'') > (a.i.date||'') ? 1 : -1));
+  const newer = (a, b) => (b.i.date||'') > (a.i.date||'') ? 1 : (b.i.date||'') < (a.i.date||'') ? -1 : 0, srt = S.isort || 'sla';
+  const cmp = srt === 'received' ? newer : srt === 'customer' ? (a, b) => String(a.i.customer||'~').localeCompare(String(b.i.customer||'~')) || String(a.i.name||'').localeCompare(String(b.i.name||''))
+    : srt === 'value' ? (a, b) => (inqEstValue(b.i) - inqEstValue(a.i)) || newer(a, b)
+    : f === 'closed' ? newer : (a, b) => (INQ_RANK[a.st.k] - INQ_RANK[b.st.k]) || ((b.st.sla?.elapsed||0) - (a.st.sla?.elapsed||0)) || newer(a, b);
+  list.sort((a, b) => (!!b.i.pinned - !!a.i.pinned) || cmp(a, b));
   return list;
 }
 function inqCounts(){
@@ -3303,54 +3368,95 @@ function inqCounts(){
   const live = all.filter(x => x.st.k !== 'closed' && x.st.k !== 'hold');
   return {open: live.length, over: live.filter(x => x.st.k === 'over').length, risk: live.filter(x => x.st.k === 'risk').length, us: live.filter(x => x.i.ballWith === 'us').length, hold: all.filter(x => x.st.k === 'hold').length, closed: all.filter(x => x.st.k === 'closed').length};
 }
+/* each row reads left to right: what it is · the next step · how far into the SLA · status, top right */
+function inqChip(i, st){
+  const t = todayStr();
+  if (st.k === 'over'){ const s = st.sla, past = s.elapsed > SLA_DAYS, k = past ? s.elapsed - SLA_DAYS : Math.max(1, workDaysBetween(s.current.due, t)); return ['bad', 'clock', `${k} day${k === 1 ? '' : 's'} ${past ? 'over' : 'late'}`]; }
+  if (st.k === 'risk'){ const d = st.sla.current.due; return ['warn', 'clock', d <= t ? 'Due today' : d === addDays(t, 1) ? 'Due tomorrow' : 'Due ' + fmtDay(d)]; }
+  if (st.k === 'ok') return ['ok', 'check', 'On track'];
+  if (st.k === 'stalled') return ['info', 'flag', 'Needs next step'];
+  if (st.k === 'done') return st.sla.met === false ? ['warn', 'check', 'SLA missed'] : ['done', 'check', 'SLA met'];
+  if (st.k === 'hold') return ['', 'pause', 'On hold'];
+  return [i.outcome === 'won' ? 'done' : '', i.outcome === 'won' ? 'trophy' : '', OUTCOME_LABELS[i.outcome] || (st.k === 'closed' ? 'Closed' : 'Open')];
+}
+function inqNext(i, st){
+  const s = st.sla, t = todayStr(), na = (i.nextActions||[]).filter(a => !a.done).sort((a, b) => (a.deadline||'9') < (b.deadline||'9') ? -1 : 1)[0];
+  const when = d => d === t ? 'due today' : d < t ? 'was due ' + fmtDate(d) : 'due ' + fmtDate(d);
+  if (s && s.current && st.k !== 'done' && st.k !== 'stalled') return [s.current.label, 'Next step · ' + when(s.current.due)];
+  if (na) return [na.action || 'Next action', 'Next action' + (na.deadline ? ' · ' + when(na.deadline) : '')];
+  const pj = i.projectId && findRec(DB.data, 'projects', i.projectId);
+  if (pj) return [`Project ${pj.code || pj.name}`, 'Turned into a project'];
+  if (st.k === 'done') return ['Awaiting price', 'NPD input sent to Finance'];
+  if (st.k === 'stalled') return ['Add a next step', 'All tasks are done'];
+  return [statusLabel(i.status), i.outcomeReason || i.remark || ''];
+}
+const SLA_C = {over:'bad', risk:'warn', ok:'ok', done:'done', stalled:'info'};
+function slaMeter(st, cls = ''){
+  const s = st.sla; if (!s) return '';
+  const n = Math.min(SLA_DAYS, s.state === 'done' ? (s.took == null ? SLA_DAYS : s.took) : s.elapsed);
+  return `<div class="smt ${SLA_C[st.k] || ''} ${cls}" aria-hidden="true">${Array.from({length: SLA_DAYS}, (_, k) => `<i class="${k < n ? 'on' : ''}"></i>`).join('')}</div>`;
+}
+const slaLabel = st => !st.sla ? '' : st.k === 'done' ? (st.sla.took == null ? 'SLA done' : `Took ${st.sla.took} of ${SLA_DAYS} days`) : `Day ${st.sla.elapsed} of ${SLA_DAYS}`;
+const INQ_SORTS = [['sla','SLA, most urgent'],['received','Received, newest'],['customer','Customer'],['value','Estimated value']];
 function inqRows(){
   const list = inqFiltered();
   if (!list.length) return `<div class="empty card"><b>Nothing here</b>No inquiries match this filter${S.q ? ` and “${esc(S.q)}”` : ''}.</div>`;
   return list.map(({i, st}) => {
-    const sla = st.sla, val = inqEstValue(i);
-    const stage = sla && sla.current ? `<div class="slab">Next: <b>${esc(sla.current.label)}</b> · due ${fmtDate(sla.current.due)}</div><div class="stg">${sla.stages.map(s => `<i class="${s.state}"></i>`).join('')}</div>`
-      : st.k === 'done' ? `<div class="slab"><b>NPD input sent</b> · awaiting price</div><div class="stg">${sla.stages.map(() => '<i class="done"></i>').join('')}</div>`
-      : st.k === 'stalled' ? `<div class="slab"><b>All tasks done</b> · add a next step or close</div>`
-      : `<div class="slab">${esc(statusLabel(i.status))}${i.outcome ? ' · <b>' + esc(OUTCOME_LABELS[i.outcome] || i.outcome) + '</b>' : ''}</div>`;
-    return `<button type="button" class="card row hov" data-open="${esc(i.id)}" style="--n:r-${esc(String(i.id).replace(/[^\w-]/g,''))}">
-      <i class="bar4" style="--c:${ST_COLOR[st.k]}"></i>
-      <div style="min-width:0"><div class="t">${i.pinned ? '<span class="star" style="color:#F5C518">★</span> ' : ''}${esc(i.name)}</div><div class="s">${esc([i.customer, i.factory, i.bdPerson && i.bdPerson !== 'Other' ? 'BD ' + i.bdPerson : '', i.date ? 'received ' + fmtDate(i.date) : ''].filter(Boolean).join(' · '))}</div>
-        <div class="meta2"><span class="pill stp ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${prio(prioKey(i.priority))}${i.ballWith ? `<span class="pill">Ball: ${esc(BALL_LABELS[i.ballWith] || i.ballWith)}</span>` : ''}${tagChips(i.tags)}</div></div>
-      <div class="col-stage" style="min-width:0">${stage}</div>
-      <div class="col-ball" style="min-width:0"><span class="pill ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span></div>
-      <div class="rv">${val ? fmtRMShort(val) : ''}<small>${esc(i.code || '')}</small></div></button>`; }).join('');
+    const chip = inqChip(i, st), nx = inqNext(i, st), val = inqEstValue(i);
+    const sub = [S.isort === 'value' && val ? `<b>${fmtRMShort(val)}</b>` : '', esc(i.customer || ''), esc(facOf(i)), i.date ? 'received ' + fmtDate(i.date) : '', i.code ? `<span class="mono">${esc(i.code)}</span>` : ''].filter(Boolean).join(' · ');
+    return `<button type="button" class="card row irow hov${i.id === sheetId ? ' sel' : ''}" data-open="${esc(i.id)}" aria-current="${i.id === sheetId}" style="--n:r-${esc(String(i.id).replace(/[^\w-]/g,''))}">
+      <span class="ic1"><span class="t">${i.pinned ? '<span class="star">★</span> ' : ''}${esc(i.name)}</span><span class="s"><span class="sx">${sub}</span>${prio(prioKey(i.priority))}</span>${tagChips(i.tags)}</span>
+      <span class="inx"><span class="a">${esc(nx[0])}</span><span class="s">${esc(nx[1])}</span></span>
+      <span class="isl">${st.sla ? `<span>${slaLabel(st)}</span>${slaMeter(st)}` : ''}</span>
+      <span class="pill ${chip[0]}">${chip[1] ? ico(chip[1], 13) : ''}${esc(chip[2])}</span></button>`; }).join('');
 }
 function pageInquiries(){
   const c = inqCounts();
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('fseg', INQ_FILTERS.map(([k,l]) => [k, l, c[k]]), S.filter)}
-    ${tagFilterHTML('itag', S.itag)}<label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
+  return `${staleBanner()}<div class="toolbar itools st" style="--i:0">${segHTML('fseg', INQ_FILTERS.map(([k,l]) => [k, l, c[k], c[k] ? '' : 'zero']), S.filter)}
+    ${tagFilterHTML('itag', S.itag)}<label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label><button class="btn wtool tb-pdf" type="button" data-act="pdf-inquiries" title="Download this list as a PDF report">${ico('file',15)}<span>PDF</span></button><label class="psort">${ico('sort',15)}<select id="isort" aria-label="Sort inquiries">${INQ_SORTS.map(([k, l]) => `<option value="${k}"${(S.isort || 'sla') === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
     <div class="rows st" style="--i:1" id="rows">${inqRows()}</div>`;
 }
 
 /* ── Inquiry detail sheet ── */
 let sheetId = null;
+/* inquiry → project: a prefilled New project form; saving links both and marks the inquiry won */
+function inqToProject(id){
+  const i = findRec(DB.data, 'inquiries', id); if (!i || !can('projects','add')) return;
+  formProject(null, { name: i.name, customer: i.customer || '', factory: facOf(i), brief: i.remark || '', tags: i.tags || [], classification: String(i.type || '').toUpperCase() === 'IMP' ? 'improvement' : '', fromInquiry: i.id, code: i.code || '' });
+}
+function linkInquiry(inqId, projId){
+  const p = findRec(DB.data, 'projects', projId), today = todayStr();
+  mutate([{coll:'inquiries', id: inqId, fn: r => { r.projectId = projId; if (!r.outcome){ r.outcome = 'won'; r.outcomeDate = today; }
+    inqLog(r, 'update', 'folder', `Turned into project ${strong(p ? p.code || p.name : '')}`); }}]);
+}
+/* the panel docks beside the list on wide screens (Inquiries page only); elsewhere it slides over with a scrim */
+const sheetDocks = () => S.page === 'inquiries' && innerWidth >= 1280;
+function placeSheet(){
+  const sh = $('#sheet'), open = sh.classList.contains('open'), dock = open && sheetDocks(), root = document.documentElement;
+  root.classList.toggle('sheet-dock', dock);
+  if (dock){ const top = $('.top'); root.style.setProperty('--sheet-top', Math.round(top ? top.getBoundingClientRect().bottom + 4 : 96) + 'px'); }
+  $('#scrim').classList.toggle('on', open && !dock);
+  $$('#rows .irow').forEach(r => { const on = open && r.dataset.open === sheetId; r.classList.toggle('sel', on); r.setAttribute('aria-current', on); });
+}
+
 function sheetHTML(i){
   const st = inqState(i), sla = st.sla, canE = can('inquiries','edit'), canT = canE || can('actions','complete'), canAddT = canE || can('inquiries','add');
   const tk = t => subKey(t, (i.tasks||[]).indexOf(t)), nas = (i.nextActions||[]).map((a, k) => ({...a, _k: subKey(a, k)}));
   const tasks = [...(i.tasks||[])].sort((a,b) => (!!a.done - !!b.done) || ((a.deadline||'9') < (b.deadline||'9') ? -1 : 1));
-  const today = todayStr();
+  const today = todayStr(), chip = inqChip(i, st), pj = i.projectId && findRec(DB.data, 'projects', i.projectId);
   let n = 0;
   return `<div class="grab"></div>
   <div class="sh-head" id="shhead"><div class="r1"><span class="mono muted">${esc(i.code || '')}</span><div style="display:flex;gap:8px">${canE ? `<button class="ibtn" type="button" data-act="pin-inq" aria-label="${i.pinned ? 'Unpin' : 'Pin'}" title="${i.pinned ? 'Unpin' : 'Pin to sidebar'}" style="${i.pinned ? 'color:#F5C518' : ''}">${ico('pin',17)}</button>` : ''}<button class="ibtn" type="button" data-act="closesheet" aria-label="Close">${ico('x',18)}</button></div></div>
-    <h2>${esc(i.name)}</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${i.customer ? `<span class="pill">${esc(i.customer)}</span>` : ''}${i.factory ? `<span class="pill">${esc(i.factory)}</span>` : ''}${i.type ? `<span class="pill info">${esc(TYPE_LABELS[i.type] || i.type)}</span>` : ''}${prio(prioKey(i.priority))}${tagChips(i.tags, 8)}</div></div>
+    <h2>${esc(i.name)}</h2><div class="sh-sub"><span>${[esc(i.customer || ''), esc(facOf(i)), i.date ? 'received ' + fmtDate(i.date) : '', i.type ? esc(TYPE_LABELS[i.type] || i.type) : ''].filter(Boolean).join(' · ')}</span>${prio(prioKey(i.priority))}</div>${tagChips(i.tags, 8)}</div>
   <div class="sh-body">
-    ${sla ? `<section class="shsec" style="--i:${n++}"><h3>5-day SLA <span>working days</span></h3>
-      <div class="card slabox"><div class="slabig"><b>${sla.state === 'done' ? (sla.met === false ? 'Missed' : 'Met') : 'Day ' + sla.elapsed}</b><span class="muted">${sla.state === 'done' ? (sla.took == null ? 'NPD input sent to Finance' : `NPD input sent in ${sla.took} working day${sla.took === 1 ? '' : 's'}`) : sla.elapsed > SLA_DAYS ? `${sla.elapsed - SLA_DAYS} working day${sla.elapsed - SLA_DAYS > 1 ? 's' : ''} over` : `${SLA_DAYS - sla.elapsed} working day${SLA_DAYS - sla.elapsed === 1 ? '' : 's'} left`}</span></div>
-        <div class="wd5" style="--c:${sla.state === 'done' ? 'var(--ok)' : ST_COLOR[st.k] || 'var(--ok)'}">${[1,2,3,4,5,6,7].map(dd => `<i class="${dd > sla.elapsed ? 'off' : ''} ${dd === 5 ? 'lim' : ''}" style="--i:${dd}"></i>`).join('')}</div></div>
-      ${sla.stages.map(s => `<div class="slarow ${s.state}"><div class="node">${s.state === 'done' ? ico('check',13) : ''}</div><div style="min-width:0"><div class="nm">${esc(s.label)}</div><div class="when">${s.state === 'done' ? 'Done' + (s.doneOn ? ' ' + fmtDate(s.doneOn) : '') : `Due ${fmtDate(s.due)} · ${{overdue:'overdue', risk:'at risk', ok:'on track'}[s.state]}`}</div></div>
-        ${s.state !== 'done' && s.task && canT ? `<button class="b1 sm" type="button" data-itask="${esc(s.task.id)}" data-done="1">${ico('check',14)} Mark done</button>` : ''}</div>`).join('')}
-      ${st.k === 'stalled' ? `<div class="banner warn">All tasks are done but the inquiry is still open. Add a next action below, or close it from Edit details.</div>` : ''}</section>` : ''}
-    <section class="shsec" style="--i:${n++}"><h3>Tasks <span>${tasks.filter(t => t.done).length}/${tasks.length} done</span></h3>
-      ${canAddT ? `<button type="button" class="addrow" data-fm="itask">${ico('plus',16)}<span>Add task</span></button>` : ''}
+    ${sla ? `<section class="shsec" style="--i:${n++}"><div class="card slabox"><div class="slr"><b class="slbig">${slaLabel(st)}</b><span class="pill ${chip[0]}">${chip[1] ? ico(chip[1], 13) : ''}${esc(chip[2])}</span></div>${slaMeter(st, 'big')}
+      <span class="sls">5-day SLA in working days · ${sla.state === 'done' ? (sla.took == null ? 'NPD input sent to Finance' : `NPD input sent in ${sla.took} working day${sla.took === 1 ? '' : 's'}`) : `${addWorkDays(i.date, SLA_DAYS) < today ? 'was due' : 'due'} ${fmtDate(addWorkDays(i.date, SLA_DAYS))}`}</span>
+      <div class="slst">${sla.stages.map(s => `<span class="${s.state}">${s.state === 'done' ? ico('check', 12) : ''}${esc(s.label)} · ${s.state === 'done' ? 'done' + (s.doneOn ? ' ' + fmtDate(s.doneOn) : '') : 'due ' + fmtDate(s.due)}</span>`).join('')}</div>
+      ${st.k === 'stalled' ? `<div class="banner warn">All tasks are done but the inquiry is still open. Add a next action below, or close it from Edit details.</div>` : ''}</div></section>` : ''}
+    <section class="shsec" style="--i:${n++}"><h3>Tasks <span>${tasks.filter(t => t.done).length} of ${tasks.length} done</span>${canAddT ? `<button type="button" class="pj-add" data-fm="itask" aria-label="Add task" title="Add task">${ico('plus',16)}</button>` : ''}</h3>
       ${tasks.length ? tasks.map(t => `<div class="task slim ${t.done ? 'done' : ''}" data-itask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-itask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-        <div style="min-width:0" ${canE ? `data-fm="itask|${esc(tk(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}${tagChips(t.tags)}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="itask|${esc(tk(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : ''}</div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
-    ${nas.length || canE ? `<section class="shsec" style="--i:${n++}"><h3>Next actions ${nas.length ? `<span>${nas.filter(a => a.done).length}/${nas.length} done</span>` : ''}</h3>
-      ${canE ? `<button type="button" class="addrow" data-fm="na">${ico('plus',16)}<span>Add next action</span></button>` : ''}
+        <div style="min-width:0" ${canE ? `data-fm="itask|${esc(tk(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who">${_isMoldTask(t) || _isImlTask(t) || _isNpdTask(t) ? '<span class="pill wtag">SLA</span>' : ''}<span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}${tagChips(t.tags)}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="itask|${esc(tk(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : ''}</div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
+    ${nas.length || canE ? `<section class="shsec" style="--i:${n++}"><h3>Next actions ${nas.length ? `<span>${nas.filter(a => a.done).length} of ${nas.length} done</span>` : ''}${canE ? `<button type="button" class="pj-add" data-fm="na" aria-label="Add next action" title="Add next action">${ico('plus',16)}</button>` : ''}</h3>
       ${[...nas].sort((a,b) => (!!a.done - !!b.done) || ((a.deadline||'9') < (b.deadline||'9') ? -1 : 1)).map(a => `<div class="task slim ${a.done ? 'done' : ''}"><button type="button" class="cb" ${canE ? `data-na="${esc(a._k)}" data-done="${a.done ? 0 : 1}"` : 'disabled'} aria-label="${a.done ? 'Reopen' : 'Complete'}: ${esc(a.action || '')}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
         <div style="min-width:0" ${canE ? `data-fm="na|${esc(a._k)}" class="tap"` : ''}><div class="tt">${esc(a.action || a.text || '(untitled)')}</div><div class="who"><span>${esc(a.pic || '')}</span>${a.done && a.completedAt ? `<span>done ${fmtDate(a.completedAt)}</span>` : a.dateAdded ? `<span>added ${fmtDate(a.dateAdded)}</span>` : ''}${tagChips(a.tags)}</div></div><span class="due ${!a.done && a.deadline && a.deadline < today ? 'late' : ''}">${a.deadline ? fmtDate(a.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="na|${esc(a._k)}" aria-label="Edit">${ico('pencil',15)}</button>` : ''}</div>`).join('')}</section>` : ''}
     <section class="shsec" style="--i:${n++}"><h3>Ball in court ${i.ballWith ? `<span>since ${fmtDate(i.ballSince)} · ${ballDays(i)}d</span>` : ''}</h3>
@@ -3359,7 +3465,7 @@ function sheetHTML(i){
       ${canE ? segHTML('ioseg', [['','Open'],['won','Won'],['lost','Lost'],['dropped','Dropped']], i.outcome || '') : `<div class="ro">${esc(OUTCOME_LABELS[i.outcome] || 'Open')}</div>`}
       ${i.outcomeReason ? `<div class="ro">Reason: ${esc(i.outcomeReason)}</div>` : ''}</section>
     <section class="shsec" style="--i:${n++}"><h3>Details</h3><div class="kv">
-      <div><span>Received</span><b>${fmtDate(i.date, true) || '—'}</b></div><div><span>Status</span><b>${esc(statusLabel(i.status))}</b></div>
+      ${pj ? `<div><span>Project</span><b><button type="button" class="pj-mini" data-proj="${esc(pj.id)}">${esc(pj.code || pj.name)} ${ico('arrow',13)}</button></b></div>` : ''}<div><span>Received</span><b>${fmtDate(i.date, true) || '—'}</b></div><div><span>Status</span><b>${esc(statusLabel(i.status))}</b></div>
       <div><span>BD person</span><b>${esc(i.bdPerson || '—')}${i.bdNum ? ' · #' + esc(i.bdNum) : ''}</b></div><div><span>Material</span><b>${esc(i.material || '—')}</b></div>
       <div><span>Est. value</span><b>${inqEstValue(i) ? fmtRM(inqEstValue(i)) : '—'}</b></div><div><span>Mold cost</span><b>${i.moldCost ? fmtRM(i.moldCost) : '—'}</b></div></div></section>
     ${i.remark ? `<section class="shsec" style="--i:${n++}"><h3>Remark</h3><div class="remark">${esc(i.remark)}${i.remarkDate ? `<small>${fmtDate(i.remarkDate, true)}</small>` : ''}</div></section>` : ''}
@@ -3367,12 +3473,13 @@ function sheetHTML(i){
     ${(i.links||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Links</h3><div class="links">${i.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div></section>` : ''}
     ${(i.activityLog||[]).length ? `<section class="shsec" style="--i:${n++}"><h3>Activity <span>latest ${Math.min(10, i.activityLog.length)}</span></h3><div class="hist">${[...i.activityLog].reverse().slice(0,10).map((a,k) => `<div class="h" style="--i:${k}"><i style="--c:${a.type === 'done' ? 'var(--ok)' : a.type === 'create' ? 'var(--ac)' : 'var(--info)'}"></i><div><b>${richText(a.text)}</b><span>${esc(a.by || '')}</span></div><span class="due">${fmtDate(a.date)}${a.time ? ' ' + esc(a.time) : ''}</span></div>`).join('')}</div></section>` : ''}
   </div>
-  <div class="sh-foot">${canE ? `<button class="btn" type="button" data-fm="inq|${esc(i.id)}">${ico('pencil',15)} Edit details</button>` : ''}<button class="b1" type="button" data-act="closesheet">Done</button></div>`;
+  <div class="sh-foot">${canE ? `<button class="btn" type="button" data-fm="inq|${esc(i.id)}">${ico('pencil',15)} Edit</button>` : ''}<span class="sh-gap"></span>${pj ? `<button class="btn" type="button" data-proj="${esc(pj.id)}">${ico('folder',15)} Open project</button>`
+    : can('projects','add') && i.outcome !== 'lost' && i.outcome !== 'dropped' ? `<button class="btn" type="button" data-act="inq-proj">${ico('arrow',15)} Turn into project</button>` : ''}<button class="b1" type="button" data-act="closesheet">Done</button></div>`;
 }
 function openSheet(id){
   const i = findRec(DB.data, 'inquiries', id); if (!i) return; sheetId = id;
   const sh = $('#sheet'); sh.innerHTML = sheetHTML(i); sh.style.setProperty('--drag','0px');
-  $('#scrim').classList.add('on'); requestAnimationFrame(() => { sh.classList.add('open'); $$('#sheet .seg').forEach(s => placeInd(s, false)); }); wireSheetDrag();
+  requestAnimationFrame(() => { sh.classList.add('open'); placeSheet(); $$('#sheet .seg').forEach(s => placeInd(s, false)); }); wireSheetDrag();
 }
 function refreshSheet(){
   const sh = $('#sheet'); if (!sheetId || !sh.classList.contains('open')) return;
@@ -3382,7 +3489,7 @@ function refreshSheet(){
   const nb = sh.querySelector('.sh-body'); if (nb) nb.scrollTop = top;
   $$('#sheet .seg').forEach(s => placeInd(s, false));
 }
-function closeSheet(){ const sh = $('#sheet'); if (!sh.classList.contains('open')) return; sh.classList.remove('open'); sh.style.setProperty('--drag','0px'); $('#scrim').classList.remove('on'); sheetId = null; }
+function closeSheet(){ const sh = $('#sheet'); if (!sh.classList.contains('open')) return; sh.classList.remove('open'); sh.style.setProperty('--drag','0px'); sheetId = null; placeSheet(); }
 function wireSheetDrag(){
   const sh = $('#sheet'), h = $('#shhead'); if (!h) return; const mobile = () => innerWidth <= 720; let sx = 0, sy = 0, d = 0, on = false, t0 = 0;
   h.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; on = true; sx = e.clientX; sy = e.clientY; t0 = performance.now(); sh.classList.add('dragging'); h.setPointerCapture(e.pointerId); });
@@ -3440,6 +3547,7 @@ function pageProjects(){
   return `${staleBanner()}<div class="toolbar ptools st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}
     ${board ? segHTML('pgroup', [['status','By status'],['stage','By stage']], S.pgroup) : segHTML('pfilt', [['active','Active', L.active.length],['hold','On hold', L.hold.length],['done','Completed', L.done.length],['all','All', L.all.length]], S.pfilt)}
     ${tagFilterHTML('ptag', S.ptag)}
+    <button class="btn wtool tb-pdf" type="button" data-act="pdf-projects" title="Download this list as a PDF report">${ico('file',15)}<span>PDF</span></button>
     ${board ? '' : `<label class="psort">${ico('sort',15)}<select id="psort" aria-label="Sort projects">${P_SORTS.map(([k, l]) => `<option value="${k}"${S.psort === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>`}
     ${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
 }
@@ -3512,7 +3620,8 @@ document.addEventListener('contextmenu', e => { if (BD && BD.touch) e.preventDef
 document.addEventListener('pointerup', e => bdEnd(e, false));
 document.addEventListener('pointercancel', e => bdEnd(e, true));
 document.addEventListener('click', e => { if (Date.now() - bdJust < 350){ e.stopPropagation(); e.preventDefault(); } }, true);   // the drop is not a tap
-document.addEventListener('change', e => { if (['ptag','itag','wtag'].includes(e.target.id)){ S[e.target.id] = e.target.value; vt(() => refresh(), 'list'); return; }
+document.addEventListener('change', e => { if (e.target.id === 'isort'){ S.isort = e.target.value; store.set('npd2-isort', S.isort); vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'); return; }
+  if (['ptag','itag','wtag'].includes(e.target.id)){ S[e.target.id] = e.target.value; vt(() => refresh(), 'list'); return; }
   if (e.target.id === 'wtypesel'){ S.wtype = e.target.value; vt(() => refresh(), 'list'); return; }
   if (e.target.id === 'psort'){ S.psort = e.target.value; store.set('npd2-psort', S.psort); vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); } });
 
@@ -3598,6 +3707,7 @@ function pageProject(){
   const unset = '<span class="pj-unset">Not set</span>';
   const det = [['Project', p.code ? `<span class="mono">${esc(p.code)}</span>` : unset], ['Customer', p.customer ? `<span class="mono">${esc(p.customer)}</span>` : unset], ['Factory', esc(facOf(p)) || unset],
     ['Type', esc(CLASS_LABELS[p.classification] || p.classification || '') || unset], ['Sales', esc(p.salesPerson || '') || unset], ['Started', fmtDate(p.date, true) || unset],
+    ...(p.fromInquiry && findRec(DB.data, 'inquiries', p.fromInquiry) ? [['Inquiry', `<button type="button" class="pj-mini" data-open="${esc(p.fromInquiry)}">${esc(findRec(DB.data, 'inquiries', p.fromInquiry).code || 'Open')} ${ico('arrow',13)}</button>`]] : []),
     ['Links', (p.links||[]).length ? p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join(' · ') : unset]];
   const stageInner = `<span class="pj-lab">Stage<span class="mono">${si >= 0 ? `${si + 1} of ${NPD_STAGES.length}` : ''}</span></span>
       <span class="pj-v">${p.stage ? esc(p.stage) : '<span class="pj-unset">Not set</span>'}</span>
@@ -3721,68 +3831,218 @@ function emptyBin(btn){
   toast(`Emptied the recycle bin`, {icon:'trash', undo: () => mutate(copies.map(b => ({coll:'bin', add: b, at:'end'})))});
 }
 
-/* ── Export: an Excel workbook (SheetJS, loaded on first use) and a full JSON backup of everything ── */
-let XLSX_P = null;
-function loadXLSX(){
-  return XLSX_P = XLSX_P || new Promise((res, rej) => { if (window.XLSX) return res(window.XLSX);
-    const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-    sc.onload = () => window.XLSX ? res(window.XLSX) : rej(new Error('no XLSX')); sc.onerror = () => { XLSX_P = null; rej(new Error('load')); }; document.head.appendChild(sc); });
+/* ── Export: a formatted Excel workbook (ExcelJS, loaded on first use) and a full JSON backup of everything ── */
+/* The Excel export is the tool's whole database: every collection, every field. Records become rows; lists inside a
+   record (tasks, milestones, history…) get their own sheet with the parent's code and name in front. Codes become labels. */
+const xlHuman = k => ({id:'ID', pic:'PIC', bdNum:'BD #', bdPerson:'BD person', kiv:'KIV', kivComment:'KIV reason', kivDate:'KIV since', date:'Date', deliveryDate:'Delivery date', ballWith:'Ball with', ballSince:'Ball since', projectId:'Project', fromInquiry:'From inquiry', salesPerson:'Sales person', moldCost:'Mold cost (RM)', completedAt:'Completed at', addedOn:'Added on', createdAt:'Created at', deletedAt:'Deleted at', stageSince:'Stage since', followupOf:'Follow-up of', linkedSubStatus:'Linked update', remarkDate:'Remark date', outcomeDate:'Outcome date', outcomeReason:'Outcome reason', dateAdded:'Date added', pinnedAt:'Pinned at'})[k]
+  || k.split('.').map(p => p.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase()).join(' · ').replace(/^./, c => c.toUpperCase());
+const xlStrip = s => String(s || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+const xlLinks = ls => (ls || []).map(l => l && typeof l === 'object' ? (l.label ? `${l.label}: ${l.url}` : l.url || '') : String(l)).join('\n');
+function xlFlat(o, pre = '', out = {}){
+  Object.entries(o || {}).forEach(([k, v]) => { if (v === undefined) return; const key = pre ? pre + '.' + k : k;
+    if (v && typeof v === 'object' && !Array.isArray(v)) xlFlat(v, key, out); else out[key] = v; });
+  return out;
 }
-function xlDate(v){ const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : (v || ''); }
+/* one value for a cell: dates as dates, Yes for true, tag names, link text; other lists as JSON so nothing is lost */
+function xlVal(k, v, lab){
+  if (lab && lab[k]) return lab[k](v);
+  if (v == null || v === false) return '';
+  if (v === true) return 'Yes';
+  if (k === 'tags' || k.endsWith('.tags')) return tagNames(v);
+  if (k === 'links' || k.endsWith('.links')) return xlLinks(v);
+  if (Array.isArray(v)) return v.every(x => x == null || typeof x !== 'object') ? v.join(', ') : JSON.stringify(v).slice(0, 32000);
+  if (typeof v === 'string'){ if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return xlDate(v); if (k === 'text' || /<\/?(strong|b|i|em)>/.test(v)) return xlStrip(v); }
+  return v;
+}
+/* rows of records → [head, rows]: the preferred fields first, then every other field in the order first seen */
+function xlTable(recs, opts = {}){
+  const {first = [], skip = [], lab = {}, pre = [], extra = []} = opts, keys = [];
+  const sublist = (k, v) => Array.isArray(v) && !['links','tags'].includes(k) && (!v.length || (v[0] && typeof v[0] === 'object'));   // lists of records get their own sheet
+  const flats = recs.map(r => { const f = xlFlat(Object.fromEntries(Object.entries(r.rec || {}).filter(([k, v]) => !skip.includes(k) && !sublist(k, v))));
+    Object.keys(f).forEach(k => { if (!keys.includes(k)) keys.push(k); }); return f; });
+  const order = [...first.filter(k => keys.includes(k) || extra.some(e => e[0] === k)), ...keys.filter(k => !first.includes(k) && k !== 'id'), ...(keys.includes('id') ? ['id'] : [])];
+  const head = [...pre.map(p => p[0]), ...order.map(k => { const e = extra.find(x => x[0] === k); return e ? e[1] : xlHuman(k); })];
+  const rows = recs.map((r, i) => [...pre.map(p => p[1](r)), ...order.map(k => { const e = extra.find(x => x[0] === k); return e ? e[2](r) : xlVal(k, flats[i][k], lab); })]);
+  return [head, rows];
+}
+const lbl = list => v => (list.find(x => String(x[0]) === String(v)) || [0, v == null ? '' : v])[1];
 function exportSheets(){
-  const d = DB.data, D = xlDate, yes = v => v ? 'Yes' : '', links = ls => (ls || []).map(l => l.label ? `${l.label}: ${l.url}` : l.url).join('\n');
-  const taskSt = t => t.done ? 'Done' : (TASK_ST.find(x => x[0] === t.status) || [0, ''])[1];
-  const pipe = (p, k) => (p && p[k]) || {};
-  return [
-    ['Inquiries', ['Code','Name','Customer','Factory','BD person','BD #','Received','Type','Priority','Status','SLA','Ball with','Outcome','Material','Remark',
-      'Mold inquiry','Mold inquiry remark','Mold inquiry date','Costing','Costing remark','Costing date','Price submission','Price submission remark','Price submission date','Tasks done','Tasks total','Links','Tags'],
-      d.inquiries.map(i => { const mi = pipe(i.pipeline,'moldInquiry'), co = pipe(i.pipeline,'costing'), pr = pipe(i.pipeline,'priceSubmission');
-        return [i.code||'', i.name||'', i.customer||'', facOf(i)||'', i.bdPerson||'', i.bdNum||'', D(i.date), i.type||'', PRIO_LABEL[prioKey(i.priority)]||'', (INQ_ST.find(x => x[0] === String(i.status||'').toUpperCase()) || [0, i.status||''])[1],
-          inqStateLabel(i).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2'), BALL_LABELS[i.ballWith]||'', OUTCOME_LABELS[i.outcome]||'', i.material||'', i.remark||'',
-          mi.status||'', mi.remark||'', D(mi.date), co.status||'', co.remark||'', D(co.date), pr.status||'', pr.remark||'', D(pr.date),
-          (i.tasks||[]).filter(t => t.done).length, (i.tasks||[]).length, links(i.links), tagNames(i.tags)]; })],
-    ['Inquiry tasks', ['Code','Inquiry','Task','PIC','Deadline','Status','Completed','Tags'],
-      d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
-    ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed','Tags'],
-      d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt), tagNames(n.tags)]))],
-    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Stage','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links','Tags'],
-      d.projects.map(p => { const ss = [...(p.subStatuses||[])].sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1)[0];
-        return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), p.stage||'', HEALTH_LABEL[projHealth(p)]||'',
-          D(p.date), D(p.deliveryDate), BALL_LABELS[p.ballWith]||'', p.kiv ? (p.kivComment || 'Yes') : '', p.brief||'',
-          (p.tasks||[]).filter(t => t.done).length, (p.tasks||[]).length, projPct(p), (p.pics||[]).map(x => x.name + (x.role ? ` (${x.role})` : '')).join(', '),
-          ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links), tagNames(p.tags)]; })],
-    ['Project actions', ['Project code','Project','Factory','Action','PIC','Deadline','Status','Completed','Tags'],
-      d.projects.flatMap(p => (p.tasks||[]).map(t => [p.code||'', p.name||'', facOf(p)||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
-    ['Milestones', ['Project code','Project','Milestone','Category','Date','Status','Note'],
-      d.projects.flatMap(p => (p.milestones||[]).map(m => [p.code||'', p.name||'', m.title||'', m.category||'', D(m.date), (MS_ST.find(x => x[0] === m.status) || [0, m.status||''])[1], m.note||'']))],
-    ['Updates', ['Project code','Project','Update','Status','Date','Note'],
-      d.projects.flatMap(p => (p.subStatuses||[]).map(u => [p.code||'', p.name||'', u.title||'', (SS_ST.find(x => x[0] === u.status) || [0, u.status||''])[1], D(u.date), u.note||'']))],
-    ['People', ['Project code','Project','Name','Role'], d.projects.flatMap(p => (p.pics||[]).map(x => [p.code||'', p.name||'', x.name||'', x.role||'']))],
-    ['Tasks', ['Task','Owner','Category','Priority','Status','Due','Chase on','Description','Completed','Archived','Tags'],
-      (d.mtasks||[]).map(t => [t.title||'', t.owner||'', (MT_CATS.find(x => x[0] === t.category) || [0, t.category||''])[1], (MT_PRIO.find(x => x[0] === t.priority) || [0, t.priority||''])[1],
-        (TASK_ST.find(x => x[0] === t.status) || [0, t.status||''])[1], D(t.deadline), D(t.reminder), t.description||'', D(t.completedAt), yes(t.archived), tagNames(t.tags)])],
-  ];
+  const d = DB.data, sheets = [], main = ['Inquiries','Projects','Personal tasks','Tags'], add = (name, t) => { if (t[1].length || main.includes(name)) sheets.push([name, t[0], t[1]]); };   // empty sub-lists get no sheet
+  const taskLab = { status: v => v ? lbl(TASK_ST)(v) : '' };
+  const inqLab = { status: v => lbl(INQ_ST)(String(v || '').toUpperCase()), type: v => TYPE_LABELS[v] || v || '', priority: v => PRIO_LABEL[prioKey(v)] || v || '', outcome: v => OUTCOME_LABELS[v] || v || '', ballWith: v => BALL_LABELS[v] || v || '',
+    projectId: v => v ? ((findRec(d, 'projects', v) || {}).code || v) : '' };
+  const prjLab = { status: v => statusLabel(v), classification: v => CLASS_LABELS[v] || v || '', ballWith: v => BALL_LABELS[v] || v || '', fromInquiry: v => v ? ((findRec(d, 'inquiries', v) || {}).code || v) : '' };
+  const ofI = i => [['Inquiry code', () => i.code || ''], ['Inquiry', () => i.name || '']], ofP = p => [['Project code', () => p.code || ''], ['Project', () => p.name || '']];
+  const sub = (parents, key, ofX, opts = {}) => { const recs = []; parents.forEach(x => (x[key] || []).forEach(r => recs.push({rec: r, parent: x}))); return xlTable(recs, {...opts, pre: ofX({}).map(([h], j) => [h, r => ofX(r.parent)[j][1]()])}); };
+  add('Inquiries', xlTable(d.inquiries.map(i => ({rec: i})), { lab: inqLab, skip: ['expanded','nextAction'],
+    first: ['code','name','customer','factory','bdPerson','bdNum','date','type','priority','status','sla','outcome','outcomeReason','outcomeDate','ballWith','ballSince','material','value','moldCost','remark','remarkDate','tags','projectId','links'],
+    extra: [['sla','SLA', r => inqStateLabel(r.rec).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2')], ['value','Est. value (RM)', r => inqEstValue(r.rec) || '']] }));
+  add('Inquiry tasks', sub(d.inquiries, 'tasks', ofI, { lab: taskLab, first: ['name','pic','deadline','status','done','completedAt','reminder','addedOn','owner','tags'] }));
+  add('Inquiry next actions', sub(d.inquiries, 'nextActions', ofI, { first: ['action','pic','deadline','done','completedAt','dateAdded','tags'] }));
+  add('Inquiry products', sub(d.inquiries, 'products', ofI, { first: ['name','volume','cost','value'], extra: [['value','Est. value / yr (RM)', r => (parseFloat(r.rec.volume) || 0) * (parseFloat(r.rec.cost) || 0) || '']] }));
+  add('Inquiry history', sub(d.inquiries, 'activityLog', ofI, { first: ['date','time','by','type','text'], skip: ['icon'] }));
+  add('Projects', xlTable(d.projects.map(p => ({rec: p})), { lab: prjLab, skip: ['expanded'],
+    first: ['code','name','customer','factory','classification','status','stage','stageSince','health','date','deliveryDate','progress','ballWith','ballSince','salesPerson','kiv','kivComment','kivDate','brief','tags','fromInquiry','links'],
+    extra: [['health','Health', r => HEALTH_LABEL[projHealth(r.rec)] || ''], ['progress','Progress %', r => projPct(r.rec)]] }));
+  add('Project actions', sub(d.projects, 'tasks', ofP, { lab: taskLab, first: ['name','pic','deadline','status','done','completedAt','reminder','addedOn','tags'] }));
+  add('Milestones', sub(d.projects, 'milestones', ofP, { lab: { status: v => lbl(MS_ST)(v || 'upcoming') }, first: ['title','category','date','status','note'] }));
+  add('Updates', sub(d.projects, 'subStatuses', ofP, { lab: { status: v => lbl(SS_ST)(v) }, first: ['title','status','date','note'] }));
+  add('People', sub(d.projects, 'pics', ofP, { first: ['name','role'] }));
+  add('Project history', sub(d.projects, 'activityLog', ofP, { first: ['date','time','by','type','text'], skip: ['icon'] }));
+  add('Personal tasks', xlTable((d.mtasks || []).map(t => ({rec: t})), { lab: { status: v => lbl(TASK_ST)(v), priority: v => lbl(MT_PRIO)(v), category: v => lbl(MT_CATS)(v) },
+    first: ['title','owner','category','priority','status','deadline','reminder','description','completedAt','archived','createdAt','tags'] }));
+  add('Tags', xlTable((d.tags || []).map(t => ({rec: t})), { lab: { color: v => (TAG_COLORS.find(c => c[0] === v) || [0, 0, v])[2] }, first: ['name','color'] }));
+  add('Recycle bin', xlTable((d.bin || []).map(b => ({rec: {...b, item: undefined, task: undefined}, b})), { first: ['kind','code','name','deletedAt','parentCode','parentName','parentType','what','data'],
+    extra: [['what','Item', r => binName(r.b)], ['data','Saved record (JSON)', r => JSON.stringify(r.b.item || r.b.task || {}).slice(0, 32000)]] }));
+  /* V1 data V2 doesn't show yet is exported too, so the file stays the full database */
+  const sch = []; Object.entries(d.schedule || {}).sort().forEach(([day, es]) => (Array.isArray(es) ? es : [es]).forEach(e => sch.push({rec: {day, ...(e && typeof e === 'object' ? e : {value: e})}})));
+  if (sch.length) add('Schedule', xlTable(sch, { first: ['day','code','name','customer','duration','summary'] }));
+  const known = new Set(['inquiries','projects','mtasks','tags','bin','schedule']), other = [];
+  Object.entries(d).forEach(([k, v]) => { if (known.has(k) || v == null) return;
+    if (Array.isArray(v) && v.length && v.every(x => x && typeof x === 'object')) add(xlHuman(k).slice(0, 31), xlTable(v.map(r => ({rec: r}))));
+    else if (Array.isArray(v) ? v.length : typeof v === 'object' ? Object.keys(v).length : true) other.push({rec: {setting: k, value: typeof v === 'object' ? JSON.stringify(v).slice(0, 32000) : v}}); });
+  if (other.length) add('Other data', xlTable(other, { first: ['setting','value'] }));
+  return sheets;
 }
+/* Excel: ExcelJS (it writes cell styles) loads from jsDelivr the first time it's needed */
+let XL_P = null;
+function loadExcelJS(){
+  return XL_P = XL_P || new Promise((res, rej) => { if (window.ExcelJS) return res(window.ExcelJS);
+    const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+    sc.onload = () => window.ExcelJS ? res(window.ExcelJS) : rej(new Error('no ExcelJS')); sc.onerror = () => { XL_P = null; rej(new Error('load')); }; document.head.appendChild(sc); });
+}
+/* dates go in as UTC midnight: Excel has no time zone, so a local midnight would show as the day before in Malaysia */
+function xlDate(v){ const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : (v || ''); }
+const XL_TONE = { bad:['FFFDE2E2','FF9B1C1C'], warn:['FFFEF3C7','FF92400E'], ok:['FFDCFCE7','FF166534'] };
+const XL_WRAP = new Set(['Brief','Remark','Links','Description','Note','Text','Summary','KIV reason','Outcome reason','Saved record (JSON)','Value','Pipeline · mold inquiry · remark','Pipeline · costing · remark','Pipeline · price submission · remark']);
+/* status colours: late / over SLA red, at risk amber, done green; a past date is red unless its row is finished */
+const XL_DUE = { 'Inquiry tasks': 'Deadline', 'Inquiry next actions': 'Deadline', 'Project actions': 'Deadline', 'Personal tasks': 'Deadline', 'Milestones': 'Date', 'Projects': 'Delivery date' };
+function xlTone(sheet, h, v, row, H, today){
+  const s = String(v == null ? '' : v), col = k => H[k] == null ? undefined : row[H[k]];
+  if (h === 'Health') return s === 'Late' ? 'bad' : s === 'At risk' ? 'warn' : s === 'On track' || s === 'Completed' ? 'ok' : '';
+  if (h === 'SLA') return /^Overdue|^SLA missed/.test(s) ? 'bad' : /^At risk/.test(s) ? 'warn' : /^On track|^SLA met/.test(s) ? 'ok' : '';
+  if (h === 'Outcome') return s === 'Won' ? 'ok' : s === 'Lost' ? 'bad' : s === 'Dropped' ? 'warn' : '';
+  if (h === 'Status' && !['Updates','Recycle bin'].includes(sheet)) return ['Done','Completed','Reached'].includes(s) ? 'ok' : s === 'Awaiting reply' || s === 'On hold' ? 'warn' : '';
+  if (h === 'Done') return s === 'Yes' ? 'ok' : '';
+  if (XL_DUE[sheet] === h && v instanceof Date){   // a past due date is red unless its row is finished
+    const finished = ['Done','Completed','Reached','Cancelled','Closed'].includes(String(col('Status') || '')) || col('Done') === 'Yes' || col('Completed at') instanceof Date || col('Archived') === 'Yes';
+    return !finished && v < today ? 'bad' : '';
+  }
+  return '';
+}
+const leadOnly = () => { if (isLead()) return true; toast('Only the master and managers can export all data', {icon:'x'}); return false; };   // members get the PDF reports
 async function exportExcel(){
-  if (!DB.data) return;
+  if (!DB.data || !leadOnly()) return;
   toast('Preparing the Excel file…', {icon:'file'});
-  let X; try { X = await loadXLSX(); } catch(e){ toast('Could not load the Excel tool. Check your connection and try again.', {icon:'x'}); return; }
-  const wb = X.utils.book_new(), sheets = exportSheets();
-  sheets.forEach(([name, head, rows]) => {
-    const ws = X.utils.aoa_to_sheet([head, ...rows], {cellDates: true, dateNF: 'dd mmm yyyy'});
-    ws['!cols'] = head.map((h, c) => ({ wch: Math.min(60, Math.max(h.length, ...rows.slice(0, 300).map(r => r[c] instanceof Date ? 11 : String(r[c] == null ? '' : r[c]).split('\n')[0].length)) + 2) }));
-    if (ws['!ref']) ws['!autofilter'] = { ref: ws['!ref'] };
-    X.utils.book_append_sheet(wb, ws, name);
+  let XL; try { XL = await loadExcelJS(); } catch(e){ toast('Could not load the Excel tool. Check your connection and try again.', {icon:'x'}); return; }
+  const wb = new XL.Workbook(), today = xlDate(todayStr()); wb.creator = meName(); wb.created = new Date();
+  exportSheets().forEach(([name, head, rows]) => {
+    const ws = wb.addWorksheet(name, { views: [{ state: 'frozen', ySplit: 1 }] }), H = Object.fromEntries(head.map((h, i) => [h, i]));
+    ws.columns = head.map((h, c) => { const len = Math.max(h.length, ...rows.slice(0, 400).map(r => r[c] instanceof Date ? 11 : String(r[c] == null ? '' : r[c]).split('\n').reduce((m, l) => Math.max(m, l.length), 0)));
+      return { header: h, width: Math.min(XL_WRAP.has(h) ? 50 : 40, Math.max(9, len + 3)) }; });
+    rows.forEach(r => ws.addRow(r));
+    head.forEach((h, c) => { const col = ws.getColumn(c + 1), dates = rows.some(r => r[c] instanceof Date);
+      col.eachCell({ includeEmpty: false }, (cell, rn) => { if (rn === 1) return; cell.alignment = { vertical: 'top', wrapText: XL_WRAP.has(h) }; if (dates && cell.value instanceof Date) cell.numFmt = 'dd mmm yyyy';
+        const t = xlTone(name, h, cell.value, rows[rn - 2], H, today); if (t){ cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XL_TONE[t][0] } }; cell.font = { bold: true, color: { argb: XL_TONE[t][1] } }; } }); });
+    const hr = ws.getRow(1); hr.height = 24;
+    hr.eachCell(cell => { cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }; cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } }; cell.alignment = { vertical: 'middle' }; });
+    if (head.length) ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: head.length } };
   });
-  X.writeFile(wb, `NPD_Tracker_${todayStr()}.xlsx`, {compression: true});
+  const buf = await wb.xlsx.writeBuffer(), a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})); a.download = `NPD_Tracker_${todayStr()}.xlsx`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast(`Exported ${DB.data.inquiries.length} inquiries, ${DB.data.projects.length} projects and ${(DB.data.mtasks||[]).length} tasks to Excel`, {icon:'check'});
 }
 function exportBackup(){
-  if (!DB.data) return;
+  if (!DB.data || !leadOnly()) return;
   const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), exportedBy: meName(), sheetSavedAt: DB.ts || '', data: DB.data }, null, 1)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `NPD_Tracker_Backup_${todayStr()}.json`;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast('Backup downloaded: everything, including the recycle bin', {icon:'check'});
+}
+/* ══════════ PDF REPORTS: the Projects or Inquiries list as you see it (filters, search, sort), A4 landscape ══════════
+   jsPDF and its table plugin load from jsDelivr the first time. */
+let PDF_P = null, PDF_LOGO;
+const loadScript = src => new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(sc); });
+function loadPDF(){
+  return PDF_P = PDF_P || (async () => {
+    if (!(window.jspdf && window.jspdf.jsPDF)) await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+    if (!window.jspdf.jsPDF.API.autoTable) await loadScript('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js');
+    return window.jspdf.jsPDF;
+  })().catch(e => { PDF_P = null; throw e; });
+}
+async function pdfLogo(){
+  if (PDF_LOGO !== undefined) return PDF_LOGO;
+  try { const b = await (await fetch('../icons/icon-192.png')).blob(); PDF_LOGO = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); }); }
+  catch(e){ PDF_LOGO = null; }
+  return PDF_LOGO;
+}
+const PDF_TONE = { bad: [[254,226,226],[155,28,28]], warn: [[254,243,199],[146,64,14]], ok: [[220,252,231],[22,101,52]], info: [[237,233,254],[91,33,182]], mu: [[241,245,249],[71,85,105]] };
+const pdfDay = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
+const pdfText = s => String(s == null ? '' : s).replace(/→/g, '>').replace(/[★✓]/g, '').replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF–—‘’“”•…]/g, '');   // the built-in PDF font covers Western characters only
+function pdfProjects(){
+  const L = projLists(), board = S.pview === 'board', list = projSort(board ? L.all : (L[S.pfilt] || L.active), board ? 'urgent' : S.psort), today = todayStr();
+  const grp = p => isClosedProj(p) ? 'done' : p.status === 'on-hold' ? 'hold' : projHealth(p);
+  const G = [['over','Late','bad'],['risk','At risk','warn'],['ok','On track','ok'],['hold','On hold','mu'],['done','Completed','ok']];
+  const tag = allTags().find(t => t.id === S.ptag);
+  const scope = [board ? 'Board' : ({active:'Active', hold:'On hold', done:'Completed', all:'All'})[S.pfilt] || 'Active', S.fac !== 'all' ? S.fac : '', tag ? 'Tag: ' + tag.name : '', !board ? 'Sorted: ' + ((P_SORTS.find(x => x[0] === S.psort) || [0, ''])[1]) : ''].filter(Boolean).join(' · ');
+  const cnt = k => list.filter(p => grp(p) === k).length;
+  const summary = [`${list.length} project${list.length === 1 ? '' : 's'}`, ...G.map(([k, l]) => cnt(k) ? `${cnt(k)} ${l.toLowerCase()}` : '').filter(Boolean)].join('  ·  ');
+  const head = ['Project', 'Factory', 'Stage', 'Health', 'Next action', 'Delivery', 'Progress', 'Ball with'];
+  const body = [];
+  G.forEach(([k, l, tone]) => { const ps = list.filter(p => grp(p) === k); if (!ps.length) return;
+    body.push([{ content: `${l}  ·  ${ps.length}`, colSpan: head.length, styles: { fillColor: PDF_TONE[tone][0], textColor: PDF_TONE[tone][1], fontStyle: 'bold' } }]);
+    ps.forEach(p => { const na = !isClosedProj(p) && nextAction(p), si = NPD_STAGES.indexOf(p.stage || ''), tasks = p.tasks || [], wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null;
+      body.push([`${p.name || ''}\n${[p.code, p.customer].filter(Boolean).join(' · ')}`, facOf(p), si >= 0 ? `${p.stage}\n${si + 1} of ${NPD_STAGES.length}` : p.stage || 'Not set',
+        { content: `${l}\n${healthWhy(p)[0]}`, tone: k === 'hold' ? 'mu' : k === 'done' ? 'ok' : tone },
+        na ? `${na.name}\n${na.pic ? na.pic + ' · ' : ''}${na.deadline ? (na.deadline < today ? `${pdfDay(na.deadline)} · ${Math.max(1, workDaysBetween(na.deadline, today))} working days late` : 'due ' + pdfDay(na.deadline)) : 'no date'}` : isClosedProj(p) ? 'Completed' : 'No open actions',
+        p.deliveryDate ? `${pdfDay(p.deliveryDate)}${isClosedProj(p) ? '' : wd < 0 ? `\n${-wd} working day${wd === -1 ? '' : 's'} late` : wd === 0 ? '\nDue today' : `\n${wd} working days left`}` : 'Not set',
+        tasks.length ? `${projPct(p)}%\n${tasks.filter(t => t.done).length} of ${tasks.length} actions` : 'No actions', BALL_LABELS[p.ballWith] || '']); }); });
+  return { title: 'Projects report', file: 'Projects', scope, summary, head, body, cols: { 0: { cellWidth: 150, fontStyle: 'bold' }, 1: { cellWidth: 70 }, 2: { cellWidth: 72 }, 3: { cellWidth: 92 }, 4: { cellWidth: 160 }, 5: { cellWidth: 82 }, 6: { cellWidth: 62 } } };
+}
+function pdfInquiries(){
+  const list = inqFiltered(), t = allTags().find(x => x.id === S.itag);
+  const scope = [(INQ_FILTERS.find(f => f[0] === S.filter) || [0, 'Open'])[1], S.q ? `Search: “${S.q}”` : '', S.fac !== 'all' ? S.fac : '', t ? 'Tag: ' + t.name : '', 'Sorted: ' + ((INQ_SORTS.find(x => x[0] === (S.isort || 'sla')) || [0, ''])[1])].filter(Boolean).join(' · ');
+  const by = k => list.filter(x => x.st.k === k).length, won = list.filter(x => x.i.outcome === 'won').length, val = list.reduce((s, x) => s + inqEstValue(x.i), 0);
+  const summary = [`${list.length} inquir${list.length === 1 ? 'y' : 'ies'}`, by('over') ? `${by('over')} over SLA` : '', by('risk') ? `${by('risk')} due soon` : '', by('ok') ? `${by('ok')} on track` : '', won ? `${won} won` : '', val ? `est. ${fmtRMShort(val)} / yr` : ''].filter(Boolean).join('  ·  ');
+  const head = ['Inquiry', 'Customer', 'Factory', 'Received', 'SLA', 'Status', 'Next step', 'Outcome', 'Est. value'];
+  const body = list.map(({i, st}) => { const chip = inqChip(i, st), nx = inqNext(i, st), v = inqEstValue(i);
+    return [`${i.name || ''}\n${[i.code, PRIO_LABEL[prioKey(i.priority)]].filter(Boolean).join(' · ')}`, i.customer || '', facOf(i), pdfDay(i.date), slaLabel(st) || '-',
+      { content: chip[2], tone: chip[0] === 'bad' ? 'bad' : chip[0] === 'warn' ? 'warn' : chip[0] === 'ok' || chip[0] === 'done' ? 'ok' : chip[0] === 'info' ? 'info' : 'mu' },
+      `${nx[0]}${nx[1] ? '\n' + nx[1] : ''}`, OUTCOME_LABELS[i.outcome] || '', v ? fmtRM(v) : '']; });
+  return { title: 'Inquiries report', file: 'Inquiries', scope, summary, head, body, cols: { 0: { cellWidth: 150, fontStyle: 'bold' }, 1: { cellWidth: 82 }, 2: { cellWidth: 70 }, 3: { cellWidth: 64 }, 4: { cellWidth: 60 }, 5: { cellWidth: 78 }, 6: { cellWidth: 150 }, 7: { cellWidth: 52 } } };
+}
+async function exportPDF(kind){
+  if (!DB.data) return;
+  if (kind === 'inquiries' && !inqOn()){ toast('Inquiries are hidden in Projects only focus', {icon:'x'}); return; }
+  toast('Preparing the PDF…', {icon:'file'});
+  let JsPDF; try { JsPDF = await loadPDF(); } catch(e){ toast('Could not load the PDF tool. Check your connection and try again.', {icon:'x'}); return; }
+  const R = kind === 'inquiries' ? pdfInquiries() : pdfProjects(), logo = await pdfLogo();
+  const doc = new JsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' }), W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 36, X = M + (logo ? 36 : 0);
+  const stamp = `Exported by ${pdfText(meName())} · ${pdfDay(todayStr())} ${nowHM()}`;
+  const header = () => {
+    if (logo) try { doc.addImage(logo, 'PNG', M, 20, 28, 28); } catch(e){}
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(17, 24, 39); doc.text(R.title, X, 34);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(pdfText(`NPD Tracker · ${pdfDay(todayStr())}${R.scope ? ' · ' + R.scope : ''}`), X, 48);
+    doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.8); doc.line(M, 58, W - M, 58);
+  };
+  header();
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(30, 41, 59); doc.text(pdfText(R.summary), M, 76);
+  const clean = c => c && typeof c === 'object' ? {...c, content: pdfText(c.content)} : pdfText(c);
+  doc.autoTable({
+    head: [R.head], body: R.body.length ? R.body.map(r => r.map(clean)) : [[{ content: 'Nothing matches these filters.', colSpan: R.head.length, styles: { textColor: [100,116,139], halign: 'center' } }]],
+    startY: 86, margin: { top: 70, left: M, right: M, bottom: 38 }, theme: 'grid',
+    styles: { font: 'helvetica', fontSize: 8.2, cellPadding: { top: 4.5, bottom: 4.5, left: 5, right: 5 }, textColor: [30, 41, 59], lineColor: [226, 232, 240], lineWidth: 0.5, valign: 'top', overflow: 'linebreak' },
+    headStyles: { fillColor: [31, 41, 55], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8.5 },
+    columnStyles: R.cols,
+    didParseCell: c => { const tn = c.cell.raw && c.cell.raw.tone; if (c.section === 'body' && tn && PDF_TONE[tn]){ c.cell.styles.fillColor = PDF_TONE[tn][0]; c.cell.styles.textColor = PDF_TONE[tn][1]; c.cell.styles.fontStyle = 'bold'; } },
+    didDrawPage: c => { if (c.pageNumber > 1) header(); }
+  });
+  const n = doc.internal.getNumberOfPages();
+  for (let k = 1; k <= n; k++){ doc.setPage(k); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+    doc.text(`NPD Tracker · ${stamp}`, M, H - 18); doc.text(`Page ${k} of ${n}`, W - M, H - 18, { align: 'right' }); }
+  doc.save(`NPD_${R.file}_Report_${todayStr()}.pdf`);
+  toast(`${R.title} downloaded · ${R.body.filter(r => r.length > 1).length} ${kind === 'inquiries' ? 'inquiries' : 'projects'}`, {icon:'check'});
 }
 
 /* ── My work: everything assigned to you in one dense list (project actions, inquiry tasks and next actions, personal tasks) ──
@@ -4432,29 +4692,30 @@ function formInquiry(id){
     } });
 }
 /* ── project: new + edit ── */
-function formProject(id){
-  const p = id ? findRec(DB.data, 'projects', id) : null; if (id && !p) return;
-  openForm({ eyebrow: p ? p.code : 'Projects', title: p ? 'Edit project' : 'New project', submit: p ? 'Save changes' : 'Create project',
+function formProject(id, preset){
+  const p = id ? findRec(DB.data, 'projects', id) : null; if (id && !p) return; const pre = !p && preset ? preset : {};
+  openForm({ eyebrow: p ? p.code : pre.fromInquiry ? `From inquiry ${pre.code}` : 'Projects', title: p ? 'Edit project' : 'New project', submit: p ? 'Save changes' : 'Create project',
     fields: [
       {k:'code', label:'Project code', req:true, half:true, value: p ? p.code || '' : '', ph:'PRJ-2026-001'},
       {k:'date', label:'Date started', type:'date', req:true, half:true, value: p ? p.date || '' : todayStr()},
-      {k:'name', label:'Project name', req:true, value: p ? p.name : '', ph:'e.g. Acme – Lid type A production'},
-      {k:'brief', label:'Brief', type:'textarea', rows:3, value: p ? p.brief || '' : '', ph:'What is this project about?'},
-      {k:'classification', label:'Classification', type:'select', half:true, value: p ? p.classification || 'new-mold' : 'new-mold', options: withCur(PROJ_CLASS, p && p.classification)},
-      {k:'factory', label:'Factory', type:'select', half:true, value: p ? p.factory || '' : '', options: factoryOpts(p && p.factory)},
-      {k:'customer', label:'Customer', half:true, value: p ? p.customer || '' : ''},
+      {k:'name', label:'Project name', req:true, value: p ? p.name : pre.name || '', ph:'e.g. Acme – Lid type A production'},
+      {k:'brief', label:'Brief', type:'textarea', rows:3, value: p ? p.brief || '' : pre.brief || '', ph:'What is this project about?'},
+      {k:'classification', label:'Classification', type:'select', half:true, value: p ? p.classification || 'new-mold' : pre.classification || 'new-mold', options: withCur(PROJ_CLASS, p && p.classification)},
+      {k:'factory', label:'Factory', type:'select', half:true, value: p ? p.factory || '' : pre.factory || '', options: factoryOpts(p ? p.factory : pre.factory)},
+      {k:'customer', label:'Customer', half:true, value: p ? p.customer || '' : pre.customer || ''},
       {k:'salesPerson', label:'Sales person', half:true, value: p ? p.salesPerson || '' : ''},
       {k:'deliveryDate', label:'Target delivery', type:'date', half:true, value: p ? p.deliveryDate || '' : ''},
       {k:'status', label:'Status', type:'select', half:true, value: p ? p.status || 'not-started' : 'not-started', options: withCur(PROJ_ST, p && p.status)},
       {k:'stage', label:'Stage', type:'select', half:true, value: p ? p.stage || '' : '', options: withCur([['', 'Not set'], ...NPD_STAGES.map(x => [x, x])], p && p.stage)},
-      ...tagField(p && p.tags),
+      ...tagField(p ? p.tags : pre.tags),
       {k:'links', label:'Links', type:'textarea', rows:2, value: p ? linksToText(p.links) : '', ph:'Drawings | https://drive.google.com/…', hint:'One per line. Optional name first, then a | and the link.'},
       {k:'kiv', label:'Keep in view (KIV)', type:'check', value: p ? !!p.kiv : false, hint:'Parked for now. It stays visible with a KIV tag.'},
       {k:'kivComment', label:'KIV reason', type:'textarea', rows:2, value: p ? p.kivComment || '' : '', ph:'Why is this project on KIV?', show: v => v.kiv},
     ],
     del: p && can('projects','delete') ? {label:'Delete project', run: () => { const u = deleteRecord('projects', p.id); if (S.page === 'project') go('projects'); done1(`Deleted ${esc(p.code || p.name)}.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => {
-      if (!p){ const nid = createProject({...v, links: textToLinks(v.links)}); done1(`Project ${esc(v.code)} created`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
+      if (!p){ const nid = createProject({...v, links: textToLinks(v.links), fromInquiry: pre.fromInquiry || ''}); if (pre.fromInquiry) linkInquiry(pre.fromInquiry, nid);
+        done1(`Project ${esc(v.code)} created${pre.fromInquiry ? ` from ${esc(pre.code)}` : ''}`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
       const patch = {};
       ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','stage','tags','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
       if ('links' in ch && !sameLinks(textToLinks(v.links), p.links)) patch.links = textToLinks(v.links);
@@ -4574,7 +4835,7 @@ let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
   const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',work:'work'}[p]}));
-  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
+  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},...(isLead() ? [{g:'Actions', t:'Export everything to Excel', run:() => exportExcel(), ic:'file'}] : []),{g:'Actions', t:'Projects report (PDF)', run:() => exportPDF('projects'), ic:'file'},...(inqOn() ? [{g:'Actions', t:'Inquiries report (PDF)', run:() => exportPDF('inquiries'), ic:'file'}] : []),...(isLead() ? [{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'}] : []),{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
@@ -4602,7 +4863,8 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
-  <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx">${ico('file',15)} Export to Excel</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
+  <div><h4>Data</h4><div class="pop-data">${isLead() ? `<button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>` : ''}
+    <button class="btn${inqOn() ? '' : ' wide'}" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
   ${DB.data ? tagsPopHTML() : ''}
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
@@ -4637,6 +4899,7 @@ document.addEventListener('keydown', e => { const sl = e.target.closest && e.tar
   const d = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1, PageUp:big, PageDown:-big }[e.key];
   if (d){ e.preventDefault(); setSlider(k, S[k] + d, true); } else if (e.key === 'Home' || e.key === 'End'){ e.preventDefault(); setSlider(k, e.key === 'Home' ? c.min : c.max, true); } });
 function openPop(anchor){
+  TAGEDIT = ''; TAGEC = '';
   const p = $('#pop'); p.innerHTML = popHTML(); hydrateIcons(p);
   const a = anchor || $('[data-act="settings"]'); const r = a.getBoundingClientRect();
   const left = Math.min(innerWidth - 400, Math.max(16, r.left + r.width - 384)), below = r.top < innerHeight/2;
@@ -4798,6 +5061,8 @@ document.addEventListener('click', e => {
   const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
   const br = t.closest('[data-binrestore]'); if (br){ restoreBin(br.dataset.binrestore); return; }
   const bw = t.closest('[data-binwipe]'); if (bw){ wipeBin(bw.dataset.binwipe, bw); return; }
+  const te = t.closest('[data-tagedit]'); if (te){ if (!isLead()) return; TAGEDIT = te.dataset.tagedit; TAGEC = ''; refreshPop(); const i = $('#tagedit-name'); if (i){ i.focus({preventScroll: true}); i.select(); } return; }
+  const tec = t.closest('[data-tagec]'); if (tec){ TAGEC = tec.dataset.tagec; $$('#pop [data-tagec]').forEach(b => { const on = b === tec; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }); return; }
   const tc = t.closest('[data-tagc]'); if (tc){ TAGC = tc.dataset.tagc; $$('#pop [data-tagc]').forEach(b => { const on = b === tc; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }); return; }
   const td = t.closest('[data-tagdel]'); if (td){ if (!isLead()) return; const tg = allTags().find(x => x.id === td.dataset.tagdel), r = tg && deleteTag(tg.id); if (!r) return; refreshPop();
     toast(`Deleted tag “${esc(tg.name)}”${r.n ? ` · removed from ${r.n} item${r.n === 1 ? '' : 's'}` : ''}`, {icon:'trash', undo: () => { r.undo(); refreshPop(); }}); return; }
@@ -4849,6 +5114,7 @@ document.addEventListener('click', e => {
     else if (act === 'styles'){ closePop(); go('styles'); }
     else if (act === 'open-bin'){ closePop(); go('bin'); }
     else if (act === 'export-xlsx'){ closePop(); exportExcel(); }
+    else if (act === 'pdf-projects' || act === 'pdf-inquiries'){ closePop(); exportPDF(act === 'pdf-inquiries' ? 'inquiries' : 'projects'); }
     else if (act === 'export-json'){ closePop(); exportBackup(); }
     else if (act === 'bin-empty'){ emptyBin(a); }
     else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();
@@ -4867,6 +5133,8 @@ document.addEventListener('click', e => {
       if (!a.classList.contains('armed')){ a.classList.add('armed'); a.textContent = `Tap again to delete ${ids.length}`; setTimeout(() => { if (a.isConnected){ a.classList.remove('armed'); a.textContent = 'Delete'; } }, 3500); return; }
       const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`Deleted ${ids.length} task${ids.length === 1 ? '' : 's'}`, {icon:'trash', undo: u}); }
     else if (act === 'pin-inq'){ const i = findRec(DB.data, 'inquiries', sheetId); if (i){ const on = !i.pinned; setPin('inquiries', i.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('inquiries', i.id, !on)}); } }
+    else if (act === 'tag-cancel'){ TAGEDIT = ''; TAGEC = ''; refreshPop(); }
+    else if (act === 'inq-proj'){ if (sheetId) inqToProject(sheetId); }
     else if (act === 'pj-stage'){ if (can('projects','edit')) formStage(S.proj); }
     else if (act === 'pj-done'){ S.pdone = !S.pdone; refresh(); }
     else if (act === 'pj-delivery'){ const p = findRec(DB.data, 'projects', S.proj); if (!p || !can('projects','edit')) return;
@@ -4891,7 +5159,7 @@ $('#fscrim').addEventListener('click', () => closeForm());
 document.addEventListener('input', e => { if (e.target.id === 'wq'){ S.wq = e.target.value; clearTimeout(S._wq); S._wq = setTimeout(() => { const v = $('#view'), top = v.scrollTop; refresh(); v.scrollTop = top; }, 160); return; }
   if (e.target.id === 'binq'){ S.binq = e.target.value; clearTimeout(S._bq); S._bq = setTimeout(() => { const l = $('#binlist'); if (l) l.innerHTML = binList(); }, 140); return; } });
 document.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; clearTimeout(S._qt); S._qt = setTimeout(() => vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'), 160); } });
-addEventListener('resize', () => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); wireScroll(); });
+addEventListener('resize', () => { if ($('#sheet').classList.contains('open')) placeSheet(); moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); wireScroll(); });
 $('#totop').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>`;
 $('#totop').addEventListener('click', () => $('#view').scrollTo({top: 0, behavior: S.motion === 'off' ? 'auto' : 'smooth'}));
 setInterval(() => { if (AUTH.user && !DB.saving && !DB.ops.length && !DB.err) setSync('ok'); }, 30000);

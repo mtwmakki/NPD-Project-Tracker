@@ -45,6 +45,20 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   products, links, pipeline statuses, mold cost, outcome reason), delete
 - Inquiry tasks and next actions: add, edit, delete, tick done
 - Ball in court, inquiry outcome, pin / unpin
+- Inquiries page:
+  - each row reads left to right: name (customer · factory · received · code · priority, tags), the next step and
+    when it is due, "Day N of 5" with a 5-part SLA meter, and the status top right ("2 days over", "Due today",
+    "On track", "SLA met", "On hold", "Won"…); no coloured edge on every row
+  - filters with zero items are greyed; tag filter; sort by SLA (most urgent), received (newest), customer or
+    estimated value (remembered on the device)
+  - on screens wider than about 1280px the panel docks beside the list: the list narrows, the open row is
+    highlighted, and clicking another row switches the panel. Tablets and phones keep the sliding panel
+  - panel: "Day 7 of 5" with the status and meter, when the SLA was due, the SLA steps with their dates, then one
+    task list (SLA tasks carry an "SLA" tag) with "+" in each section header
+  - Turn into project (footer): opens New project prefilled from the inquiry (name, customer, factory, brief from
+    the remark, tags, Improvement for IMP inquiries; the project code is yours to fill). Saving creates the
+    project with `fromInquiry`, sets the inquiry's `projectId`, marks it Won if no outcome was set, and logs it.
+    The inquiry then shows "Open project"; the project's Details link back to the inquiry; Excel has both columns
 - My work (replaces the Tasks and Notifications pages; old links open it): one dense list of everything assigned
   to you: project actions, inquiry tasks and next actions, personal tasks.
   - groups: Overdue, Today, This week, Later, No date, Awaiting reply, Done this week (folded); each group folds
@@ -59,8 +73,8 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
     swipe); the type filter is a dropdown
   - personal tasks keep their tools: Archived (restore) and Select (archive or delete several); category and
     priority show as tags and are set in the task form. Snoozes follow you to every device (saved on your profile)
-- Custom tags: one shared list (`data.tags`: id, name, colour), added and deleted in Settings → Tags by the master
-  and managers (9 colours; duplicate names are refused). Projects, inquiries, project actions, inquiry tasks, next
+- Custom tags: one shared list (`data.tags`: id, name, colour), added, renamed, recoloured and deleted in Settings → Tags
+  by the master and managers (tap a tag's name to edit it; 9 colours; duplicate names are refused). Projects, inquiries, project actions, inquiry tasks, next
   actions and personal tasks can carry tags (`tags: [tagId, …]`), picked in each form. Deleting a tag removes it
   from every item, with Undo. Tags show on project cards and the board, the project page, inquiry rows and the
   inquiry panel, action and task rows, and My work; Projects, Inquiries and My work have a tag filter (in My work
@@ -120,9 +134,27 @@ Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists every
 filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its
 project or inquiry; if that was deleted too, restore it first). Delete forever needs a second tap within 3 s;
 managers and the master can empty the whole bin. Restores and deletes are logged and offer Undo.
-Settings → Data → Export to Excel downloads a workbook (inquiries, inquiry tasks, next actions, projects, project
-actions, milestones, updates, people, personal tasks; real dates, filters on every sheet). The Excel tool (SheetJS
-0.18.5) loads from jsDelivr the first time. Backup downloads everything as JSON, including the bin.
+Settings → Data → Excel · all data (or Ctrl K "Export everything to Excel"; master and managers only, like Backup, since it
+holds everyone's personal tasks and the bin — members get the PDF reports) downloads the whole database as one
+formatted workbook, every field of every record: Inquiries (plus computed SLA and estimated value), Inquiry tasks,
+Inquiry next actions, Inquiry products, Inquiry history, Projects (plus Health and Progress %), Project actions,
+Milestones, Updates, People, Project history, Personal tasks, Tags, Recycle bin (with each saved record as JSON), and
+V1 data V2 doesn't show yet (Schedule, pipeline lists, anything else under "Other data"). Lists inside a record get their
+own sheet with the parent's code and name in the first columns; a sub-list sheet with nothing in it is left out. Codes
+and labels are shown instead of internal values (status, priority, tag names, linked project / inquiry code); the raw
+ID stays in the last column. Look: a dark bold header row frozen at the top with filter arrows, sized columns, wrapped
+long text, real dates (dd mmm yyyy, written as UTC so they don't shift a day), and status colours: late / over SLA /
+lost in red, at risk / awaiting reply / on hold in amber, done / won / on track in green, and a past deadline or
+delivery in red unless that row is finished. The Excel tool (ExcelJS 4.4.0) loads from jsDelivr the first time.
+PDF reports: the PDF button in the Projects and Inquiries toolbars (also Settings → Data and Ctrl K) prints what you are
+looking at, with the same filter, search, tag and sort, as an A4 landscape table: NPD Tracker logo, title, date and the
+filters used at the top (repeated on every page), a one-line summary, then the rows. Projects are grouped Late / At risk
+/ On track / On hold / Completed (the board view prints every project) with Project, Factory, Stage, Health and why,
+Next action, Delivery, Progress and Ball with. Inquiries show Inquiry, Customer, Factory, Received, SLA day, Status,
+Next step, Outcome and Est. value. Health and status cells are coloured like the app. Each page ends with "Exported by
+<name> · date time" and "Page x of y". The PDF tool (jsPDF 2.5.1 + AutoTable 3.8.2) loads from jsDelivr the first time.
+Its built-in font has no Chinese characters or emoji, so those are left out of the PDF (Excel keeps them).
+Backup downloads everything as JSON, including the bin.
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

@@ -67,6 +67,30 @@ Present mode shows the TPAC logo.
 - The date picker is shared (`gvDpShow`): tasks, meetings, asks and lists all use it.
 - Present: the same page read-only, with the TPAC logo; no inputs or add buttons.
 
+## Phase 4 (done): dashboard
+- Same blocks and the same gauges as before (your choice), restyled in V2's look: cards, headers in sentence case,
+  tile numbers, the health pill, stage-gate bars, remark fields, lists and milestones; the look's background shows
+  through. Scoped to `#dashView`, so the 1-page PDF (`onePagerHTML`) is untouched.
+- The top block (health, summary for the customer, meetings and dates) keeps its layout; only its look changed.
+- "Coming up" replaces "Next steps": tasks that start or are due before the next meeting (the next 3 weeks when no
+  meeting is set), with the date, "in 11 days", and starts / due.
+- Focus and Key milestones show labelled status chips (Running late, Late start…) instead of a bare number.
+- Stage-gate remarks are typed right in the gates table; read-only in Present.
+- The timeline's legend and Today button hide on the Dashboard tab.
+- The 1-page PDF's "Next steps" card became "Coming up" with the same rule and tasks as the screen (until the next
+  meeting, else the next 3 weeks); the rest of the PDF is unchanged.
+
+## Timeline header and Gantt display buttons
+- The timeline always shows a year row above the months; month labels no longer carry the year.
+- Settings > Gantt display (audit, Oct 2026): every button works. These change both the timeline on screen and the
+  exported chart: Dep. Arrows, Critical Path, Cal. Week No., Today Marker, Grid: Weekly / 2-Week / 4-Week / Month.
+  These change only the exported chart (tooltip says so): Phase, Segment, Start Week, Duration, Predecessor (the
+  table has its own Columns menu), Year Row (the screen always shows the year) and Variance (Actual mode only; greyed
+  out in Baseline). Milestone and Delay left the panel; they stay in the table's Columns menu.
+- Critical path (`computeCriticalPath`) uses the same links as the scheduler: every predecessor with its delay and the
+  gate rule (a gate waits for every task of the earlier gates); slack under about a day counts as critical. On screen
+  it tints the row, marks its left edge and colours the arrows between critical tasks; the legend says "Critical path".
+- Exported chart: each gate row's "Wk a – b • n wks" now sits after the gate's bar, so it no longer covers the name.
+
 ## Next phases
-4. Dashboard: four tiles, task bar, stage gates with remarks.
 Later: phone layout.

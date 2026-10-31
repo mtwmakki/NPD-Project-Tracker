@@ -107,7 +107,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-body);color:var(--text
    scroll is mirrored in JS (the standard approach: the timeline needs
    its own horizontal scroll, which a single shared scroller can't give).
    ══════════════════════════════════════════════ */
-:root{--gv-row:36px;--gv-head:52px}
+:root{--gv-row:36px;--gv-head:62px}
 .gv{display:flex;flex-direction:column;height:100%;background:var(--bg-body)}
 .gv-toolbar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--bg-sb);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .gv-body{flex:1;display:flex;min-height:0;overflow:hidden}
@@ -1095,6 +1095,8 @@ body,body.dark{background:transparent!important;color:var(--tx)}
 .gv-legend .dm{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;background:var(--c1)}
 .gv-legend .lt{width:16px;height:10px;border-radius:3px;border:2px solid var(--bad)}
 .gv-legend .td{width:2px;height:12px;background:repeating-linear-gradient(var(--bad) 0 3px,transparent 3px 5px)}
+#panelDisplay .col-tog.na{opacity:.45}
+.gv-legend .cp{width:16px;height:10px;border-radius:2px;background:color-mix(in srgb,var(--bad) 14%,transparent);box-shadow:inset 3px 0 0 var(--bad)}
 /* popovers: status menu and date picker */
 .gv-pop{position:fixed;z-index:400;min-width:0}
 .gv-stmenu{width:230px}
@@ -1233,6 +1235,123 @@ button.sv-tag{cursor:pointer}
 .sv2.present .sv-row{min-height:52px}
 @media (max-width:980px){ .sv-top,.sv-two{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:760px){ #statusView{padding:4px 12px 24px!important} .sv-sum{padding:16px} .sv-gl{font-size:11px} .sv-row{flex-wrap:wrap} .sv-end{width:100%;justify-content:flex-start;padding-left:34px} .sv-x,.sv-mv button{opacity:.6} }
+</style>
+<!-- ═══ Phase 4 (Oct 2026): the timeline dashboard in V2's style. Same blocks and gauges; only the look changes,
+     plus "Coming up" until the next meeting. Scoped to #dashView, so the 1-page PDF is untouched. ═══ -->
+<style id="v2dash">
+#dashView{padding:4px 24px 32px!important}
+#dashView .db-wrap{max-width:1240px;font:400 14px/20px var(--fb);color:var(--tx);background:transparent}   /* the look's background shows through, as on the other pages */
+#dashView .db-top{align-items:flex-end;margin-bottom:16px}
+#dashView .db-title{font-family:var(--fd)!important;font-weight:var(--h-w)!important;letter-spacing:var(--h-ls)!important;font-size:24px!important;line-height:32px;color:var(--tx)}
+#dashView .db-sub{font:400 14px/20px var(--fb);color:var(--mu);margin-top:2px}
+#dashView .db-sub b{color:var(--tx);font-weight:500}
+#dashView .db-status .l{font:500 12px/16px var(--fb)!important;color:var(--mu);text-transform:none!important;letter-spacing:0!important}
+#dashView .db-status .v{font:600 15px/20px var(--fb)!important;color:var(--tx);letter-spacing:0}
+#dashView .db-togbtn{height:32px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:var(--hover);color:var(--tx);font:600 13px/1 var(--fb)!important;cursor:pointer;text-transform:none;letter-spacing:0}
+#dashView .db-togbtn:hover{background:var(--sel)}
+#dashView .db-share{height:40px;padding:0 16px;font-size:13.5px!important}
+/* cards and their headers */
+#dashView .db-card{background:var(--surf-solid)!important;border:1px solid var(--line)!important;border-radius:var(--r-card)!important;box-shadow:var(--shadow)!important;overflow:hidden}
+#dashView .db-ch{font:600 15px/20px var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:var(--tx);padding:14px 18px 10px!important;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+#dashView .db-ch .tag{margin-left:auto;font:400 12.5px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important;background:none!important;padding:0!important}
+#dashView .db-gridtop{gap:16px;margin-bottom:16px}
+#dashView .db-gcap{color:var(--mu);font:400 11.5px/16px var(--fb)}
+#dashView .db-tiles{background:var(--line)}
+#dashView .db-tile{background:var(--surf-solid)}
+#dashView .db-tile .k{font:500 12px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important}
+#dashView .db-tile .v{font:600 24px/30px var(--fm)!important;color:var(--tx)!important;letter-spacing:-.02em}
+#dashView .db-tile.good .v{color:color-mix(in srgb,var(--ok) 55%,var(--tx))!important}
+#dashView .db-tile.crit .v{color:color-mix(in srgb,var(--bad) 55%,var(--tx))!important}
+#dashView .db-pill{font:600 11.5px/1 var(--fb)!important;text-transform:none!important;letter-spacing:0!important;padding:4px 10px!important;border-radius:11px!important}
+#dashView .db-pill.g{background:color-mix(in srgb,var(--ok) 17%,transparent)!important;color:color-mix(in srgb,var(--ok) 52%,var(--tx))!important}
+#dashView .db-pill.a{background:color-mix(in srgb,var(--warn) 18%,transparent)!important;color:color-mix(in srgb,var(--warn) 52%,var(--tx))!important}
+#dashView .db-pill.r{background:color-mix(in srgb,var(--bad) 16%,transparent)!important;color:color-mix(in srgb,var(--bad) 52%,var(--tx))!important}
+/* stage gates: bars, remarks typed right in the table */
+#dashView .db-ghead{font:500 12px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important;padding:10px 18px 6px!important}
+#dashView .db-grow{border-top:1px solid var(--line);padding:10px 18px;min-height:56px}
+#dashView .db-gno{border-radius:8px;width:26px;height:26px;font:600 12px/1 var(--fm)}
+#dashView .db-grow .gtx{font:500 14px/18px var(--fb);color:var(--tx)}
+#dashView .db-grow .cnt{font:400 12.5px/16px var(--fb);color:var(--mu)}
+#dashView .db-zm,#dashView .db-pb{height:22px;border-radius:11px!important;box-shadow:none!important}
+#dashView .db-pb{background:var(--track)!important}
+#dashView .db-pb .fill{background:var(--ac)!important;border-radius:11px}
+#dashView .db-zm .t,#dashView .db-pb .t{font:600 12px/22px var(--fb)!important}
+#dashView .db-gstate{background:var(--track)!important;border-radius:11px!important}
+#dashView .db-gstate .t{color:color-mix(in srgb,var(--mu) 72%,var(--tx))!important;font:500 12px/22px var(--fb)!important}
+#dashView .db-gstate.ok{background:color-mix(in srgb,var(--ok) 17%,transparent)!important}
+#dashView .db-gstate.ok .t{color:color-mix(in srgb,var(--ok) 52%,var(--tx))!important;font-weight:600!important}
+#dashView .db-rmk{height:34px;border:1px solid var(--line-2)!important;background:var(--surf-solid)!important;border-radius:10px!important;padding:0 12px;font:400 13.5px/1 var(--fb)!important;color:var(--tx)!important}
+#dashView .db-rmk::placeholder{color:var(--mu)}
+#dashView .db-rmk:focus{border-color:var(--ac)!important;outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+#dashView .db-rmkt{font:400 13.5px/20px var(--fb);color:var(--tx)}
+#dashView .db-legend{font:400 12px/16px var(--fb);color:var(--mu);margin:0;padding:10px 18px 14px;border-top:1px solid var(--line)}
+/* focus, coming up, milestones */
+#dashView .db-gridbot{gap:16px;margin-top:16px}
+#dashView .db-list{padding:0}
+#dashView .db-li{border-top:1px solid var(--line);padding:10px 18px;min-height:56px;gap:12px}
+#dashView .db-li:first-child{border-top:0}
+#dashView .db-li .n{font:500 14px/20px var(--fb);color:var(--tx)}
+#dashView .db-li .meta,#dashView .db-li .rt .meta{font:400 12.5px/16px var(--fb);color:var(--mu)}
+#dashView .db-li .gv-st{flex:none}
+#dashView .db-late{font:600 13px/18px var(--fb);color:color-mix(in srgb,var(--bad) 55%,var(--tx))}
+#dashView .db-when{font:600 13px/18px var(--fb);color:color-mix(in srgb,var(--ac) 60%,var(--tx))}
+#dashView .db-datebox{width:42px;height:42px;border-radius:12px;background:var(--track);color:var(--tx)}
+#dashView .db-datebox b{font:600 15px/1 var(--fb)} #dashView .db-datebox span{font:500 11px/1 var(--fb);color:var(--mu);text-transform:none}
+#dashView .db-empty{padding:16px 18px;font:400 13.5px/20px var(--fb);color:var(--mu)}
+#dashView .db-note{padding:0 18px 12px;margin:8px 0 0;font:400 12.5px/16px var(--fb);color:var(--mu);font-style:normal}
+#dashView .db-cost{padding:4px 18px 12px}
+#dashView .db-costrow{border-bottom:0;border-top:1px solid var(--line);padding:10px 0;gap:12px}
+#dashView .db-costrow .cl{font:500 14px/20px var(--fb);color:var(--tx)}
+#dashView .db-costrow .db-mono{font:500 12.5px/16px var(--fb)!important;color:var(--mu)!important}
+#dashView .db-st{font:400 13px/18px var(--fb)}
+#dashView .db-st th{font:600 12px/16px var(--fb)}
+#dashView .db-st td{border-color:var(--line)}
+/* the top block and the four lists keep their blocks; only their look follows V2 */
+#dashView .stp{--st-cust:var(--warn);max-width:none!important;margin-left:0!important;margin-right:0!important}
+/* the timeline's legend and Today button belong to the Gantt view */
+body[data-view=dash] .gv-legend,body[data-view=dash] #gvTodayBtn{display:none!important}
+#dashView .stp .hero{grid-template-columns:minmax(0,1fr) 360px;gap:16px;margin-bottom:16px}
+#dashView .stp .card{background:var(--surf-solid);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:16px 20px 18px}
+#dashView .stp .need{background:var(--surf-solid);border-color:var(--line);margin-bottom:16px}
+#dashView .stp .health{height:28px;padding:0 12px 0 10px;border-radius:14px;font:600 13px/1 var(--fb);background:color-mix(in srgb,var(--warn) 18%,transparent);color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+#dashView .stp .health.h-ok{background:color-mix(in srgb,var(--ok) 17%,transparent);color:color-mix(in srgb,var(--ok) 52%,var(--tx))}
+#dashView .stp .health.h-bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:color-mix(in srgb,var(--bad) 52%,var(--tx))}
+#dashView .stp .health.h-hold{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+#dashView .stp .health select{font:600 13px/1 var(--fb)!important;color:inherit!important;background:transparent!important;border:0!important}
+#dashView .stp .since{font:400 13px/18px var(--fb);color:var(--mu)}
+#dashView .stp .headline{font:400 15px/22px var(--fb);margin:8px 0 0;color:var(--tx)}
+#dashView .stp textarea.headline{min-height:48px;border:1px solid transparent!important;background:transparent!important;border-radius:10px!important;padding:6px 8px;margin:4px -8px -6px;width:calc(100% + 16px);color:var(--tx)!important;font:400 15px/22px var(--fb)!important}
+#dashView .stp textarea.headline:hover{border-color:var(--line-2)!important}
+#dashView .stp textarea.headline:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none}
+#dashView .stp .dates{background:var(--surf-solid);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:6px 20px}
+#dashView .stp .dates div{font:400 14px/20px var(--fb);color:var(--mu);border-color:var(--line);min-height:44px;padding:6px 0}
+#dashView .stp .dates b{font:600 14px/20px var(--fb)!important;color:var(--tx)}
+#dashView .stp .dates b.r,#dashView .stp .dates input.r{color:color-mix(in srgb,var(--bad) 60%,var(--tx))!important}
+#dashView .stp .st-in{font:400 14px/20px var(--fb)!important;color:var(--tx)!important;border-radius:8px!important;border:1px solid transparent!important;background:transparent!important}
+#dashView .stp .st-in:hover{border-color:var(--line-2)!important}
+#dashView .stp .st-in:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none}
+#dashView .stp .ph h3{font:600 16px/22px var(--fb);letter-spacing:0;color:var(--tx)}
+#dashView .stp .ph small{font:400 13px/16px var(--fb);color:var(--mu)}
+#dashView .stp td{font:400 14px/20px var(--fb);color:var(--tx);border-color:var(--line)}
+#dashView .stp .tag{font:600 11.5px/1 var(--fb)!important;border-radius:6px;padding:5px 8px;letter-spacing:0}
+#dashView .stp .tag.dec{background:color-mix(in srgb,var(--c2) 18%,transparent);color:color-mix(in srgb,var(--c2) 48%,var(--tx));border:0}
+#dashView .stp .tag.inf{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx));border:0}
+#dashView .stp .due{font:600 12.5px/16px var(--fb)!important;color:color-mix(in srgb,var(--bad) 55%,var(--tx))}
+#dashView .stp .d,#dashView .stp .age{font:400 12.5px/16px var(--fb)!important;color:var(--mu)}
+#dashView .stp .new{font:600 10.5px/16px var(--fb)!important;text-transform:uppercase;letter-spacing:.03em;background:color-mix(in srgb,var(--ac) 15%,transparent);color:color-mix(in srgb,var(--ac) 55%,var(--tx));border-radius:5px;padding:1px 6px}
+#dashView .stp .list li{border-color:var(--line);min-height:52px;font:400 14px/20px var(--fb)}
+#dashView .stp .list .tx{font-weight:500}
+#dashView .stp .chk{width:22px;height:22px;background:var(--ok)}
+#dashView .stp .ring{width:22px;height:22px;border:1.5px solid var(--line-2)}
+#dashView .stp button.ring:hover{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+#dashView .stp .pic{width:24px;height:24px;font:600 10.5px/1 var(--fb)!important;background:color-mix(in srgb,var(--c1) 20%,var(--surf-solid));color:color-mix(in srgb,var(--c1) 52%,var(--tx))}
+#dashView .stp .st-empty{font:400 14px/20px var(--fb);color:var(--mu)}
+#dashView .stp .st-add{border:0;background:var(--hover);color:var(--ac);font:600 13px/1 var(--fb);height:32px;padding:0 14px;border-radius:16px}
+#dashView .stp .st-add:hover{background:var(--sel)}
+#dashView .stp .st-link{color:var(--ac);font:inherit}
+#dashView .stp .st-ib{color:var(--mu)} #dashView .stp .st-ib:hover{background:var(--hover);color:var(--tx)}
+@media (max-width:980px){ #dashView .stp .hero{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:760px){ #dashView{padding:4px 12px 24px!important} }
 </style>
 <script>
 /* follow V2's light / dark (set on <html> by the boot script) when the Gantt opens, and when V2 changes it in another tab */
@@ -1410,16 +1529,14 @@ window.addEventListener('storage', function(e){
         </section>
         <section class="v3-sec" id="panelDisplay"><h3>Gantt display</h3>
           <div class="col-toggles">
-            <span class="col-tog" data-col="phase" onclick="toggleCol(this)">Phase</span>
-            <span class="col-tog active" data-col="seg" onclick="toggleCol(this)">Segment</span>
-            <span class="col-tog active" data-col="milestone" onclick="toggleCol(this)">Milestone</span>
-            <span class="col-tog" data-col="lag" onclick="toggleCol(this)">Delay</span>
-            <span class="col-tog" data-col="start" onclick="toggleCol(this)">Start Week</span>
-            <span class="col-tog" data-col="dur" onclick="toggleCol(this)">Duration</span>
-            <span class="col-tog" data-col="pred" onclick="toggleCol(this)">Predecessor</span>
+            <span class="col-tog" data-col="phase" title="Exported chart only" onclick="toggleCol(this)">Phase</span>
+            <span class="col-tog active" data-col="seg" title="Exported chart only" onclick="toggleCol(this)">Segment</span>
+            <span class="col-tog" data-col="start" title="Exported chart only" onclick="toggleCol(this)">Start Week</span>
+            <span class="col-tog" data-col="dur" title="Exported chart only" onclick="toggleCol(this)">Duration</span>
+            <span class="col-tog" data-col="pred" title="Exported chart only" onclick="toggleCol(this)">Predecessor</span>
             <span class="col-tog active" data-col="arrows" onclick="toggleCol(this)">Dep. Arrows</span>
             <span class="col-tog" data-col="crit" onclick="toggleCol(this)">Critical Path</span>
-            <span class="col-tog active" data-col="year" onclick="toggleCol(this)">Year Row</span>
+            <span class="col-tog active" data-col="year" title="Exported chart only (the timeline always shows the year)" onclick="toggleCol(this)">Year Row</span>
             <span class="col-tog active" data-col="variance" onclick="toggleCol(this)">Variance</span>
             <span class="col-tog active" data-col="calweek" onclick="toggleCol(this)">Cal. Week No.</span>
             <span class="col-tog active" data-col="today_col" onclick="toggleCol(this)">Today Marker</span>
@@ -2295,17 +2412,25 @@ function onePagerHTML(opts){
   var late=tasks.map(function(t){ var st=taskStatus(t,starts,today); if(st!==3&&st!==4) return null;
       var r=st===3?taskFinishDate(t,starts):taskStartDate(t,starts); return {t:t,days:Math.max(0,Math.round((today-r)/DAY))}; })
     .filter(Boolean).sort(function(a,b){return b.days-a.days;});
-  var next=tasks.filter(function(t){return taskStatus(t,starts,today)===1;})
-    .map(function(t){ var s=taskStartDate(t,starts); return {t:t,s:s,days:Math.round((s-today)/DAY)}; }).sort(function(a,b){return a.s-b.s;});
+  /* Coming up (same rule as the on-screen dashboard): what starts or is due before the next meeting, or in the next 3 weeks */
+  var nmD=parseDateLocal((book&&book.nextMeeting)||''), byMeeting=!!(nmD&&nmD>=today), winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY), next=[];
+  tasks.forEach(function(t){
+    var st=taskStatus(t,starts,today); if(st===5) return;
+    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
+    if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
+    else if(!ms&&fD>=today&&fD<=winEnd) next.push({t:t,s:fD,what:'due',days:Math.round((fD-today)/DAY)});
+  });
+  next.sort(function(a,b){return a.s-b.s;});
   var meta=function(t){return phDot(t.phase)+E(PLABEL[t.phase]||t.phase)+(t.resp?(' &middot; '+E(t.resp)):'');};
   h+='<section class="three"><div class="card"><div class="ch">Focus &mdash; delayed tasks <span class="tag">'+late.length+'</span></div><ul class="list">';
   if(late.length) late.slice(0,5).forEach(function(x){ h+='<li><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+'</small></span><span class="late">'+(x.days?(x.days+(x.days===1?' day':' days')+' late'):'delayed')+'</span></li>'; });
   else h+='<li class="mut">Nothing delayed &mdash; every task is on plan.</li>';
   if(late.length>5) h+='<li class="mut">+ '+(late.length-5)+' more delayed</li>';
-  h+='</ul></div><div class="card"><div class="ch">Next steps</div><ul class="list">';
+  h+='</ul></div><div class="card"><div class="ch">Coming up <span class="tag">'+(byMeeting?'until the meeting on '+E(gvDayLong(nmD)):'the next 3 weeks')+'</span></div><ul class="list">';
   if(next.length) next.slice(0,5).forEach(function(x){ var when=x.days<=0?'today':(x.days===1?'tomorrow':('in '+x.days+' days'));
-      h+='<li><span class="db"><b>'+x.s.getDate()+'</b>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+'</small></span><span class="when">'+when+'</span></li>'; });
-  else h+='<li class="mut">No upcoming tasks &mdash; everything has started.</li>';
+      h+='<li><span class="db"><b>'+x.s.getDate()+'</b>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+' &middot; '+x.what+'</small></span><span class="when">'+when+'</span></li>'; });
+  else h+='<li class="mut">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</li>';
+  if(next.length>5) h+='<li class="mut">+ '+(next.length-5)+' more</li>';
   h+='</ul></div>';
   var ms=tasks.filter(function(t){return t.milestone;});
   h+='<div class="card"><div class="ch">Key milestones &amp; sign-offs <span class="tag">'+ms.length+'</span></div><ul class="list">';
@@ -2673,32 +2798,39 @@ function renderDashboard(){
     var ref=st===3?taskFinishDate(t,starts):taskStartDate(t,starts);
     return {t:t,st:st,ref:ref,days:Math.max(0,Math.round((today-ref)/DAY))};
   }).filter(Boolean).sort(function(a,b){return b.days-a.days;});
-  var next=tasks.filter(function(t){return taskStatus(t,starts,today)===1;})
-    .map(function(t){ var s=taskStartDate(t,starts); return {t:t,s:s,days:Math.round((s-today)/DAY)}; })
-    .sort(function(a,b){return a.s-b.s;});
-  var soon=next.filter(function(x){return x.days<=14;}).length;
+  /* Coming up: what starts or is due before the next meeting (the next 3 weeks when no meeting is set) */
+  var nmISO=(book&&book.nextMeeting)||'', nmD=parseDateLocal(nmISO), byMeeting=!!(nmD&&nmD>=today);
+  var winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY);
+  var next=[];
+  tasks.forEach(function(t){
+    var st=taskStatus(t,starts,today); if(st===5) return;
+    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
+    if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
+    else if(!ms&&fD>=today&&fD<=winEnd) next.push({t:t,s:fD,what:'due',days:Math.round((fD-today)/DAY)});
+  });
+  next.sort(function(a,b){ return a.s-b.s; });
   h+='<div class="db-gridbot">';
   h+='<div class="db-card"><div class="db-ch">Focus &mdash; delayed tasks <span class="tag">'+late.length+(late.length===1?' task':' tasks')+'</span></div><div class="db-list">';
   if(late.length){
     late.slice(0,10).forEach(function(x){ var si=ST_INFO[x.st];
-      h+='<div class="db-li"><span class="st-chip" style="background:'+si.bg+';color:'+si.fg+'" title="'+si.label+'">'+x.st+'</span>'
+      h+='<div class="db-li"><span class="gv-st s'+x.st+'" title="'+si.label+'">'+gvIco('st'+x.st)+'<span>'+GV_ST_LABEL[x.st]+'</span></span>'
         +'<div class="nm"><div class="n">'+gvEsc(x.t.name)+'</div><div class="meta">'+phLbl(x.t)+'</div></div>'
         +'<div class="rt"><div class="db-late">'+(x.days?(x.days+(x.days===1?' day':' days')+' late'):'delayed')+'</div>'
-        +'<div class="meta">'+(x.st===3?'due ':(x.t.milestone||durW(x.t)===0?'was due ':'should have started '))+fmtDateShort(x.ref)+'</div></div></div>';
+        +'<div class="meta">'+(x.st===3?'due ':(x.t.milestone||durW(x.t)===0?'was due ':'should have started '))+gvDayLong(x.ref)+'</div></div></div>';
     });
     if(late.length>10) h+='<div class="db-note">+ '+(late.length-10)+' more delayed tasks</div>';
   } else h+='<div class="db-empty">Nothing delayed &mdash; every task is on plan.</div>';
   h+='</div></div>';
-  h+='<div class="db-card"><div class="db-ch">Next steps <span class="tag">'+soon+' starting in the next 14 days</span></div><div class="db-list">';
+  h+='<div class="db-card"><div class="db-ch">Coming up <span class="tag">'+(byMeeting?'until the meeting on '+gvDayLong(nmD):'the next 3 weeks')+'</span></div><div class="db-list">';
   if(next.length){
-    next.slice(0,8).forEach(function(x){
+    next.slice(0,10).forEach(function(x){
       var when=x.days<=0?'today':(x.days===1?'tomorrow':('in '+x.days+' days'));
-      h+='<div class="db-li"><div class="db-datebox"><b>'+x.s.getDate()+'</b><span>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span></div>'
+      h+='<div class="db-li"><div class="db-datebox"><b>'+x.s.getDate()+'</b><span>'+GV_MON[x.s.getMonth()]+'</span></div>'
         +'<div class="nm"><div class="n">'+gvEsc(x.t.name)+'</div><div class="meta">'+phLbl(x.t)+'</div></div>'
-        +'<div class="rt"><div class="db-when">'+when+'</div><div class="meta">starts '+fmtDateShort(x.s)+'</div></div></div>';
+        +'<div class="rt"><div class="db-when">'+when+'</div><div class="meta">'+x.what+' '+gvDayLong(x.s)+'</div></div></div>';
     });
-    if(next.length>8) h+='<div class="db-note">+ '+(next.length-8)+' more tasks not started yet</div>';
-  } else h+='<div class="db-empty">No upcoming tasks &mdash; everything has started.</div>';
+    if(next.length>10) h+='<div class="db-note">+ '+(next.length-10)+' more</div>';
+  } else h+='<div class="db-empty">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</div>';
   h+='</div></div></div>';
   /* ---- milestones ---- */
   var ms=tasks.filter(function(t){return t.milestone;});
@@ -2706,7 +2838,7 @@ function renderDashboard(){
   if(ms.length){
     ms.slice(0,12).forEach(function(t){
       var d=taskStartDate(t,starts), st=taskStatus(t,starts,today), si=ST_INFO[st];
-      h+='<div class="db-costrow"><span class="st-chip" style="background:'+si.bg+';color:'+si.fg+'" title="'+si.label+'">'+st+'</span><span class="cl">'+gvEsc(t.name)+'</span><span class="db-mono" style="color:var(--text-hint);font-size:11px">'+fmtDateShort(d)+'</span></div>';
+      h+='<div class="db-costrow"><span class="gv-st s'+st+'" title="'+si.label+'">'+gvIco('st'+st)+'<span>'+GV_ST_LABEL[st]+'</span></span><span class="cl">'+gvEsc(t.name)+'</span><span class="db-mono" style="color:var(--text-hint);font-size:11px">'+gvDayLong(d)+'</span></div>';
     });
     if(ms.length>12) h+='<div class="db-note">+ '+(ms.length-12)+' more milestones</div>';
   } else h+='<div class="db-note">No milestones flagged. Mark gates/sign-offs as milestones in the task grid.</div>';
@@ -3439,30 +3571,32 @@ function loadDefaults(){
 
 /* ---- Critical Path Algorithm ---- */
 function computeCriticalPath(starts){
+  /* Critical = (almost) no slack: the latest a task can start, worked back from the project end, is its planned start.
+     Uses the same links computeStarts() uses: every predecessor with its delay and, unless phases may overlap,
+     the gate rule (a phase waits for every task of the earlier phases). "Almost" = under ~1 day, because
+     day-based lengths and delays leave fractional weeks (2 days = 0.4, 1 calendar day = 0.14). */
   if(!tasks.length) return {};
-  // Forward pass to get early finish
-  var ef={}, es={};
-  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; ef[t.id]=es[t.id]+durW(t); });
-  // Find project end
-  var projEnd=0; tasks.forEach(function(t){projEnd=Math.max(projEnd,ef[t.id]);});
-  // Backward pass - late start/finish
-  var lf={}, ls={};
-  tasks.forEach(function(t){ lf[t.id]=projEnd; });
-  // For tasks with successors, LF = min(LS of successors)
-  for(var i=tasks.length-1;i>=0;i--){
-    var t=tasks[i];
-    // Find all tasks that depend on t
-    tasks.forEach(function(succ,si){
-      var pid=resolvePredsForTask(succ,si)[0]||null;
-      if(pid===t.id){
-        lf[t.id]=Math.min(lf[t.id],(ls[succ.id]!==undefined?ls[succ.id]:projEnd)-(succ.lag||0));
-      }
-    });
-    ls[t.id]=lf[t.id]-durW(t);
+  var EPS=0.15, es={}, succ={}, projEnd=0;
+  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; projEnd=Math.max(projEnd,es[t.id]+durW(t)); succ[t.id]=[]; });
+  var link=function(pid,t,lag){ if(succ[pid]&&pid!==t.id) succ[pid].push({t:t,lag:lag}); };
+  tasks.forEach(function(t,i){
+    resolvePredsForTask(t,i).forEach(function(pid){ link(pid,t,t.lag||0); });
+    if(!allowPhaseOverlap){
+      var myPI=PORDER.indexOf(t.phase);
+      tasks.forEach(function(q){ var qi=PORDER.indexOf(q.phase); if(qi>=0&&qi<myPI&&activePhases[q.phase]) link(q.id,t,0); });
+    }
+  });
+  var ls={}, busy={};
+  function lateStart(t){   /* memoised backward pass, so list order doesn't matter */
+    if(ls[t.id]!==undefined) return ls[t.id];
+    if(busy[t.id]) return projEnd-durW(t);   /* dependency loop guard */
+    busy[t.id]=1;
+    var lf=projEnd;
+    succ[t.id].forEach(function(e){ lf=Math.min(lf,lateStart(e.t)-e.lag); });
+    return (ls[t.id]=lf-durW(t));
   }
-  // Float = LS - ES; critical if float == 0
   var crit={};
-  tasks.forEach(function(t){ crit[t.id]=(ls[t.id]-es[t.id])===0; });
+  tasks.forEach(function(t){ crit[t.id]=lateStart(t)-es[t.id]<=EPS; });
   return crit;
 }
 
@@ -3613,7 +3747,7 @@ function refreshAll(){
    with the grid. Shared geometry constants keep the two panes in
    lockstep — change GV_ROW in one place and both follow.
    ══════════════════════════════════════════════════════ */
-var GV_ROW=36, GV_HEAD=52, GV_WW=26, selectedTaskId=null;
+var GV_ROW=36, GV_HEAD=62, GV_WW=26, selectedTaskId=null;
 /* Task Name column width, set by the splitter; the pane is this plus the visible columns. */
 var gvNameW=300, gvFixedW=0;   /* Task column, until the splitter is dragged */
 
@@ -3885,6 +4019,7 @@ function syncSettingsUI(){
     var c=el.getAttribute('data-col');
     el.classList.toggle('active',!!colVis[c]);
   });
+  gvSyncVarianceTog();
   renderPhasePills();
 }
 
@@ -4283,6 +4418,7 @@ function gvSegPalette(){
 function renderChartPane(starts){
   var host=document.getElementById('gvChart'); if(!host) return;
   var rows=gvRows(), th=gvTheme(), pal=gvSegPalette(), today=stToday(), used={};
+  var critMap=colVis.crit?computeCriticalPath(starts):{};   /* Settings > Gantt display > Critical Path */
   if(!rows.length){ host.innerHTML='<div class="gv-chart-empty">No tasks yet. Add one to begin.</div>'; renderGvLegend(pal,used); return; }
   var sd=projStartDate();
   var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); });
@@ -4294,24 +4430,38 @@ function renderChartPane(starts){
   var PADX=10;   /* inset so a milestone on the first day isn't cut off */
   var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+(W+PADX)+'" height="'+H+'" style="display:block" font-family="'+th.fb+'"><rect x="0" y="0" width="'+PADX+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><g transform="translate('+PADX+',0)">';
 
-  /* calendar header: month band over week numbers (weeks only when there's room for them) */
-  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+th.line2+'"/>';
+  /* calendar header: year band, month band, then week numbers (weeks only when there's room and Cal. Week No. is on).
+     Grid lines in the plan follow Settings > Gantt display (Grid: Weekly / 2-Week / 4-Week / Month), as in the export. */
+  var YR_H=18, WK_Y=44;   /* year row 0-18, month row 18-44, week row 44-GV_HEAD */
+  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><line x1="0" y1="'+(YR_H-.5)+'" x2="'+W+'" y2="'+(YR_H-.5)+'" stroke="'+th.line+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+th.line2+'"/>';
   var grid='', bg='', fg='';   /* layers: row backgrounds, then grid lines, then bars */
-  var mCur=new Date(sd.getTime()), mStart=0;
+  var mCur=new Date(sd.getTime()), mStart=0, yCur=sd.getFullYear(), yStart=0;
   for(var i=0;i<=TW;i++){
     var d=new Date(sd.getTime()+i*MS_WEEK);
     if(i===TW||d.getMonth()!==mCur.getMonth()){
-      var mw=(i-mStart)*WW;
-      var yr=(mCur.getMonth()===0||mStart===0)?(mw>=76?' '+mCur.getFullYear():(mw>=52?' \u2019'+String(mCur.getFullYear()).slice(2):'')):'';
-      if(mw>30) s+='<text x="'+(mStart*WW+8)+'" y="21" font-size="12" font-weight="600" fill="'+th.tx+'">'+GV_MON[mCur.getMonth()]+yr+'</text>';
-      if(i>0){ s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; grid+='<line x1="'+(i*WW)+'" y1="'+GV_HEAD+'" x2="'+(i*WW)+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; }
+      if((i-mStart)*WW>30) s+='<text x="'+(mStart*WW+8)+'" y="'+(YR_H+17)+'" font-size="12" font-weight="600" fill="'+th.tx+'">'+GV_MON[mCur.getMonth()]+'</text>';
+      if(i>0&&i<TW){ s+='<line x1="'+(i*WW)+'" y1="'+YR_H+'" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line2+'" stroke-opacity=".7"/>';
+        if(colVis.grid_month) grid+='<line x1="'+(i*WW)+'" y1="'+GV_HEAD+'" x2="'+(i*WW)+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; }
       mStart=i; mCur=d;
     }
+    if(i===TW||d.getFullYear()!==yCur){
+      if((i-yStart)*WW>=34) s+='<text x="'+(yStart*WW+8)+'" y="13" font-size="11" font-weight="600" fill="'+th.mu+'">'+yCur+'</text>';
+      if(i>0&&i<TW) s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+YR_H+'" stroke="'+th.line2+'"/>';
+      yStart=i; yCur=d.getFullYear();
+    }
   }
+  var showWk=!!colVis.calweek&&WW>=22;
   for(var w=0;w<TW;w++){
-    if(WW>=22){
-      s+='<line x1="'+(w*WW)+'" y1="'+(GV_HEAD-18)+'" x2="'+(w*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line+'"/>'; grid+='<line x1="'+(w*WW)+'" y1="'+GV_HEAD+'" x2="'+(w*WW)+'" y2="'+H+'" stroke="'+th.line+'"/>';
-      s+='<text x="'+(w*WW+WW/2)+'" y="'+(GV_HEAD-9)+'" font-size="10.5" fill="'+th.mu+'" text-anchor="middle" font-family="'+th.fm+'">'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    var gx=w*WW;
+    if(showWk){
+      if(w>0) s+='<line x1="'+gx+'" y1="'+WK_Y+'" x2="'+gx+'" y2="'+GV_HEAD+'" stroke="'+th.line+'"/>';
+      s+='<text x="'+(gx+WW/2)+'" y="'+(GV_HEAD-5.5)+'" font-size="10.5" fill="'+th.mu+'" text-anchor="middle" font-family="'+th.fm+'">'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    }
+    if(w>0){
+      var is4=(w%4===0), is2=(!is4&&w%2===0);
+      if(is4&&colVis.grid_4week) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".55"/>';
+      else if(is2&&colVis.grid_2week&&WW*2>=10) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line+'"/>';
+      else if(!is4&&!is2&&colVis.grid_week&&WW>=10) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line+'" stroke-opacity=".6"/>';
     }
   }
 
@@ -4340,14 +4490,15 @@ function renderChartPane(starts){
       bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
       y+=GV_ROW; return;
     }
-    var t=r.task, st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today);
-    if(ri++%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+th.alt+'"/>';
+    var t=r.task, st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today), crit=!!critMap[t.id];
+    if(crit){ bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+gvMix(th.bad,th.bg,0.08)+'"/><rect x="0" y="'+y+'" width="3" height="'+GV_ROW+'" fill="'+th.bad+'" opacity=".75"/>'; used._crit=1; ri++; }
+    else if(ri++%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+th.alt+'"/>';
     bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
     var bx=(st-1)*WW, bw=Math.max(dw*WW,2), by=y+8, bh=GV_ROW-16;
     var sc=pal[t.seg]||pal._; used[t.seg&&pal[t.seg]?t.seg:'_']=1;
     var fill=stt===5?th.ok:sc.fill, ink=stt===5?gvInk(th.ok):sc.ink, late=(stt===3||stt===4);
     var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts);
-    var tip=t.name+' · '+(dw===0||t.milestone?gvDayLong(sD):gvDayLong(sD)+' → '+gvDayLong(fD)+' · '+gvLenText(t))+' · '+GV_ST_LABEL[stt];
+    var tip=t.name+' · '+(dw===0||t.milestone?gvDayLong(sD):gvDayLong(sD)+' → '+gvDayLong(fD)+' · '+gvLenText(t))+' · '+GV_ST_LABEL[stt]+(crit?' · On the critical path':'');
     bpos[t.id]={x:bx,w:bw,midY:y+GV_ROW/2};
     fg+='<g><title>'+gvEsc(tip)+'</title>';
     if(dw===0||t.milestone){
@@ -4382,20 +4533,22 @@ function renderChartPane(starts){
       var at=tasks[ai];
       resolvePredsForTask(at,ai).forEach(function(pid){
         var f=bpos[pid], to=bpos[at.id]; if(!f||!to) return;
-        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+7,x2-7);
-        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+th.mu+'" stroke-width="1.2" opacity=".55"/>';
-        s+='<path d="M'+x2+' '+y2+' l-5 -3.5 l0 7 z" fill="'+th.mu+'" opacity=".7"/>';
+        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+7,x2-7), cc=critMap[pid]&&critMap[at.id], ac=cc?th.bad:th.mu;
+        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+ac+'" stroke-width="'+(cc?1.6:1.2)+'" opacity="'+(cc?.85:.55)+'"/>';
+        s+='<path d="M'+x2+' '+y2+' l-5 -3.5 l0 7 z" fill="'+ac+'" opacity="'+(cc?.9:.7)+'"/>';
       });
     }
   }
 
   /* today: a red line with a pill on the week row */
   var todayW=weekFromDate(toISODate(new Date()),sd);
-  if(todayW!==null&&todayW>=1&&todayW<=TW+1){
+  if(!colVis.today_col&&todayW!==null&&todayW>=1&&todayW<=TW+1)   /* marker hidden: keep an invisible anchor so the Today button still scrolls */
+    s+='<line class="gv-today" x1="'+((todayW-1)*WW)+'" y1="0" x2="'+((todayW-1)*WW)+'" y2="0" stroke="none"/>';
+  if(colVis.today_col&&todayW!==null&&todayW>=1&&todayW<=TW+1){
     var tx=(todayW-1)*WW;
     s+='<line class="gv-today" x1="'+tx+'" y1="'+(GV_HEAD-2)+'" x2="'+tx+'" y2="'+H+'" stroke="'+th.bad+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
-    s+='<rect x="'+(tx-23)+'" y="'+(GV_HEAD-21)+'" width="46" height="18" rx="9" fill="'+th.bad+'"/>';
-    s+='<text x="'+tx+'" y="'+(GV_HEAD-8)+'" font-size="10.5" fill="'+gvInk(th.bad)+'" text-anchor="middle" font-weight="600">Today</text>';
+    s+='<rect x="'+(tx-23)+'" y="'+(WK_Y+1)+'" width="46" height="16" rx="8" fill="'+th.bad+'"/>';
+    s+='<text x="'+tx+'" y="'+(WK_Y+12.5)+'" font-size="10.5" fill="'+gvInk(th.bad)+'" text-anchor="middle" font-weight="600">Today</text>';
     used._today=1;
   }
   s+='</g></svg>';
@@ -4409,6 +4562,7 @@ function renderGvLegend(pal,used){
   if(used._) h+='<span><i class="sw" style="background:'+pal._.fill+'"></i>No segment</span>';
   if(used._ms) h+='<span><i class="dm"></i>Milestone</span>';
   if(used._late) h+='<span><i class="lt"></i>Late</span>';
+  if(used._crit) h+='<span><i class="cp"></i>Critical path</span>';
   if(used._today) h+='<span><i class="td"></i>Today</span>';
   el.innerHTML=h; el.hidden=!h;
 }
@@ -4689,6 +4843,13 @@ function getById(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return
 function getIdx(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return i; return -1;}
 function sortTasks(){tasks.sort(function(a,b){return PORDER.indexOf(a.phase)-PORDER.indexOf(b.phase);});}
 
+/* Variance only exists in Actual mode: grey it out (still switchable) and say why */
+function gvSyncVarianceTog(){
+  var v=document.querySelector('#panelDisplay .col-tog[data-col="variance"]'); if(!v) return;
+  var off=scheduleMode!=='actual';
+  v.classList.toggle('na',off);
+  v.title=off?'Shows in Actual mode only (exported chart)':'Exported chart: plan vs actual, in weeks';
+}
 function toggleCol(el){
   var col=el.getAttribute('data-col');
   colVis[col]=!colVis[col];
@@ -4738,7 +4899,7 @@ function setMode(m){
     var lb2=document.getElementById('logRegisterBtn'); if(lb2) lb2.style.display='none';
     var vb2=document.getElementById('logViewBtn'); if(vb2) vb2.style.display='none';
   }
-  renderPanel(); renderGantt();
+  renderPanel(); renderGantt(); gvSyncVarianceTog();
 }
 
 /* ===== Dynamic phases: sync with the tasks in the plan; add / remove / hide ===== */
@@ -5312,7 +5473,20 @@ function renderGantt(){
   var YH=colVis.year?16:0;
   var CWH=colVis.calweek?14:0;
   var HH=YH+CWH+56;
-  var NH=16+notes.length*12+18;
+  /* Phase legend in the footer: every name is measured and the legend wraps onto more rows, so long phase names
+     (the stage-gate template's "Gate 1 · Quote Approval Project Start") never run into each other or into the notes. */
+  var legCtx=null; try{ legCtx=document.createElement('canvas').getContext('2d'); }catch(e){}
+  var legW=function(t,fs,fw){ if(legCtx){ legCtx.font=(fw||500)+' '+fs+'px "DM Sans","Segoe UI",Arial,sans-serif'; return Math.ceil(legCtx.measureText(t).width*1.06); } return Math.ceil(t.length*fs*0.58); };
+  var legItems=PORDER.filter(function(p){return activePhases[p];}).map(function(ph){ var tx=PLABEL[ph]+' Phase'; return {ph:ph,tx:tx,w:12+legW(tx,8.5)}; });
+  if(scheduleMode==='actual') legItems.unshift({ph:null,tx:'Baseline Plan',w:22+legW('Baseline Plan',8.5),base:true});
+  var noteW=notes.reduce(function(m,n){ return Math.max(m,legW(String(n),8.5,400)); },0);
+  var legMax=Math.max(220,(W-PR)-(PL+14+noteW)-28), legGap=16, legRows=[[]], legRW=[0];
+  legItems.forEach(function(it){
+    var r=legRows.length-1, add=(legRows[r].length?legGap:0)+it.w;
+    if(legRows[r].length&&legRW[r]+add>legMax){ legRows.push([]); legRW.push(0); r++; add=it.w; }
+    legRows[r].push(it); legRW[r]+=add;
+  });
+  var NH=Math.max(16+notes.length*12+18,16+legRows.length*13+18);
   var activePhaseList=PORDER.filter(function(p){return activePhases[p];});
   var H=LH+MH+HH+tasks.length*RH+activePhaseList.length*PHR+NH+PB;
 
@@ -5513,9 +5687,15 @@ function renderGantt(){
       s+='<line x1="0" y1="'+(banY+PHR)+'" x2="'+W+'" y2="'+(banY+PHR)+'" stroke="'+pc.bar+'" stroke-width="0.5"/>';
       s+='<text x="'+(PL+CID+4)+'" y="'+(banY+PHR/2+4)+'" font-size="9.5" font-weight="700" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" letter-spacing="0.3">'+PLABEL[t.phase].toUpperCase()+' PHASE</text>';
       if(ps){
-        var summaryX=PL+LEFT-PR-4;
-        s+='<text x="'+summaryX+'" y="'+(banY+PHR/2+4)+'" font-size="9" font-weight="600" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" font-weight="500" text-anchor="end">Wk '+ps.start+' – '+ps.end+' &bull; '+ps.dur+' wks</text>';
         var phBX=PL+LEFT+(ps.start-1)*WW, phBW=ps.dur*WW;
+        /* "Wk a – b • n wks" sits just after the gate's bar (before it when the bar ends near the right edge),
+           so it can never run over the gate name in the task column */
+        var sumTx='Wk '+ps.start+' – '+ps.end+' • '+ps.dur+' wks', sumW=legW(sumTx,9,600), sumX=null, sumA='start';
+        if(phBX+Math.max(phBW,0)+6+sumW<=W-PR-2) sumX=phBX+Math.max(phBW,0)+6;
+        else if(phBX-6-sumW>=PL+LEFT+2){ sumX=phBX-6; sumA='end'; }
+        else { var nmTx=PLABEL[t.phase].toUpperCase()+' PHASE', nmEnd=PL+CID+4+legW(nmTx,9.5,700)+nmTx.length*0.3;
+          if(PL+LEFT-6-sumW>=nmEnd+10){ sumX=PL+LEFT-6; sumA='end'; } }
+        if(sumX!==null) s+='<text x="'+sumX+'" y="'+(banY+PHR/2+4)+'" font-size="9" font-weight="600" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" text-anchor="'+sumA+'">'+sumTx.replace('•','&bull;')+'</text>';
         if(phBW>0){
           s+='<rect x="'+phBX+'" y="'+(banY+3)+'" width="'+phBW+'" height="'+(PHR-6)+'" rx="3" fill="'+pc.bar+'" opacity="0.13"/>';
           s+='<rect x="'+phBX+'" y="'+(banY+3)+'" width="'+phBW+'" height="'+(PHR-6)+'" rx="3" fill="none" stroke="'+pc.bar+'" stroke-width="1" opacity="0.35"/>';
@@ -5742,16 +5922,20 @@ function renderGantt(){
     s+='<text x="'+(PL+5)+'" y="'+(ny+3)+'" font-size="6" fill="white" text-anchor="middle" font-weight="700">'+(ni+1)+'</text>';
     s+='<text x="'+(PL+14)+'" y="'+(ny+3)+'" font-size="8.5" fill="'+svgTextSub+'">'+ev(notes[ni])+'</text>';
   }
-  var lx=W-PR;
-  PORDER.filter(function(p){return activePhases[p];}).reverse().forEach(function(ph){
-    lx-=92; s+='<rect x="'+lx+'" y="'+(finalY+11)+'" width="8" height="8" rx="2" fill="'+PCr[ph].bar+'"/>';
-    s+='<text x="'+(lx+12)+'" y="'+(finalY+18)+'" font-size="8.5" fill="'+PCr[ph].text+'" font-weight="500">'+PLABEL[ph]+' Phase</text>';
+  legRows.forEach(function(row,ri){   /* right-aligned rows, in phase order */
+    var lx=W-PR-legRW[ri], ly=finalY+11+ri*13;
+    row.forEach(function(it,ii){
+      if(ii) lx+=legGap;
+      if(it.base){
+        s+='<rect x="'+lx+'" y="'+ly+'" width="18" height="7" rx="3" fill="'+svgTextHint+'" opacity="0.5" stroke="'+svgTextHint+'" stroke-width="1" stroke-dasharray="3,2"/>';
+        s+='<text x="'+(lx+22)+'" y="'+(ly+7)+'" font-size="8.5" fill="'+svgTextHint+'" font-weight="500">Baseline Plan</text>';
+      } else {
+        s+='<rect x="'+lx+'" y="'+ly+'" width="8" height="8" rx="2" fill="'+PCr[it.ph].bar+'"/>';
+        s+='<text x="'+(lx+12)+'" y="'+(ly+7)+'" font-size="8.5" fill="'+PCr[it.ph].text+'" font-weight="500">'+ev(it.tx)+'</text>';
+      }
+      lx+=it.w;
+    });
   });
-  if(scheduleMode==='actual'){
-    lx-=105;
-    s+='<rect x="'+lx+'" y="'+(finalY+11)+'" width="18" height="7" rx="3" fill="'+svgTextHint+'" opacity="0.5" stroke="'+svgTextHint+'" stroke-width="1" stroke-dasharray="3,2"/>';
-    s+='<text x="'+(lx+22)+'" y="'+(finalY+18)+'" font-size="8.5" fill="'+svgTextHint+'" font-weight="500">Baseline Plan</text>';
-  }
   /* Segment legend — only show segments actually used by tasks in the chart */
   var usedSegs=[];
   tasks.forEach(function(t){if(activePhases[t.phase]&&t.seg&&usedSegs.indexOf(t.seg)<0) usedSegs.push(t.seg);});

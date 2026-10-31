@@ -1858,6 +1858,35 @@ button.wd:hover{background:var(--hover);color:var(--tx)}
   .wgb{padding:0 14px}
 }
 
+/* ───────── TAGS (every style): one soft chip per tag, its colour from the list in Settings ───────── */
+.tchips{display:inline-flex;flex-wrap:wrap;gap:4px;min-width:0;max-width:100%}
+.tchip{--tc:#64748B;display:inline-flex;align-items:center;gap:5px;max-width:170px;padding:2px 8px;border:1px solid transparent;border-radius:var(--r-pill);background:color-mix(in srgb,var(--tc) 15%,transparent);color:color-mix(in srgb,var(--tc) 55%,var(--tx));font:600 11.5px/16px var(--fb);letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.tchip>i{width:6px;height:6px;border-radius:50%;background:var(--tc);flex:none}
+.tchip.more{--tc:var(--mu)}
+.tchip.big{max-width:100%;padding:4px 6px 4px 10px;font-size:13px;line-height:18px;gap:6px}
+.tdel{width:24px;height:24px;margin:-4px -2px -4px 0;padding:0;border:0;border-radius:50%;background:none;color:inherit;display:grid;place-items:center;cursor:pointer;opacity:.7;position:relative}
+.tdel::after{content:"";position:absolute;inset:-8px}
+.tdel:hover,.tdel:focus-visible{opacity:1;background:color-mix(in srgb,var(--tc) 24%,transparent)}
+.tagmgr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tagadd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 8px;align-items:center}
+.tagadd input{min-width:0;height:38px;padding:0 12px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--hover);color:var(--tx);font:400 14px/1 var(--fb)}
+.tagadd input:focus{outline:2px solid var(--ac);outline-offset:1px}
+.tagadd .btn{display:inline-flex;align-items:center;gap:6px;min-height:38px}
+.tsw{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;padding:2px 2px 0}
+.tsw button{position:relative;width:24px;height:24px;padding:0;border:0;border-radius:50%;background:var(--tc);cursor:pointer;transition:box-shadow .15s,transform calc(250ms*var(--k)) var(--spring)}
+.tsw button::after{content:"";position:absolute;inset:-6px}
+.tsw button.on{box-shadow:0 0 0 2px var(--surf-solid),0 0 0 4px var(--tc);transform:scale(1.05)}
+.tsw button:focus-visible{outline:2px solid var(--ac);outline-offset:5px}
+.fm-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tpick{max-width:100%;min-height:36px;padding:6px 12px;border-color:var(--line-2);background:none;color:var(--mu);font-size:13px;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}
+.tpick>i{opacity:.5}
+.tpick.on{border-color:color-mix(in srgb,var(--tc) 45%,transparent);background:color-mix(in srgb,var(--tc) 16%,transparent);color:color-mix(in srgb,var(--tc) 55%,var(--tx))}
+.tpick.on>i{opacity:1}
+.tpick:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.pc-tags{display:flex;min-width:0;margin-top:-4px}
+.tagsel select{max-width:150px}
+.wst .tchips{flex-wrap:nowrap}
+
 /* ───────── LOGIN (every style) ─────────
    Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
    Phone: brand on top, the form in a sheet at the bottom within thumb reach; it moves up while the keyboard is open. */
@@ -2091,7 +2120,7 @@ const P = {
   flask:'M9 3h6M10 3v6l-5.4 9.2A1.9 1.9 0 0 0 6.2 21h11.6a1.9 1.9 0 0 0 1.6-2.8L14 9V3M7.2 15h9.6', diamond:'M12 3.5 20.5 12 12 20.5 3.5 12z',
   truck:'M3 6h11v10H3zM14 9.5h3.8L21 13v3h-7M7 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM17.5 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z',
   tup:'M4 17l6-6 4 4 6-7M15 8h5v5', tdn:'M4 7l6 6 4-4 6 7M15 16h5v-5', tflat:'M4 12h16M16 8l4 4-4 4',
-  pause:'M9 6v12M15 6v12', work:'M4 8.5h16v10.5H4zM9 8.5V5.5h6v3M4 13h16', rows:'M4 6h16M4 10h16M4 14h16M4 18h16', rows2:'M4 7h16M4 12h16M4 17h16', sort:'M4 7h16M7 12h10M10 17h4',
+  pause:'M9 6v12M15 6v12', tag:'M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1 1 0 0 1 0 1.4l-7.3 7.3a1 1 0 0 1-1.4 0zM8 8h.01', work:'M4 8.5h16v10.5H4zM9 8.5V5.5h6v3M4 13h16', rows:'M4 6h16M4 10h16M4 14h16M4 18h16', rows2:'M4 7h16M4 12h16M4 17h16', sort:'M4 7h16M7 12h10M10 17h4',
   pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', tasks:'M4 5h4v4H4zM4 15h4v4H4zM11 7h9M11 17h9', gantt:'M4 6h9M7 12h11M10 18h10M4 3v18', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
@@ -2102,7 +2131,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions',
   mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
-  focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null };
+  focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null, ptag: '', itag: '', wtag: '' };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus;
   root.dataset.mat = S.mat; root.style.setProperty('--lg-t', S.gt / 100); root.style.setProperty('--lg-b', S.gb); }
 const inqOn = () => S.focus !== 'projects';
@@ -2255,7 +2284,7 @@ const isLead = () => AUTH.profile && (AUTH.profile.role === 'master' || AUTH.pro
 
 /* ══════════ DATA: read, merge-safe save ══════════ */
 const DB = { data: null, ts: '', by: '', source: '', ops: [], saving: false, timer: null, lastPull: 0, err: '', retry: 0 };
-function normalize(d){ d = d || {}; d.inquiries = d.inquiries || []; d.projects = d.projects || []; d.mtasks = d.mtasks || []; d.bin = d.bin || []; d.schedule = d.schedule || {}; return d; }
+function normalize(d){ d = d || {}; d.inquiries = d.inquiries || []; d.projects = d.projects || []; d.mtasks = d.mtasks || []; d.bin = d.bin || []; d.schedule = d.schedule || {}; d.tags = d.tags || []; return d; }
 const coll = (d, name) => (d && d[name]) || [];
 const findRec = (d, name, id) => coll(d, name).find(x => x.id === id);
 async function bridgeRead(){
@@ -2311,7 +2340,7 @@ function applyOp(d, op){
   if (op.add){
     if (list.some(x => x.id === op.add.id)) return true;
     const rec = JSON.parse(JSON.stringify(op.add));
-    op.at === 'end' ? list.push(rec) : list.unshift(rec); return true;
+    typeof op.at === 'number' ? list.splice(Math.min(op.at, list.length), 0, rec) : op.at === 'end' ? list.push(rec) : list.unshift(rec); return true;
   }
   if (op.remove){
     const ix = list.findIndex(x => x.id === op.remove); if (ix < 0) return false;
@@ -2428,8 +2457,92 @@ function setPin(collName, id, on){
 }
 
 /* ══════════ NOTIFICATIONS (V1 rules: missed · due soon · awaiting reply) ══════════ */
-function snoozed(){ try { return JSON.parse(store.get('npd2-snooze', '{}')) || {}; } catch(e){ return {}; } }
-function snooze(key, until){ const s = snoozed(); const today = todayStr(); Object.keys(s).forEach(k => { if (s[k] <= today) delete s[k]; }); if (until) s[key] = until; else delete s[key]; store.set('npd2-snooze', JSON.stringify(s)); }
+/* ══════════ CUSTOM TAGS: one shared list (data.tags), added and deleted in Settings by the master and managers ══════════
+   Items keep tag ids (item.tags = [id, …]): projects, inquiries, project actions, inquiry tasks, next actions, personal tasks. */
+const TAG_COLORS = [['blue','#3B82F6','Blue'],['teal','#14B8A6','Teal'],['green','#22C55E','Green'],['amber','#F59E0B','Amber'],['orange','#F97316','Orange'],['red','#EF4444','Red'],['pink','#EC4899','Pink'],['violet','#8B5CF6','Violet'],['slate','#64748B','Grey']];
+const tagHex = c => (TAG_COLORS.find(x => x[0] === c) || TAG_COLORS[TAG_COLORS.length - 1])[1];
+const allTags = () => (DB.data && DB.data.tags) || [];
+const tagsOf = ids => ids && ids.length ? allTags().filter(t => ids.includes(t.id)) : [];
+const tagNames = ids => tagsOf(ids).map(t => t.name).join(', ');
+const tagChip = t => `<span class="tchip" style="--tc:${tagHex(t.color)}"><i></i>${esc(t.name)}</span>`;
+function tagChips(ids, max = 3){
+  const ts = tagsOf(ids); if (!ts.length) return '';
+  return `<span class="tchips">${ts.slice(0, max).map(tagChip).join('')}${ts.length > max ? `<span class="tchip more" title="${esc(ts.slice(max).map(t => t.name).join(', '))}">+${ts.length - max}</span>` : ''}</span>`;
+}
+const tagField = cur => allTags().length ? [{k:'tags', label:'Tags', type:'tags', value: tagsOf(cur).map(t => t.id)}] : [];
+const withTags = v => v.tags && v.tags.length ? {tags: v.tags} : {};
+/* a list's tag filter: a small select, shown only once tags exist; a deleted tag stops filtering */
+function tagFilterHTML(id, cur){
+  const ts = allTags(); if (!ts.length) return '';
+  return `<label class="psort tagsel">${ico('tag',15)}<select id="${id}" aria-label="Filter by tag"><option value="">All tags</option>${ts.map(t => `<option value="${esc(t.id)}"${cur === t.id ? ' selected' : ''}>${esc(t.name)}</option>`).join('')}</select>${ico('chev',14)}</label>`;
+}
+const tagOk = (cur, ...lists) => !cur || !allTags().some(t => t.id === cur) || lists.some(l => (l || []).includes(cur));
+function addTag(name, color){
+  const id = uid(); mutate([{coll:'tags', at:'end', add:{id, name, color}}]);
+  changelog({type:'create', icon:'tag', text:`Added tag: ${strong(name)}`, section:'settings'});
+  return id;
+}
+/* deleting a tag takes it off every item too; Undo puts the tag and every item's copy back */
+function deleteTag(id){
+  const d = DB.data, t = allTags().find(x => x.id === id); if (!t) return null;
+  const at = allTags().indexOf(t), copy = clone(t), hit = [];
+  const scan = (coll, r) => { if ((r.tags||[]).includes(id)) hit.push([coll, r.id, '', '']);
+    ['tasks','nextActions'].forEach(sub => (r[sub]||[]).forEach((x, i) => { if ((x.tags||[]).includes(id)) hit.push([coll, r.id, sub, subKey(x, i)]); })); };
+  d.projects.forEach(r => scan('projects', r)); d.inquiries.forEach(r => scan('inquiries', r)); (d.mtasks||[]).forEach(r => scan('mtasks', r));
+  const opsFor = back => hit.map(([coll, rid, sub, key]) => ({coll, id: rid, fn: r => { const o = sub ? subOf(r[sub], key) : r; if (!o) return; const ts = (o.tags || []).filter(x => x !== id); if (back) ts.push(id); o.tags = ts; }}));
+  mutate([{coll:'tags', remove: id}, ...opsFor(false)]);
+  changelog({type:'delete', icon:'tag', text:`Deleted tag: ${strong(t.name)}${hit.length ? ` (removed from ${hit.length} item${hit.length === 1 ? '' : 's'})` : ''}`, section:'settings'});
+  return { n: hit.length, undo: () => mutate([{coll:'tags', add: copy, at}, ...opsFor(true)]) };
+}
+let TAGC = '';   // colour picked for the next tag; by default the first colour not used yet
+const tagPick = () => TAGC || (TAG_COLORS.find(c => !allTags().some(t => t.color === c[0])) || TAG_COLORS[0])[0];
+function tagsPopHTML(){
+  const lead = isLead(), ts = allTags();
+  return `<div class="pop-tags"><h4>Tags</h4>
+    <div class="tagmgr">${ts.map(t => `<span class="tchip big" style="--tc:${tagHex(t.color)}"><i></i>${esc(t.name)}${lead ? `<button type="button" class="tdel" data-tagdel="${esc(t.id)}" aria-label="Delete tag ${esc(t.name)}" title="Delete tag">${ico('x',12)}</button>` : ''}</span>`).join('') || '<span class="pop-note">No tags yet.</span>'}</div>
+    ${lead ? `<form class="tagadd" id="tagadd" autocomplete="off"><input id="tagname" maxlength="24" placeholder="New tag, e.g. Rush order" aria-label="New tag name"><button class="btn sm" type="submit">${ico('plus',14)} Add tag</button>
+      <div class="tsw" role="radiogroup" aria-label="Tag colour">${TAG_COLORS.map(([k, hex, l]) => `<button type="button" role="radio" data-tagc="${k}" class="${k === tagPick() ? 'on' : ''}" aria-checked="${k === tagPick()}" aria-label="${l}" title="${l}" style="--tc:${hex}"></button>`).join('')}</div></form>`
+      : '<p class="pop-note">The master and managers add and delete tags.</p>'}</div>`;
+}
+function refreshPop(focusAdd){
+  const p = $('#pop'); if (!p.classList.contains('open')) return;
+  const top = p.scrollTop; p.innerHTML = popHTML(); hydrateIcons(p); $$('#pop .seg').forEach(s => placeInd(s, false)); p.scrollTop = top;
+  if (focusAdd){ const i = $('#tagname'); if (i) i.focus({preventScroll: true}); }
+}
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'tagadd') return; e.preventDefault(); if (!isLead() || !DB.data) return;
+  const inp = $('#tagname'), name = inp.value.trim().replace(/\s+/g, ' ');
+  if (!name){ inp.focus(); return; }
+  if (allTags().some(t => t.name.toLowerCase() === name.toLowerCase())){ toast(`“${esc(name)}” is already a tag`, {icon:'x'}); inp.select(); return; }
+  addTag(name, tagPick()); TAGC = ''; refreshPop(true); toast(`Tag “${esc(name)}” added`, {icon:'tag'});
+});
+
+/* ══════════ SNOOZES follow you: kept on this device and on your profile, so every device sees them ══════════ */
+let SNZ = null, PROFILE_UNSUB = null;
+function snoozed(){ if (!SNZ){ try { SNZ = JSON.parse(store.get('npd2-snooze', '{}')) || {}; } catch(e){ SNZ = {}; } } return SNZ; }
+function snooze(key, until){
+  const s = snoozed(), today = todayStr(); Object.keys(s).forEach(k => { if (s[k] <= today) delete s[k]; });
+  if (until) s[key] = until; else delete s[key];
+  store.set('npd2-snooze', JSON.stringify(s)); syncSnoozes();
+}
+function syncSnoozes(){
+  try { if (!AUTH.db || !AUTH.user) return; const ref = AUTH.db.collection('users').doc(AUTH.user.uid), snoozes = {...snoozed()};
+    ref.update({ snoozes }).catch(() => ref.set({ snoozes }, { merge: true }).catch(e => console.warn('snooze sync', e))); } catch(e){ console.warn('snooze sync', e); }
+}
+/* the profile copy wins; returns true when it changed what this device shows */
+function snoozeFromProfile(remote){
+  if (!remote || typeof remote !== 'object'){ if (Object.keys(snoozed()).length) syncSnoozes(); return false; }
+  const today = todayStr(), clean = Object.fromEntries(Object.entries(remote).filter(([, d]) => typeof d === 'string' && d > today));
+  if (JSON.stringify(clean) === JSON.stringify(snoozed())) return false;
+  SNZ = clean; store.set('npd2-snooze', JSON.stringify(clean)); return true;
+}
+function watchProfile(uid){
+  try { if (PROFILE_UNSUB) PROFILE_UNSUB(); PROFILE_UNSUB = null;
+    const ref = AUTH.db.collection('users').doc(uid); if (!ref.onSnapshot) return;
+    PROFILE_UNSUB = ref.onSnapshot(doc => { const s = doc && doc.exists ? (doc.data() || {}).snoozes : null; if (s && snoozeFromProfile(s) && AUTH.user && DB.data){ softRender(false); counts(); } }, e => console.warn('profile watch', e));
+  } catch(e){ console.warn('profile watch', e); }
+}
+
 function collectNotifications(scope){
   const d = DB.data; if (!d) return {missed:[], upcoming:[], awaiting:[]};
   const today = todayStr(), me = meName(), all = scope === 'all' && isLead();
@@ -2516,6 +2629,7 @@ function addProjTask(projId, v){
   const t = {id, name: v.name, deadline: v.deadline || '', pic: v.pic || meName(), status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', done, linkedSubStatus: v.linkedSubStatus || '', addedOn: today};
   if (done) t.completedAt = today;
   if (v.followupOf) t.followupOf = v.followupOf;
+  Object.assign(t, withTags(v));
   mutate([{coll:'projects', id: projId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t));
     projLog(r, 'add', 'circle-plus', `Added action: ${strong(t.name)}${t.deadline ? ' · due ' + fmtDate(t.deadline) : ''}`); }}]);
   return id;
@@ -2543,7 +2657,7 @@ function deleteProjTask(projId, key){
 /* ── inquiry tasks + next actions ── */
 function addInqTask(inqId, v){
   const id = uid();
-  const t = {id, name: v.name, deadline: v.deadline || '', done: false, pic: v.pic || meName(), owner: meName(), addedOn: todayStr()};
+  const t = {id, name: v.name, deadline: v.deadline || '', done: false, pic: v.pic || meName(), owner: meName(), addedOn: todayStr(), ...withTags(v)};
   if (v.followupOf) t.followupOf = v.followupOf;
   mutate([{coll:'inquiries', id: inqId, fn: r => { r.tasks = r.tasks || []; if (r.tasks.some(x => x.id === id)) return; r.tasks.push(clone(t)); inqLog(r, 'create', 'circle-plus', `Added task: ${strong(t.name)}`); }}]);
   return id;
@@ -2566,7 +2680,7 @@ function deleteInqTask(inqId, key){
 }
 function addInqNA(inqId, v){
   const id = uid(), today = todayStr();
-  const na = {id, pic: v.pic || meName(), action: v.action, deadline: v.deadline || '', dateAdded: today, addedOn: today};
+  const na = {id, pic: v.pic || meName(), action: v.action, deadline: v.deadline || '', dateAdded: today, addedOn: today, ...withTags(v)};
   mutate([{coll:'inquiries', id: inqId, fn: r => { r.nextActions = r.nextActions || []; if (r.nextActions.some(x => x.id === id)) return; r.nextActions.push(clone(na)); inqLog(r, 'create', 'circle-plus', `Next action added: ${strong(na.action)}`); }}]);
   return id;
 }
@@ -2637,7 +2751,7 @@ function createInquiry(v, defaults){
     type: v.type || 'CUST', priority: v.priority || '2', material: v.material || '', remark: v.remark || '', remarkDate: v.remarkDate || '', factory: v.factory || '',
     products: v.products || [], nextActions: [], nextAction: '',
     pipeline: { moldInquiry:{status:'', remark:'', date:''}, costing:{status:'', remark:'', date:''}, priceSubmission:{status:'', remark:'', date:''} },
-    ballWith: '', ballSince: '', links: v.links || [], outcome: '', outcomeReason: '', outcomeDate: '', moldCost: 0,
+    ballWith: '', ballSince: '', links: v.links || [], outcome: '', outcomeReason: '', outcomeDate: '', moldCost: 0, ...withTags(v),
     tasks: DEFAULT_INQ_TASKS.filter(([k]) => defaults.includes(k)).map(([, n, wd]) => ({id: uid(), name: n, deadline: addWorkDays(v.date, wd), done: false, pic: me, addedOn: today})),
     expanded: true, activityLog: [{id: uid(), type:'create', icon:'pencil', text:`Inquiry created: ${strong(v.name)}`, by: me, date: today, time: nowHM()}] };
   mutate([{coll:'inquiries', add: inq, at:'start'}]);
@@ -2662,7 +2776,7 @@ function editInquiry(id, patch){
 function createProject(v){
   const id = uid(), today = todayStr();
   const p = { id, code: v.code, name: v.name, date: v.date, status: v.status || 'not-started', classification: v.classification || 'new-mold', brief: v.brief || '', factory: v.factory || '',
-    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', stage: v.stage || '', ballWith: '', ballSince: '', links: v.links || [],
+    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', stage: v.stage || '', ...withTags(v), ballWith: '', ballSince: '', links: v.links || [],
     subStatuses: [], tasks: [], milestones: [], pics: [], expanded: true,
     activityLog: [{id: uid(), type:'add', icon:'circle-plus', text:`Project created: ${strong(v.name)}`, by: meName(), date: today, time: nowHM()}] };
   if (v.kiv){ p.kiv = true; p.kivComment = v.kivComment || ''; p.kivDate = today; }
@@ -2700,7 +2814,7 @@ const MT_PRIO = [['high','High'],['medium','Medium'],['low','Low']];
 function createMTask(v){
   const id = uid(), today = todayStr();
   const t = {id, title: v.title, description: v.description || '', category: v.category || 'general', priority: v.priority || 'medium', deadline: v.deadline || '',
-    status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', owner: meName(), createdAt: today};
+    status: v.status || 'todo', reminder: v.status === 'awaiting-reply' ? v.reminder || '' : '', owner: meName(), createdAt: today, ...withTags(v)};
   if (t.status === 'done') t.completedAt = today;
   if (v.followupOf) t.followupOf = v.followupOf;
   mutate([{coll:'mtasks', add: t, at:'start'}]);
@@ -3176,8 +3290,8 @@ function wireChart(){
 const INQ_FILTERS = [['open','Open'],['over','Overdue'],['risk','At risk'],['us','Ball with us'],['hold','On hold'],['closed','Closed']];
 function inqFiltered(){
   const q = S.q.trim().toLowerCase();
-  let list = DB.data.inquiries.filter(facMatch).map(i => ({i, st: inqState(i)}));
-  if (q) list = list.filter(({i}) => [i.name, i.code, i.customer, i.bdPerson, i.factory, i.material, i.remark].join(' ').toLowerCase().includes(q));
+  let list = DB.data.inquiries.filter(facMatch).filter(i => tagOk(S.itag, i.tags)).map(i => ({i, st: inqState(i)}));
+  if (q) list = list.filter(({i}) => [i.name, i.code, i.customer, i.bdPerson, i.factory, i.material, i.remark, tagNames(i.tags)].join(' ').toLowerCase().includes(q));
   const f = S.filter;
   list = list.filter(({i, st}) => f === 'closed' ? st.k === 'closed' : f === 'hold' ? st.k === 'hold' : st.k !== 'closed' && st.k !== 'hold' && (f === 'open' || (f === 'over' && st.k === 'over') || (f === 'risk' && st.k === 'risk') || (f === 'us' && i.ballWith === 'us')));
   list.sort((a, b) => f === 'closed' ? ((b.i.date||'') > (a.i.date||'') ? 1 : -1)
@@ -3185,7 +3299,7 @@ function inqFiltered(){
   return list;
 }
 function inqCounts(){
-  const all = DB.data.inquiries.filter(facMatch).map(i => ({i, st: inqState(i)}));
+  const all = DB.data.inquiries.filter(facMatch).filter(i => tagOk(S.itag, i.tags)).map(i => ({i, st: inqState(i)}));
   const live = all.filter(x => x.st.k !== 'closed' && x.st.k !== 'hold');
   return {open: live.length, over: live.filter(x => x.st.k === 'over').length, risk: live.filter(x => x.st.k === 'risk').length, us: live.filter(x => x.i.ballWith === 'us').length, hold: all.filter(x => x.st.k === 'hold').length, closed: all.filter(x => x.st.k === 'closed').length};
 }
@@ -3201,7 +3315,7 @@ function inqRows(){
     return `<button type="button" class="card row hov" data-open="${esc(i.id)}" style="--n:r-${esc(String(i.id).replace(/[^\w-]/g,''))}">
       <i class="bar4" style="--c:${ST_COLOR[st.k]}"></i>
       <div style="min-width:0"><div class="t">${i.pinned ? '<span class="star" style="color:#F5C518">★</span> ' : ''}${esc(i.name)}</div><div class="s">${esc([i.customer, i.factory, i.bdPerson && i.bdPerson !== 'Other' ? 'BD ' + i.bdPerson : '', i.date ? 'received ' + fmtDate(i.date) : ''].filter(Boolean).join(' · '))}</div>
-        <div class="meta2"><span class="pill stp ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${prio(prioKey(i.priority))}${i.ballWith ? `<span class="pill">Ball: ${esc(BALL_LABELS[i.ballWith] || i.ballWith)}</span>` : ''}</div></div>
+        <div class="meta2"><span class="pill stp ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${prio(prioKey(i.priority))}${i.ballWith ? `<span class="pill">Ball: ${esc(BALL_LABELS[i.ballWith] || i.ballWith)}</span>` : ''}${tagChips(i.tags)}</div></div>
       <div class="col-stage" style="min-width:0">${stage}</div>
       <div class="col-ball" style="min-width:0"><span class="pill ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span></div>
       <div class="rv">${val ? fmtRMShort(val) : ''}<small>${esc(i.code || '')}</small></div></button>`; }).join('');
@@ -3209,7 +3323,7 @@ function inqRows(){
 function pageInquiries(){
   const c = inqCounts();
   return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('fseg', INQ_FILTERS.map(([k,l]) => [k, l, c[k]]), S.filter)}
-    <label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
+    ${tagFilterHTML('itag', S.itag)}<label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
     <div class="rows st" style="--i:1" id="rows">${inqRows()}</div>`;
 }
 
@@ -3223,7 +3337,7 @@ function sheetHTML(i){
   let n = 0;
   return `<div class="grab"></div>
   <div class="sh-head" id="shhead"><div class="r1"><span class="mono muted">${esc(i.code || '')}</span><div style="display:flex;gap:8px">${canE ? `<button class="ibtn" type="button" data-act="pin-inq" aria-label="${i.pinned ? 'Unpin' : 'Pin'}" title="${i.pinned ? 'Unpin' : 'Pin to sidebar'}" style="${i.pinned ? 'color:#F5C518' : ''}">${ico('pin',17)}</button>` : ''}<button class="ibtn" type="button" data-act="closesheet" aria-label="Close">${ico('x',18)}</button></div></div>
-    <h2>${esc(i.name)}</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${i.customer ? `<span class="pill">${esc(i.customer)}</span>` : ''}${i.factory ? `<span class="pill">${esc(i.factory)}</span>` : ''}${i.type ? `<span class="pill info">${esc(TYPE_LABELS[i.type] || i.type)}</span>` : ''}${prio(prioKey(i.priority))}</div></div>
+    <h2>${esc(i.name)}</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[st.k]}"><i class="dotc"></i>${esc(inqStateLabel(i, st))}</span>${i.customer ? `<span class="pill">${esc(i.customer)}</span>` : ''}${i.factory ? `<span class="pill">${esc(i.factory)}</span>` : ''}${i.type ? `<span class="pill info">${esc(TYPE_LABELS[i.type] || i.type)}</span>` : ''}${prio(prioKey(i.priority))}${tagChips(i.tags, 8)}</div></div>
   <div class="sh-body">
     ${sla ? `<section class="shsec" style="--i:${n++}"><h3>5-day SLA <span>working days</span></h3>
       <div class="card slabox"><div class="slabig"><b>${sla.state === 'done' ? (sla.met === false ? 'Missed' : 'Met') : 'Day ' + sla.elapsed}</b><span class="muted">${sla.state === 'done' ? (sla.took == null ? 'NPD input sent to Finance' : `NPD input sent in ${sla.took} working day${sla.took === 1 ? '' : 's'}`) : sla.elapsed > SLA_DAYS ? `${sla.elapsed - SLA_DAYS} working day${sla.elapsed - SLA_DAYS > 1 ? 's' : ''} over` : `${SLA_DAYS - sla.elapsed} working day${SLA_DAYS - sla.elapsed === 1 ? '' : 's'} left`}</span></div>
@@ -3234,11 +3348,11 @@ function sheetHTML(i){
     <section class="shsec" style="--i:${n++}"><h3>Tasks <span>${tasks.filter(t => t.done).length}/${tasks.length} done</span></h3>
       ${canAddT ? `<button type="button" class="addrow" data-fm="itask">${ico('plus',16)}<span>Add task</span></button>` : ''}
       ${tasks.length ? tasks.map(t => `<div class="task slim ${t.done ? 'done' : ''}" data-itask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-itask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-        <div style="min-width:0" ${canE ? `data-fm="itask|${esc(tk(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="itask|${esc(tk(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : ''}</div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
+        <div style="min-width:0" ${canE ? `data-fm="itask|${esc(tk(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.status === 'awaiting-reply' ? '<span class="pill info">Awaiting reply</span>' : ''}${tagChips(t.tags)}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="itask|${esc(tk(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : ''}</div>`).join('') : '<div class="ro">No tasks yet.</div>'}</section>
     ${nas.length || canE ? `<section class="shsec" style="--i:${n++}"><h3>Next actions ${nas.length ? `<span>${nas.filter(a => a.done).length}/${nas.length} done</span>` : ''}</h3>
       ${canE ? `<button type="button" class="addrow" data-fm="na">${ico('plus',16)}<span>Add next action</span></button>` : ''}
       ${[...nas].sort((a,b) => (!!a.done - !!b.done) || ((a.deadline||'9') < (b.deadline||'9') ? -1 : 1)).map(a => `<div class="task slim ${a.done ? 'done' : ''}"><button type="button" class="cb" ${canE ? `data-na="${esc(a._k)}" data-done="${a.done ? 0 : 1}"` : 'disabled'} aria-label="${a.done ? 'Reopen' : 'Complete'}: ${esc(a.action || '')}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-        <div style="min-width:0" ${canE ? `data-fm="na|${esc(a._k)}" class="tap"` : ''}><div class="tt">${esc(a.action || a.text || '(untitled)')}</div><div class="who"><span>${esc(a.pic || '')}</span>${a.done && a.completedAt ? `<span>done ${fmtDate(a.completedAt)}</span>` : a.dateAdded ? `<span>added ${fmtDate(a.dateAdded)}</span>` : ''}</div></div><span class="due ${!a.done && a.deadline && a.deadline < today ? 'late' : ''}">${a.deadline ? fmtDate(a.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="na|${esc(a._k)}" aria-label="Edit">${ico('pencil',15)}</button>` : ''}</div>`).join('')}</section>` : ''}
+        <div style="min-width:0" ${canE ? `data-fm="na|${esc(a._k)}" class="tap"` : ''}><div class="tt">${esc(a.action || a.text || '(untitled)')}</div><div class="who"><span>${esc(a.pic || '')}</span>${a.done && a.completedAt ? `<span>done ${fmtDate(a.completedAt)}</span>` : a.dateAdded ? `<span>added ${fmtDate(a.dateAdded)}</span>` : ''}${tagChips(a.tags)}</div></div><span class="due ${!a.done && a.deadline && a.deadline < today ? 'late' : ''}">${a.deadline ? fmtDate(a.deadline) : ''}</span>${canE ? `<button type="button" class="ed" data-fm="na|${esc(a._k)}" aria-label="Edit">${ico('pencil',15)}</button>` : ''}</div>`).join('')}</section>` : ''}
     <section class="shsec" style="--i:${n++}"><h3>Ball in court ${i.ballWith ? `<span>since ${fmtDate(i.ballSince)} · ${ballDays(i)}d</span>` : ''}</h3>
       ${canE ? segHTML('ibseg', [['us','Us'],['customer','Customer'],['factory','Factory'],['supplier','Supplier'],['','—']], i.ballWith || '', true) : `<div class="ro">${esc(BALL_LABELS[i.ballWith] || 'Not set')}</div>`}</section>
     <section class="shsec" style="--i:${n++}"><h3>Outcome ${i.outcomeDate ? `<span>${fmtDate(i.outcomeDate)}</span>` : ''}</h3>
@@ -3311,19 +3425,21 @@ function projCard(p, n, anim, cls = 'pcard'){
   const acts = tasks.length ? `${doneN} of ${tasks.length}${board ? '' : ' actions'}` : 'No actions yet';
   return `<div role="button" tabindex="0" class="card ${cls}${hold || closed ? ' off' : ''}${anim ? ' st' : ''}" style="--i:${Math.min(n, 12)};--n:p-${esc(String(p.id).replace(/[^\w-]/g,''))}" data-proj="${esc(p.id)}"${board && canPin ? ` title="Drag to another column to move it"` : ''}>
     <div class="pc-h"><h3 class="t">${esc(p.name)}</h3>${p.pinned || canPin ? `<button type="button" class="pc-pin${p.pinned ? ' on' : ''}" ${canPin ? `data-pinp="${esc(p.id)}"` : 'disabled'} aria-pressed="${!!p.pinned}" aria-label="${p.pinned ? 'Unpin' : 'Pin'} ${esc(p.name)}" title="${p.pinned ? 'Pinned · tap to unpin' : 'Pin to the top and the sidebar'}">${ico('pin',14)}</button>` : ''}${showChip ? `<span class="pill ${chip[0]}">${chip[1] ? ico(chip[1], 13) : ''}${chip[2]}</span>` : ''}</div>
+    ${(tg => tg ? `<div class="pc-tags">${tg}</div>` : '')(tagChips(p.tags, board ? 2 : 3))}
     <div class="pc-nx${na ? '' : ' q'}"><span class="a">${na && !board ? '<b>Next</b>' : ''}${esc(nx[0])}</span>${nx[1] ? `<span class="dt ${nx[2]}">${esc(nx[1])}</span>` : ''}</div>
     <div class="pc-pr"><div class="pc-pb"><i style="width:${projPct(p)}%"></i></div><div class="pc-prl">${board ? `<span>${acts}${stage ? ' · ' + stage : ''}</span>` : `<span>${acts}</span><span>${stage || '<span class="pj-unset">Stage not set</span>'}</span>`}</div></div>
     <div class="pc-l4">${[p.code && `<span class="mono">${esc(p.code)}</span>`, esc(facOf(p)), !board && esc(CLASS_LABELS[p.classification] || p.classification || ''), !board && p.customer && `<span class="mono">${esc(p.customer)}</span>`, p.kiv && 'KIV'].filter(Boolean).join(' · ') || '&nbsp;'}</div></div>`;
 }
 const P_SORTS = [['urgent','Most urgent first'],['delivery','Delivery date'],['updated','Recently updated'],['name','Name']];
 function projLists(){
-  const all = DB.data.projects.filter(facMatch);
+  const all = DB.data.projects.filter(facMatch).filter(p => tagOk(S.ptag, p.tags));
   return { all, active: all.filter(p => !isClosedProj(p) && p.status !== 'on-hold'), hold: all.filter(p => p.status === 'on-hold'), done: all.filter(isClosedProj) };
 }
 function pageProjects(){
   const L = projLists(), board = S.pview === 'board';
   return `${staleBanner()}<div class="toolbar ptools st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}
     ${board ? segHTML('pgroup', [['status','By status'],['stage','By stage']], S.pgroup) : segHTML('pfilt', [['active','Active', L.active.length],['hold','On hold', L.hold.length],['done','Completed', L.done.length],['all','All', L.all.length]], S.pfilt)}
+    ${tagFilterHTML('ptag', S.ptag)}
     ${board ? '' : `<label class="psort">${ico('sort',15)}<select id="psort" aria-label="Sort projects">${P_SORTS.map(([k, l]) => `<option value="${k}"${S.psort === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>`}
     ${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
 }
@@ -3396,7 +3512,8 @@ document.addEventListener('contextmenu', e => { if (BD && BD.touch) e.preventDef
 document.addEventListener('pointerup', e => bdEnd(e, false));
 document.addEventListener('pointercancel', e => bdEnd(e, true));
 document.addEventListener('click', e => { if (Date.now() - bdJust < 350){ e.stopPropagation(); e.preventDefault(); } }, true);   // the drop is not a tap
-document.addEventListener('change', e => { if (e.target.id === 'wtypesel'){ S.wtype = e.target.value; vt(() => refresh(), 'list'); return; }
+document.addEventListener('change', e => { if (['ptag','itag','wtag'].includes(e.target.id)){ S[e.target.id] = e.target.value; vt(() => refresh(), 'list'); return; }
+  if (e.target.id === 'wtypesel'){ S.wtype = e.target.value; vt(() => refresh(), 'list'); return; }
   if (e.target.id === 'psort'){ S.psort = e.target.value; store.set('npd2-psort', S.psort); vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); } });
 
 /* ── Project detail: name and health first, then what happens next, then progress and people, reference details last ── */
@@ -3444,7 +3561,7 @@ function tasksHTML(p){
   const keyOf = t => subKey(t, (p.tasks||[]).indexOf(t));
   const open = (p.tasks||[]).filter(t => !t.done).sort((a,b) => (a.deadline||'9') < (b.deadline||'9') ? -1 : 1), done = (p.tasks||[]).filter(t => t.done);
   const row = t => `<div class="task ${t.done ? 'done' : ''}" style="--n:t-${esc(String(t.id).replace(/[^\w-]/g,''))}" data-ptask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-ptask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
-    <div style="min-width:0" ${canEd ? `data-fm="ptask|${esc(keyOf(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.classification && t.classification !== 'General' ? `<span>${esc(t.classification)}</span>` : ''}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !t.done ? '<span class="pill warn">In progress</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canEd ? `<button type="button" class="ed" data-fm="ptask|${esc(keyOf(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
+    <div style="min-width:0" ${canEd ? `data-fm="ptask|${esc(keyOf(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.classification && t.classification !== 'General' ? `<span>${esc(t.classification)}</span>` : ''}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !t.done ? '<span class="pill warn">In progress</span>' : ''}${tagChips(t.tags)}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canEd ? `<button type="button" class="ed" data-fm="ptask|${esc(keyOf(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
   return `${tgHead(`Open · ${open.length}`, can('actions','add') ? 'ptask' : '', 'Add action', canT ? '' : 'view only')}${open.length ? open.map(row).join('') : '<div class="empty" style="padding:18px">No open actions.</div>'}
     ${done.length ? `<button type="button" class="tgroup tg-fold" data-act="pj-done" aria-expanded="${!!S.pdone}"><span>${ico('chev',13)}Done · ${done.length}</span></button>${S.pdone ? done.map(row).join('') : ''}` : ''}`;
 }
@@ -3489,7 +3606,7 @@ function pageProject(){
   return `${staleBanner()}<div class="dash pj">
     <header class="pj-head" style="view-transition-name:herobox">
       <div class="pj-h1"><h1 class="pj-name" style="view-transition-name:hero">${esc(p.name)}</h1>
-        <div class="pj-hl"><span class="pill ${ST_PILL[h] || ''}">${ico(h === 'over' || h === 'risk' ? 'clock' : 'check', 13)}${HEALTH_LABEL[h]}</span><span>${esc(why[0])}</span>${why.length > 1 ? `<span class="r">· ${esc(why.slice(1).join(' · ').replace(/^./, c => c.toLowerCase()))}</span>` : ''}${p.status === 'on-hold' || p.status === 'not-started' ? `<span class="pill">${esc(statusLabel(p.status))}</span>` : ''}${p.kiv ? `<span class="pill warn" title="${esc(p.kivComment || '')}">KIV</span>` : ''}</div></div>
+        <div class="pj-hl"><span class="pill ${ST_PILL[h] || ''}">${ico(h === 'over' || h === 'risk' ? 'clock' : 'check', 13)}${HEALTH_LABEL[h]}</span><span>${esc(why[0])}</span>${why.length > 1 ? `<span class="r">· ${esc(why.slice(1).join(' · ').replace(/^./, c => c.toLowerCase()))}</span>` : ''}${p.status === 'on-hold' || p.status === 'not-started' ? `<span class="pill">${esc(statusLabel(p.status))}</span>` : ''}${p.kiv ? `<span class="pill warn" title="${esc(p.kivComment || '')}">KIV</span>` : ''}${tagChips(p.tags, 8)}</div></div>
       <div class="pj-acts">${canE ? `<button class="btn sm" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit</button><button class="btn sm${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',15)} ${p.pinned ? 'Pinned' : 'Pin'}</button>` : ''}<a class="btn sm" href="${gantt}" target="_blank" rel="noopener">${ico('gantt',15)} Timeline</a></div>
     </header>
     <section class="pj-l2">
@@ -3618,32 +3735,32 @@ function exportSheets(){
   const pipe = (p, k) => (p && p[k]) || {};
   return [
     ['Inquiries', ['Code','Name','Customer','Factory','BD person','BD #','Received','Type','Priority','Status','SLA','Ball with','Outcome','Material','Remark',
-      'Mold inquiry','Mold inquiry remark','Mold inquiry date','Costing','Costing remark','Costing date','Price submission','Price submission remark','Price submission date','Tasks done','Tasks total','Links'],
+      'Mold inquiry','Mold inquiry remark','Mold inquiry date','Costing','Costing remark','Costing date','Price submission','Price submission remark','Price submission date','Tasks done','Tasks total','Links','Tags'],
       d.inquiries.map(i => { const mi = pipe(i.pipeline,'moldInquiry'), co = pipe(i.pipeline,'costing'), pr = pipe(i.pipeline,'priceSubmission');
         return [i.code||'', i.name||'', i.customer||'', facOf(i)||'', i.bdPerson||'', i.bdNum||'', D(i.date), i.type||'', PRIO_LABEL[prioKey(i.priority)]||'', (INQ_ST.find(x => x[0] === String(i.status||'').toUpperCase()) || [0, i.status||''])[1],
           inqStateLabel(i).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2'), BALL_LABELS[i.ballWith]||'', OUTCOME_LABELS[i.outcome]||'', i.material||'', i.remark||'',
           mi.status||'', mi.remark||'', D(mi.date), co.status||'', co.remark||'', D(co.date), pr.status||'', pr.remark||'', D(pr.date),
-          (i.tasks||[]).filter(t => t.done).length, (i.tasks||[]).length, links(i.links)]; })],
-    ['Inquiry tasks', ['Code','Inquiry','Task','PIC','Deadline','Status','Completed'],
-      d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt)]))],
-    ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed'],
-      d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt)]))],
-    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Stage','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links'],
+          (i.tasks||[]).filter(t => t.done).length, (i.tasks||[]).length, links(i.links), tagNames(i.tags)]; })],
+    ['Inquiry tasks', ['Code','Inquiry','Task','PIC','Deadline','Status','Completed','Tags'],
+      d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
+    ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed','Tags'],
+      d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt), tagNames(n.tags)]))],
+    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Stage','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links','Tags'],
       d.projects.map(p => { const ss = [...(p.subStatuses||[])].sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1)[0];
         return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), p.stage||'', HEALTH_LABEL[projHealth(p)]||'',
           D(p.date), D(p.deliveryDate), BALL_LABELS[p.ballWith]||'', p.kiv ? (p.kivComment || 'Yes') : '', p.brief||'',
           (p.tasks||[]).filter(t => t.done).length, (p.tasks||[]).length, projPct(p), (p.pics||[]).map(x => x.name + (x.role ? ` (${x.role})` : '')).join(', '),
-          ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links)]; })],
-    ['Project actions', ['Project code','Project','Factory','Action','PIC','Deadline','Status','Completed'],
-      d.projects.flatMap(p => (p.tasks||[]).map(t => [p.code||'', p.name||'', facOf(p)||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt)]))],
+          ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links), tagNames(p.tags)]; })],
+    ['Project actions', ['Project code','Project','Factory','Action','PIC','Deadline','Status','Completed','Tags'],
+      d.projects.flatMap(p => (p.tasks||[]).map(t => [p.code||'', p.name||'', facOf(p)||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
     ['Milestones', ['Project code','Project','Milestone','Category','Date','Status','Note'],
       d.projects.flatMap(p => (p.milestones||[]).map(m => [p.code||'', p.name||'', m.title||'', m.category||'', D(m.date), (MS_ST.find(x => x[0] === m.status) || [0, m.status||''])[1], m.note||'']))],
     ['Updates', ['Project code','Project','Update','Status','Date','Note'],
       d.projects.flatMap(p => (p.subStatuses||[]).map(u => [p.code||'', p.name||'', u.title||'', (SS_ST.find(x => x[0] === u.status) || [0, u.status||''])[1], D(u.date), u.note||'']))],
     ['People', ['Project code','Project','Name','Role'], d.projects.flatMap(p => (p.pics||[]).map(x => [p.code||'', p.name||'', x.name||'', x.role||'']))],
-    ['Tasks', ['Task','Owner','Category','Priority','Status','Due','Chase on','Description','Completed','Archived'],
+    ['Tasks', ['Task','Owner','Category','Priority','Status','Due','Chase on','Description','Completed','Archived','Tags'],
       (d.mtasks||[]).map(t => [t.title||'', t.owner||'', (MT_CATS.find(x => x[0] === t.category) || [0, t.category||''])[1], (MT_PRIO.find(x => x[0] === t.priority) || [0, t.priority||''])[1],
-        (TASK_ST.find(x => x[0] === t.status) || [0, t.status||''])[1], D(t.deadline), D(t.reminder), t.description||'', D(t.completedAt), yes(t.archived)])],
+        (TASK_ST.find(x => x[0] === t.status) || [0, t.status||''])[1], D(t.deadline), D(t.reminder), t.description||'', D(t.completedAt), yes(t.archived), tagNames(t.tags)])],
   ];
 }
 async function exportExcel(){
@@ -3677,13 +3794,13 @@ function workItems(everyone){
   const vis = p => all || (p || 'Adam') === me, keep = t => !t.done || (t.completedAt && t.completedAt >= wk7), fm = x => S.fac === 'all' || facOf(x) === S.fac;
   const add = n => { n.key = `${n.type}:${n.parentId}:${n.taskId}`; n.kind = n.status === 'awaiting-reply' ? 'awaiting' : n.deadline && n.deadline < today ? 'missed' : 'upcoming'; out.push(n); };
   if (inqOn()) d.inquiries.forEach(i => { if (isClosedInq(i) || !fm(i)) return;
-    (i.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'inquiry', coll:'inquiries', parentId:i.id, taskId:t.id, parentCode:i.code, parentName:i.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.status||'', pic:t.pic||'Adam', fac:facOf(i), done:!!t.done, doneOn:t.completedAt||'', sla:_isMoldTask(t) || _isImlTask(t) || _isNpdTask(t)}));
-    if (!i.outcome) (i.nextActions||[]).forEach((na, ix) => { if (keep(na) && vis(na.pic)) add({type:'na', coll:'inquiries', parentId:i.id, taskId:subKey(na, ix), parentCode:i.code, parentName:i.name, taskName:na.action || 'Next action', deadline:na.deadline||'', reminder:'', status:'', pic:na.pic||'Adam', fac:facOf(i), done:!!na.done, doneOn:na.completedAt||''}); });
+    (i.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'inquiry', coll:'inquiries', parentId:i.id, taskId:t.id, parentCode:i.code, parentName:i.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.status||'', pic:t.pic||'Adam', fac:facOf(i), done:!!t.done, doneOn:t.completedAt||'', sla:_isMoldTask(t) || _isImlTask(t) || _isNpdTask(t), tags:t.tags||[], ptags:i.tags||[]}));
+    if (!i.outcome) (i.nextActions||[]).forEach((na, ix) => { if (keep(na) && vis(na.pic)) add({type:'na', coll:'inquiries', parentId:i.id, taskId:subKey(na, ix), parentCode:i.code, parentName:i.name, taskName:na.action || 'Next action', deadline:na.deadline||'', reminder:'', status:'', pic:na.pic||'Adam', fac:facOf(i), done:!!na.done, doneOn:na.completedAt||'', tags:na.tags||[], ptags:i.tags||[]}); });
   });
   d.projects.forEach(p => { if (isClosedProj(p) || !fm(p)) return;
-    (p.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'project', coll:'projects', parentId:p.id, taskId:t.id, parentCode:p.code, parentName:p.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.done ? '' : t.status||'', pic:t.pic||'Adam', fac:facOf(p), done:!!t.done, doneOn:t.completedAt||''})); });
+    (p.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'project', coll:'projects', parentId:p.id, taskId:t.id, parentCode:p.code, parentName:p.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.done ? '' : t.status||'', pic:t.pic||'Adam', fac:facOf(p), done:!!t.done, doneOn:t.completedAt||'', tags:t.tags||[], ptags:p.tags||[]})); });
   if (S.fac === 'all') (d.mtasks||[]).filter(t => !t.archived && (all || (t.owner || 'Adam') === me) && (t.status !== 'done' || (t.completedAt && t.completedAt >= wk7)))
-    .forEach(t => add({type:'mtask', coll:'mtasks', parentId:t.id, taskId:t.id, parentCode:'TASK', parentName:t.title, taskName:t.title || 'Untitled task', deadline:t.deadline||'', reminder:t.reminder||'', status:t.status === 'done' ? '' : t.status||'', pic:t.owner||'Adam', fac:'', done:t.status === 'done', doneOn:t.completedAt||'', prio:prioKey(t.priority), cat:t.category}));
+    .forEach(t => add({type:'mtask', coll:'mtasks', parentId:t.id, taskId:t.id, parentCode:'TASK', parentName:t.title, taskName:t.title || 'Untitled task', deadline:t.deadline||'', reminder:t.reminder||'', status:t.status === 'done' ? '' : t.status||'', pic:t.owner||'Adam', fac:'', done:t.status === 'done', doneOn:t.completedAt||'', prio:prioKey(t.priority), cat:t.category, tags:t.tags||[], ptags:[]}));
   return out;
 }
 function workSummary(){ const today = todayStr(), it = workItems(S.wscope === 'all').filter(n => !n.done), over = it.filter(n => n.status !== 'awaiting-reply' && n.deadline && n.deadline < today).length; return `${it.length} open${over ? ` · ${over} overdue` : ''}`; }
@@ -3697,7 +3814,7 @@ function workRow(n, today, every, hint){
   const cat = n.type === 'mtask' && n.cat && !/^general$/i.test(n.cat) ? (MT_CATS.find(c => c[0] === n.cat) || [0, n.cat])[1] : '';
   const tags = [aw ? `<span class="pill">${ico('clock',12)}Awaiting reply</span>` : n.status === 'inprogress' ? '<span class="pill warn">In progress</span>' : '',
     n.sla ? '<span class="pill wtag">SLA</span>' : '', n.type === 'na' ? '<span class="pill">Next action</span>' : '',
-    !n.done && /\btrials?\b|\bT\d\b/i.test(n.taskName) ? `<span class="pill">${ico('flask',12)}Trial</span>` : '', n.prio ? prio(n.prio) : '', cat ? `<span class="pill">${esc(cat)}</span>` : ''].filter(Boolean).join('');
+    !n.done && /\btrials?\b|\bT\d\b/i.test(n.taskName) ? `<span class="pill">${ico('flask',12)}Trial</span>` : '', n.prio ? prio(n.prio) : '', cat ? `<span class="pill">${esc(cat)}</span>` : '', tagChips(n.tags, 2)].filter(Boolean).join('');
   const src = n.type === 'mtask' ? 'Personal' : n.parentName;
   return `<div class="wrow${n.done ? ' done' : ''}" data-nkey="${esc(n.key)}"><div class="wunder"><span class="ul">${ico('check',18)} ${canC ? 'Done' : 'View only'}</span><span class="ur">Snooze ${ico('clock',18)}</span></div>
     <div class="wfg" data-nopen="${esc(n.key)}" tabindex="0">
@@ -3713,10 +3830,10 @@ function workRow(n, today, every, hint){
 function pageWork(){
   if (S.tarch || S.tsel) return workPersonal();
   const today = todayStr(), w7 = addDays(today, 7), every = S.wscope === 'all' && isLead(), sn = snoozed(), q = (S.wq || '').trim().toLowerCase();
-  const items = workItems(every), open = items.filter(n => !n.done);
+  const items = workItems(every).filter(n => tagOk(S.wtag, n.tags, n.ptags)), open = items.filter(n => !n.done);
   const typeOf = n => n.type === 'na' ? 'inquiry' : n.type, cnt = k => open.filter(n => k === 'all' || typeOf(n) === k).length;
   const isSnz = n => !n.done && sn[n.key] && sn[n.key] > today;
-  let list = items.filter(n => (S.wtype === 'all' || typeOf(n) === S.wtype) && (!q || [n.taskName, n.parentName, n.parentCode, n.pic].join(' ').toLowerCase().includes(q)));
+  let list = items.filter(n => (S.wtype === 'all' || typeOf(n) === S.wtype) && (!q || [n.taskName, n.parentName, n.parentCode, n.pic, tagNames(n.tags), tagNames(n.ptags)].join(' ').toLowerCase().includes(q)));
   const snzN = list.filter(isSnz).length; if (!S.wsnz) list = list.filter(n => !isSnz(n));
   const by = (a, b) => a < b ? -1 : a > b ? 1 : 0, sortK = g => g === 'done' ? (a, b) => by(b.doneOn, a.doneOn) : g === 'await' ? (a, b) => by(a.reminder || a.deadline || '9', b.reminder || b.deadline || '9') : (a, b) => by(a.deadline || '9', b.deadline || '9') || by(a.taskName, b.taskName);
   const groups = W_GROUPS.map(([k, l]) => [k, l, list.filter(n => wGroup(n, today, w7) === k).sort(sortK(k))]).filter(g => g[2].length);
@@ -3729,6 +3846,7 @@ function pageWork(){
   return `${staleBanner()}<div class="toolbar wtools st" style="--i:0">${isLead() ? segHTML('wscope', [['mine','Mine'],['all','Everyone']], S.wscope) : ''}
       ${segHTML('wtype', [['all','All', cnt('all')], ['project','Projects', cnt('project')], ...(inqOn() ? [['inquiry','Inquiries', cnt('inquiry')]] : []), ['mtask','Personal', cnt('mtask')]], S.wtype)}
       <label class="psort wtypesel">${ico('rows',15)}<select id="wtypesel" aria-label="Show">${[['all','All types'], ['project','Projects'], ...(inqOn() ? [['inquiry','Inquiries']] : []), ['mtask','Personal']].map(([k, l]) => `<option value="${k}"${S.wtype === k ? ' selected' : ''}>${l} · ${cnt(k)}</option>`).join('')}</select>${ico('chev',14)}</label>
+      ${tagFilterHTML('wtag', S.wtag)}
       <label class="search wsearch">${ico('search',17)}<input id="wq" placeholder="Search tasks, projects, inquiries" value="${esc(S.wq || '')}" aria-label="Search my work"></label>
       ${segHTML('wdens', [['comfortable', `${ico('rows2',16)}<span class="vh">Comfortable</span>`], ['compact', `${ico('rows',16)}<span class="vh">Compact</span>`]], S.wdens)}
       <button class="btn wtool" type="button" data-act="tarch" title="Archived personal tasks">${ico('file',15)}<span>Archived</span></button>
@@ -3736,7 +3854,7 @@ function pageWork(){
       ${can('tasks','add') ? `<button class="b1 tb-new" type="button" data-fm="mtask">${ico('plus',16)}<span>New task</span></button>` : ''}</div>
     <div class="card wl st${dens}${every ? ' every' : ''}" style="--i:1" id="wlist">
       ${groups.length ? `<div class="wth" aria-hidden="true"><span></span><span>Task</span><span>From</span>${every ? '<span>Owner</span>' : ''}<span>Due</span><span>Status</span><span></span></div>${body}`
-        : `<div class="empty" style="padding:32px 12px"><b>${q || S.wtype !== 'all' ? 'Nothing matches' : 'All caught up'}</b>${q || S.wtype !== 'all' ? 'Try another filter or search.' : `Nothing assigned to ${every ? 'anyone' : 'you'} is open${S.fac !== 'all' ? ' for ' + esc(S.fac) : ''}.`}</div>`}
+        : `<div class="empty" style="padding:32px 12px"><b>${q || S.wtype !== 'all' || S.wtag ? 'Nothing matches' : 'All caught up'}</b>${q || S.wtype !== 'all' || S.wtag ? 'Try another filter or search.' : `Nothing assigned to ${every ? 'anyone' : 'you'} is open${S.fac !== 'all' ? ' for ' + esc(S.fac) : ''}.`}</div>`}
     </div>
     ${snzN ? `<p class="wfoot"><button class="lnk" type="button" data-act="wsnz">${S.wsnz ? 'Hide' : 'Show'} ${snzN} snoozed</button></p>` : ''}`;
 }
@@ -3872,7 +3990,7 @@ function mtaskRow(t, today){
   return `<div class="task mt ${done ? 'done' : ''} ${sel && sel.has(t.id) ? 'picked' : ''}" style="--n:m-${esc(String(t.id).replace(/[^\w-]/g,''))}" ${sel ? `data-mtsel="${esc(t.id)}" role="button" tabindex="0"` : ''}>
     ${sel ? `<span class="selc">${ico('check',14)}</span>` : `<button type="button" class="cb" ${canC ? `data-mt="${esc(t.id)}" data-done="${done ? 0 : 1}"` : 'disabled'} aria-label="${done ? 'Reopen' : 'Complete'}: ${esc(t.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>`}
     <div style="min-width:0" ${!sel && canE ? `data-fm="mtask|${esc(t.id)}" class="tap"` : ''}><div class="tt">${esc(t.title)}</div>
-      <div class="who">${cat ? `<span>${esc(cat)}</span>` : ''}${prio(pk)}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !done ? '<span class="pill warn">In progress</span>' : ''}${S.wscope === 'all' ? `<span>${esc(t.owner || 'Adam')}</span>` : ''}${t.description ? `<span class="desc">${esc(t.description)}</span>` : ''}</div></div>
+      <div class="who">${cat ? `<span>${esc(cat)}</span>` : ''}${prio(pk)}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !done ? '<span class="pill warn">In progress</span>' : ''}${tagChips(t.tags)}${S.wscope === 'all' ? `<span>${esc(t.owner || 'Adam')}</span>` : ''}${t.description ? `<span class="desc">${esc(t.description)}</span>` : ''}</div></div>
     <span class="due ${!done && t.deadline && t.deadline < today ? 'late' : ''}">${done && t.completedAt ? 'done ' + fmtDate(t.completedAt) : t.deadline ? fmtDate(t.deadline) : ''}</span>
     ${!sel && canE ? `<button type="button" class="ed" data-fm="mtask|${esc(t.id)}" aria-label="Edit ${esc(t.title)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
 }
@@ -4050,6 +4168,7 @@ function fieldHTML(f){
   else if (f.type === 'chips') ctl = `<div class="fm-chips" role="radiogroup" data-k="${f.k}" data-chips>${f.options.map(([o, l]) => `<button type="button" role="radio" data-v="${esc(o)}" class="${String(o) === String(v) ? 'on' : ''}" aria-checked="${String(o) === String(v)}">${esc(l)}</button>`).join('')}</div>`;
   else if (f.type === 'check') return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}"><label class="fm-tog"><input type="checkbox" id="${id}" data-k="${f.k}" ${v ? 'checked' : ''}><i></i><span>${esc(f.label)}</span></label>${f.hint ? `<small>${esc(f.hint)}</small>` : ''}</div>`;
   else if (f.type === 'checks') ctl = `<div class="fm-checks" data-k="${f.k}" data-checks>${f.options.map(([o, l, sub]) => `<label class="fm-ck"><input type="checkbox" value="${esc(o)}" ${(v || []).includes(o) ? 'checked' : ''}><i>${ico('check',13)}</i><span>${esc(l)}${sub ? `<small>${esc(sub)}</small>` : ''}</span></label>`).join('')}</div>`;
+  else if (f.type === 'tags') ctl = `<div class="fm-tags" role="group" aria-label="${esc(f.label)}" data-k="${f.k}" data-tagpick>${allTags().map(t => { const on = (v || []).includes(t.id); return `<button type="button" class="tchip tpick${on ? ' on' : ''}" data-v="${esc(t.id)}" aria-pressed="${on}" style="--tc:${tagHex(t.color)}"><i></i>${esc(t.name)}</button>`; }).join('')}</div>`;
   else if (f.type === 'date') ctl = dateFieldHTML(f, id);
   else if (f.type === 'products') ctl = `<div class="fm-prods" data-k="${f.k}" data-prods>${(v || []).map(prodRow).join('')}</div><button type="button" class="lnk fm-addp" data-addprod>+ Add product</button><div class="fm-rev" data-rev></div>`;
   else ctl = `<input id="${id}" data-k="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" placeholder="${esc(f.ph || '')}" ${f.type === 'number' ? 'min="0" step="any" inputmode="decimal"' : ''} ${f.list ? `list="${id}-dl"` : ''} autocomplete="off">${f.list ? `<datalist id="${id}-dl">${f.list.map(o => `<option value="${esc(o)}"></option>`).join('')}</datalist>` : ''}`;
@@ -4064,6 +4183,7 @@ function readForm(){
     if (f.type === 'chips'){ const on = $('[data-chips] button.on', box); out[f.k] = on ? on.dataset.v : ''; }
     else if (f.type === 'check') out[f.k] = $('input', box).checked;
     else if (f.type === 'checks') out[f.k] = $$('input:checked', box).map(x => x.value);
+    else if (f.type === 'tags') out[f.k] = $$('[data-tagpick] button.on', box).map(b => b.dataset.v);
     else if (f.type === 'date') out[f.k] = $('.fm-date', box).dataset.v || '';
     else if (f.type === 'products') out[f.k] = $$('.fm-prod', box).map(r => ({id: r.dataset.id, name: $('[data-pf="name"]', r).value.trim(), volume: parseFloat($('[data-pf="volume"]', r).value) || 0, cost: parseFloat($('[data-pf="cost"]', r).value) || 0})).filter(p => p.name);
     else { const el = $('[data-k]', box); out[f.k] = f.type === 'textarea' ? el.value.trim() : String(el.value).trim(); }
@@ -4126,6 +4246,7 @@ document.addEventListener('click', e => {
     else if (a === 'del'){ if (!FM.armed){ FM.armed = true; x.classList.add('armed'); $('span', x).textContent = 'Tap again to delete'; setTimeout(() => { FM.armed = false; if (x.isConnected){ x.classList.remove('armed'); $('span', x).textContent = FM.cfg && FM.cfg.del ? FM.cfg.del.label || 'Delete' : 'Delete'; } }, 3500); }
       else { const run = FM.cfg.del.run; closeForm(true); run(); } }
     return; }
+  const tp = t.closest('[data-tagpick] button'); if (tp){ const on = !tp.classList.contains('on'); tp.classList.toggle('on', on); tp.setAttribute('aria-pressed', on); formSync(); return; }
   const ch = t.closest('[data-chips] button'); if (ch){ $$('button', ch.parentElement).forEach(b => { b.classList.toggle('on', b === ch); b.setAttribute('aria-checked', b === ch); }); formSync(); return; }
   if (t.closest('[data-addprod]')){ const box = $('#form [data-prods]'); box.insertAdjacentHTML('beforeend', prodRow({})); hydrateIcons(box); $('.fm-prod:last-child input', box).focus(); formSync(); return; }
   const dp = t.closest('[data-delprod]'); if (dp){ dp.closest('.fm-prod').remove(); formSync(); return; }
@@ -4175,6 +4296,7 @@ function formProjTask(projId, key, preset){
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : todayStr()},
       {k:'status', label:'Status', type:'chips', value: t ? t.status || (t.done ? 'done' : 'todo') : 'todo', options: TASK_ST},
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
+      ...tagField(t && t.tags),
       ...(subs.length ? [{k:'linkedSubStatus', label:'Linked update', type:'select', value: t ? t.linkedSubStatus || '' : '', options: withCur([['', '— None —'], ...subs.map((s, i) => [s.id || String(i), s.title + (s.date ? ' (' + fmtDate(s.date) + ')' : '')])], t && t.linkedSubStatus)}] : []),
     ],
     del: t && can('actions','delete') ? {label:'Delete', run: () => { const u = deleteProjTask(projId, key); done1(`Deleted “${esc(t.name)}”.`, u, 'trash'); }} : null,
@@ -4194,6 +4316,7 @@ function formInqTask(inqId, key, preset){
       {k:'name', label:'Task', req:true, value: t ? t.name : preset ? preset.name : '', ph:'e.g. Follow up mold quote'},
       {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : addWorkDays(todayStr(), 2)},
+      ...tagField(t && t.tags),
     ],
     del: t ? {label:'Delete', run: () => { const u = deleteInqTask(inqId, key); done1(`Deleted “${esc(t.name)}”.`, u, 'trash'); }} : null,
     onSubmit: (v, ch) => { if (!t){ addInqTask(inqId, {...v, followupOf: preset && preset.followupOf}); done1('Task added'); return; } if (Object.keys(ch).length){ editInqTask(inqId, key, ch); done1('Task saved'); } } });
@@ -4207,6 +4330,7 @@ function formInqNA(inqId, key, preset){
       {k:'action', label:'Next action', req:true, value: na ? na.action || na.text || '' : preset ? preset.name : '', ph:'e.g. Chase customer for artwork'},
       {k:'pic', label:'Person in charge', type:'select', half:true, value: na ? na.pic || meName() : meName(), options: peopleOpts(na && na.pic)},
       {k:'deadline', label:'Deadline', type:'date', half:true, value: na ? na.deadline || '' : preset ? preset.deadline : ''},
+      ...tagField(na && na.tags),
     ],
     del: na ? {label:'Delete', run: () => { const u = deleteInqNA(inqId, key); done1('Next action removed', u, 'trash'); }} : null,
     onSubmit: (v, ch) => { if (!na){ addInqNA(inqId, v); done1('Next action added'); return; } if (Object.keys(ch).length){ editInqNA(inqId, key, ch); done1('Next action saved'); } } });
@@ -4295,7 +4419,7 @@ function formInquiry(id){
         return;
       }
       const patch = {};
-      ['code','bdNum','name','customer','bdPerson','date','factory','type','material','priority','status','remark','remarkDate','products','outcomeReason'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
+      ['code','bdNum','name','customer','bdPerson','date','factory','type','material','priority','status','remark','remarkDate','products','outcomeReason','tags'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
       if ('remark' in ch && !('remarkDate' in ch) && v.remark) patch.remarkDate = today;
       if ('links' in ch && !sameLinks(textToLinks(v.links), i.links)) patch.links = textToLinks(v.links);
       if ('moldCost' in ch) patch.moldCost = parseFloat(v.moldCost) || 0;
@@ -4323,6 +4447,7 @@ function formProject(id){
       {k:'deliveryDate', label:'Target delivery', type:'date', half:true, value: p ? p.deliveryDate || '' : ''},
       {k:'status', label:'Status', type:'select', half:true, value: p ? p.status || 'not-started' : 'not-started', options: withCur(PROJ_ST, p && p.status)},
       {k:'stage', label:'Stage', type:'select', half:true, value: p ? p.stage || '' : '', options: withCur([['', 'Not set'], ...NPD_STAGES.map(x => [x, x])], p && p.stage)},
+      ...tagField(p && p.tags),
       {k:'links', label:'Links', type:'textarea', rows:2, value: p ? linksToText(p.links) : '', ph:'Drawings | https://drive.google.com/…', hint:'One per line. Optional name first, then a | and the link.'},
       {k:'kiv', label:'Keep in view (KIV)', type:'check', value: p ? !!p.kiv : false, hint:'Parked for now. It stays visible with a KIV tag.'},
       {k:'kivComment', label:'KIV reason', type:'textarea', rows:2, value: p ? p.kivComment || '' : '', ph:'Why is this project on KIV?', show: v => v.kiv},
@@ -4331,7 +4456,7 @@ function formProject(id){
     onSubmit: (v, ch) => {
       if (!p){ const nid = createProject({...v, links: textToLinks(v.links)}); done1(`Project ${esc(v.code)} created`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
       const patch = {};
-      ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','stage','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
+      ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','stage','tags','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
       if ('links' in ch && !sameLinks(textToLinks(v.links), p.links)) patch.links = textToLinks(v.links);
       if (!Object.keys(patch).length) return;
       editProject(p.id, patch);
@@ -4366,6 +4491,7 @@ function formMTask(id, preset){
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : todayStr()},
       {k:'status', label:'Status', type:'chips', value: t ? t.status || 'todo' : 'todo', options: TASK_ST},
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
+      ...tagField(t && t.tags),
     ],
     extra: t && can('tasks','add') ? {label:'Duplicate', icon:'plus', run: () => { const nid = duplicateMTask(t.id); done1('Task duplicated'); if (nid) setTimeout(() => formMTask(nid), 80); }} : null,
     del: t && can('tasks','delete') ? {label:'Delete', run: () => { if (deleteWouldBeBlocked(1)){ toast('The Sheet would block this delete (too few records left).', {icon:'x'}); return; } const u = deleteMTasks([t.id]); done1(`Deleted “${esc(t.title)}”.`, u, 'trash'); }} : null,
@@ -4478,6 +4604,7 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
   <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx">${ico('file',15)} Export to Excel</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
+  ${DB.data ? tagsPopHTML() : ''}
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
 const SL_IC = { solid:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   clear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
@@ -4649,11 +4776,13 @@ async function onSignedIn(user){
   if (LG.viaForm) store.set(LG_LAST, LG.keep ? JSON.stringify({ email: user.email, name: AUTH.profile.name || '' }) : '');
   else { const u = lgLast(); if (u && u.email === user.email && AUTH.profile.name && u.name !== AUTH.profile.name) store.set(LG_LAST, JSON.stringify({ email: user.email, name: AUTH.profile.name })); }
   setMe(); loadUsers();
+  snoozeFromProfile(profile && profile.snoozes); watchProfile(user.uid);   // a snooze on one device hides the item on all of them
   if (!DB.data) loadCache();
   enterApp();
   pull({first:true});
 }
 function onSignedOut(){
+  if (PROFILE_UNSUB){ PROFILE_UNSUB(); PROFILE_UNSUB = null; }
   AUTH.user = null; AUTH.profile = null; DB.data = null; DB.ts = ''; DB.source = ''; closeForm(true); closeSheet(); closePop();
   showLogin();
 }
@@ -4669,6 +4798,9 @@ document.addEventListener('click', e => {
   const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
   const br = t.closest('[data-binrestore]'); if (br){ restoreBin(br.dataset.binrestore); return; }
   const bw = t.closest('[data-binwipe]'); if (bw){ wipeBin(bw.dataset.binwipe, bw); return; }
+  const tc = t.closest('[data-tagc]'); if (tc){ TAGC = tc.dataset.tagc; $$('#pop [data-tagc]').forEach(b => { const on = b === tc; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }); return; }
+  const td = t.closest('[data-tagdel]'); if (td){ if (!isLead()) return; const tg = allTags().find(x => x.id === td.dataset.tagdel), r = tg && deleteTag(tg.id); if (!r) return; refreshPop();
+    toast(`Deleted tag “${esc(tg.name)}”${r.n ? ` · removed from ${r.n} item${r.n === 1 ? '' : 's'}` : ''}`, {icon:'trash', undo: () => { r.undo(); refreshPop(); }}); return; }
   const nad = t.closest('[data-na]'); if (nad){ toggleNA(nad.dataset.na, nad.dataset.done === '1', nad); return; }
   const mt = t.closest('[data-mt]'); if (mt){ toggleMT(mt.dataset.mt, mt.dataset.done === '1', mt); return; }
   const ms = t.closest('[data-mtsel]'); if (ms){ const id = ms.dataset.mtsel; S.tsel.has(id) ? S.tsel.delete(id) : S.tsel.add(id); refresh(); return; }

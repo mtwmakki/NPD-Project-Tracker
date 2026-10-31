@@ -9,7 +9,8 @@ retirement commit). `gantt.html` stays at the root: V2's Gantt button opens it a
 - Signs in with the same Firebase account V1 used. The first sign-in of a new person creates their profile in
   Firestore `users` (member role and permissions; the master email always gets master), as V1 did.
 - Reads and writes the same Google Sheet through the same Apps Script bridge. No new fields are added.
-- V2's style, theme, motion and snoozed notifications are stored only on the device (`npd2-*` keys).
+- V2's style, theme and motion are stored only on the device (`npd2-*` keys). Snoozes are kept on the device and on
+  your Firestore profile (`users/{uid}.snoozes`), so a snooze on one device hides the item on all of them.
 - Styles include **Liquid Glass** (from the Liquid Glass System design system): frosted glass on every surface, SF
   system font, iOS blue for the main action. Choosing it opens in the device's light or dark mode; the sun/moon button
   still switches it.
@@ -57,7 +58,14 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   - phones: two-line rows; swipe right = done, swipe left = snooze until tomorrow (a hint shows until the first
     swipe); the type filter is a dropdown
   - personal tasks keep their tools: Archived (restore) and Select (archive or delete several); category and
-    priority show as tags and are set in the task form. Snoozes are kept on the device only
+    priority show as tags and are set in the task form. Snoozes follow you to every device (saved on your profile)
+- Custom tags: one shared list (`data.tags`: id, name, colour), added and deleted in Settings → Tags by the master
+  and managers (9 colours; duplicate names are refused). Projects, inquiries, project actions, inquiry tasks, next
+  actions and personal tasks can carry tags (`tags: [tagId, …]`), picked in each form. Deleting a tag removes it
+  from every item, with Undo. Tags show on project cards and the board, the project page, inquiry rows and the
+  inquiry panel, action and task rows, and My work; Projects, Inquiries and My work have a tag filter (in My work
+  it also matches the tags of the task's project or inquiry), search finds tag names, and every Excel sheet with
+  tagged items has a Tags column
 - Project people (PICs): add, edit, remove; each project links to its Gantt (separate page)
 - After ticking anything done, the confirmation offers "Follow up", which opens a prefilled follow-up task
 - Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, My work, search) on that

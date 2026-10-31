@@ -7,7 +7,7 @@ doesn't touch), so any of them can still be built in V2 later. Size: S = under h
 ## Already in V2
 Sign-in, Dashboard ("Needs you", four tiles with week-on-week trends, this week's milestones, SLA, won/lost, factory load), Inquiries (filters, search,
 factory filter, pins, SLA sheet, tasks, next actions, ball in court, outcome, products, links, pipeline
-statuses), Projects (cards with filter and sort, board by status or stage with drag, project page with health and reason, next action, delivery, NPD stage, milestone strip, actions, updates, overview, history,
+statuses), custom tags (managed in Settings, on every kind of item, filterable), Projects (cards with filter and sort, board by status or stage with drag, project page with health and reason, next action, delivery, NPD stage, milestone strip, actions, updates, overview, history,
 KIV), My work (Tasks + Notifications in one list: overdue / today / this week / later / awaiting reply, swipe done / snooze, archive and bulk actions for personal tasks), create / edit / delete for
 inquiries, projects, actions, tasks, next actions, updates and milestones (deletes go to the recycle bin
 with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, merge-safe saving.

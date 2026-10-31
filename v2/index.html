@@ -539,6 +539,7 @@ button{font:inherit;color:inherit}
 #totop{position:absolute;right:28px;bottom:24px;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:color-mix(in srgb,var(--surf-solid) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--tx);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity calc(250ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring)}
 #totop.show{opacity:1;transform:none;pointer-events:auto}
 @media (max-width:720px){#totop{right:16px;bottom:16px}}
+@media (max-width:720px){html .toolbar .btn.tb-pdf{display:none}}   /* phones: PDF reports are in Settings → Data, the toolbar stays one row shorter */
 @media (max-width:720px){#tseg,#bseg,#pseg,#nseg{display:flex;width:100%}#tseg button,#bseg button,#pseg button,#nseg button{flex:1;justify-content:center;padding-left:8px;padding-right:8px}.seg button{padding-left:12px;padding-right:12px}}
 .tok table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
 .tok th{text-align:left;font:600 11px var(--fb);letter-spacing:.12em;text-transform:uppercase;color:var(--mu);padding:10px 12px;border-bottom:1px solid var(--line)}
@@ -3412,7 +3413,7 @@ function inqRows(){
 function pageInquiries(){
   const c = inqCounts();
   return `${staleBanner()}<div class="toolbar itools st" style="--i:0">${segHTML('fseg', INQ_FILTERS.map(([k,l]) => [k, l, c[k], c[k] ? '' : 'zero']), S.filter)}
-    ${tagFilterHTML('itag', S.itag)}<label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label><label class="psort">${ico('sort',15)}<select id="isort" aria-label="Sort inquiries">${INQ_SORTS.map(([k, l]) => `<option value="${k}"${(S.isort || 'sla') === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
+    ${tagFilterHTML('itag', S.itag)}<label class="search">${ico('search',17)}<input id="q" placeholder="Search name, customer, code, BD person" value="${esc(S.q)}" aria-label="Search inquiries"></label><button class="btn wtool tb-pdf" type="button" data-act="pdf-inquiries" title="Download this list as a PDF report">${ico('file',15)}<span>PDF</span></button><label class="psort">${ico('sort',15)}<select id="isort" aria-label="Sort inquiries">${INQ_SORTS.map(([k, l]) => `<option value="${k}"${(S.isort || 'sla') === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>${can('inquiries','add') ? `<button class="b1 tb-new" type="button" data-fm="inq">${ico('plus',16)}<span>New inquiry</span></button>` : ''}</div>
     <div class="rows st" style="--i:1" id="rows">${inqRows()}</div>`;
 }
 
@@ -3546,6 +3547,7 @@ function pageProjects(){
   return `${staleBanner()}<div class="toolbar ptools st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}
     ${board ? segHTML('pgroup', [['status','By status'],['stage','By stage']], S.pgroup) : segHTML('pfilt', [['active','Active', L.active.length],['hold','On hold', L.hold.length],['done','Completed', L.done.length],['all','All', L.all.length]], S.pfilt)}
     ${tagFilterHTML('ptag', S.ptag)}
+    <button class="btn wtool tb-pdf" type="button" data-act="pdf-projects" title="Download this list as a PDF report">${ico('file',15)}<span>PDF</span></button>
     ${board ? '' : `<label class="psort">${ico('sort',15)}<select id="psort" aria-label="Sort projects">${P_SORTS.map(([k, l]) => `<option value="${k}"${S.psort === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>`}
     ${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
 }
@@ -3830,39 +3832,77 @@ function emptyBin(btn){
 }
 
 /* ── Export: a formatted Excel workbook (ExcelJS, loaded on first use) and a full JSON backup of everything ── */
+/* The Excel export is the tool's whole database: every collection, every field. Records become rows; lists inside a
+   record (tasks, milestones, history…) get their own sheet with the parent's code and name in front. Codes become labels. */
+const xlHuman = k => ({id:'ID', pic:'PIC', bdNum:'BD #', bdPerson:'BD person', kiv:'KIV', kivComment:'KIV reason', kivDate:'KIV since', date:'Date', deliveryDate:'Delivery date', ballWith:'Ball with', ballSince:'Ball since', projectId:'Project', fromInquiry:'From inquiry', salesPerson:'Sales person', moldCost:'Mold cost (RM)', completedAt:'Completed at', addedOn:'Added on', createdAt:'Created at', deletedAt:'Deleted at', stageSince:'Stage since', followupOf:'Follow-up of', linkedSubStatus:'Linked update', remarkDate:'Remark date', outcomeDate:'Outcome date', outcomeReason:'Outcome reason', dateAdded:'Date added', pinnedAt:'Pinned at'})[k]
+  || k.split('.').map(p => p.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase()).join(' · ').replace(/^./, c => c.toUpperCase());
+const xlStrip = s => String(s || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+const xlLinks = ls => (ls || []).map(l => l && typeof l === 'object' ? (l.label ? `${l.label}: ${l.url}` : l.url || '') : String(l)).join('\n');
+function xlFlat(o, pre = '', out = {}){
+  Object.entries(o || {}).forEach(([k, v]) => { if (v === undefined) return; const key = pre ? pre + '.' + k : k;
+    if (v && typeof v === 'object' && !Array.isArray(v)) xlFlat(v, key, out); else out[key] = v; });
+  return out;
+}
+/* one value for a cell: dates as dates, Yes for true, tag names, link text; other lists as JSON so nothing is lost */
+function xlVal(k, v, lab){
+  if (lab && lab[k]) return lab[k](v);
+  if (v == null || v === false) return '';
+  if (v === true) return 'Yes';
+  if (k === 'tags' || k.endsWith('.tags')) return tagNames(v);
+  if (k === 'links' || k.endsWith('.links')) return xlLinks(v);
+  if (Array.isArray(v)) return v.every(x => x == null || typeof x !== 'object') ? v.join(', ') : JSON.stringify(v).slice(0, 32000);
+  if (typeof v === 'string'){ if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return xlDate(v); if (k === 'text' || /<\/?(strong|b|i|em)>/.test(v)) return xlStrip(v); }
+  return v;
+}
+/* rows of records → [head, rows]: the preferred fields first, then every other field in the order first seen */
+function xlTable(recs, opts = {}){
+  const {first = [], skip = [], lab = {}, pre = [], extra = []} = opts, keys = [];
+  const sublist = (k, v) => Array.isArray(v) && !['links','tags'].includes(k) && (!v.length || (v[0] && typeof v[0] === 'object'));   // lists of records get their own sheet
+  const flats = recs.map(r => { const f = xlFlat(Object.fromEntries(Object.entries(r.rec || {}).filter(([k, v]) => !skip.includes(k) && !sublist(k, v))));
+    Object.keys(f).forEach(k => { if (!keys.includes(k)) keys.push(k); }); return f; });
+  const order = [...first.filter(k => keys.includes(k) || extra.some(e => e[0] === k)), ...keys.filter(k => !first.includes(k) && k !== 'id'), ...(keys.includes('id') ? ['id'] : [])];
+  const head = [...pre.map(p => p[0]), ...order.map(k => { const e = extra.find(x => x[0] === k); return e ? e[1] : xlHuman(k); })];
+  const rows = recs.map((r, i) => [...pre.map(p => p[1](r)), ...order.map(k => { const e = extra.find(x => x[0] === k); return e ? e[2](r) : xlVal(k, flats[i][k], lab); })]);
+  return [head, rows];
+}
+const lbl = list => v => (list.find(x => String(x[0]) === String(v)) || [0, v == null ? '' : v])[1];
 function exportSheets(){
-  const d = DB.data, D = xlDate, yes = v => v ? 'Yes' : '', links = ls => (ls || []).map(l => l.label ? `${l.label}: ${l.url}` : l.url).join('\n');
-  const taskSt = t => t.done ? 'Done' : (TASK_ST.find(x => x[0] === t.status) || [0, ''])[1];
-  const pipe = (p, k) => (p && p[k]) || {};
-  return [
-    ['Inquiries', ['Code','Name','Customer','Factory','BD person','BD #','Received','Type','Priority','Status','SLA','Ball with','Outcome','Material','Remark',
-      'Mold inquiry','Mold inquiry remark','Mold inquiry date','Costing','Costing remark','Costing date','Price submission','Price submission remark','Price submission date','Tasks done','Tasks total','Links','Tags','Project'],
-      d.inquiries.map(i => { const mi = pipe(i.pipeline,'moldInquiry'), co = pipe(i.pipeline,'costing'), pr = pipe(i.pipeline,'priceSubmission');
-        return [i.code||'', i.name||'', i.customer||'', facOf(i)||'', i.bdPerson||'', i.bdNum||'', D(i.date), i.type||'', PRIO_LABEL[prioKey(i.priority)]||'', (INQ_ST.find(x => x[0] === String(i.status||'').toUpperCase()) || [0, i.status||''])[1],
-          inqStateLabel(i).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2'), BALL_LABELS[i.ballWith]||'', OUTCOME_LABELS[i.outcome]||'', i.material||'', i.remark||'',
-          mi.status||'', mi.remark||'', D(mi.date), co.status||'', co.remark||'', D(co.date), pr.status||'', pr.remark||'', D(pr.date),
-          (i.tasks||[]).filter(t => t.done).length, (i.tasks||[]).length, links(i.links), tagNames(i.tags), ((findRec(d, 'projects', i.projectId) || {}).code) || '']; })],
-    ['Inquiry tasks', ['Code','Inquiry','Task','PIC','Deadline','Status','Completed','Tags'],
-      d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
-    ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed','Tags'],
-      d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt), tagNames(n.tags)]))],
-    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Stage','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links','Tags','From inquiry'],
-      d.projects.map(p => { const ss = [...(p.subStatuses||[])].sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1)[0];
-        return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), p.stage||'', HEALTH_LABEL[projHealth(p)]||'',
-          D(p.date), D(p.deliveryDate), BALL_LABELS[p.ballWith]||'', p.kiv ? (p.kivComment || 'Yes') : '', p.brief||'',
-          (p.tasks||[]).filter(t => t.done).length, (p.tasks||[]).length, projPct(p), (p.pics||[]).map(x => x.name + (x.role ? ` (${x.role})` : '')).join(', '),
-          ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links), tagNames(p.tags), ((findRec(d, 'inquiries', p.fromInquiry) || {}).code) || '']; })],
-    ['Project actions', ['Project code','Project','Factory','Action','PIC','Deadline','Status','Completed','Tags'],
-      d.projects.flatMap(p => (p.tasks||[]).map(t => [p.code||'', p.name||'', facOf(p)||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt), tagNames(t.tags)]))],
-    ['Milestones', ['Project code','Project','Milestone','Category','Date','Status','Note'],
-      d.projects.flatMap(p => (p.milestones||[]).map(m => [p.code||'', p.name||'', m.title||'', m.category||'', D(m.date), (MS_ST.find(x => x[0] === m.status) || [0, m.status||''])[1], m.note||'']))],
-    ['Updates', ['Project code','Project','Update','Status','Date','Note'],
-      d.projects.flatMap(p => (p.subStatuses||[]).map(u => [p.code||'', p.name||'', u.title||'', (SS_ST.find(x => x[0] === u.status) || [0, u.status||''])[1], D(u.date), u.note||'']))],
-    ['People', ['Project code','Project','Name','Role'], d.projects.flatMap(p => (p.pics||[]).map(x => [p.code||'', p.name||'', x.name||'', x.role||'']))],
-    ['Tasks', ['Task','Owner','Category','Priority','Status','Due','Chase on','Description','Completed','Archived','Tags'],
-      (d.mtasks||[]).map(t => [t.title||'', t.owner||'', (MT_CATS.find(x => x[0] === t.category) || [0, t.category||''])[1], (MT_PRIO.find(x => x[0] === t.priority) || [0, t.priority||''])[1],
-        (TASK_ST.find(x => x[0] === t.status) || [0, t.status||''])[1], D(t.deadline), D(t.reminder), t.description||'', D(t.completedAt), yes(t.archived), tagNames(t.tags)])],
-  ];
+  const d = DB.data, sheets = [], main = ['Inquiries','Projects','Personal tasks','Tags'], add = (name, t) => { if (t[1].length || main.includes(name)) sheets.push([name, t[0], t[1]]); };   // empty sub-lists get no sheet
+  const taskLab = { status: v => v ? lbl(TASK_ST)(v) : '' };
+  const inqLab = { status: v => lbl(INQ_ST)(String(v || '').toUpperCase()), type: v => TYPE_LABELS[v] || v || '', priority: v => PRIO_LABEL[prioKey(v)] || v || '', outcome: v => OUTCOME_LABELS[v] || v || '', ballWith: v => BALL_LABELS[v] || v || '',
+    projectId: v => v ? ((findRec(d, 'projects', v) || {}).code || v) : '' };
+  const prjLab = { status: v => statusLabel(v), classification: v => CLASS_LABELS[v] || v || '', ballWith: v => BALL_LABELS[v] || v || '', fromInquiry: v => v ? ((findRec(d, 'inquiries', v) || {}).code || v) : '' };
+  const ofI = i => [['Inquiry code', () => i.code || ''], ['Inquiry', () => i.name || '']], ofP = p => [['Project code', () => p.code || ''], ['Project', () => p.name || '']];
+  const sub = (parents, key, ofX, opts = {}) => { const recs = []; parents.forEach(x => (x[key] || []).forEach(r => recs.push({rec: r, parent: x}))); return xlTable(recs, {...opts, pre: ofX({}).map(([h], j) => [h, r => ofX(r.parent)[j][1]()])}); };
+  add('Inquiries', xlTable(d.inquiries.map(i => ({rec: i})), { lab: inqLab, skip: ['expanded','nextAction'],
+    first: ['code','name','customer','factory','bdPerson','bdNum','date','type','priority','status','sla','outcome','outcomeReason','outcomeDate','ballWith','ballSince','material','value','moldCost','remark','remarkDate','tags','projectId','links'],
+    extra: [['sla','SLA', r => inqStateLabel(r.rec).replace(/ · WD (\d+)\/(\d+)/, ' · working day $1 of $2')], ['value','Est. value (RM)', r => inqEstValue(r.rec) || '']] }));
+  add('Inquiry tasks', sub(d.inquiries, 'tasks', ofI, { lab: taskLab, first: ['name','pic','deadline','status','done','completedAt','reminder','addedOn','owner','tags'] }));
+  add('Inquiry next actions', sub(d.inquiries, 'nextActions', ofI, { first: ['action','pic','deadline','done','completedAt','dateAdded','tags'] }));
+  add('Inquiry products', sub(d.inquiries, 'products', ofI, { first: ['name','volume','cost','value'], extra: [['value','Est. value / yr (RM)', r => (parseFloat(r.rec.volume) || 0) * (parseFloat(r.rec.cost) || 0) || '']] }));
+  add('Inquiry history', sub(d.inquiries, 'activityLog', ofI, { first: ['date','time','by','type','text'], skip: ['icon'] }));
+  add('Projects', xlTable(d.projects.map(p => ({rec: p})), { lab: prjLab, skip: ['expanded'],
+    first: ['code','name','customer','factory','classification','status','stage','stageSince','health','date','deliveryDate','progress','ballWith','ballSince','salesPerson','kiv','kivComment','kivDate','brief','tags','fromInquiry','links'],
+    extra: [['health','Health', r => HEALTH_LABEL[projHealth(r.rec)] || ''], ['progress','Progress %', r => projPct(r.rec)]] }));
+  add('Project actions', sub(d.projects, 'tasks', ofP, { lab: taskLab, first: ['name','pic','deadline','status','done','completedAt','reminder','addedOn','tags'] }));
+  add('Milestones', sub(d.projects, 'milestones', ofP, { lab: { status: v => lbl(MS_ST)(v || 'upcoming') }, first: ['title','category','date','status','note'] }));
+  add('Updates', sub(d.projects, 'subStatuses', ofP, { lab: { status: v => lbl(SS_ST)(v) }, first: ['title','status','date','note'] }));
+  add('People', sub(d.projects, 'pics', ofP, { first: ['name','role'] }));
+  add('Project history', sub(d.projects, 'activityLog', ofP, { first: ['date','time','by','type','text'], skip: ['icon'] }));
+  add('Personal tasks', xlTable((d.mtasks || []).map(t => ({rec: t})), { lab: { status: v => lbl(TASK_ST)(v), priority: v => lbl(MT_PRIO)(v), category: v => lbl(MT_CATS)(v) },
+    first: ['title','owner','category','priority','status','deadline','reminder','description','completedAt','archived','createdAt','tags'] }));
+  add('Tags', xlTable((d.tags || []).map(t => ({rec: t})), { lab: { color: v => (TAG_COLORS.find(c => c[0] === v) || [0, 0, v])[2] }, first: ['name','color'] }));
+  add('Recycle bin', xlTable((d.bin || []).map(b => ({rec: {...b, item: undefined, task: undefined}, b})), { first: ['kind','code','name','deletedAt','parentCode','parentName','parentType','what','data'],
+    extra: [['what','Item', r => binName(r.b)], ['data','Saved record (JSON)', r => JSON.stringify(r.b.item || r.b.task || {}).slice(0, 32000)]] }));
+  /* V1 data V2 doesn't show yet is exported too, so the file stays the full database */
+  const sch = []; Object.entries(d.schedule || {}).sort().forEach(([day, es]) => (Array.isArray(es) ? es : [es]).forEach(e => sch.push({rec: {day, ...(e && typeof e === 'object' ? e : {value: e})}})));
+  if (sch.length) add('Schedule', xlTable(sch, { first: ['day','code','name','customer','duration','summary'] }));
+  const known = new Set(['inquiries','projects','mtasks','tags','bin','schedule']), other = [];
+  Object.entries(d).forEach(([k, v]) => { if (known.has(k) || v == null) return;
+    if (Array.isArray(v) && v.length && v.every(x => x && typeof x === 'object')) add(xlHuman(k).slice(0, 31), xlTable(v.map(r => ({rec: r}))));
+    else if (Array.isArray(v) ? v.length : typeof v === 'object' ? Object.keys(v).length : true) other.push({rec: {setting: k, value: typeof v === 'object' ? JSON.stringify(v).slice(0, 32000) : v}}); });
+  if (other.length) add('Other data', xlTable(other, { first: ['setting','value'] }));
+  return sheets;
 }
 /* Excel: ExcelJS (it writes cell styles) loads from jsDelivr the first time it's needed */
 let XL_P = null;
@@ -3874,17 +3914,18 @@ function loadExcelJS(){
 /* dates go in as UTC midnight: Excel has no time zone, so a local midnight would show as the day before in Malaysia */
 function xlDate(v){ const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : (v || ''); }
 const XL_TONE = { bad:['FFFDE2E2','FF9B1C1C'], warn:['FFFEF3C7','FF92400E'], ok:['FFDCFCE7','FF166534'] };
-const XL_WRAP = new Set(['Brief','Remark','Links','Description','Note','Latest update','People','Mold inquiry remark','Costing remark','Price submission remark']);
+const XL_WRAP = new Set(['Brief','Remark','Links','Description','Note','Text','Summary','KIV reason','Outcome reason','Saved record (JSON)','Value','Pipeline · mold inquiry · remark','Pipeline · costing · remark','Pipeline · price submission · remark']);
 /* status colours: late / over SLA red, at risk amber, done green; a past date is red unless its row is finished */
+const XL_DUE = { 'Inquiry tasks': 'Deadline', 'Inquiry next actions': 'Deadline', 'Project actions': 'Deadline', 'Personal tasks': 'Deadline', 'Milestones': 'Date', 'Projects': 'Delivery date' };
 function xlTone(sheet, h, v, row, H, today){
   const s = String(v == null ? '' : v), col = k => H[k] == null ? undefined : row[H[k]];
   if (h === 'Health') return s === 'Late' ? 'bad' : s === 'At risk' ? 'warn' : s === 'On track' || s === 'Completed' ? 'ok' : '';
   if (h === 'SLA') return /^Overdue|^SLA missed/.test(s) ? 'bad' : /^At risk/.test(s) ? 'warn' : /^On track|^SLA met/.test(s) ? 'ok' : '';
   if (h === 'Outcome') return s === 'Won' ? 'ok' : s === 'Lost' ? 'bad' : s === 'Dropped' ? 'warn' : '';
-  if (h === 'Status' && sheet !== 'Updates') return ['Done','Completed','Reached'].includes(s) ? 'ok' : s === 'Awaiting reply' || s === 'On hold' ? 'warn' : '';
+  if (h === 'Status' && !['Updates','Recycle bin'].includes(sheet)) return ['Done','Completed','Reached'].includes(s) ? 'ok' : s === 'Awaiting reply' || s === 'On hold' ? 'warn' : '';
   if (h === 'Done') return s === 'Yes' ? 'ok' : '';
-  if (['Deadline','Due','Delivery','Date'].includes(h) && v instanceof Date && !['Updates','People'].includes(sheet)){
-    const finished = ['Done','Completed','Reached','Cancelled','Closed'].includes(String(col('Status') || '')) || col('Done') === 'Yes' || col('Completed') instanceof Date;
+  if (XL_DUE[sheet] === h && v instanceof Date){   // a past due date is red unless its row is finished
+    const finished = ['Done','Completed','Reached','Cancelled','Closed'].includes(String(col('Status') || '')) || col('Done') === 'Yes' || col('Completed at') instanceof Date || col('Archived') === 'Yes';
     return !finished && v < today ? 'bad' : '';
   }
   return '';
@@ -3917,6 +3958,90 @@ function exportBackup(){
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `NPD_Tracker_Backup_${todayStr()}.json`;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast('Backup downloaded: everything, including the recycle bin', {icon:'check'});
+}
+/* ══════════ PDF REPORTS: the Projects or Inquiries list as you see it (filters, search, sort), A4 landscape ══════════
+   jsPDF and its table plugin load from jsDelivr the first time. */
+let PDF_P = null, PDF_LOGO;
+const loadScript = src => new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(sc); });
+function loadPDF(){
+  return PDF_P = PDF_P || (async () => {
+    if (!(window.jspdf && window.jspdf.jsPDF)) await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+    if (!window.jspdf.jsPDF.API.autoTable) await loadScript('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js');
+    return window.jspdf.jsPDF;
+  })().catch(e => { PDF_P = null; throw e; });
+}
+async function pdfLogo(){
+  if (PDF_LOGO !== undefined) return PDF_LOGO;
+  try { const b = await (await fetch('../icons/icon-192.png')).blob(); PDF_LOGO = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); }); }
+  catch(e){ PDF_LOGO = null; }
+  return PDF_LOGO;
+}
+const PDF_TONE = { bad: [[254,226,226],[155,28,28]], warn: [[254,243,199],[146,64,14]], ok: [[220,252,231],[22,101,52]], info: [[237,233,254],[91,33,182]], mu: [[241,245,249],[71,85,105]] };
+const pdfDay = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
+const pdfText = s => String(s == null ? '' : s).replace(/→/g, '>').replace(/[★✓]/g, '').replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF–—‘’“”•…]/g, '');   // the built-in PDF font covers Western characters only
+function pdfProjects(){
+  const L = projLists(), board = S.pview === 'board', list = projSort(board ? L.all : (L[S.pfilt] || L.active), board ? 'urgent' : S.psort), today = todayStr();
+  const grp = p => isClosedProj(p) ? 'done' : p.status === 'on-hold' ? 'hold' : projHealth(p);
+  const G = [['over','Late','bad'],['risk','At risk','warn'],['ok','On track','ok'],['hold','On hold','mu'],['done','Completed','ok']];
+  const tag = allTags().find(t => t.id === S.ptag);
+  const scope = [board ? 'Board' : ({active:'Active', hold:'On hold', done:'Completed', all:'All'})[S.pfilt] || 'Active', S.fac !== 'all' ? S.fac : '', tag ? 'Tag: ' + tag.name : '', !board ? 'Sorted: ' + ((P_SORTS.find(x => x[0] === S.psort) || [0, ''])[1]) : ''].filter(Boolean).join(' · ');
+  const cnt = k => list.filter(p => grp(p) === k).length;
+  const summary = [`${list.length} project${list.length === 1 ? '' : 's'}`, ...G.map(([k, l]) => cnt(k) ? `${cnt(k)} ${l.toLowerCase()}` : '').filter(Boolean)].join('  ·  ');
+  const head = ['Project', 'Factory', 'Stage', 'Health', 'Next action', 'Delivery', 'Progress', 'Ball with'];
+  const body = [];
+  G.forEach(([k, l, tone]) => { const ps = list.filter(p => grp(p) === k); if (!ps.length) return;
+    body.push([{ content: `${l}  ·  ${ps.length}`, colSpan: head.length, styles: { fillColor: PDF_TONE[tone][0], textColor: PDF_TONE[tone][1], fontStyle: 'bold' } }]);
+    ps.forEach(p => { const na = !isClosedProj(p) && nextAction(p), si = NPD_STAGES.indexOf(p.stage || ''), tasks = p.tasks || [], wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null;
+      body.push([`${p.name || ''}\n${[p.code, p.customer].filter(Boolean).join(' · ')}`, facOf(p), si >= 0 ? `${p.stage}\n${si + 1} of ${NPD_STAGES.length}` : p.stage || 'Not set',
+        { content: `${l}\n${healthWhy(p)[0]}`, tone: k === 'hold' ? 'mu' : k === 'done' ? 'ok' : tone },
+        na ? `${na.name}\n${na.pic ? na.pic + ' · ' : ''}${na.deadline ? (na.deadline < today ? `${pdfDay(na.deadline)} · ${Math.max(1, workDaysBetween(na.deadline, today))} working days late` : 'due ' + pdfDay(na.deadline)) : 'no date'}` : isClosedProj(p) ? 'Completed' : 'No open actions',
+        p.deliveryDate ? `${pdfDay(p.deliveryDate)}${isClosedProj(p) ? '' : wd < 0 ? `\n${-wd} working day${wd === -1 ? '' : 's'} late` : wd === 0 ? '\nDue today' : `\n${wd} working days left`}` : 'Not set',
+        tasks.length ? `${projPct(p)}%\n${tasks.filter(t => t.done).length} of ${tasks.length} actions` : 'No actions', BALL_LABELS[p.ballWith] || '']); }); });
+  return { title: 'Projects report', file: 'Projects', scope, summary, head, body, cols: { 0: { cellWidth: 150, fontStyle: 'bold' }, 1: { cellWidth: 70 }, 2: { cellWidth: 72 }, 3: { cellWidth: 92 }, 4: { cellWidth: 160 }, 5: { cellWidth: 82 }, 6: { cellWidth: 62 } } };
+}
+function pdfInquiries(){
+  const list = inqFiltered(), t = allTags().find(x => x.id === S.itag);
+  const scope = [(INQ_FILTERS.find(f => f[0] === S.filter) || [0, 'Open'])[1], S.q ? `Search: “${S.q}”` : '', S.fac !== 'all' ? S.fac : '', t ? 'Tag: ' + t.name : '', 'Sorted: ' + ((INQ_SORTS.find(x => x[0] === (S.isort || 'sla')) || [0, ''])[1])].filter(Boolean).join(' · ');
+  const by = k => list.filter(x => x.st.k === k).length, won = list.filter(x => x.i.outcome === 'won').length, val = list.reduce((s, x) => s + inqEstValue(x.i), 0);
+  const summary = [`${list.length} inquir${list.length === 1 ? 'y' : 'ies'}`, by('over') ? `${by('over')} over SLA` : '', by('risk') ? `${by('risk')} due soon` : '', by('ok') ? `${by('ok')} on track` : '', won ? `${won} won` : '', val ? `est. ${fmtRMShort(val)} / yr` : ''].filter(Boolean).join('  ·  ');
+  const head = ['Inquiry', 'Customer', 'Factory', 'Received', 'SLA', 'Status', 'Next step', 'Outcome', 'Est. value'];
+  const body = list.map(({i, st}) => { const chip = inqChip(i, st), nx = inqNext(i, st), v = inqEstValue(i);
+    return [`${i.name || ''}\n${[i.code, PRIO_LABEL[prioKey(i.priority)]].filter(Boolean).join(' · ')}`, i.customer || '', facOf(i), pdfDay(i.date), slaLabel(st) || '-',
+      { content: chip[2], tone: chip[0] === 'bad' ? 'bad' : chip[0] === 'warn' ? 'warn' : chip[0] === 'ok' || chip[0] === 'done' ? 'ok' : chip[0] === 'info' ? 'info' : 'mu' },
+      `${nx[0]}${nx[1] ? '\n' + nx[1] : ''}`, OUTCOME_LABELS[i.outcome] || '', v ? fmtRM(v) : '']; });
+  return { title: 'Inquiries report', file: 'Inquiries', scope, summary, head, body, cols: { 0: { cellWidth: 150, fontStyle: 'bold' }, 1: { cellWidth: 82 }, 2: { cellWidth: 70 }, 3: { cellWidth: 64 }, 4: { cellWidth: 60 }, 5: { cellWidth: 78 }, 6: { cellWidth: 150 }, 7: { cellWidth: 52 } } };
+}
+async function exportPDF(kind){
+  if (!DB.data) return;
+  if (kind === 'inquiries' && !inqOn()){ toast('Inquiries are hidden in Projects only focus', {icon:'x'}); return; }
+  toast('Preparing the PDF…', {icon:'file'});
+  let JsPDF; try { JsPDF = await loadPDF(); } catch(e){ toast('Could not load the PDF tool. Check your connection and try again.', {icon:'x'}); return; }
+  const R = kind === 'inquiries' ? pdfInquiries() : pdfProjects(), logo = await pdfLogo();
+  const doc = new JsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' }), W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 36, X = M + (logo ? 36 : 0);
+  const stamp = `Exported by ${pdfText(meName())} · ${pdfDay(todayStr())} ${nowHM()}`;
+  const header = () => {
+    if (logo) try { doc.addImage(logo, 'PNG', M, 20, 28, 28); } catch(e){}
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(17, 24, 39); doc.text(R.title, X, 34);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(pdfText(`NPD Tracker · ${pdfDay(todayStr())}${R.scope ? ' · ' + R.scope : ''}`), X, 48);
+    doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.8); doc.line(M, 58, W - M, 58);
+  };
+  header();
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(30, 41, 59); doc.text(pdfText(R.summary), M, 76);
+  const clean = c => c && typeof c === 'object' ? {...c, content: pdfText(c.content)} : pdfText(c);
+  doc.autoTable({
+    head: [R.head], body: R.body.length ? R.body.map(r => r.map(clean)) : [[{ content: 'Nothing matches these filters.', colSpan: R.head.length, styles: { textColor: [100,116,139], halign: 'center' } }]],
+    startY: 86, margin: { top: 70, left: M, right: M, bottom: 38 }, theme: 'grid',
+    styles: { font: 'helvetica', fontSize: 8.2, cellPadding: { top: 4.5, bottom: 4.5, left: 5, right: 5 }, textColor: [30, 41, 59], lineColor: [226, 232, 240], lineWidth: 0.5, valign: 'top', overflow: 'linebreak' },
+    headStyles: { fillColor: [31, 41, 55], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8.5 },
+    columnStyles: R.cols,
+    didParseCell: c => { const tn = c.cell.raw && c.cell.raw.tone; if (c.section === 'body' && tn && PDF_TONE[tn]){ c.cell.styles.fillColor = PDF_TONE[tn][0]; c.cell.styles.textColor = PDF_TONE[tn][1]; c.cell.styles.fontStyle = 'bold'; } },
+    didDrawPage: c => { if (c.pageNumber > 1) header(); }
+  });
+  const n = doc.internal.getNumberOfPages();
+  for (let k = 1; k <= n; k++){ doc.setPage(k); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+    doc.text(`NPD Tracker · ${stamp}`, M, H - 18); doc.text(`Page ${k} of ${n}`, W - M, H - 18, { align: 'right' }); }
+  doc.save(`NPD_${R.file}_Report_${todayStr()}.pdf`);
+  toast(`${R.title} downloaded · ${R.body.filter(r => r.length > 1).length} ${kind === 'inquiries' ? 'inquiries' : 'projects'}`, {icon:'check'});
 }
 
 /* ── My work: everything assigned to you in one dense list (project actions, inquiry tasks and next actions, personal tasks) ──
@@ -4709,7 +4834,7 @@ let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
   const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',work:'work'}[p]}));
-  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
+  const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export everything to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Projects report (PDF)', run:() => exportPDF('projects'), ic:'file'},...(inqOn() ? [{g:'Actions', t:'Inquiries report (PDF)', run:() => exportPDF('inquiries'), ic:'file'}] : []),{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
   if (DB.data && can('tasks','add')) acts.unshift({g:'Actions', t:'New task', run:() => formMTask(), ic:'plus'});
@@ -4737,7 +4862,8 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
-  <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx">${ico('file',15)} Export to Excel</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
+  <div><h4>Data</h4><div class="pop-data"><button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>
+    <button class="btn" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
   ${DB.data ? tagsPopHTML() : ''}
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
@@ -4987,6 +5113,7 @@ document.addEventListener('click', e => {
     else if (act === 'styles'){ closePop(); go('styles'); }
     else if (act === 'open-bin'){ closePop(); go('bin'); }
     else if (act === 'export-xlsx'){ closePop(); exportExcel(); }
+    else if (act === 'pdf-projects' || act === 'pdf-inquiries'){ closePop(); exportPDF(act === 'pdf-inquiries' ? 'inquiries' : 'projects'); }
     else if (act === 'export-json'){ closePop(); exportBackup(); }
     else if (act === 'bin-empty'){ emptyBin(a); }
     else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();

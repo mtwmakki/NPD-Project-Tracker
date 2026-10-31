@@ -35,9 +35,9 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 ### Wave 3 — reporting (~3 days)
 | Feature | Size |
 |---|---|
-| ~~Full Excel export~~ (done: Settings → Data → Export to Excel) | S |
-| Inquiry report (date range, choose fields) → Excel / PDF | M |
-| Project report → PDF | M |
+| ~~Full Excel export~~ (done: Settings → Data → Excel · all data — the whole database, every collection and field) | S |
+| ~~Inquiry report → PDF~~ (done: PDF button on Inquiries, prints the current filter / search / sort). Still to do: date range and choose fields | M |
+| ~~Project report → PDF~~ (done: PDF button on Projects, grouped by health, prints the current filter / sort) | M |
 | Delivery Matrix tab + yellow / red day thresholds setting | M |
 | Dashboard: project health table, workload per person, status / trend charts | M |
 | Scheduler (weekly activity log) + weekly Excel export — confirmed needed | M |

@@ -134,12 +134,26 @@ Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists every
 filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its
 project or inquiry; if that was deleted too, restore it first). Delete forever needs a second tap within 3 s;
 managers and the master can empty the whole bin. Restores and deletes are logged and offer Undo.
-Settings → Data → Export to Excel downloads one formatted workbook (inquiries, inquiry tasks, next actions, projects,
-project actions, milestones, updates, people, personal tasks): a dark bold header row frozen at the top with filter
-arrows, sized columns, wrapped long text, real dates (dd mmm yyyy, written as UTC so they don't shift a day), and status
-colours: late / over SLA / lost in red, at risk / awaiting reply / on hold in amber, done / won / on track in green, and
-a past deadline or delivery in red unless that row is finished. The Excel tool (ExcelJS 4.4.0) loads from jsDelivr the
-first time. Backup downloads everything as JSON, including the bin.
+Settings → Data → Excel · all data (or Ctrl K "Export everything to Excel") downloads the whole database as one
+formatted workbook, every field of every record: Inquiries (plus computed SLA and estimated value), Inquiry tasks,
+Inquiry next actions, Inquiry products, Inquiry history, Projects (plus Health and Progress %), Project actions,
+Milestones, Updates, People, Project history, Personal tasks, Tags, Recycle bin (with each saved record as JSON), and
+V1 data V2 doesn't show yet (Schedule, pipeline lists, anything else under "Other data"). Lists inside a record get their
+own sheet with the parent's code and name in the first columns; a sub-list sheet with nothing in it is left out. Codes
+and labels are shown instead of internal values (status, priority, tag names, linked project / inquiry code); the raw
+ID stays in the last column. Look: a dark bold header row frozen at the top with filter arrows, sized columns, wrapped
+long text, real dates (dd mmm yyyy, written as UTC so they don't shift a day), and status colours: late / over SLA /
+lost in red, at risk / awaiting reply / on hold in amber, done / won / on track in green, and a past deadline or
+delivery in red unless that row is finished. The Excel tool (ExcelJS 4.4.0) loads from jsDelivr the first time.
+PDF reports: the PDF button in the Projects and Inquiries toolbars (also Settings → Data and Ctrl K) prints what you are
+looking at, with the same filter, search, tag and sort, as an A4 landscape table: NPD Tracker logo, title, date and the
+filters used at the top (repeated on every page), a one-line summary, then the rows. Projects are grouped Late / At risk
+/ On track / On hold / Completed (the board view prints every project) with Project, Factory, Stage, Health and why,
+Next action, Delivery, Progress and Ball with. Inquiries show Inquiry, Customer, Factory, Received, SLA day, Status,
+Next step, Outcome and Est. value. Health and status cells are coloured like the app. Each page ends with "Exported by
+<name> · date time" and "Page x of y". The PDF tool (jsPDF 2.5.1 + AutoTable 3.8.2) loads from jsDelivr the first time.
+Its built-in font has no Chinese characters or emoji, so those are left out of the PDF (Excel keeps them).
+Backup downloads everything as JSON, including the bin.
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

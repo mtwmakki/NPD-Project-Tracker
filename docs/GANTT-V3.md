@@ -77,6 +77,20 @@ Present mode shows the TPAC logo.
 - Focus and Key milestones show labelled status chips (Running late, Late start…) instead of a bare number.
 - Stage-gate remarks are typed right in the gates table; read-only in Present.
 - The timeline's legend and Today button hide on the Dashboard tab.
+- The 1-page PDF's "Next steps" card became "Coming up" with the same rule and tasks as the screen (until the next
+  meeting, else the next 3 weeks); the rest of the PDF is unchanged.
+
+## Timeline header and Gantt display buttons
+- The timeline always shows a year row above the months; month labels no longer carry the year.
+- Settings > Gantt display (audit, Oct 2026): every button works. These change both the timeline on screen and the
+  exported chart: Dep. Arrows, Critical Path, Cal. Week No., Today Marker, Grid: Weekly / 2-Week / 4-Week / Month.
+  These change only the exported chart (tooltip says so): Phase, Segment, Start Week, Duration, Predecessor (the
+  table has its own Columns menu), Year Row (the screen always shows the year) and Variance (Actual mode only; greyed
+  out in Baseline). Milestone and Delay left the panel; they stay in the table's Columns menu.
+- Critical path (`computeCriticalPath`) uses the same links as the scheduler: every predecessor with its delay and the
+  gate rule (a gate waits for every task of the earlier gates); slack under about a day counts as critical. On screen
+  it tints the row, marks its left edge and colours the arrows between critical tasks; the legend says "Critical path".
+- Exported chart: each gate row's "Wk a – b • n wks" now sits after the gate's bar, so it no longer covers the name.
 
 ## Next phases
 Later: phone layout.

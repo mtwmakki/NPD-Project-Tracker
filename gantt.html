@@ -107,7 +107,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-body);color:var(--text
    scroll is mirrored in JS (the standard approach: the timeline needs
    its own horizontal scroll, which a single shared scroller can't give).
    ══════════════════════════════════════════════ */
-:root{--gv-row:36px;--gv-head:52px}
+:root{--gv-row:36px;--gv-head:62px}
 .gv{display:flex;flex-direction:column;height:100%;background:var(--bg-body)}
 .gv-toolbar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--bg-sb);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .gv-body{flex:1;display:flex;min-height:0;overflow:hidden}
@@ -1095,6 +1095,8 @@ body,body.dark{background:transparent!important;color:var(--tx)}
 .gv-legend .dm{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;background:var(--c1)}
 .gv-legend .lt{width:16px;height:10px;border-radius:3px;border:2px solid var(--bad)}
 .gv-legend .td{width:2px;height:12px;background:repeating-linear-gradient(var(--bad) 0 3px,transparent 3px 5px)}
+#panelDisplay .col-tog.na{opacity:.45}
+.gv-legend .cp{width:16px;height:10px;border-radius:2px;background:color-mix(in srgb,var(--bad) 14%,transparent);box-shadow:inset 3px 0 0 var(--bad)}
 /* popovers: status menu and date picker */
 .gv-pop{position:fixed;z-index:400;min-width:0}
 .gv-stmenu{width:230px}
@@ -1527,16 +1529,14 @@ window.addEventListener('storage', function(e){
         </section>
         <section class="v3-sec" id="panelDisplay"><h3>Gantt display</h3>
           <div class="col-toggles">
-            <span class="col-tog" data-col="phase" onclick="toggleCol(this)">Phase</span>
-            <span class="col-tog active" data-col="seg" onclick="toggleCol(this)">Segment</span>
-            <span class="col-tog active" data-col="milestone" onclick="toggleCol(this)">Milestone</span>
-            <span class="col-tog" data-col="lag" onclick="toggleCol(this)">Delay</span>
-            <span class="col-tog" data-col="start" onclick="toggleCol(this)">Start Week</span>
-            <span class="col-tog" data-col="dur" onclick="toggleCol(this)">Duration</span>
-            <span class="col-tog" data-col="pred" onclick="toggleCol(this)">Predecessor</span>
+            <span class="col-tog" data-col="phase" title="Exported chart only" onclick="toggleCol(this)">Phase</span>
+            <span class="col-tog active" data-col="seg" title="Exported chart only" onclick="toggleCol(this)">Segment</span>
+            <span class="col-tog" data-col="start" title="Exported chart only" onclick="toggleCol(this)">Start Week</span>
+            <span class="col-tog" data-col="dur" title="Exported chart only" onclick="toggleCol(this)">Duration</span>
+            <span class="col-tog" data-col="pred" title="Exported chart only" onclick="toggleCol(this)">Predecessor</span>
             <span class="col-tog active" data-col="arrows" onclick="toggleCol(this)">Dep. Arrows</span>
             <span class="col-tog" data-col="crit" onclick="toggleCol(this)">Critical Path</span>
-            <span class="col-tog active" data-col="year" onclick="toggleCol(this)">Year Row</span>
+            <span class="col-tog active" data-col="year" title="Exported chart only (the timeline always shows the year)" onclick="toggleCol(this)">Year Row</span>
             <span class="col-tog active" data-col="variance" onclick="toggleCol(this)">Variance</span>
             <span class="col-tog active" data-col="calweek" onclick="toggleCol(this)">Cal. Week No.</span>
             <span class="col-tog active" data-col="today_col" onclick="toggleCol(this)">Today Marker</span>
@@ -2412,17 +2412,25 @@ function onePagerHTML(opts){
   var late=tasks.map(function(t){ var st=taskStatus(t,starts,today); if(st!==3&&st!==4) return null;
       var r=st===3?taskFinishDate(t,starts):taskStartDate(t,starts); return {t:t,days:Math.max(0,Math.round((today-r)/DAY))}; })
     .filter(Boolean).sort(function(a,b){return b.days-a.days;});
-  var next=tasks.filter(function(t){return taskStatus(t,starts,today)===1;})
-    .map(function(t){ var s=taskStartDate(t,starts); return {t:t,s:s,days:Math.round((s-today)/DAY)}; }).sort(function(a,b){return a.s-b.s;});
+  /* Coming up (same rule as the on-screen dashboard): what starts or is due before the next meeting, or in the next 3 weeks */
+  var nmD=parseDateLocal((book&&book.nextMeeting)||''), byMeeting=!!(nmD&&nmD>=today), winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY), next=[];
+  tasks.forEach(function(t){
+    var st=taskStatus(t,starts,today); if(st===5) return;
+    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
+    if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
+    else if(!ms&&fD>=today&&fD<=winEnd) next.push({t:t,s:fD,what:'due',days:Math.round((fD-today)/DAY)});
+  });
+  next.sort(function(a,b){return a.s-b.s;});
   var meta=function(t){return phDot(t.phase)+E(PLABEL[t.phase]||t.phase)+(t.resp?(' &middot; '+E(t.resp)):'');};
   h+='<section class="three"><div class="card"><div class="ch">Focus &mdash; delayed tasks <span class="tag">'+late.length+'</span></div><ul class="list">';
   if(late.length) late.slice(0,5).forEach(function(x){ h+='<li><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+'</small></span><span class="late">'+(x.days?(x.days+(x.days===1?' day':' days')+' late'):'delayed')+'</span></li>'; });
   else h+='<li class="mut">Nothing delayed &mdash; every task is on plan.</li>';
   if(late.length>5) h+='<li class="mut">+ '+(late.length-5)+' more delayed</li>';
-  h+='</ul></div><div class="card"><div class="ch">Next steps</div><ul class="list">';
+  h+='</ul></div><div class="card"><div class="ch">Coming up <span class="tag">'+(byMeeting?'until the meeting on '+E(gvDayLong(nmD)):'the next 3 weeks')+'</span></div><ul class="list">';
   if(next.length) next.slice(0,5).forEach(function(x){ var when=x.days<=0?'today':(x.days===1?'tomorrow':('in '+x.days+' days'));
-      h+='<li><span class="db"><b>'+x.s.getDate()+'</b>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+'</small></span><span class="when">'+when+'</span></li>'; });
-  else h+='<li class="mut">No upcoming tasks &mdash; everything has started.</li>';
+      h+='<li><span class="db"><b>'+x.s.getDate()+'</b>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span><span class="nm"><span class="n">'+E(x.t.name)+'</span><small>'+meta(x.t)+' &middot; '+x.what+'</small></span><span class="when">'+when+'</span></li>'; });
+  else h+='<li class="mut">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</li>';
+  if(next.length>5) h+='<li class="mut">+ '+(next.length-5)+' more</li>';
   h+='</ul></div>';
   var ms=tasks.filter(function(t){return t.milestone;});
   h+='<div class="card"><div class="ch">Key milestones &amp; sign-offs <span class="tag">'+ms.length+'</span></div><ul class="list">';
@@ -3563,30 +3571,32 @@ function loadDefaults(){
 
 /* ---- Critical Path Algorithm ---- */
 function computeCriticalPath(starts){
+  /* Critical = (almost) no slack: the latest a task can start, worked back from the project end, is its planned start.
+     Uses the same links computeStarts() uses: every predecessor with its delay and, unless phases may overlap,
+     the gate rule (a phase waits for every task of the earlier phases). "Almost" = under ~1 day, because
+     day-based lengths and delays leave fractional weeks (2 days = 0.4, 1 calendar day = 0.14). */
   if(!tasks.length) return {};
-  // Forward pass to get early finish
-  var ef={}, es={};
-  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; ef[t.id]=es[t.id]+durW(t); });
-  // Find project end
-  var projEnd=0; tasks.forEach(function(t){projEnd=Math.max(projEnd,ef[t.id]);});
-  // Backward pass - late start/finish
-  var lf={}, ls={};
-  tasks.forEach(function(t){ lf[t.id]=projEnd; });
-  // For tasks with successors, LF = min(LS of successors)
-  for(var i=tasks.length-1;i>=0;i--){
-    var t=tasks[i];
-    // Find all tasks that depend on t
-    tasks.forEach(function(succ,si){
-      var pid=resolvePredsForTask(succ,si)[0]||null;
-      if(pid===t.id){
-        lf[t.id]=Math.min(lf[t.id],(ls[succ.id]!==undefined?ls[succ.id]:projEnd)-(succ.lag||0));
-      }
-    });
-    ls[t.id]=lf[t.id]-durW(t);
+  var EPS=0.15, es={}, succ={}, projEnd=0;
+  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; projEnd=Math.max(projEnd,es[t.id]+durW(t)); succ[t.id]=[]; });
+  var link=function(pid,t,lag){ if(succ[pid]&&pid!==t.id) succ[pid].push({t:t,lag:lag}); };
+  tasks.forEach(function(t,i){
+    resolvePredsForTask(t,i).forEach(function(pid){ link(pid,t,t.lag||0); });
+    if(!allowPhaseOverlap){
+      var myPI=PORDER.indexOf(t.phase);
+      tasks.forEach(function(q){ var qi=PORDER.indexOf(q.phase); if(qi>=0&&qi<myPI&&activePhases[q.phase]) link(q.id,t,0); });
+    }
+  });
+  var ls={}, busy={};
+  function lateStart(t){   /* memoised backward pass, so list order doesn't matter */
+    if(ls[t.id]!==undefined) return ls[t.id];
+    if(busy[t.id]) return projEnd-durW(t);   /* dependency loop guard */
+    busy[t.id]=1;
+    var lf=projEnd;
+    succ[t.id].forEach(function(e){ lf=Math.min(lf,lateStart(e.t)-e.lag); });
+    return (ls[t.id]=lf-durW(t));
   }
-  // Float = LS - ES; critical if float == 0
   var crit={};
-  tasks.forEach(function(t){ crit[t.id]=(ls[t.id]-es[t.id])===0; });
+  tasks.forEach(function(t){ crit[t.id]=lateStart(t)-es[t.id]<=EPS; });
   return crit;
 }
 
@@ -3737,7 +3747,7 @@ function refreshAll(){
    with the grid. Shared geometry constants keep the two panes in
    lockstep — change GV_ROW in one place and both follow.
    ══════════════════════════════════════════════════════ */
-var GV_ROW=36, GV_HEAD=52, GV_WW=26, selectedTaskId=null;
+var GV_ROW=36, GV_HEAD=62, GV_WW=26, selectedTaskId=null;
 /* Task Name column width, set by the splitter; the pane is this plus the visible columns. */
 var gvNameW=300, gvFixedW=0;   /* Task column, until the splitter is dragged */
 
@@ -4009,6 +4019,7 @@ function syncSettingsUI(){
     var c=el.getAttribute('data-col');
     el.classList.toggle('active',!!colVis[c]);
   });
+  gvSyncVarianceTog();
   renderPhasePills();
 }
 
@@ -4407,6 +4418,7 @@ function gvSegPalette(){
 function renderChartPane(starts){
   var host=document.getElementById('gvChart'); if(!host) return;
   var rows=gvRows(), th=gvTheme(), pal=gvSegPalette(), today=stToday(), used={};
+  var critMap=colVis.crit?computeCriticalPath(starts):{};   /* Settings > Gantt display > Critical Path */
   if(!rows.length){ host.innerHTML='<div class="gv-chart-empty">No tasks yet. Add one to begin.</div>'; renderGvLegend(pal,used); return; }
   var sd=projStartDate();
   var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); });
@@ -4418,24 +4430,38 @@ function renderChartPane(starts){
   var PADX=10;   /* inset so a milestone on the first day isn't cut off */
   var s='<svg xmlns="http://www.w3.org/2000/svg" width="'+(W+PADX)+'" height="'+H+'" style="display:block" font-family="'+th.fb+'"><rect x="0" y="0" width="'+PADX+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><g transform="translate('+PADX+',0)">';
 
-  /* calendar header: month band over week numbers (weeks only when there's room for them) */
-  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+th.line2+'"/>';
+  /* calendar header: year band, month band, then week numbers (weeks only when there's room and Cal. Week No. is on).
+     Grid lines in the plan follow Settings > Gantt display (Grid: Weekly / 2-Week / 4-Week / Month), as in the export. */
+  var YR_H=18, WK_Y=44;   /* year row 0-18, month row 18-44, week row 44-GV_HEAD */
+  s+='<rect x="0" y="0" width="'+W+'" height="'+GV_HEAD+'" fill="'+th.bg+'"/><line x1="0" y1="'+(YR_H-.5)+'" x2="'+W+'" y2="'+(YR_H-.5)+'" stroke="'+th.line+'"/><line x1="0" y1="'+(GV_HEAD-.5)+'" x2="'+W+'" y2="'+(GV_HEAD-.5)+'" stroke="'+th.line2+'"/>';
   var grid='', bg='', fg='';   /* layers: row backgrounds, then grid lines, then bars */
-  var mCur=new Date(sd.getTime()), mStart=0;
+  var mCur=new Date(sd.getTime()), mStart=0, yCur=sd.getFullYear(), yStart=0;
   for(var i=0;i<=TW;i++){
     var d=new Date(sd.getTime()+i*MS_WEEK);
     if(i===TW||d.getMonth()!==mCur.getMonth()){
-      var mw=(i-mStart)*WW;
-      var yr=(mCur.getMonth()===0||mStart===0)?(mw>=76?' '+mCur.getFullYear():(mw>=52?' \u2019'+String(mCur.getFullYear()).slice(2):'')):'';
-      if(mw>30) s+='<text x="'+(mStart*WW+8)+'" y="21" font-size="12" font-weight="600" fill="'+th.tx+'">'+GV_MON[mCur.getMonth()]+yr+'</text>';
-      if(i>0){ s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; grid+='<line x1="'+(i*WW)+'" y1="'+GV_HEAD+'" x2="'+(i*WW)+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; }
+      if((i-mStart)*WW>30) s+='<text x="'+(mStart*WW+8)+'" y="'+(YR_H+17)+'" font-size="12" font-weight="600" fill="'+th.tx+'">'+GV_MON[mCur.getMonth()]+'</text>';
+      if(i>0&&i<TW){ s+='<line x1="'+(i*WW)+'" y1="'+YR_H+'" x2="'+(i*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line2+'" stroke-opacity=".7"/>';
+        if(colVis.grid_month) grid+='<line x1="'+(i*WW)+'" y1="'+GV_HEAD+'" x2="'+(i*WW)+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".7"/>'; }
       mStart=i; mCur=d;
     }
+    if(i===TW||d.getFullYear()!==yCur){
+      if((i-yStart)*WW>=34) s+='<text x="'+(yStart*WW+8)+'" y="13" font-size="11" font-weight="600" fill="'+th.mu+'">'+yCur+'</text>';
+      if(i>0&&i<TW) s+='<line x1="'+(i*WW)+'" y1="0" x2="'+(i*WW)+'" y2="'+YR_H+'" stroke="'+th.line2+'"/>';
+      yStart=i; yCur=d.getFullYear();
+    }
   }
+  var showWk=!!colVis.calweek&&WW>=22;
   for(var w=0;w<TW;w++){
-    if(WW>=22){
-      s+='<line x1="'+(w*WW)+'" y1="'+(GV_HEAD-18)+'" x2="'+(w*WW)+'" y2="'+GV_HEAD+'" stroke="'+th.line+'"/>'; grid+='<line x1="'+(w*WW)+'" y1="'+GV_HEAD+'" x2="'+(w*WW)+'" y2="'+H+'" stroke="'+th.line+'"/>';
-      s+='<text x="'+(w*WW+WW/2)+'" y="'+(GV_HEAD-9)+'" font-size="10.5" fill="'+th.mu+'" text-anchor="middle" font-family="'+th.fm+'">'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    var gx=w*WW;
+    if(showWk){
+      if(w>0) s+='<line x1="'+gx+'" y1="'+WK_Y+'" x2="'+gx+'" y2="'+GV_HEAD+'" stroke="'+th.line+'"/>';
+      s+='<text x="'+(gx+WW/2)+'" y="'+(GV_HEAD-5.5)+'" font-size="10.5" fill="'+th.mu+'" text-anchor="middle" font-family="'+th.fm+'">'+getISOWeek(new Date(sd.getTime()+w*MS_WEEK))+'</text>';
+    }
+    if(w>0){
+      var is4=(w%4===0), is2=(!is4&&w%2===0);
+      if(is4&&colVis.grid_4week) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line2+'" stroke-opacity=".55"/>';
+      else if(is2&&colVis.grid_2week&&WW*2>=10) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line+'"/>';
+      else if(!is4&&!is2&&colVis.grid_week&&WW>=10) grid+='<line x1="'+gx+'" y1="'+GV_HEAD+'" x2="'+gx+'" y2="'+H+'" stroke="'+th.line+'" stroke-opacity=".6"/>';
     }
   }
 
@@ -4464,14 +4490,15 @@ function renderChartPane(starts){
       bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
       y+=GV_ROW; return;
     }
-    var t=r.task, st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today);
-    if(ri++%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+th.alt+'"/>';
+    var t=r.task, st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today), crit=!!critMap[t.id];
+    if(crit){ bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+gvMix(th.bad,th.bg,0.08)+'"/><rect x="0" y="'+y+'" width="3" height="'+GV_ROW+'" fill="'+th.bad+'" opacity=".75"/>'; used._crit=1; ri++; }
+    else if(ri++%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+GV_ROW+'" fill="'+th.alt+'"/>';
     bg+='<line x1="0" y1="'+(y+GV_ROW)+'" x2="'+W+'" y2="'+(y+GV_ROW)+'" stroke="'+th.line+'"/>';
     var bx=(st-1)*WW, bw=Math.max(dw*WW,2), by=y+8, bh=GV_ROW-16;
     var sc=pal[t.seg]||pal._; used[t.seg&&pal[t.seg]?t.seg:'_']=1;
     var fill=stt===5?th.ok:sc.fill, ink=stt===5?gvInk(th.ok):sc.ink, late=(stt===3||stt===4);
     var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts);
-    var tip=t.name+' · '+(dw===0||t.milestone?gvDayLong(sD):gvDayLong(sD)+' → '+gvDayLong(fD)+' · '+gvLenText(t))+' · '+GV_ST_LABEL[stt];
+    var tip=t.name+' · '+(dw===0||t.milestone?gvDayLong(sD):gvDayLong(sD)+' → '+gvDayLong(fD)+' · '+gvLenText(t))+' · '+GV_ST_LABEL[stt]+(crit?' · On the critical path':'');
     bpos[t.id]={x:bx,w:bw,midY:y+GV_ROW/2};
     fg+='<g><title>'+gvEsc(tip)+'</title>';
     if(dw===0||t.milestone){
@@ -4506,20 +4533,22 @@ function renderChartPane(starts){
       var at=tasks[ai];
       resolvePredsForTask(at,ai).forEach(function(pid){
         var f=bpos[pid], to=bpos[at.id]; if(!f||!to) return;
-        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+7,x2-7);
-        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+th.mu+'" stroke-width="1.2" opacity=".55"/>';
-        s+='<path d="M'+x2+' '+y2+' l-5 -3.5 l0 7 z" fill="'+th.mu+'" opacity=".7"/>';
+        var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+7,x2-7), cc=critMap[pid]&&critMap[at.id], ac=cc?th.bad:th.mu;
+        s+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+ac+'" stroke-width="'+(cc?1.6:1.2)+'" opacity="'+(cc?.85:.55)+'"/>';
+        s+='<path d="M'+x2+' '+y2+' l-5 -3.5 l0 7 z" fill="'+ac+'" opacity="'+(cc?.9:.7)+'"/>';
       });
     }
   }
 
   /* today: a red line with a pill on the week row */
   var todayW=weekFromDate(toISODate(new Date()),sd);
-  if(todayW!==null&&todayW>=1&&todayW<=TW+1){
+  if(!colVis.today_col&&todayW!==null&&todayW>=1&&todayW<=TW+1)   /* marker hidden: keep an invisible anchor so the Today button still scrolls */
+    s+='<line class="gv-today" x1="'+((todayW-1)*WW)+'" y1="0" x2="'+((todayW-1)*WW)+'" y2="0" stroke="none"/>';
+  if(colVis.today_col&&todayW!==null&&todayW>=1&&todayW<=TW+1){
     var tx=(todayW-1)*WW;
     s+='<line class="gv-today" x1="'+tx+'" y1="'+(GV_HEAD-2)+'" x2="'+tx+'" y2="'+H+'" stroke="'+th.bad+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
-    s+='<rect x="'+(tx-23)+'" y="'+(GV_HEAD-21)+'" width="46" height="18" rx="9" fill="'+th.bad+'"/>';
-    s+='<text x="'+tx+'" y="'+(GV_HEAD-8)+'" font-size="10.5" fill="'+gvInk(th.bad)+'" text-anchor="middle" font-weight="600">Today</text>';
+    s+='<rect x="'+(tx-23)+'" y="'+(WK_Y+1)+'" width="46" height="16" rx="8" fill="'+th.bad+'"/>';
+    s+='<text x="'+tx+'" y="'+(WK_Y+12.5)+'" font-size="10.5" fill="'+gvInk(th.bad)+'" text-anchor="middle" font-weight="600">Today</text>';
     used._today=1;
   }
   s+='</g></svg>';
@@ -4533,6 +4562,7 @@ function renderGvLegend(pal,used){
   if(used._) h+='<span><i class="sw" style="background:'+pal._.fill+'"></i>No segment</span>';
   if(used._ms) h+='<span><i class="dm"></i>Milestone</span>';
   if(used._late) h+='<span><i class="lt"></i>Late</span>';
+  if(used._crit) h+='<span><i class="cp"></i>Critical path</span>';
   if(used._today) h+='<span><i class="td"></i>Today</span>';
   el.innerHTML=h; el.hidden=!h;
 }
@@ -4813,6 +4843,13 @@ function getById(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return
 function getIdx(id){for(var i=0;i<tasks.length;i++) if(tasks[i].id===id) return i; return -1;}
 function sortTasks(){tasks.sort(function(a,b){return PORDER.indexOf(a.phase)-PORDER.indexOf(b.phase);});}
 
+/* Variance only exists in Actual mode: grey it out (still switchable) and say why */
+function gvSyncVarianceTog(){
+  var v=document.querySelector('#panelDisplay .col-tog[data-col="variance"]'); if(!v) return;
+  var off=scheduleMode!=='actual';
+  v.classList.toggle('na',off);
+  v.title=off?'Shows in Actual mode only (exported chart)':'Exported chart: plan vs actual, in weeks';
+}
 function toggleCol(el){
   var col=el.getAttribute('data-col');
   colVis[col]=!colVis[col];
@@ -4862,7 +4899,7 @@ function setMode(m){
     var lb2=document.getElementById('logRegisterBtn'); if(lb2) lb2.style.display='none';
     var vb2=document.getElementById('logViewBtn'); if(vb2) vb2.style.display='none';
   }
-  renderPanel(); renderGantt();
+  renderPanel(); renderGantt(); gvSyncVarianceTog();
 }
 
 /* ===== Dynamic phases: sync with the tasks in the plan; add / remove / hide ===== */
@@ -5650,9 +5687,15 @@ function renderGantt(){
       s+='<line x1="0" y1="'+(banY+PHR)+'" x2="'+W+'" y2="'+(banY+PHR)+'" stroke="'+pc.bar+'" stroke-width="0.5"/>';
       s+='<text x="'+(PL+CID+4)+'" y="'+(banY+PHR/2+4)+'" font-size="9.5" font-weight="700" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" letter-spacing="0.3">'+PLABEL[t.phase].toUpperCase()+' PHASE</text>';
       if(ps){
-        var summaryX=PL+LEFT-PR-4;
-        s+='<text x="'+summaryX+'" y="'+(banY+PHR/2+4)+'" font-size="9" font-weight="600" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" font-weight="500" text-anchor="end">Wk '+ps.start+' – '+ps.end+' &bull; '+ps.dur+' wks</text>';
         var phBX=PL+LEFT+(ps.start-1)*WW, phBW=ps.dur*WW;
+        /* "Wk a – b • n wks" sits just after the gate's bar (before it when the bar ends near the right edge),
+           so it can never run over the gate name in the task column */
+        var sumTx='Wk '+ps.start+' – '+ps.end+' • '+ps.dur+' wks', sumW=legW(sumTx,9,600), sumX=null, sumA='start';
+        if(phBX+Math.max(phBW,0)+6+sumW<=W-PR-2) sumX=phBX+Math.max(phBW,0)+6;
+        else if(phBX-6-sumW>=PL+LEFT+2){ sumX=phBX-6; sumA='end'; }
+        else { var nmTx=PLABEL[t.phase].toUpperCase()+' PHASE', nmEnd=PL+CID+4+legW(nmTx,9.5,700)+nmTx.length*0.3;
+          if(PL+LEFT-6-sumW>=nmEnd+10){ sumX=PL+LEFT-6; sumA='end'; } }
+        if(sumX!==null) s+='<text x="'+sumX+'" y="'+(banY+PHR/2+4)+'" font-size="9" font-weight="600" font-family="Tomorrow,DM Sans,sans-serif" fill="'+pc.text+'" text-anchor="'+sumA+'">'+sumTx.replace('•','&bull;')+'</text>';
         if(phBW>0){
           s+='<rect x="'+phBX+'" y="'+(banY+3)+'" width="'+phBW+'" height="'+(PHR-6)+'" rx="3" fill="'+pc.bar+'" opacity="0.13"/>';
           s+='<rect x="'+phBX+'" y="'+(banY+3)+'" width="'+phBW+'" height="'+(PHR-6)+'" rx="3" fill="none" stroke="'+pc.bar+'" stroke-width="1" opacity="0.35"/>';

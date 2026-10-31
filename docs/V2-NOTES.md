@@ -51,11 +51,23 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
 - Notifications include inquiry next actions, filter by person and by next 7 / 30 days, and every row has a
   calendar button to move its deadline (or the chase date of an awaiting reply)
 - Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, alerts, search) on that
-  device; the Dashboard switches to a projects view (late/at-risk, upcoming milestones, this week's actions,
-  waiting on others, stale projects, factory load)
+  device; the Dashboard drops the inquiry rows, the SLA card and Won vs lost
 - Pin button on every project card and on the project page
-- Dashboard: V1's My Day panels (waiting on others, stale projects, new tasks on older items) and the
-  once-a-day overdue banner
+- Dashboard, top to bottom:
+  - the greeting is one line beside the title (under it on phones)
+  - Needs you: the 5 most urgent items. Late work first (most working days late on top): your overdue actions
+    and tasks, inquiries past their SLA, late projects, milestones up to a month past their date. Then what is
+    due today, then trials and milestones in the next 3 days. The circle completes an action right there
+    (same as Notifications, with Undo); tapping the row opens the inquiry, project or task
+  - four tiles: Overdue actions, Inquiries over SLA (Projects at risk in Projects only), Projects late,
+    Due this week. Each says how it compares with a week ago; the number turns red only when above zero
+  - This week: today and the next five working days, with milestones (trials get a flask) and deliveries
+  - More: factory load (overdue, at risk, on track), inquiry SLA with where open inquiries are waiting,
+    and V1's My Day panels (waiting on others, stale projects, new tasks on older items) and Won vs lost
+    (12 months, with the win rate) only when they have something; the empty ones are named in one
+    "All clear" line
+  - the factory filter applies to all of it; the once-a-day overdue banner and the range control are gone
+    (the Overdue tile and Needs you carry that now)
 
 Every date is picked from V2's own calendar (never the phone's or Windows' date box): weeks start
 on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next

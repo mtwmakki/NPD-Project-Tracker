@@ -53,6 +53,21 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
 - Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, alerts, search) on that
   device; the Dashboard drops the inquiry rows, the SLA card and Won vs lost
 - Pin button on every project card and on the project page
+- Project page, top to bottom:
+  - one "Projects" back button; the project name is the title, with Late / At risk / On track and the reason
+    ("Delivery date 29 Oct passed · 2 actions overdue, the oldest by 10 working days")
+  - Edit, Pin and Timeline (opens the Gantt) beside the name
+  - three cards: Next action (complete it with the circle, tap the name to edit), Delivery ("Move date" opens
+    the calendar; "1 working day late" / "12 working days left") and Stage
+  - Stage: one of the 7 phases of the Gantt's NPD Procedure Template (Design, CAPEX Approval, Pilot Mold,
+    Commercial Mold, Machine & Aux Equipment, IML Development, Production Ramp-Up). Tap the card to pick it;
+    it is also in the project form. Saved as `stage` (plus `stageSince`) on the project and in the Excel export
+  - milestone strip: milestones and the delivery date in date order with a Today marker; missed ones in red;
+    tap one to edit it (the delivery date opens the calendar)
+  - tabs (Actions, Updates, Overview, History) with the "+" in each section header; done actions fold away
+  - right column (below the tabs on tablets and phones): progress, ball in court, people, and a Details block
+    (codes, factory, type, sales, start date, links)
+  - stage changes and delivery-date moves are written to the project's history
 - Dashboard, top to bottom:
   - the greeting is one line beside the title (under it on phones)
   - Needs you: the 5 most urgent items. Late work first (most working days late on top): your overdue actions
@@ -85,8 +100,8 @@ Each change is written to the item's history and to the Firestore changelog (no 
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 
 ## How V2 maps your data
-- Projects have no phase field, so the board groups by status (not started / in progress / completed)
-  and the project page shows your real milestones as the timeline.
+- Projects now have a `stage` field (new in V2, empty until someone picks one). The board still groups by
+  status (not started / in progress / completed); the milestone strip shows the real milestones.
 - Project health: Late = an overdue open action or delivery date passed; At risk = action due within
   3 days or delivery within 14 days.
 - Inquiry priority 3/2/1 shows as High / Medium / Low. SLA rules are identical to V1.

@@ -52,7 +52,16 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   calendar button to move its deadline (or the chase date of an awaiting reply)
 - Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, alerts, search) on that
   device; the Dashboard drops the inquiry rows, the SLA card and Won vs lost
-- Pin button on every project card and on the project page
+- Projects page:
+  - Cards: each card reads name and health (Late red, At risk orange, On track grey, On hold, Completed),
+    the next action with its date (red when overdue), progress and stage, then codes, factory and type, muted.
+    Filter Active / On hold / Completed / All; sort by most urgent first, delivery date, recently updated or
+    name. Pinned projects come first; the pin shows on hover (filled when pinned)
+  - Board: real columns. By status: Not started, In progress, On hold, Completed. By stage: Stage not set and the
+    7 NPD stages (completed projects left out). Drag a card to another column to change its status or stage
+    (mouse: just drag; touch: hold the card, then drag; dragging to the edge scrolls the board). Undo on the toast
+  - the view, filter, sort and board grouping are remembered on the device
+- Pin from a card (on hover) or from the project page
 - Project page, top to bottom:
   - one "Projects" back button; the project name is the title, with Late / At risk / On track and the reason
     ("Delivery date 29 Oct passed · 2 actions overdue, the oldest by 10 working days")
@@ -100,8 +109,8 @@ Each change is written to the item's history and to the Firestore changelog (no 
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 
 ## How V2 maps your data
-- Projects now have a `stage` field (new in V2, empty until someone picks one). The board still groups by
-  status (not started / in progress / completed); the milestone strip shows the real milestones.
+- Projects now have a `stage` field (new in V2, empty until someone picks one, on the project page or by dragging
+  on the stage board). The board groups by status or by stage; the milestone strip shows the real milestones.
 - Project health: Late = an overdue open action or delivery date passed; At risk = action due within
   3 days or delivery within 14 days.
 - Inquiry priority 3/2/1 shows as High / Medium / Low. SLA rules are identical to V1.

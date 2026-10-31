@@ -34,9 +34,24 @@ Present mode shows the TPAC logo.
   line), Weeks / Months (was a zoom %; remembered per device as `gantt3:scale`), Project settings.
 - Phones: the header stacks and the toolbar shows icons; nothing scrolls sideways. The full phone layout comes later.
 
+## Phase 2 (done): Gantt editor
+- Task table, 36px rows, sentence-case header. Default columns: Status, Owner, Start, Finish, Length, Depends on.
+  Segment, Milestone, Delay and Linkage are under ⋯ → Table columns. The table's Segment and Depends-on columns use
+  their own keys (`gvSeg`, `gvPred`) so the preview / export keeps its own column choice. Plans saved before Phase 2
+  get the new defaults once (`colVer: 2` in the plan).
+- Status chips with a word and an icon: Not started, In progress, Running late, Late start, Done (V3's statuses 1–5).
+  Set from the dates; click a chip to pick Auto or a status by hand (a pin marks a hand-set status). Chip text is
+  mixed toward the look's text colour so it passes AA in every look.
+- Owner: free text with an initials avatar. Dates read "23 Nov" ("4 Jan ’27" in another year) and open V2's
+  calendar (arrow keys move, quick picks Today / Next Monday / +1 wk / +2 wks, or +1 wk / +2 wks / End of month /
+  Same as start for a finish; Unpin for a pinned start). Depends on shows row numbers, names on hover.
+- Fixed: the Task cell was pushed 58px over the Status column by an old style (relative + left:58px), which is why
+  V3 showed status codes cut to "PD", "IP".
+- Timeline: colours resolved from the look at draw time. Bars by segment from the look's palette (white or dark text,
+  whichever reads), Done bars green, late work outlined red, milestones as diamonds, a red Today pill, month + week
+  header, a tooltip on every bar, a 10px inset so a first-day milestone isn't cut. Legend under the plan.
+
 ## Next phases
-2. Gantt editor: task table (status chips "Not started / In progress / Running late / Late start / Done", owner
-   avatars, "23 Nov" dates, V2's date picker) and timeline (header, Today pill, segment colours, legend).
 3. Customer status page and Present mode.
 4. Dashboard: four tiles, task bar, stage gates with remarks.
 Later: phone layout.

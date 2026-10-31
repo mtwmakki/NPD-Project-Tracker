@@ -160,7 +160,6 @@
 :root[data-look="J"] #tseg button{padding:8px 0;font-weight:500}
 :root[data-look="J"] #tseg button::before{content:"◇";margin-right:7px;font-size:11px}
 :root[data-look="J"] #tseg button.on::before{content:"◆"}
-:root[data-look="J"] .bhead{background:var(--surf);border-color:var(--line)}
 :root[data-look="J"] .lg-name{font-weight:500}
 
 /* motion levels */
@@ -458,13 +457,8 @@ button{font:inherit;color:inherit}
 .pcard:hover{transform:translateY(-3px);border-color:var(--line-2)}
 .pcard:active{transform:scale(.98)}
 .pcard .t{font:var(--ph-w) 19px/1.2 var(--fd);letter-spacing:-.02em;margin:0;width:fit-content;max-width:100%}
-.pcard .meta{display:flex;gap:6px;flex-wrap:wrap}
-.prog{display:grid;gap:8px}
-.prog .lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mu)}
-.prog .lab b{color:var(--tx);font-weight:600}
 .pbar{height:6px;border-radius:99px;background:var(--track);overflow:hidden}
 .pbar i{display:block;height:100%;border-radius:inherit;background:var(--c,var(--prog));transform-origin:left;animation:grow calc(1100ms*var(--k)) var(--ease-out) backwards;animation-delay:calc(250ms*var(--k) + var(--i,0)*70ms*var(--k))}
-.pfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--mu)}
 
 /* project detail */
 @keyframes nodepop{from{transform:scale(0)}}
@@ -629,29 +623,11 @@ button{font:inherit;color:inherit}
 .ph-act{display:none}
 #topx{min-width:0;display:flex}
 .ph-tools{display:flex;align-items:center;gap:10px}
-.board{display:grid;gap:10px}
-.bcol{display:grid;grid-template-columns:200px minmax(0,1fr);gap:14px;align-items:start;padding:12px;border-radius:var(--r-card);background:var(--hover);border:1px solid var(--line);min-width:0}
-.bcol.empty{padding:8px 12px;align-items:center}
-.bcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;min-width:0}
-.bcol.empty .bcards{color:var(--mu);font-size:13px}
-.bhead .step{margin-left:auto;font:500 11px var(--fm);color:var(--mu)}
-@media (max-width:860px){.bcol{grid-template-columns:minmax(0,1fr)}}
-.bhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r-sm);background:var(--surf-solid);border:1px solid var(--line);font-weight:600;font-size:13.5px;white-space:nowrap;min-width:0}
-.bhead .n{color:var(--mu);font-weight:500}
-.bhead .ic{width:13px;height:13px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--dc,var(--mu));flex:none}
-.bhead .ic.half{background:conic-gradient(var(--dc) 0 50%,transparent 0)}
-.bhead .ic.full{background:var(--dc)}
-.bhead .plus{margin-left:auto;color:var(--mu);font-weight:400}
 .bcard{padding:14px;display:grid;gap:10px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
 .bcard:hover{border-color:var(--line-2)}
 .bcard:active{transform:scale(.98)}
-.bcard .tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .bcard .t{font-weight:600;font-size:15px;margin:0;width:fit-content;max-width:100%;line-height:1.3}
-.bcard .s{font-size:12.5px;color:var(--mu);margin-top:-6px}
 .bfoot{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.avs{display:flex}
-.avs i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 9.5px var(--fb);font-style:normal;color:#fff;border:2px solid var(--surf-solid);margin-left:-7px}
-.avs i:first-child{margin-left:0}
 .bempty{padding:16px;border:1px dashed var(--line-2);border-radius:var(--r-card);text-align:center;color:var(--mu);font-size:13px}
 :root[data-vt="list"] .pcard,:root[data-vt="list"] .bcard{view-transition-name:var(--n)}
 .refs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:8px}
@@ -814,7 +790,6 @@ body{padding:0}
 .links a:hover{border-color:var(--ac)}
 .ro{font-size:12.5px;color:var(--mu)}
 /* projects live */
-.pcard .brief{font-size:13px;color:var(--mu);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:-6px}
 .more{display:flex;justify-content:center;margin:14px 0 4px}
 .upd{display:grid;gap:10px}
 .upd .u{padding:12px 14px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line);display:grid;gap:6px}
@@ -1049,12 +1024,6 @@ body{padding:0}
 .pop-note{margin:8px 2px 0;font-size:12px;color:var(--mu);line-height:1.4}
 #focusseg{width:100%}#focusseg button{flex:1;justify-content:center}
 /* ── pin buttons ── */
-.ptop{display:inline-flex;align-items:center;gap:6px}
-.pinb{width:30px;height:30px;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;flex:none;transition:color .2s,border-color .2s,background .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
-.pinb:hover{color:var(--tx);border-color:var(--tx)}
-.pinb:active{transform:scale(.88)}
-.pinb.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 22%,transparent)}
-.pinb[disabled]{cursor:default}
 [data-proj][role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 
 /* ───────── PHONES (iPhone, Fold cover screen) ───────── */
@@ -1317,9 +1286,7 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .pcard{padding:var(--pad);gap:10px}
 :root[data-look="K"] .pcard:hover{transform:none}
 :root[data-look="K"] .pcard .t{font:var(--w-emph) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t)}
-:root[data-look="K"] .pcard .brief{font:400 var(--sub)/var(--sub-l) var(--fb);margin-top:-4px}
 :root[data-look="K"] .bcard{padding:12px var(--pad);gap:8px}
-:root[data-look="K"] .bhead{border:0;border-radius:var(--r-sm);background:none;padding:6px 4px;font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);color:var(--mu)}
 :root[data-look="K"] .pbar{height:4px}
 /* project page header */
 
@@ -1780,6 +1747,76 @@ button.pj-pp:hover{background:var(--hover)}
   .pj-det{padding:10px 16px 12px}
 }
 
+/* ───────── PROJECT CARDS + BOARD (every style): name and health · next action · progress and stage · codes, muted ───────── */
+.ptools .seg + .seg{margin-left:4px}
+.psort{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border-radius:var(--r-pill);color:var(--tx);font:500 13.5px/1 var(--fb);cursor:pointer}
+.psort:hover{background:var(--hover)}
+.psort select{appearance:none;-webkit-appearance:none;border:0;background:none;color:inherit;font:inherit;padding:0 18px 0 0;margin-right:-18px;cursor:pointer;min-height:40px}
+.psort select:focus-visible{outline:none}
+.psort:focus-within{outline:2px solid var(--ac);outline-offset:2px}
+.psort>svg:last-child{transform:rotate(90deg);pointer-events:none;color:var(--mu)}
+.pgrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.pcard,.bcard{min-width:0}
+.pcard{gap:10px;padding:16px 18px}
+.pc-h{display:flex;align-items:flex-start;gap:6px;min-width:0}
+.pc-h .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.pcard .pc-h .t{font-size:17px;line-height:22px}
+.pc-h .pill{flex:none}
+.pc-h .pill svg{flex:none}
+.pc-pin{width:32px;height:32px;margin:-5px -2px -5px 0;border:0;border-radius:50%;background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;flex:none;opacity:0;transition:opacity .15s,background-color .2s,color .2s}
+.pcard:hover .pc-pin,.bcard:hover .pc-pin,.pc-pin:focus-visible,.pc-pin.on{opacity:1}
+.pc-pin:hover{background:var(--hover);color:var(--tx)}
+.pc-pin.on{color:var(--ac)}
+.pc-pin.on svg path{fill:currentColor}
+.pc-pin[disabled]{cursor:default}
+@media (hover:none){.pc-pin:not(.on){display:none}}
+.pc-nx{display:flex;align-items:baseline;gap:12px;min-width:0;font:400 13.5px/20px var(--fb)}
+.pc-nx .a{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-nx .a b{font-weight:600;margin-right:6px}
+.pc-nx.q .a{color:var(--mu)}
+.pc-nx .dt{flex:none;font:500 12.5px/20px var(--fb);color:var(--mu);font-variant-numeric:tabular-nums}
+.pc-nx .dt.late{color:var(--bad);font-weight:600}
+.pc-nx .dt.now{color:var(--ac);font-weight:600}
+.pc-pb{height:4px;border-radius:2px;background:var(--track);overflow:hidden}
+.pc-pb i{display:block;height:100%;border-radius:inherit;background:var(--prog)}
+.pc-prl{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font:400 12px/16px var(--fb);color:var(--mu);min-width:0}
+.pc-prl>span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-l4{padding-top:8px;border-top:1px solid var(--line);font:400 12px/16px var(--fb);color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-l4 .mono{font:500 11.5px/16px var(--fm)}
+.off .pc-h .t{color:var(--mu)}
+.pcard.off .pc-pb i,.bcard.off .pc-pb i{background:color-mix(in srgb,var(--mu) 50%,transparent)}
+.pboard{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,1fr);gap:12px;align-items:start;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding-bottom:8px}
+.pboard.stage{grid-auto-columns:minmax(240px,260px)}
+.pcol{display:grid;gap:8px;align-content:start;min-width:0;padding:8px;border:1px solid var(--line);border-radius:var(--r-card);background:var(--hover);scroll-snap-align:start;transition:border-color .2s,background-color .2s}
+.pcol.drop{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,var(--hover))}
+.pch{display:flex;align-items:center;gap:8px;min-height:36px;padding:2px 6px;font:600 14px/20px var(--fb);min-width:0}
+.pch b{font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pch .n{color:var(--mu);font-weight:500;font-variant-numeric:tabular-nums}
+.pch .pj-add{margin:-6px -6px -6px auto}
+.pch>svg{flex:none;color:var(--mu)}
+.pch .ic{width:13px;height:13px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--dc,var(--mu));flex:none}
+.pch .ic.half{background:conic-gradient(var(--dc,var(--mu)) 0 50%,transparent 0)}
+.pch .ic.full{background:var(--dc,var(--mu))}
+.pcn{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--track);color:var(--mu);font:600 11px/1 var(--fm)}
+.pcards{display:grid;gap:8px;min-height:44px}
+.pcol.drop .pcards::after{content:"";height:64px;border:2px dashed var(--ac);border-radius:var(--r-sm)}
+.pcol-empty{margin:0;padding:10px 6px;font-size:13px;color:var(--mu)}
+.pcol.drop .pcol-empty{display:none}
+.bcard{gap:8px;padding:12px 14px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.bcard .pc-h .t{font-size:14.5px;line-height:20px}
+.bcard .pc-nx{font-size:13px}
+.bcard .pc-l4{padding-top:6px}
+html:root .card.bcard.bd-src{background:none;box-shadow:none;border:2px dashed var(--line-2);backdrop-filter:none;-webkit-backdrop-filter:none}
+.bcard.bd-src>*{visibility:hidden}
+html:root .card.bd-ghost{position:fixed;z-index:90;margin:0;pointer-events:none;transform-origin:50% 50%;background:var(--surf-solid);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 20px 44px -14px rgba(0,0,0,.38)}
+html.bd-dragging,html.bd-dragging *{cursor:grabbing!important;-webkit-user-select:none;user-select:none}
+:is(.pcard,.bcard):focus-visible,.pc-pin:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media (max-width:720px){
+  .pboard,.pboard.stage{grid-auto-columns:min(320px,calc(100vw - 80px));scroll-snap-type:x mandatory}
+  .ptools{flex-wrap:wrap}
+  .psort{margin-left:auto}
+}
+
 /* ───────── LOGIN (every style) ─────────
    Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
    Phone: brand on top, the form in a sheet at the bottom within thumb reach; it moves up while the keyboard is open. */
@@ -2015,6 +2052,7 @@ const P = {
   flask:'M9 3h6M10 3v6l-5.4 9.2A1.9 1.9 0 0 0 6.2 21h11.6a1.9 1.9 0 0 0 1.6-2.8L14 9V3M7.2 15h9.6', diamond:'M12 3.5 20.5 12 12 20.5 3.5 12z',
   truck:'M3 6h11v10H3zM14 9.5h3.8L21 13v3h-7M7 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM17.5 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z',
   tup:'M4 17l6-6 4 4 6-7M15 8h5v5', tdn:'M4 7l6 6 4-4 6 7M15 16h5v-5', tflat:'M4 12h16M16 8l4 4-4 4',
+  pause:'M9 6v12M15 6v12', sort:'M4 7h16M7 12h10M10 17h4',
   pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', tasks:'M4 5h4v4H4zM4 15h4v4H4zM11 7h9M11 17h9', gantt:'M4 6h9M7 12h11M10 18h10M4 3v18', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
@@ -2023,7 +2061,7 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 /* ── prefs ── */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
-  page: 'dashboard', range: 'year', pview: 'cards', filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine', showDone: false,
+  page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine',
   mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
   focus: store.get('npd2-focus', 'all'), tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus;
@@ -3205,45 +3243,123 @@ function wireSheetDrag(){
 /* ── Projects ── */
 const AVC = ['#38BDF8','#A78BFA','#F472B6','#34D399','#FBBF24','#FB7185'];
 const initials = t => String(t||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase() || '?';
-function avs(p){
-  const people = (p.pics||[]).map(x => x.name).filter(Boolean).slice(0, 3);
-  if (!people.length && p.salesPerson) people.push(p.salesPerson);
-  return `<span class="avs">${facOf(p) ? `<i style="background:${facColor(facOf(p))}" title="${esc(facOf(p))}">${initials(facOf(p))}</i>` : ''}${people.map((n,k) => `<i style="background:${AVC[(n.length + k) % AVC.length]}" title="${esc(n)}">${initials(n)}</i>`).join('')}</span>`;
-}
 function nextOpenTask(p){ return (p.tasks||[]).filter(t => !t.done && t.deadline).sort((a,b) => a.deadline < b.deadline ? -1 : 1)[0]; }
+/* cards use the project page's levels, compressed: name and health · next action · progress and stage · codes, muted */
+const PB_STATUS = [['not-started','Not started'],['in-progress','In progress'],['on-hold','On hold'],['completed','Completed']];
+const pStatus = p => PB_STATUS.some(s => s[0] === p.status) ? p.status : 'not-started';
+const H_RANK = {over:0, risk:1, ok:2, done:3};
+function projSort(list, how){
+  const nd = p => { const t = nextOpenTask(p); return (t && t.deadline) || p.deliveryDate || '9'; }, by = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+  const cmp = how === 'delivery' ? (a, b) => by(a.deliveryDate || '9', b.deliveryDate || '9')
+    : how === 'name' ? (a, b) => String(a.name || '').localeCompare(String(b.name || ''))
+    : how === 'updated' ? (a, b) => by(lastUpdated(b) || '', lastUpdated(a) || '')
+    : (a, b) => (H_RANK[projHealth(a)] - H_RANK[projHealth(b)]) || by(nd(a), nd(b));
+  return [...list].sort((a, b) => (!!b.pinned - !!a.pinned) || cmp(a, b));
+}
+/* the day a project's status last changed to this one, from its history */
+const statusSince = (p, label) => { const a = [...(p.activityLog||[])].reverse().find(x => x.type === 'status' && String(x.text||'').endsWith(`<strong>${label}</strong>`)); return a ? a.date : ''; };
 function projCard(p, n, anim, cls = 'pcard'){
-  const h = projHealth(p), pct = projPct(p), tasks = p.tasks||[], nt = nextOpenTask(p), today = todayStr();
-  const canPin = can('projects','edit');
-  return `<div role="button" tabindex="0" class="card ${cls}${anim ? ' st' : ''}" style="--i:${Math.min(n, 12)};--n:p-${esc(String(p.id).replace(/[^\w-]/g,''))}" data-proj="${esc(p.id)}">
-    <div class="pfoot"><span class="mono">${esc(p.code || '')}</span><span class="ptop"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span>${canPin || p.pinned ? `<button type="button" class="pinb${p.pinned ? ' on' : ''}" ${canPin ? `data-pinp="${esc(p.id)}"` : 'disabled'} aria-pressed="${!!p.pinned}" aria-label="${p.pinned ? 'Unpin' : 'Pin'} ${esc(p.name)}" title="${p.pinned ? 'Pinned · tap to unpin' : 'Pin to the sidebar'}">${ico('pin',15)}</button>` : ''}</span></div>
-    <h3 class="t">${esc(p.name)}</h3>
-    ${p.brief ? `<div class="brief">${esc(p.brief)}</div>` : ''}
-    <div class="meta">${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}${p.status === 'not-started' ? '<span class="pill">Not started</span>' : ''}</div>
-    <div class="prog"><div class="lab"><span>Actions <b>${tasks.filter(t => t.done).length}/${tasks.length}</b></span><span>${pct}%</span></div><div class="pbar"><i style="width:${pct}%;--c:${h === 'ok' || h === 'done' ? 'var(--prog)' : ST_COLOR[h]}"></i></div></div>
-    <div class="pfoot">${avs(p)}<span class="due ${nt && nt.deadline < today ? 'late' : ''}">${nt ? 'Next ' + fmtDate(nt.deadline) : p.deliveryDate ? 'Delivery ' + fmtDate(p.deliveryDate) : ''}</span></div></div>`;
+  const h = projHealth(p), tasks = p.tasks || [], doneN = tasks.filter(t => t.done).length, today = todayStr(), board = cls === 'bcard';
+  const hold = p.status === 'on-hold', closed = isClosedProj(p), canPin = can('projects','edit'), si = NPD_STAGES.indexOf(p.stage || '');
+  const chip = closed ? ['done', 'check', board ? 'Done' : 'Completed'] : hold ? ['', 'pause', 'On hold'] : h === 'over' ? ['bad', 'clock', 'Late'] : h === 'risk' ? ['warn', 'clock', 'At risk'] : ['', '', 'On track'];
+  const showChip = !board || (!hold && !closed && h !== 'ok');   // on the board the column already says on hold / completed
+  const day = d => d < today ? fmtDate(d) : d === today ? 'Today' : board ? fmtDate(d) : fmtDay(d);
+  const na = !closed && !hold && nextAction(p), latest = [...(p.subStatuses||[])].sort((a,b) => (b.date||b.createdAt||'') > (a.date||a.createdAt||'') ? 1 : -1)[0];
+  const since = hold ? statusSince(p, 'On hold') : closed ? statusSince(p, 'Completed') : '';
+  const nx = closed ? [latest && latest.status === 'completed' ? latest.title : 'Completed', since ? fmtDate(since) : p.deliveryDate ? fmtDate(p.deliveryDate) : '', '']
+    : hold ? [p.kivComment || (latest && latest.title) || 'On hold', since ? 'since ' + fmtDate(since) : '', '']
+    : na ? [na.name, na.deadline ? day(na.deadline) : '', na.deadline && na.deadline < today ? 'late' : na.deadline === today ? 'now' : '']
+    : ['No open actions', p.deliveryDate ? 'Delivery ' + fmtDate(p.deliveryDate) : '', ''];
+  const stage = si >= 0 ? `${esc(p.stage)}${board ? '' : ` · ${si + 1} of ${NPD_STAGES.length}`}` : p.stage ? esc(p.stage) : '';
+  const acts = tasks.length ? `${doneN} of ${tasks.length}${board ? '' : ' actions'}` : 'No actions yet';
+  return `<div role="button" tabindex="0" class="card ${cls}${hold || closed ? ' off' : ''}${anim ? ' st' : ''}" style="--i:${Math.min(n, 12)};--n:p-${esc(String(p.id).replace(/[^\w-]/g,''))}" data-proj="${esc(p.id)}"${board && canPin ? ` title="Drag to another column to move it"` : ''}>
+    <div class="pc-h"><h3 class="t">${esc(p.name)}</h3>${p.pinned || canPin ? `<button type="button" class="pc-pin${p.pinned ? ' on' : ''}" ${canPin ? `data-pinp="${esc(p.id)}"` : 'disabled'} aria-pressed="${!!p.pinned}" aria-label="${p.pinned ? 'Unpin' : 'Pin'} ${esc(p.name)}" title="${p.pinned ? 'Pinned · tap to unpin' : 'Pin to the top and the sidebar'}">${ico('pin',14)}</button>` : ''}${showChip ? `<span class="pill ${chip[0]}">${chip[1] ? ico(chip[1], 13) : ''}${chip[2]}</span>` : ''}</div>
+    <div class="pc-nx${na ? '' : ' q'}"><span class="a">${na && !board ? '<b>Next</b>' : ''}${esc(nx[0])}</span>${nx[1] ? `<span class="dt ${nx[2]}">${esc(nx[1])}</span>` : ''}</div>
+    <div class="pc-pr"><div class="pc-pb"><i style="width:${projPct(p)}%"></i></div><div class="pc-prl">${board ? `<span>${acts}${stage ? ' · ' + stage : ''}</span>` : `<span>${acts}</span><span>${stage || '<span class="pj-unset">Stage not set</span>'}</span>`}</div></div>
+    <div class="pc-l4">${[p.code && `<span class="mono">${esc(p.code)}</span>`, esc(facOf(p)), !board && esc(CLASS_LABELS[p.classification] || p.classification || ''), !board && p.customer && `<span class="mono">${esc(p.customer)}</span>`, p.kiv && 'KIV'].filter(Boolean).join(' · ') || '&nbsp;'}</div></div>`;
+}
+const P_SORTS = [['urgent','Most urgent first'],['delivery','Delivery date'],['updated','Recently updated'],['name','Name']];
+function projLists(){
+  const all = DB.data.projects.filter(facMatch);
+  return { all, active: all.filter(p => !isClosedProj(p) && p.status !== 'on-hold'), hold: all.filter(p => p.status === 'on-hold'), done: all.filter(isClosedProj) };
 }
 function pageProjects(){
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}<span class="muted" style="font-size:13.5px">${S.pview === 'board' ? 'One row per status: not started, in progress, completed.' : 'Grouped by what needs you first.'}</span>${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
+  const L = projLists(), board = S.pview === 'board';
+  return `${staleBanner()}<div class="toolbar ptools st" style="--i:0">${segHTML('pseg', [['cards','Cards'],['board','Board']], S.pview)}
+    ${board ? segHTML('pgroup', [['status','By status'],['stage','By stage']], S.pgroup) : segHTML('pfilt', [['active','Active', L.active.length],['hold','On hold', L.hold.length],['done','Completed', L.done.length],['all','All', L.all.length]], S.pfilt)}
+    ${board ? '' : `<label class="psort">${ico('sort',15)}<select id="psort" aria-label="Sort projects">${P_SORTS.map(([k, l]) => `<option value="${k}"${S.psort === k ? ' selected' : ''}>${l}</option>`).join('')}</select>${ico('chev',14)}</label>`}
+    ${can('projects','add') ? `<button class="b1 tb-new" type="button" data-fm="proj">${ico('plus',16)}<span>New project</span></button>` : ''}</div><div id="pbody">${projBody(true)}</div>`;
 }
 function projBody(anim){
-  const all = DB.data.projects.filter(facMatch); let n = 0;
+  const L = projLists(); let n = 0;
   if (S.pview === 'board'){
-    const lanes = [['not-started','Not started','var(--mu)',''],['in-progress','In progress','var(--warn)','half'],['completed','Completed','var(--ok)','full']];
-    return `<div class="board">${lanes.map(([k, l, c, ic], li) => { const ps = all.filter(p => (p.status || 'not-started') === k).sort((a,b) => (!!b.pinned - !!a.pinned) || ((a.deliveryDate||'9') < (b.deliveryDate||'9') ? -1 : 1));
-      return `<div class="bcol ${ps.length ? '' : 'empty'}"><div class="bhead"><i class="ic ${ic}" style="--dc:${c}"></i>${l}<span class="n">${ps.length}</span><span class="step">${li+1}/3</span></div>
-        <div class="bcards">${ps.length ? ps.map(p => projCard(p, n++, anim, 'bcard')).join('') : 'No projects here'}</div></div>`; }).join('')}</div>`;
+    const byStage = S.pgroup === 'stage';
+    const cols = byStage ? [['', 'Stage not set', '<i class="ic"></i>'], ...NPD_STAGES.map((s, i) => [s, s, `<span class="pcn">${i + 1}</span>`])]
+      : [['not-started','Not started','<i class="ic"></i>'], ['in-progress','In progress','<i class="ic half"></i>'], ['on-hold','On hold', ico('pause', 14)], ['completed','Completed','<i class="ic full" style="--dc:var(--ok)"></i>']];
+    const list = byStage ? L.all.filter(p => !isClosedProj(p)) : L.all, colOf = p => byStage ? (NPD_STAGES.includes(p.stage) ? p.stage : '') : pStatus(p);
+    return `<div class="pboard${byStage ? ' stage' : ''}" id="pboard" data-group="${byStage ? 'stage' : 'status'}">${cols.map(([k, l, ic]) => { const ps = projSort(list.filter(p => colOf(p) === k), 'urgent');
+      return `<section class="pcol" data-col="${esc(k)}" aria-label="${esc(l)}"><header class="pch">${ic}<b>${esc(l)}</b><span class="n">${ps.length}</span>${!byStage && k === 'not-started' && can('projects','add') ? `<button type="button" class="pj-add" data-fm="proj" aria-label="New project" title="New project">${ico('plus',16)}</button>` : ''}</header>
+        <div class="pcards">${ps.map(p => projCard(p, n++, anim, 'bcard')).join('') || '<p class="pcol-empty">Nothing here</p>'}</div></section>`; }).join('')}</div>`;
   }
-  const act = all.filter(p => !isClosedProj(p)), doneL = all.filter(isClosedProj);
-  const groups = [
-    ['Pinned', act.filter(p => p.pinned)],
-    ['Needs attention', act.filter(p => !p.pinned && ['over','risk'].includes(projHealth(p))).sort((a,b) => projHealth(a) === 'over' ? -1 : 1)],
-    ['In progress', act.filter(p => !p.pinned && p.status === 'in-progress' && projHealth(p) === 'ok')],
-    ['Not started', act.filter(p => !p.pinned && p.status !== 'in-progress' && projHealth(p) === 'ok')],
-  ];
-  return groups.filter(g => g[1].length).map(([l, ps]) => `<div class="ngroup">${l} <span class="ct">${ps.length}</span></div><div class="pgrid">${ps.map(p => projCard(p, n++, anim)).join('')}</div>`).join('')
-    + (doneL.length ? `<div class="ngroup">Completed <span class="ct">${doneL.length}</span></div>${S.showDone ? `<div class="pgrid">${doneL.map(p => projCard(p, n++, false)).join('')}</div>` : ''}<div class="more"><button class="btn" type="button" data-act="toggledone">${S.showDone ? 'Hide completed' : `Show ${doneL.length} completed`}</button></div>` : '')
-    || `<div class="empty card"><b>No projects</b>Nothing for this factory yet.</div>`;
+  const list = projSort(L[S.pfilt] || L.active, S.psort);
+  if (!list.length) return `<div class="empty card"><b>Nothing here</b>${S.pfilt === 'hold' ? 'No projects are on hold' : S.pfilt === 'done' ? 'No completed projects yet' : 'No projects'}${S.fac !== 'all' ? ' for ' + esc(S.fac) : ''}.</div>`;
+  return `<div class="pgrid">${list.map(p => projCard(p, n++, anim)).join('')}</div>`;
 }
+
+/* ── board drag: move a card to another column to change its status (or stage). Mouse: drag after 6px; touch: hold, then drag ── */
+let BD = null, bdJust = 0;
+function bdStart(){
+  const c = BD.card, r = c.getBoundingClientRect(), g = c.cloneNode(true);
+  BD.on = true; BD.from = c.closest('.pcol').dataset.col;
+  g.classList.remove('st'); g.classList.add('bd-ghost'); g.removeAttribute('data-proj'); g.removeAttribute('tabindex'); g.setAttribute('aria-hidden', 'true');
+  Object.assign(g.style, { width: r.width + 'px', left: r.left + 'px', top: r.top + 'px' });
+  document.body.appendChild(g); BD.ghost = g; c.classList.add('bd-src'); document.documentElement.classList.add('bd-dragging');
+  try { c.setPointerCapture(BD.pid); } catch(_){}   // a release outside the window still ends the drag
+  if (navigator.vibrate) try { navigator.vibrate(8); } catch(_){}
+}
+function bdMove(x, y){
+  BD.lx = x; BD.ly = y; BD.ghost.style.transform = `translate(${x - BD.x}px,${y - BD.y}px) rotate(1.5deg)`;
+  const el = document.elementFromPoint(x, y), col = el && el.closest('#pboard .pcol'), over = col && col.dataset.col !== BD.from ? col : null;
+  if (over !== BD.over){ if (BD.over) BD.over.classList.remove('drop'); BD.over = over; if (over) over.classList.add('drop'); }
+  const b = $('#pboard').getBoundingClientRect(), v = $('#view').getBoundingClientRect();
+  BD.sx = x < b.left + 48 ? -14 : x > b.right - 48 ? 14 : 0; BD.sy = y < v.top + 56 ? -12 : y > v.bottom - 56 ? 12 : 0;
+  if ((BD.sx || BD.sy) && !BD.raf) BD.raf = requestAnimationFrame(bdTick);
+}
+function bdTick(){ if (!BD || !BD.on) return; BD.raf = 0; if (!BD.sx && !BD.sy) return; $('#pboard').scrollLeft += BD.sx; $('#view').scrollTop += BD.sy; bdMove(BD.lx, BD.ly); }
+function bdEnd(e, cancel){
+  if (!BD || e.pointerId !== BD.pid) return;
+  clearTimeout(BD.t); const s = BD; BD = null; if (!s.on) return;
+  bdJust = Date.now(); document.documentElement.classList.remove('bd-dragging'); s.card.classList.remove('bd-src'); s.ghost.remove();
+  if (s.over) s.over.classList.remove('drop');
+  if (cancel || !s.over) return;
+  const p = findRec(DB.data, 'projects', s.id), to = s.over.dataset.col; if (!p) return;
+  if ($('#pboard').dataset.group === 'stage'){
+    const was = p.stage || ''; vt(() => editProject(p.id, {stage: to}), 'list');
+    toast(`${esc(p.name)} · ${esc(to || 'stage not set')}`, {icon:'flag', undo: () => vt(() => editProject(p.id, {stage: was}), 'list')});
+  } else {
+    const was = pStatus(p); vt(() => editProject(p.id, {status: to}), 'list');
+    if (to === 'completed' && S.motion === 'full') burst(e.clientX, e.clientY, 40, 160);
+    toast(`${esc(p.name)} · ${esc(statusLabel(to))}`, {icon:'arrow', undo: () => vt(() => editProject(p.id, {status: was}), 'list')});
+  }
+}
+document.addEventListener('pointerdown', e => {
+  const card = e.target.closest && e.target.closest('#pboard .bcard'); if (!card || e.button > 0 || e.target.closest('button,a') || !can('projects','edit')) return;
+  BD = { card, id: card.dataset.proj, x: e.clientX, y: e.clientY, pid: e.pointerId, touch: e.pointerType === 'touch', on: false, t: 0 };
+  if (BD.touch) BD.t = setTimeout(() => { if (BD && !BD.on){ bdStart(); bdMove(BD.x, BD.y); } }, 320);
+});
+document.addEventListener('pointermove', e => {
+  if (!BD || e.pointerId !== BD.pid) return;
+  if (!BD.on){ const d = Math.hypot(e.clientX - BD.x, e.clientY - BD.y);
+    if (BD.touch){ if (d > 8){ clearTimeout(BD.t); BD = null; } return; }   // moving before the hold is a scroll, not a drag
+    if (d < 6) return; bdStart(); }
+  e.preventDefault(); bdMove(e.clientX, e.clientY);
+}, {passive:false});
+document.addEventListener('touchmove', e => { if (BD && BD.on) e.preventDefault(); }, {passive:false});
+document.addEventListener('contextmenu', e => { if (BD && BD.touch) e.preventDefault(); });
+document.addEventListener('pointerup', e => bdEnd(e, false));
+document.addEventListener('pointercancel', e => bdEnd(e, true));
+document.addEventListener('click', e => { if (Date.now() - bdJust < 350){ e.stopPropagation(); e.preventDefault(); } }, true);   // the drop is not a tap
+document.addEventListener('change', e => { if (e.target.id === 'psort'){ S.psort = e.target.value; store.set('npd2-psort', S.psort); vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); } });
 
 /* ── Project detail: name and health first, then what happens next, then progress and people, reference details last ── */
 const NPD_STAGES = ['Design','CAPEX Approval','Pilot Mold','Commercial Mold','Machine & Aux Equipment','IML Development','Production Ramp-Up'];   // the phases of the Gantt's NPD Procedure Template
@@ -4491,7 +4607,7 @@ document.addEventListener('click', e => {
     const prevIdx = $$('button', seg).findIndex(b => b.classList.contains('on'));
     $$('button', seg).forEach(b => { b.classList.toggle('on', b === sb); b.setAttribute('aria-selected', b === sb); }); placeInd(seg);
     const newIdx = $$('button', seg).indexOf(sb);
-    if (seg.id === 'pseg'){ S.pview = v; vt(() => { $('#pbody').innerHTML = projBody(false); $('#pseg').nextElementSibling.textContent = v === 'board' ? 'One row per status: not started, in progress, completed.' : 'Grouped by what needs you first.'; }, 'list'); }
+    if (seg.id === 'pseg' || seg.id === 'pfilt' || seg.id === 'pgroup'){ const k = {pseg:'pview', pfilt:'pfilt', pgroup:'pgroup'}[seg.id]; S[k] = v; store.set('npd2-' + k, v); const from = indNow(seg); vt(() => { refresh(); slideInd(seg.id, from); }, 'list'); }
     else if (seg.id === 'fseg'){ S.filter = v; vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'); }
     else if (seg.id === 'tseg'){ S.tab = v; const p = findRec(DB.data, 'projects', S.proj), tb = $('#tabbody'); if (p){ tb.innerHTML = tabBody(p); tb.className = 'tabbody'; void tb.offsetWidth; tb.classList.add(newIdx > prevIdx ? 'swap-r' : 'swap-l'); } }
     else if (seg.id === 'pbseg'){ const p = findRec(DB.data, 'projects', S.proj); if (!p) return; const prev = p.ballWith || ''; setBall('projects', p.id, v); toast(`Ball passed to ${esc(BALL_LABELS[v])}`, {icon:'arrow', undo: () => setBall('projects', p.id, prev)}); }
@@ -4531,7 +4647,6 @@ document.addEventListener('click', e => {
       if (deleteWouldBeBlocked(ids.length)){ toast('The Sheet would block deleting this many at once. Delete them in smaller batches.', {icon:'x'}); return; }
       if (!a.classList.contains('armed')){ a.classList.add('armed'); a.textContent = `Tap again to delete ${ids.length}`; setTimeout(() => { if (a.isConnected){ a.classList.remove('armed'); a.textContent = 'Delete'; } }, 3500); return; }
       const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`Deleted ${ids.length} task${ids.length === 1 ? '' : 's'}`, {icon:'trash', undo: u}); }
-    else if (act === 'toggledone'){ S.showDone = !S.showDone; vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); }
     else if (act === 'pin-inq'){ const i = findRec(DB.data, 'inquiries', sheetId); if (i){ const on = !i.pinned; setPin('inquiries', i.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('inquiries', i.id, !on)}); } }
     else if (act === 'pj-stage'){ if (can('projects','edit')) formStage(S.proj); }
     else if (act === 'pj-done'){ S.pdone = !S.pdone; refresh(); }

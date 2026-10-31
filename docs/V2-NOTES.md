@@ -73,8 +73,8 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
     swipe); the type filter is a dropdown
   - personal tasks keep their tools: Archived (restore) and Select (archive or delete several); category and
     priority show as tags and are set in the task form. Snoozes follow you to every device (saved on your profile)
-- Custom tags: one shared list (`data.tags`: id, name, colour), added and deleted in Settings → Tags by the master
-  and managers (9 colours; duplicate names are refused). Projects, inquiries, project actions, inquiry tasks, next
+- Custom tags: one shared list (`data.tags`: id, name, colour), added, renamed, recoloured and deleted in Settings → Tags
+  by the master and managers (tap a tag's name to edit it; 9 colours; duplicate names are refused). Projects, inquiries, project actions, inquiry tasks, next
   actions and personal tasks can carry tags (`tags: [tagId, …]`), picked in each form. Deleting a tag removes it
   from every item, with Undo. Tags show on project cards and the board, the project page, inquiry rows and the
   inquiry panel, action and task rows, and My work; Projects, Inquiries and My work have a tag filter (in My work
@@ -134,9 +134,12 @@ Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists every
 filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its
 project or inquiry; if that was deleted too, restore it first). Delete forever needs a second tap within 3 s;
 managers and the master can empty the whole bin. Restores and deletes are logged and offer Undo.
-Settings → Data → Export to Excel downloads a workbook (inquiries, inquiry tasks, next actions, projects, project
-actions, milestones, updates, people, personal tasks; real dates, filters on every sheet). The Excel tool (SheetJS
-0.18.5) loads from jsDelivr the first time. Backup downloads everything as JSON, including the bin.
+Settings → Data → Export to Excel downloads one formatted workbook (inquiries, inquiry tasks, next actions, projects,
+project actions, milestones, updates, people, personal tasks): a dark bold header row frozen at the top with filter
+arrows, sized columns, wrapped long text, real dates (dd mmm yyyy, written as UTC so they don't shift a day), and status
+colours: late / over SLA / lost in red, at risk / awaiting reply / on hold in amber, done / won / on track in green, and
+a past deadline or delivery in red unless that row is finished. The Excel tool (ExcelJS 4.4.0) loads from jsDelivr the
+first time. Backup downloads everything as JSON, including the bin.
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

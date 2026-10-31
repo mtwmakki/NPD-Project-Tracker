@@ -5436,7 +5436,20 @@ function renderGantt(){
   var YH=colVis.year?16:0;
   var CWH=colVis.calweek?14:0;
   var HH=YH+CWH+56;
-  var NH=16+notes.length*12+18;
+  /* Phase legend in the footer: every name is measured and the legend wraps onto more rows, so long phase names
+     (the stage-gate template's "Gate 1 · Quote Approval Project Start") never run into each other or into the notes. */
+  var legCtx=null; try{ legCtx=document.createElement('canvas').getContext('2d'); }catch(e){}
+  var legW=function(t,fs,fw){ if(legCtx){ legCtx.font=(fw||500)+' '+fs+'px "DM Sans","Segoe UI",Arial,sans-serif'; return Math.ceil(legCtx.measureText(t).width*1.06); } return Math.ceil(t.length*fs*0.58); };
+  var legItems=PORDER.filter(function(p){return activePhases[p];}).map(function(ph){ var tx=PLABEL[ph]+' Phase'; return {ph:ph,tx:tx,w:12+legW(tx,8.5)}; });
+  if(scheduleMode==='actual') legItems.unshift({ph:null,tx:'Baseline Plan',w:22+legW('Baseline Plan',8.5),base:true});
+  var noteW=notes.reduce(function(m,n){ return Math.max(m,legW(String(n),8.5,400)); },0);
+  var legMax=Math.max(220,(W-PR)-(PL+14+noteW)-28), legGap=16, legRows=[[]], legRW=[0];
+  legItems.forEach(function(it){
+    var r=legRows.length-1, add=(legRows[r].length?legGap:0)+it.w;
+    if(legRows[r].length&&legRW[r]+add>legMax){ legRows.push([]); legRW.push(0); r++; add=it.w; }
+    legRows[r].push(it); legRW[r]+=add;
+  });
+  var NH=Math.max(16+notes.length*12+18,16+legRows.length*13+18);
   var activePhaseList=PORDER.filter(function(p){return activePhases[p];});
   var H=LH+MH+HH+tasks.length*RH+activePhaseList.length*PHR+NH+PB;
 
@@ -5866,16 +5879,20 @@ function renderGantt(){
     s+='<text x="'+(PL+5)+'" y="'+(ny+3)+'" font-size="6" fill="white" text-anchor="middle" font-weight="700">'+(ni+1)+'</text>';
     s+='<text x="'+(PL+14)+'" y="'+(ny+3)+'" font-size="8.5" fill="'+svgTextSub+'">'+ev(notes[ni])+'</text>';
   }
-  var lx=W-PR;
-  PORDER.filter(function(p){return activePhases[p];}).reverse().forEach(function(ph){
-    lx-=92; s+='<rect x="'+lx+'" y="'+(finalY+11)+'" width="8" height="8" rx="2" fill="'+PCr[ph].bar+'"/>';
-    s+='<text x="'+(lx+12)+'" y="'+(finalY+18)+'" font-size="8.5" fill="'+PCr[ph].text+'" font-weight="500">'+PLABEL[ph]+' Phase</text>';
+  legRows.forEach(function(row,ri){   /* right-aligned rows, in phase order */
+    var lx=W-PR-legRW[ri], ly=finalY+11+ri*13;
+    row.forEach(function(it,ii){
+      if(ii) lx+=legGap;
+      if(it.base){
+        s+='<rect x="'+lx+'" y="'+ly+'" width="18" height="7" rx="3" fill="'+svgTextHint+'" opacity="0.5" stroke="'+svgTextHint+'" stroke-width="1" stroke-dasharray="3,2"/>';
+        s+='<text x="'+(lx+22)+'" y="'+(ly+7)+'" font-size="8.5" fill="'+svgTextHint+'" font-weight="500">Baseline Plan</text>';
+      } else {
+        s+='<rect x="'+lx+'" y="'+ly+'" width="8" height="8" rx="2" fill="'+PCr[it.ph].bar+'"/>';
+        s+='<text x="'+(lx+12)+'" y="'+(ly+7)+'" font-size="8.5" fill="'+PCr[it.ph].text+'" font-weight="500">'+ev(it.tx)+'</text>';
+      }
+      lx+=it.w;
+    });
   });
-  if(scheduleMode==='actual'){
-    lx-=105;
-    s+='<rect x="'+lx+'" y="'+(finalY+11)+'" width="18" height="7" rx="3" fill="'+svgTextHint+'" opacity="0.5" stroke="'+svgTextHint+'" stroke-width="1" stroke-dasharray="3,2"/>';
-    s+='<text x="'+(lx+22)+'" y="'+(finalY+18)+'" font-size="8.5" fill="'+svgTextHint+'" font-weight="500">Baseline Plan</text>';
-  }
   /* Segment legend — only show segments actually used by tasks in the chart */
   var usedSegs=[];
   tasks.forEach(function(t){if(activePhases[t.phase]&&t.seg&&usedSegs.indexOf(t.seg)<0) usedSegs.push(t.seg);});

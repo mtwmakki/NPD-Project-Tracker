@@ -43,14 +43,24 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
 - Inquiries: new inquiry (with the 3 default SLA tasks, same deadlines as V1), edit details (incl.
   products, links, pipeline statuses, mold cost, outcome reason), delete
 - Inquiry tasks and next actions: add, edit, delete, tick done
-- Ball in court, inquiry outcome, pin / unpin; complete tasks from Notifications (snooze is device-only)
-- Standalone tasks (Tasks page): add, edit, duplicate, tick done, archive / restore, select several to
-  archive or delete; categories, priority, awaiting reply; master can see everyone's tasks
+- Ball in court, inquiry outcome, pin / unpin
+- My work (replaces the Tasks and Notifications pages; old links open it): one dense list of everything assigned
+  to you: project actions, inquiry tasks and next actions, personal tasks.
+  - groups: Overdue, Today, This week, Later, No date, Awaiting reply, Done this week (folded); each group folds
+  - columns: task, from (project / inquiry code and name, or Personal), owner (Everyone view), due, status (Awaiting
+    reply, In progress, SLA, Next action, Trial, priority, category); a bell marks an awaiting reply whose chase
+    date has come
+  - the circle completes (with Undo and Follow up), the due date opens the calendar to move it (or the chase
+    date), hover shows Snooze until tomorrow, tapping the row opens the inquiry, project or task
+  - filters: Mine / Everyone (managers and the master), All / Projects / Inquiries / Personal with counts, search,
+    Compact (36px rows) or Comfortable; the factory filter applies too (personal tasks show only for All factories)
+  - phones: two-line rows; swipe right = done, swipe left = snooze until tomorrow (a hint shows until the first
+    swipe); the type filter is a dropdown
+  - personal tasks keep their tools: Archived (restore) and Select (archive or delete several); category and
+    priority show as tags and are set in the task form. Snoozes are kept on the device only
 - Project people (PICs): add, edit, remove; each project links to its Gantt (separate page)
 - After ticking anything done, the confirmation offers "Follow up", which opens a prefilled follow-up task
-- Notifications include inquiry next actions, filter by person and by next 7 / 30 days, and every row has a
-  calendar button to move its deadline (or the chase date of an awaiting reply)
-- Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, alerts, search) on that
+- Settings → Focus → "Projects only" hides inquiries everywhere (menu, Dashboard, My work, search) on that
   device; the Dashboard drops the inquiry rows, the SLA card and Won vs lost
 - Projects page:
   - Cards: each card reads name and health (Late red, At risk orange, On track grey, On hold, Completed),
@@ -82,7 +92,7 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   - Needs you: the 5 most urgent items. Late work first (most working days late on top): your overdue actions
     and tasks, inquiries past their SLA, late projects, milestones up to a month past their date. Then what is
     due today, then trials and milestones in the next 3 days. The circle completes an action right there
-    (same as Notifications, with Undo); tapping the row opens the inquiry, project or task
+    (same as My work, with Undo); tapping the row opens the inquiry, project or task
   - four tiles: Overdue actions, Inquiries over SLA (Projects at risk in Projects only), Projects late,
     Due this week. Each says how it compares with a week ago; the number turns red only when above zero
   - This week: today and the next five working days, with milestones (trials get a flask) and deliveries

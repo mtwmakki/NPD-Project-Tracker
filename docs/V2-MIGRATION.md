@@ -8,7 +8,7 @@ doesn't touch), so any of them can still be built in V2 later. Size: S = under h
 Sign-in, Dashboard ("Needs you", four tiles with week-on-week trends, this week's milestones, SLA, won/lost, factory load), Inquiries (filters, search,
 factory filter, pins, SLA sheet, tasks, next actions, ball in court, outcome, products, links, pipeline
 statuses), Projects (cards with filter and sort, board by status or stage with drag, project page with health and reason, next action, delivery, NPD stage, milestone strip, actions, updates, overview, history,
-KIV), Notifications (missed / due soon / awaiting reply, swipe done / snooze), create / edit / delete for
+KIV), My work (Tasks + Notifications in one list: overdue / today / this week / later / awaiting reply, swipe done / snooze, archive and bulk actions for personal tasks), create / edit / delete for
 inquiries, projects, actions, tasks, next actions, updates and milestones (deletes go to the recycle bin
 with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, merge-safe saving.
 
@@ -63,7 +63,7 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 
 ## Decisions (Oct 2026)
 - My Day is not coming back as a page: its useful sections (overdue next actions, waiting on others,
-  stale projects, new tasks on older items) are now on the V2 Dashboard and in Notifications.
+  stale projects, new tasks on older items) are now on the V2 Dashboard and in My work.
 - Gantt stays a separate page (linked from each project in V2); its UI gets reworked later.
 - Reports in use: Inquiry report, Project report, full Excel export. Excel import is still needed.
 

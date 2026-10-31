@@ -495,24 +495,6 @@ button{font:inherit;color:inherit}
 .hist .h span{font-size:12.5px;color:var(--mu)}
 
 /* ───────── NOTIFICATIONS ───────── */
-.ngroup{font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu);padding:14px 4px 8px}
-.nlist{display:grid;gap:8px}
-.nrow{position:relative;border-radius:var(--r-card);overflow:hidden}
-.nrow .under{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-weight:700;font-size:14px;border-radius:inherit}
-.nrow .under span{display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .2s,transform .3s var(--spring)}
-.nrow[data-dir="r"] .under{background:color-mix(in srgb,var(--ok) 26%,var(--surf-solid));color:var(--ok)}
-.nrow[data-dir="l"] .under{background:color-mix(in srgb,var(--bad) 26%,var(--surf-solid));color:var(--bad)}
-.nrow[data-dir="r"] .under .ul,.nrow[data-dir="l"] .under .ur{opacity:1}
-.nrow.armed .under span{transform:scale(1.15)}
-.nfg{user-select:none;-webkit-user-select:none;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 18px;background:var(--surf-solid);border:1px solid var(--line);border-radius:inherit;touch-action:pan-y;transform:translateX(var(--dx,0px));transition:transform calc(var(--spring-d)*var(--k)) var(--spring),background .3s;cursor:grab}
-.nrow.drag .nfg{transition:none;cursor:grabbing}
-.nic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c);position:relative}
-.nrow.unread .nic::after{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--ac);border:2px solid var(--surf-solid);transition:transform calc(400ms*var(--k)) var(--spring)}
-.nrow.readnow .nic::after{transform:scale(0)}
-.nt{font-weight:600;font-size:14.5px}
-.nrow:not(.unread) .nt{font-weight:500;color:var(--mu)}
-.ns{font-size:12.5px;color:var(--mu)}
-.nr{display:grid;justify-items:end;gap:8px}
 .nact{display:flex;gap:6px}
 .nact .btn{padding:8px 12px;font-size:12.5px}
 .collapse{animation:collapse calc(380ms*var(--k)) var(--ease-io) forwards}
@@ -799,7 +781,6 @@ body{padding:0}
 .pill.done{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok);border-color:transparent}
 .pill.cancel{opacity:.6;text-decoration:line-through}
 .kv.wide{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-.ngroup .ct{color:var(--mu);font-weight:500;letter-spacing:0;text-transform:none;margin-left:6px}
 .seg.acc button{padding-left:12px;padding-right:12px}
 :root[data-look="I"] .seg.acc button{padding:11px 14px;font-size:14px}
 .row .meta2 .stp{display:none}
@@ -921,7 +902,7 @@ body{padding:0}
   @keyframes in-l{from{opacity:0;transform:translateX(-40px)}}
   .orb{animation:none}
   .st{animation-duration:calc(480ms*var(--k));animation-delay:calc(min(var(--i,0),6)*40ms*var(--k))}
-  .row,.pcard,.nrow,.hist .h{content-visibility:auto;contain-intrinsic-size:auto 96px}
+  .row,.pcard,.hist .h{content-visibility:auto;contain-intrinsic-size:auto 96px}
 }
 
 .collapse{animation-duration:calc(260ms*var(--k))}
@@ -988,14 +969,6 @@ body{padding:0}
 #dp.sheet .dp-quick button{padding:11px 4px;font-size:13.5px}
 
 /* ── wave 1 ── */
-.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}
-.chiprow button{padding:7px 12px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:none;color:var(--mu);font:600 12.5px var(--fb);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
-.chiprow button span{opacity:.7;font-weight:500;margin-left:2px}
-.chiprow button:hover{color:var(--tx)}
-.chiprow button.on{background:var(--ac-grad);color:var(--on-ac);border-color:transparent}
-.resched{display:inline-grid;place-items:center;width:28px;height:28px;margin-left:6px;vertical-align:middle;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--mu);cursor:pointer;transition:color .2s,border-color .2s}
-.resched:hover,.resched[aria-expanded="true"]{color:var(--ac);border-color:var(--ac)}
-.nr .due{display:inline-flex;align-items:center}
 .tb-gap{flex:1}
 .btn.sm.on{border-color:var(--ac);color:var(--ac)}
 .mtlist{padding:14px}
@@ -1010,7 +983,7 @@ body{padding:0}
 .selbar .fm-del.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
 .toast{--tms:5s}
 .li .late{color:var(--bad)}
-@media (max-width:720px){.ntip{display:none}.selbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:720px){.selbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
 .toast .tbar{animation-duration:var(--tms)}
 .ttools{margin-top:-4px}
 .btn.on{border-color:var(--ac);color:var(--ac)}
@@ -1021,6 +994,7 @@ body{padding:0}
 
 /* ── Projects-only focus ── */
 :root[data-focus="projects"] #nav [data-go="inquiries"],:root[data-focus="projects"] #tabbar [data-go="inquiries"]{display:none}
+:root[data-focus="projects"][data-look="K"] #tabbar{--tbw:calc((100vw - 60px) / 3)}
 .pop-note{margin:8px 2px 0;font-size:12px;color:var(--mu);line-height:1.4}
 #focusseg{width:100%}#focusseg button{flex:1;justify-content:center}
 /* ── pin buttons ── */
@@ -1033,9 +1007,8 @@ body{padding:0}
   .ibtn,.fm-prod .ibtn,.dp-nav{width:44px;height:44px}
   .fac{height:44px}
   .seg button{padding-top:12px;padding-bottom:12px}
-  .resched{width:34px;height:34px;position:relative}
   .cb{position:relative}
-  .resched::after,.fm-dclr::after,.cb::after{content:"";position:absolute;inset:-8px}
+  .fm-dclr::after,.cb::after{content:"";position:absolute;inset:-8px}
 }
 /* Top bar and tab bar float over the page so they can slide away while scrolling down (--toph/--tabh are measured in JS) */
 @media (max-width:720px){
@@ -1091,13 +1064,9 @@ body{padding:0}
   .lg-name{font-size:32px}
   .fld input{padding:11px 13px}
   .slide{height:56px}.thumb{width:46px;height:46px}
-  .nic{width:34px;height:34px;border-radius:12px}
 }
 /* Notification rows on phones: the due label and calendar button go under the title so it gets the full width */
 @media (max-width:720px){
-  .nfg{grid-template-columns:auto minmax(0,1fr);gap:6px 12px;padding:12px 14px;align-items:start}
-  .nfg .nic{grid-row:1/span 2}
-  .nfg .nr{grid-column:2;display:flex;align-items:center;gap:8px;justify-items:start}
 }
 /* iOS 26.0 Safari: when its toolbar shrinks, a full-height layout can leave a blank band at the bottom (fixed in 26.1).
    Size the page from the measured window height instead, and paint the page colour behind it. */
@@ -1233,10 +1202,8 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .ph h3{font:var(--w-emph) var(--t3)/var(--t3-l) var(--fb);letter-spacing:var(--t3-t)}
 :root[data-look="K"] .ph span{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);text-transform:none;color:var(--mu)}
 /* group labels (kit: list header "Nested" = Headline, secondary label, sentence case) */
-:root[data-look="K"] .tgroup,:root[data-look="K"] .ngroup,:root[data-look="K"] .sec,:root[data-look="K"] .fm-sec,:root[data-look="K"] .hero .eyebrow,:root[data-look="K"] #pop h4{font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t);text-transform:none;color:var(--mu)}
+:root[data-look="K"] .tgroup,:root[data-look="K"] .sec,:root[data-look="K"] .fm-sec,:root[data-look="K"] .hero .eyebrow,:root[data-look="K"] #pop h4{font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t);text-transform:none;color:var(--mu)}
 :root[data-look="K"] .tgroup{padding:14px 0 6px}
-:root[data-look="K"] .ngroup{padding:18px var(--pad) 8px}
-:root[data-look="K"] .ngroup .ct{font-weight:400}
 
 /* top bar */
 :root[data-look="K"] .top{gap:10px}
@@ -1256,7 +1223,7 @@ html,body{height:var(--app-h,100%)}
 /* list rows inside a section (kit: Row 52 / 68, title Body, subtitle Subheadline, inset hairline separators) */
 :root[data-look="K"] .tabbody{gap:0}
 :root[data-look="K"] .task{position:relative;background:none;border:0;border-radius:0;min-height:var(--row);padding:11px 0;gap:4px 12px;align-items:center}
-:root[data-look="K"] .task+.task::before,:root[data-look="K"] .row+.row::before,:root[data-look="K"] .li+.li::before,:root[data-look="K"] .nrow+.nrow .nfg::before{content:"";position:absolute;top:0;right:0;left:var(--sep-l,0);border-top:1px solid var(--line);pointer-events:none}
+:root[data-look="K"] .task+.task::before,:root[data-look="K"] .row+.row::before,:root[data-look="K"] .li+.li::before{content:"";position:absolute;top:0;right:0;left:var(--sep-l,0);border-top:1px solid var(--line);pointer-events:none}
 :root[data-look="K"] .task{--sep-l:36px}
 :root[data-look="K"] .task.done{background:none;opacity:1}
 :root[data-look="K"] .task .tt{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
@@ -1291,15 +1258,6 @@ html,body{height:var(--app-h,100%)}
 /* project page header */
 
 /* notifications: one grouped list */
-:root[data-look="K"] .nlist{gap:0;background:var(--surf);border-radius:var(--r-card);overflow:hidden}
-:root[data-look="K"] .nrow{border-radius:0}
-:root[data-look="K"] .nfg{background:var(--surf);border:0;border-radius:0;padding:11px var(--pad);min-height:var(--row-tall);gap:4px 12px;--sep-l:calc(var(--pad) + 42px)}
-:root[data-look="K"] .nic{width:30px;height:30px;border-radius:8px}
-:root[data-look="K"] .nt{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
-:root[data-look="K"] .nrow.unread .nt{font-weight:var(--w-emph)}
-:root[data-look="K"] .nrow:not(.unread) .nt{font-weight:400;color:var(--tx)}
-:root[data-look="K"] .ns{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t)}
-:root[data-look="K"] .resched{border:0;background:var(--fill3);color:var(--ac)}
 
 /* forms and sheets (HIG: sheets show the grouped background; fields are filled, borderless) */
 :root[data-look="K"] #sheet,:root[data-look="K"] .fm-card{background:var(--bg);border:0;box-shadow:0 20px 60px rgba(0,0,0,.25);backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -1389,10 +1347,7 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] :is(.card:not(.row):not(.hero),.rows,.lg-card),:root[data-look="K"] .banner{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur);box-shadow:var(--mat-edge)}
 :root[data-look="K"] .card .card{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
 :root[data-look="K"] .banner.warn{background:color-mix(in srgb,var(--warn) 12%,var(--mat))}
-:root[data-look="K"] .nlist{background:none;box-shadow:var(--mat-edge)}
-:root[data-look="K"] .nfg{background:var(--mat);backdrop-filter:var(--mat-blur);-webkit-backdrop-filter:var(--mat-blur)}
 /* colour only where it needs attention: list icons are neutral unless late or at risk */
-:root[data-look="K"] .nic:not([style*="bad"]):not([style*="warn"]){background:var(--fill3);color:var(--mu)}
 
 /* press: 0.97 while pressed, 1.03 on hover with a mouse, 300ms spring back */
 :root[data-look="K"] :is(.ibtn,.sync,.btn,.b1){transition:transform calc(300ms*var(--k)) var(--spring),background-color calc(300ms*var(--k)) var(--ease-out),color .2s,opacity .2s}
@@ -1429,7 +1384,7 @@ html,body{height:var(--app-h,100%)}
 
 /* phone: scrolling down folds the tab bar into a pill holding the current tab (width shrinks, the row of tabs slides); tapping it unfolds */
 @media (max-width:720px){
-  :root[data-look="K"] #tabbar{--tbw:calc((100vw - 60px) / 5);overflow:hidden;transition:right calc(400ms*var(--k)) var(--spring)}
+  :root[data-look="K"] #tabbar{--tbw:calc((100vw - 60px) / 4);overflow:hidden;transition:right calc(400ms*var(--k)) var(--spring)}
   :root[data-look="K"] #tabbar button{flex:0 0 var(--tbw);width:var(--tbw)}
   :root[data-look="K"] #tabbar>*{translate:0 0;transition:translate calc(400ms*var(--k)) var(--spring),scale calc(320ms*var(--k)) var(--spring),opacity calc(200ms*var(--k)) var(--ease-out),color .2s,background-color .2s,box-shadow .2s}
   :root[data-look="K"] #app.bars-off #tabbar{right:calc(100% - 25px - var(--tbw) - 10px);cursor:pointer}
@@ -1465,7 +1420,6 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] #sheet{border-radius:38px 38px 0 0;left:0;right:0;bottom:0}
   :root[data-look="K"] #form{padding:8px 0 0}
   :root[data-look="K"] .fm-card{border-radius:38px 38px 0 0}
-  :root[data-look="K"] .nfg{grid-template-columns:auto minmax(0,1fr)}
   /* the shared compact phone rules are replaced by the kit's sizes */
 }
 @media (max-width:430px){
@@ -1817,6 +1771,93 @@ html.bd-dragging,html.bd-dragging *{cursor:grabbing!important;-webkit-user-selec
   .psort{margin-left:auto}
 }
 
+/* ───────── MY WORK (every style): one dense list, slim sticky group bars, single-line rows in columns ───────── */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.wtools{flex-wrap:wrap;gap:8px}
+.wsearch{flex:1 1 220px;max-width:340px}
+.wtool{display:inline-flex;align-items:center;gap:6px}
+.wtypesel{display:none}
+.wmode{font:600 15px/20px var(--fb);margin-right:auto}
+.wl{--wcols:28px minmax(0,2.2fr) minmax(0,1.4fr) 104px minmax(0,190px) 64px;padding:2px 0 6px}
+.wl.every{--wcols:28px minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,120px) 104px minmax(0,190px) 64px}
+.wth,.wfg{display:grid;grid-template-columns:var(--wcols);gap:12px;align-items:center;padding:0 16px}
+.wth{min-height:32px;font:500 12px/16px var(--fb);color:var(--mu)}
+.wgb{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;width:100%;min-height:32px;padding:0 16px;border:0;border-top:1px solid var(--line);background:color-mix(in srgb,var(--surf-solid) 94%,transparent);color:var(--mu);font:600 11.5px/16px var(--fb);letter-spacing:.06em;text-transform:uppercase;text-align:left;cursor:pointer}
+.wgb:hover{color:var(--tx)}
+.wgb svg{flex:none;transform:rotate(90deg);transition:transform calc(200ms*var(--k)) var(--ease-out)}
+.wgb[aria-expanded="false"] svg{transform:none}
+.wgb .n{font-weight:500;letter-spacing:0;font-variant-numeric:tabular-nums}
+.wrow{position:relative;overflow:hidden}
+.wrow + .wrow .wfg{box-shadow:inset 0 1px 0 var(--line)}
+.wunder{display:none;position:absolute;inset:0;align-items:center;justify-content:space-between;padding:0 20px;font:700 14px/1 var(--fb)}
+.wunder span{display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .2s,transform .3s var(--spring)}
+.wrow[data-dir] .wunder{display:flex}
+.wrow[data-dir="r"] .wunder{background:color-mix(in srgb,var(--ok) 24%,var(--surf-solid));color:var(--ok)}
+.wrow[data-dir="l"] .wunder{background:color-mix(in srgb,var(--ac) 22%,var(--surf-solid));color:var(--ac)}
+.wrow[data-dir="r"] .wunder .ul,.wrow[data-dir="l"] .wunder .ur{opacity:1}
+.wrow.armed .wunder span{transform:scale(1.15)}
+.wfg{position:relative;min-height:36px;padding-top:2px;padding-bottom:2px;cursor:pointer;transform:translateX(var(--dx,0px));transition:transform calc(320ms*var(--k)) var(--spring),background-color .2s}
+.wrow[data-dir] .wfg{background:var(--surf-solid)}
+.wrow.drag .wfg{transition:none}
+.wfg:hover{background:var(--hover)}
+.wcc{position:relative;width:22px;height:22px;padding:0;border-radius:50%;border:1.5px solid var(--line-2);background:none;color:transparent;display:grid;place-items:center;cursor:pointer;transition:border-color .2s,color .2s,background-color .2s}
+.wcc::after{content:"";position:absolute;inset:-11px}
+.wcc:hover{border-color:var(--ok);color:var(--ok)}
+.wcc.ro{border-style:dashed;cursor:default}
+.wrow.done .wcc{background:var(--ok);border-color:var(--ok);color:#fff}
+.wt{display:flex;align-items:center;gap:6px;min-width:0}
+.wtt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 14px/20px var(--fb)}
+.wrow.done .wtt{color:var(--mu);text-decoration:line-through;text-decoration-color:var(--line-2)}
+.wbell{display:grid;flex:none;color:var(--ac)}
+.ws{display:flex;align-items:center;gap:6px;min-width:0;font:400 13px/18px var(--fb);color:var(--mu)}
+.ws svg{flex:none}
+.ws .mono{flex:none;color:var(--tx);font:500 12px/18px var(--fm)}
+.wsn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wo{display:flex;align-items:center;gap:6px;min-width:0;font:400 13px/18px var(--fb);color:var(--mu)}
+.won{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd{justify-self:start;padding:4px 6px;margin:-4px -6px;border:0;border-radius:var(--r-sm);background:none;color:var(--mu);font:500 13px/18px var(--fb);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:left}
+button.wd{cursor:pointer}
+button.wd:hover{background:var(--hover);color:var(--tx)}
+.wd.late{color:var(--bad);font-weight:600}
+.wd.now{color:var(--ac);font-weight:600}
+.wnone{color:color-mix(in srgb,var(--mu) 70%,transparent);font-weight:400}
+.wst{display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden}
+.wst .pill{flex:none;padding:3px 7px;font-size:11.5px;gap:4px}
+.wst .pill svg{flex:none}
+.wtag{font-family:var(--fm);letter-spacing:.04em;color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent);border-color:transparent}
+.wx{display:flex;align-items:center;justify-content:flex-end;gap:2px;color:var(--mu)}
+.wbtn{width:32px;height:32px;border:0;border-radius:50%;background:none;color:var(--mu);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .15s,background-color .2s,color .2s}
+.wfg:hover .wbtn,.wbtn:focus-visible{opacity:1}
+.wbtn:hover{background:var(--hover);color:var(--tx)}
+.wchev{display:grid;opacity:.5}
+.wl.comfy .wfg{min-height:48px}
+.wl.comfy .wtt{font-size:14.5px}
+.whint{flex:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--ac) 12%,transparent);color:var(--ac);font:600 11.5px/14px var(--fb);white-space:nowrap}
+.wfoot{margin:10px 4px 0;text-align:center;font-size:13.5px}
+:is(.wcc,.wd,.wbtn,.wgb):focus-visible,.wfg:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+@media (max-width:720px){
+  .wth{display:none}
+  .wl{padding:0}
+  .wfg,.wl.every .wfg{grid-template-columns:28px minmax(0,1fr) auto auto;grid-template-areas:"cc t t d" "cc s st st";gap:2px 10px;min-height:56px;padding:9px 14px}
+  .wcc{grid-area:cc}
+  .wt{grid-area:t}
+  .wd{grid-area:d;justify-self:end}
+  .ws{grid-area:s}
+  .wst{grid-area:st;justify-self:end;max-width:60vw}
+  .wx,.wo{display:none}
+  .wl.every .wo{display:flex;grid-area:st;justify-self:end}
+  .wl.every .wst{display:none}
+  #wscope{order:1}
+  #wtype,#wdens{display:none}
+  .wtypesel{display:inline-flex;order:2;flex:1 1 auto;justify-content:flex-end;min-width:0}
+  .wtypesel select{min-width:0;max-width:100%;text-overflow:ellipsis}
+  .wsearch{order:3;flex:1 1 120px;max-width:none;min-width:0}
+  .wtool{order:4}
+  .wtools .tb-new{order:5;margin-left:0}
+  .wtool span{display:none}
+  .wgb{padding:0 14px}
+}
+
 /* ───────── LOGIN (every style) ─────────
    Laptop: a brand side (logo, one line, a glimpse of the tracker) next to the form. Tablet: one column.
    Phone: brand on top, the form in a sheet at the bottom within thumb reach; it moves up while the keyboard is open. */
@@ -1968,8 +2009,7 @@ html.bd-dragging,html.bd-dragging *{cursor:grabbing!important;-webkit-user-selec
       <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span><span class="lbl">Dashboard</span></button>
       <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span><span class="lbl">Inquiries</span><span class="cnt" id="c-inq"></span></button>
       <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span><span class="lbl">Projects</span><span class="cnt" id="c-proj"></span></button>
-      <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span><span class="lbl">Tasks</span><span class="cnt" id="c-task"></span></button>
-      <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span><span class="lbl">Notifications</span><span class="cnt hot" id="c-noti"></span></button>
+      <button type="button" data-go="work" aria-label="My work" title="My work"><span data-ico="work"></span><span class="lbl">My work</span><span class="cnt hot" id="c-work"></span></button>
     </nav>
     <button class="ibtn shelf-btn" type="button" data-act="shelf" aria-expanded="false" aria-controls="shelf" aria-label="Pinned and factories" title="Pinned and factories"><span data-ico="pin"></span><i class="shelf-dot"></i></button>
     <div class="side-foot">
@@ -1994,8 +2034,7 @@ html.bd-dragging,html.bd-dragging *{cursor:grabbing!important;-webkit-user-selec
     <button type="button" data-go="dashboard" aria-label="Dashboard" title="Dashboard"><span data-ico="grid"></span>Home</button>
     <button type="button" data-go="inquiries" aria-label="Inquiries" title="Inquiries"><span data-ico="inbox"></span>Inquiries</button>
     <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span>Projects</button>
-    <button type="button" data-go="tasks" aria-label="Tasks" title="Tasks"><span data-ico="tasks"></span>Tasks</button>
-    <button type="button" data-go="notifications" aria-label="Notifications" title="Notifications"><span data-ico="bell"></span>Alerts</button>
+    <button type="button" data-go="work" aria-label="My work" title="My work"><span data-ico="work"></span>My work</button>
   </nav>
 </div>
 
@@ -2052,7 +2091,7 @@ const P = {
   flask:'M9 3h6M10 3v6l-5.4 9.2A1.9 1.9 0 0 0 6.2 21h11.6a1.9 1.9 0 0 0 1.6-2.8L14 9V3M7.2 15h9.6', diamond:'M12 3.5 20.5 12 12 20.5 3.5 12z',
   truck:'M3 6h11v10H3zM14 9.5h3.8L21 13v3h-7M7 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM17.5 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z',
   tup:'M4 17l6-6 4 4 6-7M15 8h5v5', tdn:'M4 7l6 6 4-4 6 7M15 16h5v-5', tflat:'M4 12h16M16 8l4 4-4 4',
-  pause:'M9 6v12M15 6v12', sort:'M4 7h16M7 12h10M10 17h4',
+  pause:'M9 6v12M15 6v12', work:'M4 8.5h16v10.5H4zM9 8.5V5.5h6v3M4 13h16', rows:'M4 6h16M4 10h16M4 14h16M4 18h16', rows2:'M4 7h16M4 12h16M4 17h16', sort:'M4 7h16M7 12h10M10 17h4',
   pencil:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4', tasks:'M4 5h4v4H4zM4 15h4v4H4zM11 7h9M11 17h9', gantt:'M4 6h9M7 12h11M10 18h10M4 3v18', cal:'M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 10h16M8.5 3v4M15.5 3v4', plus:'M12 5v14M5 12h14', trash:'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
 };
 const ico = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n] || P.file}"/></svg>`;
@@ -2061,9 +2100,9 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 /* ── prefs ── */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
-  page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions', nscope: 'mine',
+  page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions',
   mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
-  focus: store.get('npd2-focus', 'all'), tcat: 'all', tscope: 'mine', tdone: false, tarch: false, tsel: null, nwhen: 'all', nperson: '' };
+  focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null };
 function applyPrefs(){ root.dataset.look = S.look; root.dataset.theme = S.theme; root.dataset.motion = S.motion; root.dataset.focus = S.focus;
   root.dataset.mat = S.mat; root.style.setProperty('--lg-t', S.gt / 100); root.style.setProperty('--lg-b', S.gb); }
 const inqOn = () => S.focus !== 'projects';
@@ -2823,7 +2862,7 @@ function moveNav(animate = true){
   if (nb){ const f = lg && lgPos(ni, 'y'); if (!animate) ni.style.transition = 'none'; ni.style.transform = `translateY(${nb.offsetTop}px)`; ni.style.opacity = '1'; if (!animate){ void ni.offsetWidth; ni.style.transition = ''; } if (lg) lgGlide(ni, 'y', f, nb.offsetTop, nb); } else ni.style.opacity = '0';
   const tb = $(`#tabbar button[data-go="${key}"]`), ti = $('#tab-ind');
   if (tb && tb.offsetWidth){ const f = lg && lgPos(ti, 'x'); if (!animate) ti.style.transition = 'none'; ti.style.width = tb.offsetWidth + 'px'; ti.style.transform = `translateX(${tb.offsetLeft}px)`; if (!animate){ void ti.offsetWidth; ti.style.transition = ''; } if (lg) lgGlide(ti, 'x', f, tb.offsetLeft, tb); }
-  if (tb) $('#tabbar').style.setProperty('--fold-i', $$('#tabbar button').indexOf(tb));
+  if (tb) $('#tabbar').style.setProperty('--fold-i', $$('#tabbar button').filter(b => getComputedStyle(b).display !== 'none').indexOf(tb));
 }
 /* Liquid Glass: the selection lens glides on a real spring (about 5% overshoot), stretches toward where it is going,
    and the new icon bounces as it lands. The spring is sampled into a CSS linear() curve. */
@@ -2915,10 +2954,8 @@ function counts(){
   const openInq = d ? d.inquiries.filter(i => String(i.status||'').toUpperCase() === 'OPEN') : [];
   $('#c-inq').textContent = d ? openInq.filter(facMatch).length : '';
   $('#c-proj').textContent = d ? d.projects.filter(p => !isClosedProj(p)).filter(facMatch).length : '';
-  const myT = d ? (d.mtasks||[]).filter(t => t.status !== 'done' && !t.archived && (t.owner || 'Adam') === meName()).length : 0;
-  $('#c-task').textContent = myT || '';
   const N = d ? collectNotifications('mine') : {missed:[], awaiting:[]};
-  const u = N.missed.length + N.awaiting.length; $('#c-noti').textContent = u || ''; $('#c-noti').style.display = u ? '' : 'none';
+  const u = N.missed.length + N.awaiting.length; $('#c-work').textContent = u || ''; $('#c-work').style.display = u ? '' : 'none';
   const activeOf = f => d ? (inqOn() ? openInq.filter(i => facOf(i) === f).length : 0) + d.projects.filter(p => !isClosedProj(p) && facOf(p) === f).length : '';
   $('#facs').innerHTML = [['all','All factories','var(--mu)'], ...factories().map(f => [f, f, facColor(f)])].map(([k,l,c]) =>
     `<button type="button" class="fac ${S.fac===k?'on':''}" data-fac="${esc(k)}" title="${esc(l)}"><i class="dot" style="--dc:${c}"></i>${esc(l)}<span class="cnt">${k==='all' ? (d ? (inqOn() ? openInq.length : 0) + d.projects.filter(p => !isClosedProj(p)).length : '') : activeOf(k)}</span></button>`).join('');
@@ -2936,7 +2973,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], tasks:['Tasks',''], notifications:['Notifications',''], styles:['Styles',''], bin:['Recycle bin',''] };
+const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], work:['My work',''], styles:['Styles',''], bin:['Recycle bin',''] };
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function bootHTML(){
   return `${DB.err ? `<div class="banner warn">${ico('x',16)}<span>Can't reach the Sheet right now (${esc(DB.err)}). <button class="lnk" type="button" data-act="sync">Try again</button></span></div>` : ''}
@@ -3037,11 +3074,11 @@ function pageDashboard(){
   const odAt = r => acts.filter(a => a.dl < r && openAt(a, r)).length, dueAt = r => acts.filter(a => a.dl >= r && a.dl <= addDays(r, 6) && openAt(a, r)).length;
   const cnt = (list, f) => list.filter(f).length;
   const tiles = [
-    {l:'Overdue actions', v: missed.length, c:'bad', tr: trend(odAt(today), odAt(ref)), go:'notifications'},
+    {l:'Overdue actions', v: missed.length, c:'bad', tr: trend(odAt(today), odAt(ref)), go:'work'},
     inq ? {l:'Inquiries over SLA', v: over.length, c:'bad', tr: trend(cnt(open, i => slaOverAt(i, today)), cnt(open, i => slaOverAt(i, ref))), go:'inquiries'}
         : {l:'Projects at risk', v: prisk.length, c:'warn', tr: trend(cnt(active, p => projRiskAt(p, today)), cnt(active, p => projRiskAt(p, ref))), go:'projects'},
     {l:'Projects late', v: late.length, c:'bad', tr: trend(cnt(active, p => projLateAt(p, today)), cnt(active, p => projLateAt(p, ref))), go:'projects'},
-    {l:'Due this week', v: dueAt(today), c:'', tr: trend(dueAt(today), dueAt(ref)), go:'notifications'},
+    {l:'Due this week', v: dueAt(today), c:'', tr: trend(dueAt(today), dueAt(ref)), go:'work'},
   ];
   // ── this week: today and the next five working days
   const days = [today]; while (days.length < 6) days.push(addWorkDays(days[days.length - 1], 1));
@@ -3077,7 +3114,7 @@ function pageDashboard(){
   const clear = [!waiting.length && 'nothing is waiting on others', !stale.length && 'no project is stale', !newOld.length && 'no new tasks on older items'].filter(Boolean);
   return `${staleBanner()}<div class="dash db">
     <p class="db-greet">${esc(dashGreeting())}</p>
-    <section class="card db-needs st" style="--i:${n++}"><div class="ph"><h3>Needs you</h3><span>${needs.length > 5 ? `5 of ${needs.length}` : needs.length || ''}</span><button type="button" class="db-link" data-go="notifications">See all${ico('chev', 15)}</button></div>
+    <section class="card db-needs st" style="--i:${n++}"><div class="ph"><h3>Needs you</h3><span>${needs.length > 5 ? `5 of ${needs.length}` : needs.length || ''}</span><button type="button" class="db-link" data-go="work">See all${ico('chev', 15)}</button></div>
       ${needs.length ? `<div class="db-list">${needs.slice(0, 5).map((x, i) => needRow(x, n + i)).join('')}</div>` : `<p class="db-empty">${ico('check', 18)}Nothing late, over SLA or due today.</p>`}</section>
     <section class="db-tiles">${tiles.map(x => `<button type="button" class="card db-tile st" style="--i:${n++}" data-go="${x.go}"><span class="db-tl">${x.l}</span><span class="db-tn ${x.v ? x.c : ''}"><span data-count="${x.v}">${x.v}</span></span>${x.tr}</button>`).join('')}</section>
     <section class="card db-week st" style="--i:${n++}"><div class="ph"><h3>This week</h3><span>milestones, trials and deliveries</span></div>
@@ -3359,7 +3396,8 @@ document.addEventListener('contextmenu', e => { if (BD && BD.touch) e.preventDef
 document.addEventListener('pointerup', e => bdEnd(e, false));
 document.addEventListener('pointercancel', e => bdEnd(e, true));
 document.addEventListener('click', e => { if (Date.now() - bdJust < 350){ e.stopPropagation(); e.preventDefault(); } }, true);   // the drop is not a tap
-document.addEventListener('change', e => { if (e.target.id === 'psort'){ S.psort = e.target.value; store.set('npd2-psort', S.psort); vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); } });
+document.addEventListener('change', e => { if (e.target.id === 'wtypesel'){ S.wtype = e.target.value; vt(() => refresh(), 'list'); return; }
+  if (e.target.id === 'psort'){ S.psort = e.target.value; store.set('npd2-psort', S.psort); vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); } });
 
 /* ── Project detail: name and health first, then what happens next, then progress and people, reference details last ── */
 const NPD_STAGES = ['Design','CAPEX Approval','Pilot Mold','Commercial Mold','Machine & Aux Equipment','IML Development','Production Ramp-Up'];   // the phases of the Gantt's NPD Procedure Template
@@ -3630,28 +3668,77 @@ function exportBackup(){
   toast('Backup downloaded: everything, including the recycle bin', {icon:'check'});
 }
 
-/* ── Notifications ── */
+/* ── My work: everything assigned to you in one dense list (project actions, inquiry tasks and next actions, personal tasks) ──
+   Rows use the notification shape, so completing, snoozing and moving dates go through the same functions everywhere. */
 let NOTI = [];
-function pageNotifications(){
-  const N = collectNotifications(S.nscope);
-  const ALL = [...N.missed.map(n => ({...n, kind:'missed'})), ...N.upcoming.map(n => ({...n, kind:'upcoming'})), ...N.awaiting.map(n => ({...n, kind:'awaiting'}))];
-  const today = todayStr(), everyone = S.nscope === 'all' && isLead();
-  const ppl = everyone ? [...new Set(ALL.map(x => x.pic))].sort() : [];
-  if (S.nperson && !ppl.includes(S.nperson)) S.nperson = '';
-  const horizon = S.nwhen === 'week' ? addDays(today, 7) : S.nwhen === 'month' ? addDays(today, 30) : '';
-  NOTI = ALL.filter(x => (!S.nperson || x.pic === S.nperson) && (!horizon || !(x.kind === 'awaiting' ? x.reminder || x.deadline : x.deadline) || (x.kind === 'awaiting' ? x.reminder || x.deadline : x.deadline) <= horizon));
-  const when = n => n.kind === 'awaiting' ? (n.reminder ? 'reminder ' + fmtDate(n.reminder) : 'awaiting reply') : n.deadline < today ? `${-workDaysBetween(today, n.deadline) || 1} working day${-workDaysBetween(today, n.deadline) > 1 ? 's' : ''} late` : n.deadline === today ? 'due today' : 'due ' + fmtDate(n.deadline);
-  const grp = [['missed','Overdue', 'bad', 'clock'],['upcoming','Due soon', 'warn', 'flag'],['awaiting','Awaiting reply', 'info', 'msg']];
-  let n = 1;
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${isLead() ? segHTML('nseg', [['mine','Mine'],['all','Everyone']], S.nscope) : ''}${segHTML('nwhen', [['all','Any time'],['week','Next 7 days'],['month','Next 30 days']], S.nwhen)}<span class="muted ntip" style="font-size:13.5px">Swipe right to mark done, left to snooze until tomorrow.</span></div>
-    ${everyone && ppl.length > 1 ? `<div class="chiprow st" style="--i:0">${[['', 'Everyone', ALL.length], ...ppl.map(p => [p, p, ALL.filter(x => x.pic === p).length])].map(([k, l, c]) => `<button type="button" class="${S.nperson === k ? 'on' : ''}" data-nper="${esc(k)}">${esc(l)} <span>${c}</span></button>`).join('')}</div>` : ''}
-    ${grp.map(([k, l, c, ic]) => { const ns = NOTI.filter(x => x.kind === k); if (!ns.length) return '';
-      return `<div class="ngroup">${l} <span class="ct">${ns.length}</span></div><div class="nlist">${ns.map(x => `<div class="nrow st ${k === 'missed' ? 'unread' : ''}" style="--i:${Math.min(n++, 12)}" data-nkey="${esc(x.key)}">
-        <div class="under"><span class="ul">${ico('check',18)} ${canCompleteNotif(x) ? 'Done' : 'View only'}</span><span class="ur">Snooze ${ico('clock',18)}</span></div>
-        <div class="nfg"><span class="nic" style="--c:var(--${c})">${ico(x.type === 'project' ? 'folder' : x.type === 'inquiry' || x.type === 'na' ? 'inbox' : x.type === 'mtask' ? 'tasks' : ic, 19)}</span>
-          <div style="min-width:0"><div class="nt">${esc(x.taskName)}</div><div class="ns">${esc([x.parentCode !== 'TASK' ? x.parentCode : 'Task', x.parentName !== x.taskName ? x.parentName : '', S.nscope === 'all' ? x.pic : ''].filter(Boolean).join(' · '))}</div></div>
-          <div class="nr"><span class="due ${k === 'missed' ? 'late' : ''}">${esc(when(x))}${canEditNotif(x) ? `<button type="button" class="resched" data-resched="${esc(x.key)}" data-v="${esc(k === 'awaiting' ? x.reminder || '' : x.deadline || '')}" data-dplabel="${k === 'awaiting' ? 'Chase on' : 'New deadline'}" aria-label="Change date">${ico('cal',15)}</button>` : ''}</span><div class="nact">${canCompleteNotif(x) ? `<button class="btn" type="button" data-ndone="${esc(x.key)}">${ico('check',14)} Done</button>` : ''}<button class="btn" type="button" data-nopen="${esc(x.key)}">Open</button></div></div></div></div>`).join('')}</div>`; }).join('')
-    || `<div class="empty card"><b>All caught up</b>Nothing overdue, due soon or awaiting a reply${S.nscope === 'mine' ? ' for you' : ''}${horizon || S.nperson ? ' with these filters' : ''}.</div>`}`;
+const W_GROUPS = [['over','Overdue'],['today','Today'],['week','This week'],['later','Later'],['nodate','No date'],['await','Awaiting reply'],['done','Done this week']];
+function workItems(everyone){
+  const d = DB.data, me = meName(), all = everyone && isLead(), today = todayStr(), wk7 = addDays(today, -7), out = [];
+  const vis = p => all || (p || 'Adam') === me, keep = t => !t.done || (t.completedAt && t.completedAt >= wk7), fm = x => S.fac === 'all' || facOf(x) === S.fac;
+  const add = n => { n.key = `${n.type}:${n.parentId}:${n.taskId}`; n.kind = n.status === 'awaiting-reply' ? 'awaiting' : n.deadline && n.deadline < today ? 'missed' : 'upcoming'; out.push(n); };
+  if (inqOn()) d.inquiries.forEach(i => { if (isClosedInq(i) || !fm(i)) return;
+    (i.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'inquiry', coll:'inquiries', parentId:i.id, taskId:t.id, parentCode:i.code, parentName:i.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.status||'', pic:t.pic||'Adam', fac:facOf(i), done:!!t.done, doneOn:t.completedAt||'', sla:_isMoldTask(t) || _isImlTask(t) || _isNpdTask(t)}));
+    if (!i.outcome) (i.nextActions||[]).forEach((na, ix) => { if (keep(na) && vis(na.pic)) add({type:'na', coll:'inquiries', parentId:i.id, taskId:subKey(na, ix), parentCode:i.code, parentName:i.name, taskName:na.action || 'Next action', deadline:na.deadline||'', reminder:'', status:'', pic:na.pic||'Adam', fac:facOf(i), done:!!na.done, doneOn:na.completedAt||''}); });
+  });
+  d.projects.forEach(p => { if (isClosedProj(p) || !fm(p)) return;
+    (p.tasks||[]).filter(t => keep(t) && vis(t.pic)).forEach(t => add({type:'project', coll:'projects', parentId:p.id, taskId:t.id, parentCode:p.code, parentName:p.name, taskName:t.name, deadline:t.deadline||'', reminder:t.reminder||'', status:t.done ? '' : t.status||'', pic:t.pic||'Adam', fac:facOf(p), done:!!t.done, doneOn:t.completedAt||''})); });
+  if (S.fac === 'all') (d.mtasks||[]).filter(t => !t.archived && (all || (t.owner || 'Adam') === me) && (t.status !== 'done' || (t.completedAt && t.completedAt >= wk7)))
+    .forEach(t => add({type:'mtask', coll:'mtasks', parentId:t.id, taskId:t.id, parentCode:'TASK', parentName:t.title, taskName:t.title || 'Untitled task', deadline:t.deadline||'', reminder:t.reminder||'', status:t.status === 'done' ? '' : t.status||'', pic:t.owner||'Adam', fac:'', done:t.status === 'done', doneOn:t.completedAt||'', prio:prioKey(t.priority), cat:t.category}));
+  return out;
+}
+function workSummary(){ const today = todayStr(), it = workItems(S.wscope === 'all').filter(n => !n.done), over = it.filter(n => n.status !== 'awaiting-reply' && n.deadline && n.deadline < today).length; return `${it.length} open${over ? ` · ${over} overdue` : ''}`; }
+const wGroup = (n, today, w7) => n.done ? 'done' : n.status === 'awaiting-reply' ? 'await' : !n.deadline ? 'nodate' : n.deadline < today ? 'over' : n.deadline === today ? 'today' : n.deadline <= w7 ? 'week' : 'later';
+const W_SRC = {project:'folder', inquiry:'inbox', na:'inbox', mtask:'user'};
+function workRow(n, today, every, hint){
+  const aw = n.status === 'awaiting-reply', due = aw ? n.reminder || n.deadline : n.deadline, canC = canCompleteNotif(n), canE = canEditNotif(n) && !n.done;
+  const chase = aw && n.reminder && n.reminder <= today;   // time to chase: the bell
+  const dueTx = n.done ? (n.doneOn ? 'done ' + fmtDate(n.doneOn) : 'done') : !due ? '' : (aw ? 'chase ' : '') + (due < today ? fmtDate(due) : due === today ? 'Today' : fmtDay(due));
+  const dueCls = !n.done && !aw && due && due < today ? 'late' : !n.done && due === today ? 'now' : '';
+  const cat = n.type === 'mtask' && n.cat && !/^general$/i.test(n.cat) ? (MT_CATS.find(c => c[0] === n.cat) || [0, n.cat])[1] : '';
+  const tags = [aw ? `<span class="pill">${ico('clock',12)}Awaiting reply</span>` : n.status === 'inprogress' ? '<span class="pill warn">In progress</span>' : '',
+    n.sla ? '<span class="pill wtag">SLA</span>' : '', n.type === 'na' ? '<span class="pill">Next action</span>' : '',
+    !n.done && /\btrials?\b|\bT\d\b/i.test(n.taskName) ? `<span class="pill">${ico('flask',12)}Trial</span>` : '', n.prio ? prio(n.prio) : '', cat ? `<span class="pill">${esc(cat)}</span>` : ''].filter(Boolean).join('');
+  const src = n.type === 'mtask' ? 'Personal' : n.parentName;
+  return `<div class="wrow${n.done ? ' done' : ''}" data-nkey="${esc(n.key)}"><div class="wunder"><span class="ul">${ico('check',18)} ${canC ? 'Done' : 'View only'}</span><span class="ur">Snooze ${ico('clock',18)}</span></div>
+    <div class="wfg" data-nopen="${esc(n.key)}" tabindex="0">
+      ${canC ? `<button type="button" class="wcc" ${n.done ? `data-nreopen="${esc(n.key)}" aria-label="Reopen: ${esc(n.taskName)}"` : `data-ndone="${esc(n.key)}" aria-label="Complete: ${esc(n.taskName)}"`}>${ico('check',13)}</button>` : `<span class="wcc ro" aria-hidden="true"></span>`}
+      <span class="wt">${chase ? `<span class="wbell" title="Time to chase">${ico('bell',14)}</span>` : ''}<span class="wtt">${esc(n.taskName)}</span></span>
+      <span class="ws">${ico(W_SRC[n.type], 14)}${n.type !== 'mtask' && n.parentCode ? `<span class="mono">${esc(n.parentCode)}</span>` : ''}<span class="wsn">${esc(src)}</span></span>
+      ${every ? `<span class="wo" title="${esc(n.pic)}"><span class="pj-av">${initials(n.pic)}</span><span class="won">${esc(n.pic)}</span></span>` : ''}
+      ${canE ? `<button type="button" class="wd ${dueCls}" data-resched="${esc(n.key)}" data-v="${esc(due || '')}" data-dplabel="${aw ? 'Chase on' : 'Due date'}" aria-label="Move the ${aw ? 'chase date' : 'due date'}">${dueTx || '<span class="wnone">Set date</span>'}</button>` : `<span class="wd ${dueCls}">${dueTx}</span>`}
+      <span class="wst">${tags}${hint ? `<span class="whint">${ico('snooze',13)}Swipe to snooze</span>` : ''}</span>
+      <span class="wx">${!n.done ? `<button type="button" class="wbtn" data-nsnz="${esc(n.key)}" aria-label="Snooze until tomorrow" title="Snooze until tomorrow">${ico('snooze',16)}</button>` : ''}<span class="wchev">${ico('chev',16)}</span></span>
+    </div></div>`;
+}
+function pageWork(){
+  if (S.tarch || S.tsel) return workPersonal();
+  const today = todayStr(), w7 = addDays(today, 7), every = S.wscope === 'all' && isLead(), sn = snoozed(), q = (S.wq || '').trim().toLowerCase();
+  const items = workItems(every), open = items.filter(n => !n.done);
+  const typeOf = n => n.type === 'na' ? 'inquiry' : n.type, cnt = k => open.filter(n => k === 'all' || typeOf(n) === k).length;
+  const isSnz = n => !n.done && sn[n.key] && sn[n.key] > today;
+  let list = items.filter(n => (S.wtype === 'all' || typeOf(n) === S.wtype) && (!q || [n.taskName, n.parentName, n.parentCode, n.pic].join(' ').toLowerCase().includes(q)));
+  const snzN = list.filter(isSnz).length; if (!S.wsnz) list = list.filter(n => !isSnz(n));
+  const by = (a, b) => a < b ? -1 : a > b ? 1 : 0, sortK = g => g === 'done' ? (a, b) => by(b.doneOn, a.doneOn) : g === 'await' ? (a, b) => by(a.reminder || a.deadline || '9', b.reminder || b.deadline || '9') : (a, b) => by(a.deadline || '9', b.deadline || '9') || by(a.taskName, b.taskName);
+  const groups = W_GROUPS.map(([k, l]) => [k, l, list.filter(n => wGroup(n, today, w7) === k).sort(sortK(k))]).filter(g => g[2].length);
+  NOTI = list;   // the circles, swipes and date buttons find their row here
+  const fold = S.wfold || (S.wfold = new Set(['done']));
+  const touch = matchMedia('(hover: none)').matches && store.get('npd2-swhint', '') !== '1'; let hinted = false;
+  const body = groups.map(([k, l, ns]) => `<button type="button" class="wgb" data-wfold="${k}" aria-expanded="${!fold.has(k)}">${ico('chev',14)}<span>${l}</span><span class="n">${ns.length}</span></button>
+    ${fold.has(k) ? '' : ns.map(n => { const h = touch && !hinted && !n.done; if (h) hinted = true; return workRow(n, today, every, h); }).join('')}`).join('');
+  const dens = S.wdens === 'comfortable' ? ' comfy' : '';
+  return `${staleBanner()}<div class="toolbar wtools st" style="--i:0">${isLead() ? segHTML('wscope', [['mine','Mine'],['all','Everyone']], S.wscope) : ''}
+      ${segHTML('wtype', [['all','All', cnt('all')], ['project','Projects', cnt('project')], ...(inqOn() ? [['inquiry','Inquiries', cnt('inquiry')]] : []), ['mtask','Personal', cnt('mtask')]], S.wtype)}
+      <label class="psort wtypesel">${ico('rows',15)}<select id="wtypesel" aria-label="Show">${[['all','All types'], ['project','Projects'], ...(inqOn() ? [['inquiry','Inquiries']] : []), ['mtask','Personal']].map(([k, l]) => `<option value="${k}"${S.wtype === k ? ' selected' : ''}>${l} · ${cnt(k)}</option>`).join('')}</select>${ico('chev',14)}</label>
+      <label class="search wsearch">${ico('search',17)}<input id="wq" placeholder="Search tasks, projects, inquiries" value="${esc(S.wq || '')}" aria-label="Search my work"></label>
+      ${segHTML('wdens', [['comfortable', `${ico('rows2',16)}<span class="vh">Comfortable</span>`], ['compact', `${ico('rows',16)}<span class="vh">Compact</span>`]], S.wdens)}
+      <button class="btn wtool" type="button" data-act="tarch" title="Archived personal tasks">${ico('file',15)}<span>Archived</span></button>
+      ${can('tasks','edit') || can('tasks','delete') ? `<button class="btn wtool" type="button" data-act="tsel" title="Select personal tasks to archive or delete">${ico('check',15)}<span>Select</span></button>` : ''}
+      ${can('tasks','add') ? `<button class="b1 tb-new" type="button" data-fm="mtask">${ico('plus',16)}<span>New task</span></button>` : ''}</div>
+    <div class="card wl st${dens}${every ? ' every' : ''}" style="--i:1" id="wlist">
+      ${groups.length ? `<div class="wth" aria-hidden="true"><span></span><span>Task</span><span>From</span>${every ? '<span>Owner</span>' : ''}<span>Due</span><span>Status</span><span></span></div>${body}`
+        : `<div class="empty" style="padding:32px 12px"><b>${q || S.wtype !== 'all' ? 'Nothing matches' : 'All caught up'}</b>${q || S.wtype !== 'all' ? 'Try another filter or search.' : `Nothing assigned to ${every ? 'anyone' : 'you'} is open${S.fac !== 'all' ? ' for ' + esc(S.fac) : ''}.`}</div>`}
+    </div>
+    ${snzN ? `<p class="wfoot"><button class="lnk" type="button" data-act="wsnz">${S.wsnz ? 'Hide' : 'Show'} ${snzN} snoozed</button></p>` : ''}`;
 }
 
 /* ── Styles gallery ── */
@@ -3691,18 +3778,18 @@ function pageStyles(){
 }
 
 /* ══════════ RENDER + NAVIGATION ══════════ */
-const ORDER = ['dashboard','inquiries','projects','tasks','notifications','styles','bin'];
+const ORDER = ['dashboard','inquiries','projects','work','styles','bin'];
 function render(opts = {}){
   const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
-  const sub2 = S.page === 'dashboard' && DB.data ? esc(dashGreeting()) : sub;
+  const sub2 = S.page === 'dashboard' && DB.data ? esc(dashGreeting()) : S.page === 'work' && DB.data ? workSummary() : sub;
   $('#ttl').innerHTML = pr ? `<button type="button" class="ibtn pj-back" data-go="projects" aria-label="Back to all projects">${ico('back',18)}<span>Projects</span></button>` : `<h1>${t}</h1>${sub2 ? `<span class="sub">${sub2}</span>` : ''}`;
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
-  $('#topx').innerHTML = !DB.data ? '' : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'tasks' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
+  $('#topx').innerHTML = !DB.data ? '' : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'work' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
-  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, tasks: pageTasks, notifications: pageNotifications, styles: pageStyles, bin: pageBin })[S.page]();
+  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, work: pageWork, styles: pageStyles, bin: pageBin })[S.page]();
   if (!opts.keep) v.scrollTop = 0;
-  if (aeId === 'q'){ const q = $('#q'); if (q){ q.focus(); try { q.setSelectionRange(sel, sel); } catch(e){} } }
+  if (aeId === 'q' || aeId === 'wq'){ const q = $('#' + aeId); if (q){ q.focus({preventScroll: true}); try { q.setSelectionRange(sel, sel); } catch(e){} } }
   hydrateIcons(v); counts(); moveNav(!opts.keep);
   requestAnimationFrame(() => {
     $$('#view .seg,#topx .seg').forEach(s => placeInd(s, false)); wireScroll();
@@ -3726,6 +3813,7 @@ function softRender(first){
   refreshSheet();
 }
 function go(page, o = {}){
+  if (page === 'tasks' || page === 'notifications') page = 'work';   // the two pages My work replaced
   if (page === S.page && page !== 'project'){ $('#view').scrollTo({top:0, behavior:'smooth'}); return Promise.resolve(); }
   closeSheet(); closePop(); closeCmd(); closeShelf();
   const from = ORDER.indexOf(S.page === 'project' ? 'projects' : S.page), to = ORDER.indexOf(page === 'project' ? 'projects' : page);
@@ -3775,8 +3863,8 @@ function toggleNA(key, done, btn){
 
 /* ── Standalone tasks (V1's Tasks page) ── */
 function visibleMTasks(){
-  const all = S.tscope === 'all' && isLead();
-  return (DB.data.mtasks || []).filter(t => (all || (t.owner || 'Adam') === meName()) && (S.tarch ? !!t.archived : !t.archived) && (S.tcat === 'all' || t.category === S.tcat));
+  const all = S.wscope === 'all' && isLead();
+  return (DB.data.mtasks || []).filter(t => (all || (t.owner || 'Adam') === meName()) && (S.tarch ? !!t.archived : !t.archived));
 }
 function mtaskRow(t, today){
   const sel = S.tsel, canE = can('tasks','edit'), canC = can('tasks','complete'), done = t.status === 'done';
@@ -3784,13 +3872,13 @@ function mtaskRow(t, today){
   return `<div class="task mt ${done ? 'done' : ''} ${sel && sel.has(t.id) ? 'picked' : ''}" style="--n:m-${esc(String(t.id).replace(/[^\w-]/g,''))}" ${sel ? `data-mtsel="${esc(t.id)}" role="button" tabindex="0"` : ''}>
     ${sel ? `<span class="selc">${ico('check',14)}</span>` : `<button type="button" class="cb" ${canC ? `data-mt="${esc(t.id)}" data-done="${done ? 0 : 1}"` : 'disabled'} aria-label="${done ? 'Reopen' : 'Complete'}: ${esc(t.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>`}
     <div style="min-width:0" ${!sel && canE ? `data-fm="mtask|${esc(t.id)}" class="tap"` : ''}><div class="tt">${esc(t.title)}</div>
-      <div class="who">${cat ? `<span>${esc(cat)}</span>` : ''}${prio(pk)}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !done ? '<span class="pill warn">In progress</span>' : ''}${S.tscope === 'all' ? `<span>${esc(t.owner || 'Adam')}</span>` : ''}${t.description ? `<span class="desc">${esc(t.description)}</span>` : ''}</div></div>
+      <div class="who">${cat ? `<span>${esc(cat)}</span>` : ''}${prio(pk)}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !done ? '<span class="pill warn">In progress</span>' : ''}${S.wscope === 'all' ? `<span>${esc(t.owner || 'Adam')}</span>` : ''}${t.description ? `<span class="desc">${esc(t.description)}</span>` : ''}</div></div>
     <span class="due ${!done && t.deadline && t.deadline < today ? 'late' : ''}">${done && t.completedAt ? 'done ' + fmtDate(t.completedAt) : t.deadline ? fmtDate(t.deadline) : ''}</span>
     ${!sel && canE ? `<button type="button" class="ed" data-fm="mtask|${esc(t.id)}" aria-label="Edit ${esc(t.title)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
 }
-function pageTasks(){
+/* My work's Archived and Select modes: the personal tasks on their own */
+function workPersonal(){
   const today = todayStr(), wk = addDays(today, 7), list = visibleMTasks();
-  const base = (DB.data.mtasks || []).filter(t => (S.tscope === 'all' && isLead() || (t.owner || 'Adam') === meName()) && (S.tarch ? !!t.archived : !t.archived));
   const byDate = (a, b) => (a.deadline || '9') < (b.deadline || '9') ? -1 : (a.deadline || '9') > (b.deadline || '9') ? 1 : ({high:0, medium:1, low:2}[a.priority] ?? 1) - ({high:0, medium:1, low:2}[b.priority] ?? 1);
   const open = list.filter(t => t.status !== 'done').sort(byDate), done = list.filter(t => t.status === 'done').sort((a,b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1);
   const groups = S.tarch ? [['Archived', list.sort((a,b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1)]] : [
@@ -3801,15 +3889,13 @@ function pageTasks(){
     ['Later', open.filter(t => t.status !== 'awaiting-reply' && t.deadline > wk)],
     ['No deadline', open.filter(t => t.status !== 'awaiting-reply' && !t.deadline)],
   ];
-  const cnt = k => base.filter(t => (k === 'all' || t.category === k) && (S.tarch || t.status !== 'done')).length;
   const body = groups.filter(g => g[1].length).map(([l, ts]) => `<div class="tgroup"><span>${l} · ${ts.length}</span></div>${ts.map(t => mtaskRow(t, today)).join('')}`).join('')
     + (!S.tarch && done.length ? `<div class="tgroup"><span>Done · ${done.length}</span><button class="lnk" type="button" data-act="tdone">${S.tdone ? 'Hide' : 'Show'}</button></div>${S.tdone ? done.map(t => mtaskRow(t, today)).join('') : ''}` : '');
   const nSel = S.tsel ? S.tsel.size : 0;
-  return `${staleBanner()}<div class="toolbar st" style="--i:0">${segHTML('tcat', [['all','All'], ...MT_CATS].map(([k, l]) => [k, l, cnt(k)]), S.tcat)}</div>
-    <div class="toolbar ttools st" style="--i:0">${isLead() ? segHTML('tscope', [['mine','Mine'],['all','Everyone']], S.tscope) : ''}
+  return `${staleBanner()}<div class="toolbar ttools st" style="--i:0"><b class="wmode">${S.tarch ? 'Archived personal tasks' : 'Select personal tasks'}</b>
       <span class="tb-gap"></span>
-      <button class="btn ${S.tarch ? 'on' : ''}" type="button" data-act="tarch">${ico(S.tarch ? 'back' : 'file',15)}<span>${S.tarch ? 'Back to tasks' : 'Archived'}</span></button>
-      ${can('tasks','edit') || can('tasks','delete') ? `<button class="btn ${S.tsel ? 'on' : ''}" type="button" data-act="tsel">${ico(S.tsel ? 'x' : 'check',15)}<span>${S.tsel ? 'Cancel' : 'Select'}</span></button>` : ''}
+      <button class="btn ${S.tarch ? 'on' : ''}" type="button" data-act="tarch">${ico(S.tarch ? 'back' : 'file',15)}<span>${S.tarch ? 'Back to My work' : 'Archived'}</span></button>
+      ${can('tasks','edit') || can('tasks','delete') ? `<button class="btn ${S.tsel ? 'on' : ''}" type="button" data-act="tsel">${ico(S.tsel ? 'x' : 'check',15)}<span>${S.tsel ? 'Done' : 'Select'}</span></button>` : ''}
       ${can('tasks','add') && !S.tarch ? `<button class="b1 tb-new" type="button" data-fm="mtask">${ico('plus',16)}<span>New task</span></button>` : ''}</div>
     <div class="card tabs-wrap st mtlist" style="--i:1">${body || `<div class="empty" style="padding:28px 10px"><b>${S.tarch ? 'No archived tasks' : 'No tasks here'}</b>${S.tarch ? 'Finished tasks you archive show up here.' : 'Add your own to-dos: reports, meetings, follow-ups.'}</div>`}</div>
     ${S.tsel ? `<div class="selbar"><b>${nSel} selected</b>${S.tarch ? `<button class="btn sm" type="button" data-act="tbulk-restore" ${nSel ? '' : 'disabled'}>Restore</button>` : `<button class="btn sm" type="button" data-act="tbulk-archive" ${nSel ? '' : 'disabled'}>Archive</button>`}${can('tasks','delete') ? `<button class="btn sm fm-del" type="button" data-act="tbulk-delete" ${nSel ? '' : 'disabled'}>Delete</button>` : ''}</div>` : ''}`;
@@ -4313,10 +4399,10 @@ function followUpAction(kind, parentId, name, srcId){
   }};
 }
 
-/* ── notification swipe: right = done, left = snooze until tomorrow ── */
+/* ── My work swipe (touch): right = done, left = snooze until tomorrow ── */
 let sw = null;
 document.addEventListener('pointerdown', e => {
-  const fg = e.target.closest('.nfg'); if (!fg || e.target.closest('button')) return;
+  const fg = e.target.closest('.wfg'); if (!fg || e.pointerType === 'mouse') return;   // a tap on a button still works; a swipe that starts on one is a swipe
   sw = { row: fg.parentElement, fg, x: e.clientX, y: e.clientY, dx: 0, lock: null, id: e.pointerId };
 });
 document.addEventListener('pointermove', e => {
@@ -4346,6 +4432,7 @@ const swipeEnd = e => {
   if (!sw || e.pointerId !== sw.id) return;
   const s = sw; sw = null; s.row.classList.remove('drag');
   if (s.lock !== 'x') return;
+  bdJust = Date.now(); store.set('npd2-swhint', '1');
   const w = s.row.offsetWidth, n = notifByKey(s.row.dataset.nkey);
   if (n && Math.abs(s.dx) > w*.35){
     if (navigator.vibrate) try { navigator.vibrate(10); } catch(_){}
@@ -4360,7 +4447,7 @@ document.addEventListener('pointerup', swipeEnd); document.addEventListener('poi
 let cmdIdx = 0, cmdItems = [];
 function cmdBuild(q){
   q = q.trim().toLowerCase();
-  const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',tasks:'tasks',notifications:'bell'}[p]}));
+  const pages = ORDER.filter(p => p !== 'styles' && p !== 'bin' && (inqOn() || p !== 'inquiries')).map(p => ({g:'Pages', t:TITLES[p][0], run:() => go(p), ic:{dashboard:'grid',inquiries:'inbox',projects:'folder',work:'work'}[p]}));
   const acts = [{g:'Actions', t:'Switch light / dark', run:() => toggleTheme(), ic:'sun'},{g:'Actions', t:'Change style', run:() => go('styles'), ic:'sliders'},{g:'Actions', t:'Export to Excel', run:() => exportExcel(), ic:'file'},{g:'Actions', t:'Download a backup', run:() => exportBackup(), ic:'arrowup'},{g:'Actions', t:'Open the recycle bin', run:() => go('bin'), ic:'trash'},{g:'Actions', t:'Reload latest data', run:() => pull({manual:true}), ic:'refresh'}];
   if (DB.data && inqOn() && can('inquiries','add')) acts.unshift({g:'Actions', t:'New inquiry', run:() => formInquiry(), ic:'plus'});
   if (DB.data && can('projects','add')) acts.unshift({g:'Actions', t:'New project', run:() => formProject(), ic:'plus'});
@@ -4585,7 +4672,9 @@ document.addEventListener('click', e => {
   const nad = t.closest('[data-na]'); if (nad){ toggleNA(nad.dataset.na, nad.dataset.done === '1', nad); return; }
   const mt = t.closest('[data-mt]'); if (mt){ toggleMT(mt.dataset.mt, mt.dataset.done === '1', mt); return; }
   const ms = t.closest('[data-mtsel]'); if (ms){ const id = ms.dataset.mtsel; S.tsel.has(id) ? S.tsel.delete(id) : S.tsel.add(id); refresh(); return; }
-  const np = t.closest('[data-nper]'); if (np){ S.nperson = np.dataset.nper; vt(() => refresh(), 'list'); return; }
+  const wf = t.closest('[data-wfold]'); if (wf){ const k = wf.dataset.wfold, f = S.wfold || (S.wfold = new Set(['done'])); f.has(k) ? f.delete(k) : f.add(k); vt(() => refresh(), 'list'); return; }
+  const sz = t.closest('[data-nsnz]'); if (sz){ const n = notifByKey(sz.dataset.nsnz); if (n) notifSnooze(n, sz.closest('.wrow')); return; }
+  const ro = t.closest('[data-nreopen]'); if (ro){ const n = notifByKey(ro.dataset.nreopen); if (n){ completeNotif(n, false); toast(`“${esc(n.taskName)}” reopened`, {icon:'refresh', undo: () => completeNotif(n, true)}); } return; }
   const rs = t.closest('[data-resched]'); if (rs){ const n = notifByKey(rs.dataset.resched); if (!n) return;
     if (DP.el && DP.field === rs){ closeDP(false); return; }
     openDP(rs, d => { const was = n.kind === 'awaiting' ? n.reminder : n.deadline; rescheduleNotif(n, d); toast(`“${esc(n.taskName)}” moved to ${fmtDate(d)}`, {icon:'clock', undo: () => rescheduleNotif(n, was || '')}); }); return; }
@@ -4601,7 +4690,7 @@ document.addEventListener('click', e => {
   const lk = t.closest('#pop [data-look]'); if (lk){ if (lk.dataset.look === 'K' && S.look !== 'K') matchDeviceTheme(); setLook(lk.dataset.look); return; }
   const it = t.closest('[data-itask]'); if (it){ toggleInqTask(it.dataset.itask, it.dataset.done === '1', it); return; }
   const ptk = t.closest('[data-ptask]'); if (ptk){ toggleProjTask(ptk.dataset.ptask, ptk.dataset.done === '1', ptk); return; }
-  const nd = t.closest('[data-ndone]'); if (nd){ const n = notifByKey(nd.dataset.ndone); if (n) notifDone(n, nd.closest('.nrow,.db-need')); return; }
+  const nd = t.closest('[data-ndone]'); if (nd){ const n = notifByKey(nd.dataset.ndone); if (n) notifDone(n, nd.closest('.wrow,.db-need')); return; }
   const no = t.closest('[data-nopen]'); if (no){ const n = notifByKey(no.dataset.nopen); if (!n) return; if (n.type === 'inquiry' || n.type === 'na') openSheet(n.parentId); else if (n.type === 'project') go('project', {proj:n.parentId}); else formMTask(n.parentId); return; }
   const sb = t.closest('.seg button'); if (sb){ const seg = sb.parentElement, v = sb.dataset.v; if (sb.classList.contains('on')) return;
     const prevIdx = $$('button', seg).findIndex(b => b.classList.contains('on'));
@@ -4613,10 +4702,7 @@ document.addEventListener('click', e => {
     else if (seg.id === 'pbseg'){ const p = findRec(DB.data, 'projects', S.proj); if (!p) return; const prev = p.ballWith || ''; setBall('projects', p.id, v); toast(`Ball passed to ${esc(BALL_LABELS[v])}`, {icon:'arrow', undo: () => setBall('projects', p.id, prev)}); }
     else if (seg.id === 'ibseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.ballWith || ''; setBall('inquiries', i.id, v); toast(v ? `Ball passed to ${esc(BALL_LABELS[v])}` : 'Ball in court cleared', {icon:'arrow', undo: () => setBall('inquiries', i.id, prev)}); }
     else if (seg.id === 'ioseg'){ const i = findRec(DB.data, 'inquiries', sheetId); if (!i) return; const prev = i.outcome || ''; setOutcome(i.id, v); if (v === 'won'){ const r = sb.getBoundingClientRect(); burst(r.left + r.width/2, r.top, 40, 180); } toast(v ? `Marked as ${OUTCOME_LABELS[v].toLowerCase()}` : 'Outcome reset to open', {icon: v === 'won' ? 'trophy' : 'check', undo: () => setOutcome(i.id, prev)}); }
-    else if (seg.id === 'nseg'){ S.nscope = v; S.nperson = ''; const from = indNow(seg); vt(() => { refresh(); slideInd('nseg', from); }, 'list'); }
-    else if (seg.id === 'nwhen'){ S.nwhen = v; const from = indNow(seg); vt(() => { refresh(); slideInd('nwhen', from); }, 'list'); }
-    else if (seg.id === 'tcat'){ S.tcat = v; const from = indNow(seg); vt(() => { refresh(); slideInd('tcat', from); }, 'list'); }
-    else if (seg.id === 'tscope'){ S.tscope = v; if (S.tsel) S.tsel.clear(); const from = indNow(seg); vt(() => { refresh(); slideInd('tscope', from); }, 'list'); }
+    else if (seg.id === 'wscope' || seg.id === 'wtype' || seg.id === 'wdens'){ S[seg.id] = v; if (seg.id === 'wdens') store.set('npd2-wdens', v); const from = indNow(seg); vt(() => { refresh(); slideInd(seg.id, from); }, 'list'); }
     else if (seg.id === 'focusseg'){ S.focus = v; store.set('npd2-focus', v); applyPrefs(); closeSheet(); if (S.page === 'inquiries' && v === 'projects') S.page = 'dashboard';
       vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
@@ -4635,6 +4721,7 @@ document.addEventListener('click', e => {
     else if (act === 'bin-empty'){ emptyBin(a); }
     else if (act === 'glass-reset'){ setSlider('gt', 70, true); setSlider('gb', 24, true); S.mat = 'thin'; store.set('npd2-mat', 'thin'); applyPrefs();
       const ms = $('#matseg'); if (ms){ $$('button', ms).forEach(b => b.classList.toggle('on', b.dataset.v === 'thin')); placeInd(ms, true); } }
+    else if (act === 'wsnz'){ S.wsnz = !S.wsnz; vt(() => refresh(), 'list'); }
     else if (act === 'tdone'){ S.tdone = !S.tdone; vt(() => refresh(), 'list'); }
     else if (act === 'tarch'){ S.tarch = !S.tarch; S.tsel = S.tsel ? new Set() : null; vt(() => refresh(), 'list'); }
     else if (act === 'tsel'){ S.tsel = S.tsel ? null : new Set(); refresh(); }
@@ -4661,14 +4748,16 @@ document.addEventListener('keydown', e => {
   if (!AUTH.user) return;
   if (formOpen()){ if (e.key === 'Escape'){ e.preventDefault(); closeForm(); } return; }
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-proj][role=button]')){ e.preventDefault(); e.target.click(); return; }
+  if (e.key === 'Enter' && e.target.matches('.wfg')){ e.preventDefault(); e.target.click(); return; }
   if (e.key === 'Enter' && e.target.matches('[data-fm][tabindex],[data-mtsel]')){ e.preventDefault(); e.target.click(); return; }
-  if (e.key === 'Escape' && S.tsel && S.page === 'tasks'){ S.tsel = null; refresh(); return; }
+  if (e.key === 'Escape' && S.tsel && S.page === 'work'){ S.tsel = null; refresh(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); $('#cmdk').classList.contains('open') ? closeCmd() : openCmd(); }
   if (e.key === 'Escape'){ closeCmd(); closeSheet(); closePop(); }
 });
 $('#scrim').addEventListener('click', closeSheet);
 $('#fscrim').addEventListener('click', () => closeForm());
-document.addEventListener('input', e => { if (e.target.id === 'binq'){ S.binq = e.target.value; clearTimeout(S._bq); S._bq = setTimeout(() => { const l = $('#binlist'); if (l) l.innerHTML = binList(); }, 140); return; } });
+document.addEventListener('input', e => { if (e.target.id === 'wq'){ S.wq = e.target.value; clearTimeout(S._wq); S._wq = setTimeout(() => { const v = $('#view'), top = v.scrollTop; refresh(); v.scrollTop = top; }, 160); return; }
+  if (e.target.id === 'binq'){ S.binq = e.target.value; clearTimeout(S._bq); S._bq = setTimeout(() => { const l = $('#binlist'); if (l) l.innerHTML = binList(); }, 140); return; } });
 document.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; clearTimeout(S._qt); S._qt = setTimeout(() => vt(() => { $('#rows').innerHTML = inqRows(); }, 'list'), 160); } });
 addEventListener('resize', () => { moveNav(false); $$('.seg').forEach(s => placeInd(s, false)); wireScroll(); });
 $('#totop').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>`;

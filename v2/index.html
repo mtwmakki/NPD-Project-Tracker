@@ -97,8 +97,8 @@
 :root[data-look="I"] body,:root[data-look="I"] #login{background:var(--backdrop)}
 :root[data-look="I"] #app .orbs,:root[data-look="I"] #login .orbs{display:none}
 :root[data-look="I"] #app{background:var(--app)}
-@media (min-width:721px){ :root[data-look="I"] body{padding:16px} :root[data-look="I"] #app{border-radius:40px;box-shadow:0 40px 90px -40px rgba(20,30,50,.5);overflow:hidden} }
-@media (min-width:1041px){ :root[data-look="I"] #app{grid-template-columns:108px minmax(0,1fr)} }
+@media (min-width:721px){:root[data-look="I"] body{padding:16px} :root[data-look="I"] #app{border-radius:40px;box-shadow:0 40px 90px -40px rgba(20,30,50,.5);overflow:hidden}}
+@media (min-width:1041px){:root[data-look="I"] #app{grid-template-columns:108px minmax(0,1fr)}}
 :root[data-look="I"] .side{background:transparent;border-right:0;align-items:center;padding:28px 14px 18px;backdrop-filter:none}
 :root[data-look="I"] .brand{padding:0 0 18px}
 :root[data-look="I"] .brand b,:root[data-look="I"] .searchbtn,:root[data-look="I"] .nav .lbl,:root[data-look="I"] .nav .cnt,:root[data-look="I"] .nav .badge-new,:root[data-look="I"] .sec,:root[data-look="I"] .me div,:root[data-look="I"] .side .fac .cnt,:root[data-look="I"] .side #pins{display:none}
@@ -140,7 +140,7 @@
 :root[data-look="I"] .tabs-wrap{padding:26px}
 :root[data-look="I"] .lg-card{background:var(--app);border:0;border-radius:36px}
 :root[data-look="I"] .lg-logo{border-radius:50%;background:var(--ac);color:var(--on-ac);box-shadow:none}
-@media (min-width:1400px){ :root[data-look="I"] .searchpill{display:flex} }
+@media (min-width:1400px){:root[data-look="I"] .searchpill{display:flex}}
 
 /* ── Look J · Graphite (reference 2) ── */
 :root[data-look="J"]{ --fd:"Instrument Sans",system-ui,sans-serif; --fb:"Instrument Sans",system-ui,sans-serif; --fn:"Instrument Sans",system-ui,sans-serif; --h-w:500; --h-ls:-.03em; --n-w:500; --n-ls:-.045em; --ph-w:500; --r-card:26px; --r-sm:12px; --r-pill:10px; --blur:none;
@@ -467,34 +467,7 @@ button{font:inherit;color:inherit}
 .pfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--mu)}
 
 /* project detail */
-.dh{padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center}
-.dh-title{margin:6px 0 10px;font:var(--h-w) clamp(30px,3.8vw,46px)/1.05 var(--fd);letter-spacing:var(--h-ls);width:fit-content;max-width:100%}
-.backlink{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--mu);cursor:pointer;font:600 13px var(--fb);padding:4px 0}
-.backlink:hover{color:var(--tx)}
-.pring{position:relative;width:118px;height:118px}
-.pring svg{width:118px;height:118px;transform:rotate(-90deg)}
-.pring circle{fill:none;stroke-width:8;stroke-linecap:round}
-.pring .bg{stroke:var(--track)}
-.pring .fg{stroke:url(#pgrad);transition:stroke-dashoffset calc(900ms*var(--k)) var(--spring-soft)}
-.pring .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
-.pring .c b{font:var(--n-w) 32px/1 var(--fn);letter-spacing:var(--n-ls)}
-.pring .c>span{font-size:11.5px;color:var(--mu)}
-.rail{padding:22px 24px 18px}
-.rail-in{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
-.ph7 span{line-height:1.25;padding:0 2px}
-.rail-cap{display:none;margin-top:14px;text-align:center;font-size:13px;color:var(--mu)}
-.rail-cap b{color:var(--tx);font-weight:600}
-.rail-line{position:absolute;left:calc(100%/14);right:calc(100%/14);top:13px;height:3px;border-radius:3px;background:var(--track)}
-.rail-line i{display:block;height:100%;width:var(--p);border-radius:inherit;background:var(--ac-grad);transform-origin:left;animation:grow calc(1400ms*var(--k)) calc(200ms*var(--k)) var(--ease-io) backwards;box-shadow:var(--glow)}
-.ph7{display:grid;justify-items:center;gap:8px;text-align:center;position:relative;z-index:1}
-.ph7 .nd{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line-2);background:var(--surf-solid);color:var(--on-ac);animation:nodepop calc(500ms*var(--k)) var(--spring) backwards;animation-delay:calc(200ms*var(--k) + var(--i)*170ms*var(--k))}
 @keyframes nodepop{from{transform:scale(0)}}
-.ph7.d .nd{background:var(--ac);border-color:var(--ac)}
-.ph7.c .nd{border-color:var(--ac)}
-.ph7.c .nd::after{content:"";position:absolute;width:28px;height:28px;border-radius:50%;border:2px solid var(--ac);animation:ring 1.8s var(--ease-out) infinite}
-.ph7 span{font-size:12.5px;color:var(--mu)}
-.ph7.c span{color:var(--tx);font-weight:600}
-.dgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start}
 .tabs-wrap{padding:18px;display:grid;gap:16px}
 .tabbody{display:grid;gap:10px}
 .tabbody.swap-r{animation:in-r calc(450ms*var(--k)) var(--ease-out) backwards}
@@ -603,7 +576,6 @@ button{font:inherit;color:inherit}
 #totop{position:absolute;right:28px;bottom:24px;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:color-mix(in srgb,var(--surf-solid) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--tx);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity calc(250ms*var(--k)),transform calc(var(--spring-d)*var(--k)) var(--spring)}
 #totop.show{opacity:1;transform:none;pointer-events:auto}
 @media (max-width:720px){#totop{right:16px;bottom:16px}}
-@media (max-width:560px){.ph7 span{display:none}.ph7.c span{display:none}.rail-cap{display:block}.rail{padding:20px 14px 16px}}
 @media (max-width:720px){#tseg,#bseg,#pseg,#nseg{display:flex;width:100%}#tseg button,#bseg button,#pseg button,#nseg button{flex:1;justify-content:center;padding-left:8px;padding-right:8px}.seg button{padding-left:12px;padding-right:12px}}
 .tok table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
 .tok th{text-align:left;font:600 11px var(--fb);letter-spacing:.12em;text-transform:uppercase;color:var(--mu);padding:10px 12px;border-bottom:1px solid var(--line)}
@@ -767,7 +739,6 @@ button{font:inherit;color:inherit}
   .searchbtn{width:46px;justify-content:center;padding:10px 0}
   .nav{width:46px}.nav button{justify-content:center;padding:0}
   .me{flex-direction:column;padding:0}.me .ibtn{margin:0}
-  .dgrid,.grid2{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:720px){
   #app{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
@@ -779,7 +750,6 @@ button{font:inherit;color:inherit}
   .tabbar button.on{color:var(--tx)}
   .tab-ind{position:absolute;top:8px;left:0;width:64px;height:48px;border-radius:16px;background:var(--sel);transition:transform calc(var(--spring-d)*var(--k)) var(--spring)}
   .row{grid-template-columns:4px minmax(0,1fr) auto;gap:12px}.row .col-stage{display:none}
-  .dh{grid-template-columns:minmax(0,1fr);padding:20px}
   .princ{grid-template-columns:minmax(0,1fr)}
   #sheet{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:84%;border-radius:28px;transform:translateY(calc(100% + 20px))}
   #sheet.open{transform:translateY(var(--drag,0px))}
@@ -853,11 +823,8 @@ body{padding:0}
 .upd .u p{margin:0;font-size:13.5px;color:var(--mu);white-space:pre-wrap}
 .pill.done{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok);border-color:transparent}
 .pill.cancel{opacity:.6;text-decoration:line-through}
-.ph7 .dt{font:500 11px var(--fm);color:var(--mu)}
-.rail-empty{padding:18px 22px;color:var(--mu);font-size:13.5px}
 .kv.wide{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .ngroup .ct{color:var(--mu);font-weight:500;letter-spacing:0;text-transform:none;margin-left:6px}
-@media (max-width:560px){.ph7 .dt{display:none}}
 .seg.acc button{padding-left:12px;padding-right:12px}
 :root[data-look="I"] .seg.acc button{padding:11px 14px;font-size:14px}
 .row .meta2 .stp{display:none}
@@ -875,13 +842,7 @@ body{padding:0}
 @media (hover:none){.task .ed{opacity:.8}}
 @media (max-width:720px){.task .ed{display:none}}
 .shsec .task.slim{grid-template-columns:auto minmax(0,1fr) auto auto}
-.pill.pedit{cursor:pointer;display:inline-flex;align-items:center;gap:5px}
-.pill.pedit:hover{border-color:var(--ac)}
 .sh-foot{align-items:center}
-.rail-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.rail-act{display:flex;justify-content:flex-end;margin-top:6px}
-.ph7.tap{border-radius:12px;padding:4px 2px;transition:background .2s}
-.ph7.tap:hover{background:var(--hover)}
 .mslist{display:grid;gap:8px}
 .msrow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line);transition:border-color .2s}
 .msrow.tap:hover,.upd .u.tap:hover{border-color:var(--line-2)}
@@ -1072,12 +1033,6 @@ body{padding:0}
 .selbar{position:sticky;bottom:12px;z-index:5;margin:12px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);box-shadow:0 18px 40px -16px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);animation:rise calc(300ms*var(--k)) var(--ease-out) backwards}
 .selbar b{font-size:14px;margin-right:4px}
 .selbar .fm-del.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
-.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:6px}
-.picrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);background:var(--hover);border:1px solid var(--line);min-width:0;transition:border-color .2s}
-.picrow.tap:hover{border-color:var(--line-2)}
-.picrow>i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px var(--fb);font-style:normal;flex:none}
-.picrow b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.picrow small{display:block;font-size:12px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toast{--tms:5s}
 .li .late{color:var(--bad)}
 @media (max-width:720px){.ntip{display:none}.selbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
@@ -1100,10 +1055,7 @@ body{padding:0}
 .pinb:active{transform:scale(.88)}
 .pinb.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 22%,transparent)}
 .pinb[disabled]{cursor:default}
-.pinpill{cursor:pointer;display:inline-flex;align-items:center;gap:5px}
-.pinpill.on{color:#B7791F;border-color:#F5C518;background:color-mix(in srgb,#F5C518 18%,transparent)}
 [data-proj][role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.pill.plink{text-decoration:none;color:inherit}
 
 /* ───────── PHONES (iPhone, Fold cover screen) ───────── */
 /* Touch screens: iOS zooms into any field under 16px when it gets focus, and fingers need ~44px targets */
@@ -1146,16 +1098,11 @@ body{padding:0}
   :root[data-look] .top h1{font-size:24px}
   :root[data-look] #view{padding-left:12px;padding-right:12px}
   :root[data-look] .panel,:root[data-look] .tabs-wrap{padding:16px}
-  .kpis,.grid2,.grid3,.dgrid{gap:10px}
   #sheet{top:calc(8px + env(safe-area-inset-top,0px));height:auto}
   /* compact spacing: smaller headings, pills and buttons, less air between and inside cards */
   .dash{gap:12px}
   :root[data-look] .btn,:root[data-look] .b1{padding:10px 14px;font-size:14px}
   :root[data-look] .pill{font-size:11.5px;padding:5px 8px;gap:5px}
-  :root[data-look] .dh{grid-template-columns:minmax(0,1fr) 76px;gap:12px;padding:16px;align-items:start}
-  :root[data-look] .dh-title{font-size:24px;margin:4px 0 8px}
-  .pring,.pring svg{width:76px;height:76px}
-  .pring .c b{font-size:20px}.pring .c>span{font-size:9.5px}
   .ph h3{font-size:17px}
   :root[data-look] .ph h3{font-size:17px}
   /* task rows: due date beside the title instead of on its own line */
@@ -1312,7 +1259,6 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .hov:hover{border-color:transparent}
 :root[data-look="K"] .panel,:root[data-look="K"] .tabs-wrap{padding:var(--pad);gap:12px}
 :root[data-look="K"] .dash{gap:var(--gap)}
-:root[data-look="K"] .dgrid,:root[data-look="K"] .grid2,:root[data-look="K"] .grid3,:root[data-look="K"] .kpis{gap:var(--gap)}
 /* section header inside a card (kit: list header "Prominent" = Title 3 semibold) */
 :root[data-look="K"] .ph{align-items:baseline}
 :root[data-look="K"] .ph h3{font:var(--w-emph) var(--t3)/var(--t3-l) var(--fb);letter-spacing:var(--t3-t)}
@@ -1376,9 +1322,6 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .bhead{border:0;border-radius:var(--r-sm);background:none;padding:6px 4px;font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);color:var(--mu)}
 :root[data-look="K"] .pbar{height:4px}
 /* project page header */
-:root[data-look="K"] .dh{padding:var(--pad)}
-:root[data-look="K"] .dh-title{font:var(--h-w) var(--t2)/var(--t2-l) var(--fd);letter-spacing:var(--t2-t);margin:2px 0 8px}
-:root[data-look="K"] .backlink{font:400 var(--body)/var(--body-l) var(--fb);color:var(--ac);padding:0}
 
 /* notifications: one grouped list */
 :root[data-look="K"] .nlist{gap:0;background:var(--surf);border-radius:var(--r-card);overflow:hidden}
@@ -1486,7 +1429,7 @@ html,body{height:var(--app-h,100%)}
 
 /* press: 0.97 while pressed, 1.03 on hover with a mouse, 300ms spring back */
 :root[data-look="K"] :is(.ibtn,.sync,.btn,.b1){transition:transform calc(300ms*var(--k)) var(--spring),background-color calc(300ms*var(--k)) var(--ease-out),color .2s,opacity .2s}
-@media (hover:hover){ :root[data-look="K"] :is(.ibtn,.sync,.btn,.b1):hover{transform:scale(1.03)} }
+@media (hover:hover){:root[data-look="K"] :is(.ibtn,.sync,.btn,.b1):hover{transform:scale(1.03)}}
 :root[data-look="K"] :is(.ibtn,.sync,.btn,.b1):active{transform:scale(.97)}
 
 /* selection lens: one glass drop that glides between tabs (script drives the slide), lifts while dragged */
@@ -1557,7 +1500,6 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .fm-card{border-radius:38px 38px 0 0}
   :root[data-look="K"] .nfg{grid-template-columns:auto minmax(0,1fr)}
   /* the shared compact phone rules are replaced by the kit's sizes */
-  :root[data-look="K"] .dh{grid-template-columns:minmax(0,1fr) 76px}
 }
 @media (max-width:430px){
   :root[data-look="K"] .top{padding-left:16px;padding-right:16px}
@@ -1565,7 +1507,6 @@ html,body{height:var(--app-h,100%)}
   :root[data-look="K"] .panel,:root[data-look="K"] .tabs-wrap{padding:var(--pad)}
   :root[data-look="K"] .btn,:root[data-look="K"] .b1{padding:0 14px;font-size:var(--sub)}
   :root[data-look="K"] .pill{font-size:var(--foot);padding:3px 8px}
-  :root[data-look="K"] .dh-title{font-size:var(--t2)}
   :root[data-look="K"] .ph h3{font-size:var(--t3)}
   :root[data-look="K"] .task{padding:11px 0}
   :root[data-look="K"] .task .tt{font-size:var(--body)}
@@ -1620,7 +1561,7 @@ html,body{height:var(--app-h,100%)}
 .pop-data .btn{justify-content:center}
 .pop-data .wide{grid-column:1/-1}
 .pop-data .n{font:600 12px/1 var(--fm);padding:3px 7px;border-radius:999px;background:var(--hover);color:var(--mu)}
-@media (max-width:600px){ .bin-row{grid-template-columns:36px minmax(0,1fr)} .bin-acts{grid-column:2;justify-content:flex-start} .bin-why{text-align:left} }
+@media (max-width:600px){.bin-row{grid-template-columns:36px minmax(0,1fr)} .bin-acts{grid-column:2;justify-content:flex-start} .bin-why{text-align:left}}
 
 /* ───────── DASHBOARD (every style): Needs you, four tiles, this week, then the rest under "More" ───────── */
 .db{gap:16px}
@@ -1735,6 +1676,108 @@ html,body{height:var(--app-h,100%)}
   .db-week>.ph>span{display:none}
   .db-list{padding:0 4px 0 2px}
   .db-empty{padding:6px 16px 12px}
+}
+
+/* ───────── PROJECT PAGE (every style): 1 name and health · 2 what happens next · 3 progress and people · 4 reference details ───────── */
+.pj{gap:16px}
+:root .ibtn.pj-back{width:auto;display:inline-flex;align-items:center;gap:2px;padding:0 16px 0 10px;border-radius:var(--r-pill);font:600 15px/1 var(--fb);white-space:nowrap}
+.pj-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 24px;padding:2px 4px 0;min-width:0}
+.pj-h1{flex:1 1 420px;min-width:0;display:grid;gap:8px}
+.pj-name{margin:0;font-family:var(--fd);font-weight:var(--h-w);font-size:24px;line-height:30px;letter-spacing:-.02em;text-transform:none;text-wrap:balance;width:fit-content;max-width:100%;overflow-wrap:anywhere}
+.pj-hl{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font:400 14px/20px var(--fb)}
+.pj-hl .pill svg{flex:none}
+.pj-hl .r{color:var(--mu)}
+.pj-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pj-acts .btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;text-decoration:none}
+.pj-l2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:inherit}
+.pj-c{display:grid;gap:6px;align-content:start;padding:16px 20px 18px;min-width:0;font:inherit;color:inherit;text-align:left}
+button.pj-c{cursor:pointer;appearance:none}
+button.pj-c:hover{border-color:var(--line-2)}
+button.pj-c:active{transform:scale(.99)}
+.pj-lab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px;font:500 13px/16px var(--fb);color:var(--mu);text-transform:var(--lab-tt);letter-spacing:var(--lab-ls)}
+.pj-lab>span{font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+.pj-v{display:block;font:600 17px/24px var(--fb);min-width:0;overflow-wrap:anywhere}
+.pj-vb{border:0;background:none;padding:0;color:inherit;text-align:left;cursor:pointer;border-radius:4px}
+.pj-vb:hover{text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+.pj-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font:400 13px/18px var(--fb);color:var(--mu)}
+.pj-meta.late{color:var(--bad);font-weight:600}
+.pj .late{color:var(--bad)}
+.pj-unset{color:var(--mu);font-weight:400}
+.pj-na{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px;align-items:start;margin:-8px 0 0 -12px}
+.pj-nb{display:grid;gap:4px;padding-top:10px;min-width:0}
+.pj-av{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;background:var(--ac);color:var(--on-ac);font:700 9.5px/1 var(--fb);flex:none}
+.pj-mini{border:0;background:none;color:var(--ac);font:600 13px/16px var(--fb);padding:12px 10px;margin:-12px -10px;border-radius:var(--r-sm);cursor:pointer;text-transform:none;letter-spacing:0}
+.pj-mini:hover{background:var(--hover)}
+.pj-steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-top:4px}
+.pj-steps i{display:block;height:6px;border-radius:3px;background:var(--track)}
+.pj-steps i.d{background:color-mix(in srgb,var(--ac) 50%,transparent)}
+.pj-steps i.c{background:var(--ac)}
+.pj-stl{display:flex;justify-content:space-between;gap:8px;font:400 12px/16px var(--fb);color:var(--mu)}
+.pj-stl span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-ms{display:flex;align-items:center;gap:16px;padding:10px 16px 10px 20px;min-width:0}
+.pj-msl{flex:none;font:500 13px/16px var(--fb);color:var(--mu);text-transform:var(--lab-tt);letter-spacing:var(--lab-ls)}
+.pj-msr{flex:1;min-width:0;display:flex;align-items:center;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding:2px 0}
+.pj-msr::-webkit-scrollbar{display:none}
+.pj-mn{flex:none;display:flex;align-items:center;gap:8px;max-width:220px;min-height:44px;padding:4px 10px 4px 8px;border:0;border-radius:var(--r-sm);background:none;color:inherit;font:inherit;text-align:left}
+button.pj-mn{cursor:pointer;transition:background-color .2s}
+button.pj-mn:hover{background:var(--hover)}
+.pj-mn svg{flex:none;color:var(--mu)}
+.pj-mn>span{display:grid;min-width:0}
+.pj-mn b{font:600 13.5px/18px var(--fb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-mn span span{font:400 12px/16px var(--fb);color:var(--mu);white-space:nowrap}
+.pj-mn.done svg{color:var(--ok)}
+.pj-mn.missed svg,.pj-mn.missed span span{color:var(--bad)}
+.pj-ml{flex:1 0 16px;min-width:16px;height:1px;background:var(--line-2)}
+.pj-today{flex:none;padding:3px 8px;border-radius:var(--r-pill);background:var(--ac);color:var(--on-ac);font:700 10.5px/14px var(--fb);letter-spacing:.06em;text-transform:uppercase}
+.pj-msadd{flex:none;display:inline-flex;align-items:center;gap:6px}
+.pj-msempty{flex:1;min-width:0;color:var(--mu);font-size:13.5px;line-height:20px}
+.pj-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);gap:inherit;align-items:start}
+.pj-side{display:grid;gap:inherit;min-width:0}
+.pj-sc{padding:2px 0}
+.pj-sb{display:grid;gap:10px;padding:14px 20px}
+.pj-sb + .pj-sb{border-top:1px solid var(--line)}
+.pj-sbh{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px}
+.pj-sbh b{font:600 15px/20px var(--fb)}
+.pj-sbh>span{font:400 13px/16px var(--fb);color:var(--mu)}
+.pj-pb{height:6px;border-radius:3px;background:var(--track);overflow:hidden}
+.pj-pb i{display:block;height:100%;border-radius:inherit;background:var(--prog);transform-origin:left;animation:grow calc(900ms*var(--k)) var(--ease-out) backwards;animation-delay:calc(200ms*var(--k))}
+.pj-note{margin:0;font-size:13px;line-height:18px;color:var(--mu)}
+.pj-add{width:44px;height:44px;margin:-8px -12px -8px 0;display:grid;place-items:center;border:0;border-radius:50%;background:none;color:var(--ac);cursor:pointer;transition:background-color .2s}
+.pj-add:hover{background:var(--hover)}
+.pj-ppl{display:grid;gap:2px;margin:0 -8px}
+.pj-pp{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 8px;border:0;border-radius:var(--r-sm);background:none;color:inherit;font:500 14px/20px var(--fb);text-align:left;min-width:0}
+button.pj-pp{cursor:pointer}
+button.pj-pp:hover{background:var(--hover)}
+.pj-pp i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 11px/1 var(--fb);font-style:normal;flex:none}
+.pj-pp>span:nth-of-type(1){min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-pp .role{margin-left:auto;padding-left:8px;font-size:12.5px;font-weight:400;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pj-det{padding:12px 20px 14px;border:1px solid var(--line);border-radius:var(--r-card);min-width:0}
+.pj-dh{display:flex;align-items:center;justify-content:space-between;min-height:28px;font:600 12px/16px var(--fb);color:var(--mu);text-transform:uppercase;letter-spacing:.08em}
+.pj-dr{display:flex;justify-content:space-between;gap:16px;padding:6px 0;font:400 13px/18px var(--fb)}
+.pj-dr>span:first-child{flex:none;color:var(--mu)}
+.pj-dr>span:last-child{min-width:0;text-align:right;overflow-wrap:anywhere}
+.pj-dr .mono{font:500 12.5px/18px var(--fm)}
+.pj-dr a{color:var(--ac);text-decoration:none}
+.pj-dr a:hover{text-decoration:underline}
+.tgroup .pj-add{margin:-14px -10px -14px 0;text-transform:none}
+.tg-fold{width:100%;border:0;background:none;cursor:pointer;justify-content:flex-start;padding:12px 2px 6px;text-align:left}
+.tg-fold>span{display:inline-flex;align-items:center;gap:6px}
+.tg-fold svg{transition:transform calc(250ms*var(--k)) var(--ease-out)}
+.tg-fold[aria-expanded="true"] svg{transform:rotate(90deg)}
+.tg-fold:hover{color:var(--tx)}
+.pj :is(.pj-c,.pj-vb,.pj-mini,.pj-mn,.pj-add,.pj-pp,.db-cc,.tg-fold):focus-visible,.ibtn.pj-back:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media (max-width:1040px){.pj-body{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:720px){
+  .pj-name{font-size:22px;line-height:28px}
+  .pj-l2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .pj-next{grid-column:1/-1}
+  .pj-c{padding:12px 14px 14px}
+  .pj-stl,.pj-hl .r{display:none}
+  .pj-ms{flex-wrap:wrap;gap:4px 12px;padding:12px 14px}
+  .pj-msr{order:3;flex-basis:100%;padding-right:32px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent)}
+  .pj-msadd{margin-left:auto}
+  .pj-sb{padding:12px 16px}
+  .pj-det{padding:10px 16px 12px}
 }
 
 /* ───────── LOGIN (every style) ─────────
@@ -1929,7 +1972,6 @@ html,body{height:var(--app-h,100%)}
 <div id="fscrim"></div>
 <div id="form" aria-hidden="true"></div>
 <div id="toasts" aria-live="polite"></div>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="rs" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.2" height="5" fill="#ffffff" fill-opacity=".32"/></pattern><linearGradient id="pgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--ok)"/><stop offset="1" style="stop-color:var(--ac)"/></linearGradient></defs></svg>
 <script>
 (() => {
 'use strict';
@@ -2543,7 +2585,7 @@ function editInquiry(id, patch){
 function createProject(v){
   const id = uid(), today = todayStr();
   const p = { id, code: v.code, name: v.name, date: v.date, status: v.status || 'not-started', classification: v.classification || 'new-mold', brief: v.brief || '', factory: v.factory || '',
-    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', ballWith: '', ballSince: '', links: v.links || [],
+    customer: v.customer || '', salesPerson: v.salesPerson || '', deliveryDate: v.deliveryDate || '', stage: v.stage || '', ballWith: '', ballSince: '', links: v.links || [],
     subStatuses: [], tasks: [], milestones: [], pics: [], expanded: true,
     activityLog: [{id: uid(), type:'add', icon:'circle-plus', text:`Project created: ${strong(v.name)}`, by: meName(), date: today, time: nowHM()}] };
   if (v.kiv){ p.kiv = true; p.kivComment = v.kivComment || ''; p.kivDate = today; }
@@ -2554,11 +2596,13 @@ function createProject(v){
 function editProject(id, patch){
   const today = todayStr(), before = findRec(DB.data, 'projects', id), wasKiv = !!(before && before.kiv);
   mutate([{coll:'projects', id, fn: r => {
-    const oldStatus = r.status, hadKiv = !!r.kiv;
+    const oldStatus = r.status, hadKiv = !!r.kiv, oldStage = r.stage || '', oldDel = r.deliveryDate || '';
     Object.assign(r, clone(patch));
     if ('kiv' in patch && patch.kiv && !hadKiv) r.kivDate = today;
     if ('status' in patch && oldStatus !== patch.status) projLog(r, 'status', 'refresh', `Status changed: ${strong(statusLabel(oldStatus))} → ${strong(statusLabel(patch.status))}`);
-    projLog(r, 'edit', 'pencil', 'Project details updated');
+    if ('stage' in patch && oldStage !== (patch.stage || '')){ r.stageSince = today; projLog(r, 'status', 'flag', `Stage changed: ${strong(oldStage || 'Not set')} → ${strong(patch.stage || 'Not set')}`); }
+    if ('deliveryDate' in patch && oldDel !== (patch.deliveryDate || '')) projLog(r, 'edit', 'cal', `Delivery date moved: ${strong(oldDel ? fmtDate(oldDel, true) : 'none')} → ${strong(patch.deliveryDate ? fmtDate(patch.deliveryDate, true) : 'none')}`);
+    if (Object.keys(patch).some(k => !['status','stage','deliveryDate'].includes(k))) projLog(r, 'edit', 'pencil', 'Project details updated');
   }}]);
   const r = findRec(DB.data, 'projects', id), nm = r ? r.name : '';
   changelog({type:'update', icon:'pencil', text:`Updated project: ${strong(nm)}`, section:'projects'});
@@ -3201,27 +3245,54 @@ function projBody(anim){
     || `<div class="empty card"><b>No projects</b>Nothing for this factory yet.</div>`;
 }
 
-/* ── Project detail ── */
-function railHTML(p){
-  const canE = can('projects','edit');
-  const ms = (p.milestones||[]).map((m, i) => ({...m, _k: subKey(m, i)})).filter(m => (m.date || m.title) && m.status !== 'cancelled').sort((a,b) => (a.date||'') < (b.date||'') ? -1 : 1);
-  if (!ms.length) return `<section class="card st" style="--i:1"><div class="rail-empty"><span>No milestones yet. Add the key dates (T1 trial, approval, delivery) to see this project as a timeline.</span>${canE ? `<button class="btn sm" type="button" data-fm="ms">${ico('flag',15)} Add milestone</button>` : ''}</div></section>`;
-  let list = ms; const ci = ms.findIndex(m => m.status !== 'reached');
-  if (ms.length > 8){ const c = ci < 0 ? ms.length - 1 : ci; const s = Math.max(0, Math.min(ms.length - 8, c - 4)); list = ms.slice(s, s + 8); }
-  const cur = list.findIndex(m => m.status !== 'reached'), nn = list.length, reachedN = list.filter(m => m.status === 'reached').length;
-  const fillPct = nn > 1 ? Math.max(0, Math.min(1, (cur < 0 ? nn - 1 : cur) / (nn - 1))) * 100 : 100;
-  return `<section class="card rail st" style="--i:1"><div class="rail-in" style="grid-template-columns:repeat(${nn},minmax(0,1fr))"><div class="rail-line" style="left:calc(100%/${nn*2});right:calc(100%/${nn*2})"><i style="--p:${fillPct}%"></i></div>
-    ${list.map((m,i) => { const cls = m.status === 'reached' ? 'd' : i === cur ? 'c' : ''; return `<div class="ph7 ${cls}${canE ? ' tap' : ''}" style="--i:${i}" ${canE ? `data-fm="ms|${esc(m._k)}" role="button" tabindex="0" title="Edit milestone"` : ''}><div class="nd">${cls === 'd' ? ico('check',14) : ''}</div><span>${esc(m.title || 'Milestone')}</span><span class="dt">${fmtDate(m.date)}</span></div>`; }).join('')}</div>
-    <div class="rail-cap">${reachedN} of ${nn} milestones reached${cur >= 0 ? ` · next <b>${esc(list[cur].title)}</b> ${fmtDate(list[cur].date)}` : ''}</div>${canE ? `<div class="rail-act"><button class="lnk" type="button" data-fm="ms">+ Milestone</button></div>` : ''}</section>`;
+/* ── Project detail: name and health first, then what happens next, then progress and people, reference details last ── */
+const NPD_STAGES = ['Design','CAPEX Approval','Pilot Mold','Commercial Mold','Machine & Aux Equipment','IML Development','Production Ramp-Up'];   // the phases of the Gantt's NPD Procedure Template
+const fmtDay = d => { const x = new Date(d + 'T00:00:00'); return isNaN(x) ? d : x.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', ...(x.getFullYear() !== new Date().getFullYear() ? {year:'numeric'} : {})}); };
+const wdN = n => `${n} working day${n === 1 ? '' : 's'}`;
+function nextAction(p){ return nextOpenTask(p) || (p.tasks||[]).find(t => !t.done) || null; }
+/* "Late · Delivery date 29 Oct passed · an action is 10 working days overdue": the first reason leads, the rest is muted */
+function healthWhy(p){
+  const h = projHealth(p), today = todayStr(), open = (p.tasks||[]).filter(t => !t.done && t.deadline).sort((a,b) => a.deadline < b.deadline ? -1 : 1), out = [];
+  if (h === 'done') return ['Completed'];
+  if (h === 'over'){
+    if (p.deliveryDate && p.deliveryDate < today) out.push(`Delivery date ${fmtDate(p.deliveryDate)} passed`);
+    const od = open.filter(t => t.deadline < today), k = od.length && Math.max(1, workDaysBetween(od[0].deadline, today));
+    if (od.length) out.push(od.length === 1 ? `An action is ${wdN(k)} overdue` : `${od.length} actions overdue, the oldest by ${wdN(k)}`);
+  } else if (h === 'risk'){
+    if (p.deliveryDate && p.deliveryDate <= addDays(today, 14)){ const k = workDaysBetween(today, p.deliveryDate); out.push(k <= 0 ? 'Delivery is due today' : `Delivery in ${wdN(k)}`); }
+    const soon = open.find(t => t.deadline >= today && t.deadline <= addDays(today, 3));
+    if (soon) out.push(soon.deadline === today ? 'An action is due today' : `An action is due ${fmtDay(soon.deadline)}`);
+  } else {
+    const n = (p.tasks||[]).filter(t => !t.done).length;
+    out.push(n ? `Nothing due in the next 3 days` : 'No open actions');
+  }
+  return out.length ? out : ['On track'];
 }
+function railHTML(p){
+  const canE = can('projects','edit'), today = todayStr();
+  const nodes = (p.milestones||[]).map((m, i) => ({...m, _k: subKey(m, i)})).filter(m => (m.date || m.title) && m.status !== 'cancelled')
+    .map(m => ({t: m.title || 'Milestone', d: m.date || '', st: m.status === 'reached' ? 'done' : m.date && m.date < today ? 'missed' : '', ic: isTrial(m) ? 'flask' : 'diamond', attr: canE ? `data-fm="ms|${esc(m._k)}" aria-label="Edit milestone ${esc(m.title || '')}"` : ''}));
+  if (p.deliveryDate) nodes.push({t:'Delivery', d: p.deliveryDate, st: isClosedProj(p) ? 'done' : p.deliveryDate < today ? 'missed' : '', ic:'truck', dlv: true, attr: canE ? `data-act="pj-delivery" data-v="${esc(p.deliveryDate)}" data-dplabel="Delivery date" aria-label="Move the delivery date"` : ''});
+  nodes.sort((a,b) => (a.d||'9') < (b.d||'9') ? -1 : (a.d||'9') > (b.d||'9') ? 1 : 0);
+  const add = canE ? `<button class="btn sm pj-msadd" type="button" data-fm="ms">${ico('plus',15)} Milestone</button>` : '';
+  if (!nodes.length) return `<section class="card pj-ms st" style="--i:4"><span class="pj-msl">Milestones</span><span class="pj-msempty">No milestones yet. Add the key dates (T1 trial, approval, delivery) to see where this project stands.</span>${add}</section>`;
+  const node = x => { const tag = x.attr ? `button type="button" ${x.attr}` : 'span';
+    return `<${tag} class="pj-mn ${x.st}">${ico(x.st === 'done' ? 'check' : x.ic, 15)}<span><b>${esc(x.t)}</b><span>${x.d ? fmtDay(x.d) : 'No date'}${x.st === 'missed' ? ' · missed' : x.st === 'done' && !x.dlv ? ' · reached' : ''}</span></span></${x.attr ? 'button' : 'span'}>`; };
+  const ti = nodes.findIndex(x => x.d && x.d >= today), items = [];
+  nodes.forEach((x, i) => { if (i === ti) items.push('<span class="pj-today">Today</span>'); items.push(node(x)); });
+  if (ti < 0) items.push('<span class="pj-today">Today</span>');
+  return `<section class="card pj-ms st" style="--i:4"><span class="pj-msl">Milestones</span><div class="pj-msr">${items.join('<i class="pj-ml" aria-hidden="true"></i>')}</div>${add}</section>`;
+}
+/* section header with its "+" on the right */
+const tgHead = (label, fm, add, note = '') => `<div class="tgroup"><span>${label}</span>${fm ? `<button type="button" class="pj-add" data-fm="${fm}" aria-label="${add}" title="${add}">${ico('plus',16)}</button>` : note ? `<span>${note}</span>` : ''}</div>`;
 function tasksHTML(p){
   const today = todayStr(), canT = can('actions','complete'), canEd = can('actions','edit');
   const keyOf = t => subKey(t, (p.tasks||[]).indexOf(t));
   const open = (p.tasks||[]).filter(t => !t.done).sort((a,b) => (a.deadline||'9') < (b.deadline||'9') ? -1 : 1), done = (p.tasks||[]).filter(t => t.done);
   const row = t => `<div class="task ${t.done ? 'done' : ''}" style="--n:t-${esc(String(t.id).replace(/[^\w-]/g,''))}" data-ptask-row="${esc(t.id)}"><button type="button" class="cb" ${canT ? `data-ptask="${esc(t.id)}" data-done="${t.done ? 0 : 1}"` : 'disabled'} aria-label="${t.done ? 'Reopen' : 'Complete'}: ${esc(t.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${P.check}"/></svg></button>
     <div style="min-width:0" ${canEd ? `data-fm="ptask|${esc(keyOf(t))}" class="tap"` : ''}><div class="tt">${esc(t.name)}</div><div class="who"><span>${esc(t.pic || '')}</span>${t.classification && t.classification !== 'General' ? `<span>${esc(t.classification)}</span>` : ''}${t.status === 'awaiting-reply' ? `<span class="pill info">Awaiting reply${t.reminder ? ' · chase ' + fmtDate(t.reminder) : ''}</span>` : t.status === 'inprogress' && !t.done ? '<span class="pill warn">In progress</span>' : ''}</div></div><span class="due ${!t.done && t.deadline && t.deadline < today ? 'late' : ''}">${t.deadline ? fmtDate(t.deadline) : ''}</span>${canEd ? `<button type="button" class="ed" data-fm="ptask|${esc(keyOf(t))}" aria-label="Edit ${esc(t.name)}">${ico('pencil',15)}</button>` : '<span></span>'}</div>`;
-  return `${can('actions','add') ? `<button type="button" class="addrow" data-fm="ptask">${ico('plus',16)}<span>Add action</span></button>` : ''}<div class="tgroup"><span>Open · ${open.length}</span><span>${canT ? '' : 'view only'}</span></div>${open.length ? open.map(row).join('') : '<div class="empty" style="padding:18px">No open actions.</div>'}
-    ${done.length ? `<div class="tgroup"><span>Done · ${done.length}</span></div>${done.map(row).join('')}` : ''}`;
+  return `${tgHead(`Open · ${open.length}`, can('actions','add') ? 'ptask' : '', 'Add action', canT ? '' : 'view only')}${open.length ? open.map(row).join('') : '<div class="empty" style="padding:18px">No open actions.</div>'}
+    ${done.length ? `<button type="button" class="tgroup tg-fold" data-act="pj-done" aria-expanded="${!!S.pdone}"><span>${ico('chev',13)}Done · ${done.length}</span></button>${S.pdone ? done.map(row).join('') : ''}` : ''}`;
 }
 function tabBody(p){
   if (S.tab === 'actions') return tasksHTML(p);
@@ -3230,21 +3301,15 @@ function tabBody(p){
     const ss = (p.subStatuses||[]).map((u, i) => ({...u, _k: subKey(u, i)})).sort((a,b) => (b.date||b.createdAt||'') < (a.date||a.createdAt||'') ? -1 : 1);
     const ms = (p.milestones||[]).map((m, i) => ({...m, _k: subKey(m, i)})).sort((a,b) => (a.date||'9') < (b.date||'9') ? -1 : 1);
     const msRow = m => `<div class="msrow ${m.status || 'upcoming'} ${m.status !== 'reached' && m.status !== 'cancelled' && m.date && m.date < today ? 'late' : ''}${canE ? ' tap' : ''}" ${canE ? `data-fm="ms|${esc(m._k)}" role="button" tabindex="0"` : ''}><i class="node">${m.status === 'reached' ? ico('check',13) : m.status === 'cancelled' ? ico('x',12) : ''}</i><div style="min-width:0"><b>${esc(m.title || 'Milestone')}</b><small>${esc([m.category && m.category !== 'General' ? m.category : '', m.status === 'reached' ? 'Reached' : m.status === 'cancelled' ? 'Cancelled' : m.date && m.date < today ? 'Overdue' : '', m.note].filter(Boolean).join(' · '))}</small></div><span class="due">${fmtDate(m.date)}</span></div>`;
-    return `<div class="tgroup"><span>Milestones · ${ms.length}</span></div>${canE ? `<button type="button" class="addrow" data-fm="ms">${ico('flag',16)}<span>Add milestone</span></button>` : ''}${ms.length ? `<div class="mslist">${ms.map(msRow).join('')}</div>` : ''}
-      <div class="tgroup" style="margin-top:8px"><span>Status updates · ${ss.length}</span></div>${canE ? `<button type="button" class="addrow" data-fm="ss">${ico('msg',16)}<span>Post an update</span></button>` : ''}`
+    return `${tgHead(`Milestones · ${ms.length}`, canE ? 'ms' : '', 'Add milestone')}${ms.length ? `<div class="mslist">${ms.map(msRow).join('')}</div>` : ''}
+      ${tgHead(`Status updates · ${ss.length}`, canE ? 'ss' : '', 'Post an update')}`
       + (ss.length ? `<div class="upd">${ss.map(u => `<div class="u${canE ? ' tap' : ''}" ${canE ? `data-fm="ss|${esc(u._k)}" role="button" tabindex="0"` : ''}><div class="top3"><b>${esc(u.title)}</b><span class="pill ${u.status === 'completed' ? 'done' : u.status === 'ongoing' ? 'warn' : u.status === 'cancelled' ? 'cancel' : ''}">${esc(u.status ? u.status[0].toUpperCase() + u.status.slice(1).replace('-',' ') : '—')}</span></div>${u.note ? `<p>${esc(u.note)}</p>` : ''}<span class="due">${fmtDate(u.date || u.createdAt)}${u.classification ? ' · ' + esc(u.classification) : ''}</span></div>`).join('')}</div>` : '<div class="empty" style="padding:18px">No updates yet.</div>');
   }
   if (S.tab === 'overview'){
-    return `${p.brief ? `<div class="remark">${esc(p.brief)}</div>` : ''}<div class="facts">
-      <div><span>Status</span><b>${esc(statusLabel(p.status))}</b></div><div><span>Started</span><b>${fmtDate(p.date, true) || '—'}</b></div>
-      <div><span>Delivery date</span><b>${fmtDate(p.deliveryDate, true) || '—'}</b></div><div><span>Type</span><b>${esc(CLASS_LABELS[p.classification] || p.classification || '—')}</b></div>
-      <div><span>Factory</span><b>${esc(facOf(p) || '—')}</b></div><div><span>Customer</span><b>${esc(p.customer || '—')}</b></div>
-      <div><span>Sales</span><b>${esc(p.salesPerson || '—')}</b></div>
+    return `${p.brief ? `<div class="remark">${esc(p.brief)}</div>` : '<div class="empty" style="padding:18px">No brief yet.</div>'}<div class="facts">
+      <div><span>Status</span><b>${esc(statusLabel(p.status))}</b></div><div><span>Stage</span><b>${esc(p.stage || 'Not set')}</b></div>
+      <div><span>Started</span><b>${fmtDate(p.date, true) || '—'}</b></div><div><span>Delivery date</span><b>${fmtDate(p.deliveryDate, true) || '—'}</b></div>
       ${p.kiv ? `<div><span>KIV</span><b>${esc(p.kivComment || 'Yes')}</b></div>` : ''}</div>
-      ${(p.links||[]).length ? `<div class="links" style="margin-top:12px">${p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico('link',14)}${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
-      <div class="tgroup" style="margin-top:14px"><span>People · ${(p.pics||[]).length}</span></div>
-      ${can('projects','edit') ? `<button type="button" class="addrow" data-fm="pic">${ico('user',16)}<span>Add person</span></button>` : ''}
-      ${(p.pics||[]).length ? `<div class="pics">${p.pics.map((x, i) => `<div class="picrow${can('projects','edit') ? ' tap' : ''}" ${can('projects','edit') ? `data-fm="pic|#${i}" role="button" tabindex="0"` : ''}><i style="background:${AVC[(String(x.name||'').length + i) % AVC.length]}">${initials(x.name)}</i><div style="min-width:0"><b>${esc(x.name)}</b><small>${esc(x.role || 'No role set')}</small></div></div>`).join('')}</div>` : (can('projects','edit') ? '' : '<div class="ro">No people added.</div>')}
       ${can('projects','edit') ? `<div class="more" style="justify-content:flex-start"><button class="btn" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit details</button></div>` : ''}`;
   }
   const H = [...(p.activityLog||[])].reverse().slice(0, 40);
@@ -3253,30 +3318,61 @@ function tabBody(p){
 function pageProject(){
   const p = findRec(DB.data, 'projects', S.proj);
   if (!p) return `<div class="empty card"><b>Project not found</b>It may have been deleted on another device. <button class="lnk" type="button" data-go="projects">Back to projects</button></div>`;
-  const h = projHealth(p), pct = projPct(p), C = 2*Math.PI*50, canE = can('projects','edit'), today = todayStr();
-  const wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null;
-  return `${staleBanner()}<div class="dash">
-    <section class="card dh" style="view-transition-name:herobox">
-      <div style="min-width:0"><button type="button" class="backlink" data-go="projects">${ico('back',16)} All projects</button>
-        <h2 class="dh-title" style="view-transition-name:hero">${esc(p.name)}</h2>
-        <div class="meta" style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${ST_PILL[h] || ''}"><i class="dotc"></i>${HEALTH_LABEL[h]}</span><span class="pill">${esc(statusLabel(p.status))}</span>${p.classification ? `<span class="pill info">${esc(CLASS_LABELS[p.classification] || p.classification)}</span>` : ''}${facOf(p) ? `<span class="pill">${esc(facOf(p))}</span>` : ''}${p.customer ? `<span class="pill">${esc(p.customer)}</span>` : ''}${p.kiv ? '<span class="pill warn">KIV</span>' : ''}<span class="pill"><span class="mono">${esc(p.code || '')}</span></span>
-          ${canE ? `<button class="pill pinpill${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',13)} ${p.pinned ? 'Pinned' : 'Pin'}</button><button class="pill pedit" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',13)} Edit</button>` : ''}<a class="pill pedit plink" href="../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}" target="_blank" rel="noopener">${ico('gantt',13)} Gantt</a></div></div>
-      <div class="pring"><svg viewBox="0 0 118 118" aria-hidden="true"><circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="pfg" cx="59" cy="59" r="50" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-(RING[p.id] || 0)/100)).toFixed(1)}"/></svg><div class="c"><b><span id="ppct">${pct}</span>%</b><span>actions done</span></div></div>
+  const h = projHealth(p), today = todayStr(), canE = can('projects','edit'), canT = can('actions','complete'), canEd = can('actions','edit');
+  const why = healthWhy(p), tasks = p.tasks || [], openN = tasks.filter(t => !t.done).length, doneN = tasks.length - openN;
+  const na = nextAction(p), keyOf = t => subKey(t, tasks.indexOf(t));
+  const wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null, closed = isClosedProj(p);
+  const si = NPD_STAGES.indexOf(p.stage || '');
+  const gantt = `../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}`;
+  const unset = '<span class="pj-unset">Not set</span>';
+  const det = [['Project', p.code ? `<span class="mono">${esc(p.code)}</span>` : unset], ['Customer', p.customer ? `<span class="mono">${esc(p.customer)}</span>` : unset], ['Factory', esc(facOf(p)) || unset],
+    ['Type', esc(CLASS_LABELS[p.classification] || p.classification || '') || unset], ['Sales', esc(p.salesPerson || '') || unset], ['Started', fmtDate(p.date, true) || unset],
+    ['Links', (p.links||[]).length ? p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join(' · ') : unset]];
+  const stageInner = `<span class="pj-lab">Stage<span class="mono">${si >= 0 ? `${si + 1} of ${NPD_STAGES.length}` : ''}</span></span>
+      <span class="pj-v">${p.stage ? esc(p.stage) : '<span class="pj-unset">Not set</span>'}</span>
+      <span class="pj-steps" aria-hidden="true">${NPD_STAGES.map((s, i) => `<i class="${i < si ? 'd' : i === si ? 'c' : ''}"></i>`).join('')}</span>
+      <span class="pj-stl"><span>${NPD_STAGES[0]}</span><span>${NPD_STAGES[NPD_STAGES.length - 1]}</span></span>`;
+  return `${staleBanner()}<div class="dash pj">
+    <header class="pj-head" style="view-transition-name:herobox">
+      <div class="pj-h1"><h1 class="pj-name" style="view-transition-name:hero">${esc(p.name)}</h1>
+        <div class="pj-hl"><span class="pill ${ST_PILL[h] || ''}">${ico(h === 'over' || h === 'risk' ? 'clock' : 'check', 13)}${HEALTH_LABEL[h]}</span><span>${esc(why[0])}</span>${why.length > 1 ? `<span class="r">· ${esc(why.slice(1).join(' · ').replace(/^./, c => c.toLowerCase()))}</span>` : ''}${p.status === 'on-hold' || p.status === 'not-started' ? `<span class="pill">${esc(statusLabel(p.status))}</span>` : ''}${p.kiv ? `<span class="pill warn" title="${esc(p.kivComment || '')}">KIV</span>` : ''}</div></div>
+      <div class="pj-acts">${canE ? `<button class="btn sm" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit</button><button class="btn sm${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',15)} ${p.pinned ? 'Pinned' : 'Pin'}</button>` : ''}<a class="btn sm" href="${gantt}" target="_blank" rel="noopener">${ico('gantt',15)} Timeline</a></div>
+    </header>
+    <section class="pj-l2">
+      <div class="card pj-c pj-next st" style="--i:1"><div class="pj-lab">Next action<span>${openN ? `${openN} open` : ''}</span></div>
+        ${na ? `<div class="pj-na">${canT ? `<button type="button" class="db-cc" data-ptask="${esc(na.id)}" data-done="1" aria-label="Complete: ${esc(na.name)}" title="Mark done">${ico('check',14)}</button>` : `<span class="db-ic">${ico('tasks',18)}</span>`}
+          <div class="pj-nb">${canEd ? `<button type="button" class="pj-v pj-vb" data-fm="ptask|${esc(keyOf(na))}">${esc(na.name)}</button>` : `<span class="pj-v">${esc(na.name)}</span>`}
+          <div class="pj-meta">${na.pic ? `<span class="pj-av" aria-hidden="true">${initials(na.pic)}</span>${esc(na.pic)}` : 'No owner'}<span>·</span>${na.deadline ? `<span class="${na.deadline < today ? 'late' : ''}">due ${fmtDate(na.deadline)}</span>` : '<span>no date</span>'}${na.status === 'awaiting-reply' ? '<span>· awaiting reply</span>' : ''}</div></div></div>`
+          : `<span class="pj-v pj-unset">No open actions</span>${can('actions','add') ? `<div><button class="btn sm" type="button" data-fm="ptask">${ico('plus',15)} Add action</button></div>` : ''}`}</div>
+      <div class="card pj-c st" style="--i:2"><div class="pj-lab">Delivery${canE ? `<button type="button" class="pj-mini" data-act="pj-delivery" data-v="${esc(p.deliveryDate || '')}" data-dplabel="Delivery date">${p.deliveryDate ? 'Move date' : 'Set date'}</button>` : ''}</div>
+        <span class="pj-v">${p.deliveryDate ? fmtDay(p.deliveryDate) : '<span class="pj-unset">Not set</span>'}</span>
+        <span class="pj-meta${wd != null && wd < 0 && !closed ? ' late' : ''}">${closed ? 'Project completed' : wd == null ? 'No delivery date yet' : wd < 0 ? `${wdN(-wd)} late` : wd === 0 ? 'Due today' : `${wdN(wd)} left`}</span></div>
+      ${canE ? `<button type="button" class="card pj-c pj-stage st" style="--i:3" data-act="pj-stage" aria-label="Stage: ${esc(p.stage || 'not set')}${si >= 0 ? `, ${si + 1} of ${NPD_STAGES.length}` : ''}. Change the stage">${stageInner}</button>` : `<div class="card pj-c pj-stage st" style="--i:3">${stageInner}</div>`}
     </section>
     ${railHTML(p)}
-    <section class="dgrid">
-      <div class="card tabs-wrap st" style="--i:2">${segHTML('tseg', [['actions','Actions'],['updates','Updates'],['overview','Overview'],['history','History']], S.tab)}<div class="tabbody" id="tabbody">${tabBody(p)}</div></div>
-      <div style="display:grid;gap:14px">
-        <div class="card panel st" style="--i:3"><div class="ph"><h3>Ball in court</h3><span>${p.ballWith ? 'since ' + fmtDate(p.ballSince) : 'not set'}</span></div>
-          ${canE ? segHTML('pbseg', [['us','Us'],['factory','Factory'],['customer','Customer'],['supplier','Supplier']], p.ballWith || '', true) : `<div class="ro">${esc(BALL_LABELS[p.ballWith] || 'Not set')}</div>`}
-          <p class="muted" style="margin:0;font-size:13.5px" id="balltxt">${!p.ballWith ? 'Set who owes the next move.' : p.ballWith === 'us' ? `You owe the next move · ${ballDays(p)} day${ballDays(p) === 1 ? '' : 's'}.` : `Waiting on ${esc(BALL_LABELS[p.ballWith])} for ${ballDays(p)} day${ballDays(p) === 1 ? '' : 's'}.`}</p></div>
-        <div class="card panel st" style="--i:4"><div class="ph"><h3>Delivery</h3><span>${p.deliveryDate ? fmtDate(p.deliveryDate, true) : 'no date'}</span></div>
-          ${wd == null ? '<div class="ro">No delivery date set.</div>' : `<div class="bignum"><b>${wd < 0 ? '−' + Math.abs(wd) : wd}</b><span class="muted">working days ${wd < 0 ? 'late' : 'left'}</span></div><div class="pbar"><i style="width:${wd < 0 ? 100 : Math.max(6, 100 - Math.min(100, wd*4))}%;--c:${wd < 0 ? 'var(--bad)' : wd <= 10 ? 'var(--warn)' : 'var(--prog)'}"></i></div>`}</div>
+    <section class="pj-body">
+      <div class="card tabs-wrap st" style="--i:5">${segHTML('tseg', [['actions','Actions'],['updates','Updates'],['overview','Overview'],['history','History']], S.tab)}<div class="tabbody" id="tabbody">${tabBody(p)}</div></div>
+      <div class="pj-side">
+        <div class="card pj-sc st" style="--i:6">
+          <div class="pj-sb"><div class="pj-sbh"><b>Progress</b><span>${tasks.length ? `${doneN} of ${tasks.length} actions` : 'no actions yet'}</span></div><div class="pj-pb" role="img" aria-label="${projPct(p)}% of actions done"><i style="width:${projPct(p)}%"></i></div></div>
+          <div class="pj-sb"><div class="pj-sbh"><b>Ball in court</b><span>${p.ballWith ? 'since ' + fmtDate(p.ballSince) : 'not set'}</span></div>
+            ${canE ? segHTML('pbseg', [['us','Us'],['factory','Factory'],['customer','Customer'],['supplier','Supplier']], p.ballWith || '', true) : `<div class="ro">${esc(BALL_LABELS[p.ballWith] || 'Not set')}</div>`}
+            <p class="pj-note" id="balltxt">${!p.ballWith ? 'Set who owes the next move.' : p.ballWith === 'us' ? `You owe the next move · ${ballDays(p)} day${ballDays(p) === 1 ? '' : 's'}.` : `Waiting on ${esc(BALL_LABELS[p.ballWith])} for ${ballDays(p)} day${ballDays(p) === 1 ? '' : 's'}.`}</p></div>
+          <div class="pj-sb"><div class="pj-sbh"><b>People</b>${canE ? `<button type="button" class="pj-add" data-fm="pic" aria-label="Add person">${ico('plus',16)}</button>` : `<span>${(p.pics||[]).length}</span>`}</div>
+            ${(p.pics||[]).length ? `<div class="pj-ppl">${p.pics.map((x, i) => `<${canE ? `button type="button" data-fm="pic|#${i}"` : 'div'} class="pj-pp"><i style="background:${AVC[(String(x.name||'').length + i) % AVC.length]}">${initials(x.name)}</i><span>${esc(x.name || '')}</span><span class="role">${esc(x.role || '')}</span></${canE ? 'button' : 'div'}>`).join('')}</div>` : '<p class="pj-note">No one added yet.</p>'}</div>
+        </div>
+        <div class="pj-det st" style="--i:7"><div class="pj-dh"><span>Details</span>${canE ? `<button type="button" class="pj-mini" data-fm="proj|${esc(p.id)}">Edit</button>` : ''}</div>
+          ${det.map(([k, v]) => `<div class="pj-dr"><span>${k}</span><span>${v}</span></div>`).join('')}</div>
       </div>
     </section></div>`;
 }
-const RING = {};   // last % drawn per project, so a refresh only animates the change
-function setRing(pct){ const fg = $('#pfg'); if (!fg) return; const C = 2*Math.PI*50; RING[S.proj] = pct; requestAnimationFrame(() => fg.style.strokeDashoffset = (C*(1-pct/100)).toFixed(1)); const el = $('#ppct'); if (el) el.textContent = pct; }
+/* stage is picked by hand from the NPD phases; the change goes into the project's history */
+function formStage(projId){
+  const p = findRec(DB.data, 'projects', projId); if (!p) return;
+  openForm({ eyebrow: p.code || p.name, title: 'Project stage', submit: 'Save',
+    fields: [{k:'stage', label:'Where is this project now?', type:'chips', value: p.stage || '', options: withCur(NPD_STAGES.map(s => [s, s]), p.stage)}],
+    onSubmit: (v, ch) => { if (!('stage' in ch)) return; const was = p.stage || ''; editProject(p.id, {stage: v.stage}); done1(`Stage: ${esc(v.stage || 'not set')}`, () => editProject(p.id, {stage: was}), 'flag'); } });
+}
 
 /* ── Recycle bin: everything deleted lands in data.bin (V1's format); restore it or remove it for good ── */
 const BIN_KIND = { inquiry:{l:'Inquiry', ic:'inbox', coll:'inquiries', g:'inquiries'}, project:{l:'Project', ic:'folder', coll:'projects', g:'projects'},
@@ -3378,9 +3474,9 @@ function exportSheets(){
       d.inquiries.flatMap(i => (i.tasks||[]).map(t => [i.code||'', i.name||'', t.name||'', t.pic||'', D(t.deadline), taskSt(t), D(t.completedAt)]))],
     ['Inquiry next actions', ['Code','Inquiry','Action','PIC','Deadline','Done','Completed'],
       d.inquiries.flatMap(i => (i.nextActions||[]).map(n => [i.code||'', i.name||'', n.action||'', n.pic||'', D(n.deadline), yes(n.done), D(n.completedAt)]))],
-    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links'],
+    ['Projects', ['Code','Name','Customer','Factory','Type','Status','Stage','Health','Started','Delivery','Ball with','Parked (KIV)','Brief','Actions done','Actions total','Progress %','People','Latest update','Sales','Links'],
       d.projects.map(p => { const ss = [...(p.subStatuses||[])].sort((a, b) => (b.date||'') > (a.date||'') ? 1 : -1)[0];
-        return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), HEALTH_LABEL[projHealth(p)]||'',
+        return [p.code||'', p.name||'', p.customer||'', facOf(p)||'', CLASS_LABELS[p.classification] || p.classification || '', statusLabel(p.status), p.stage||'', HEALTH_LABEL[projHealth(p)]||'',
           D(p.date), D(p.deliveryDate), BALL_LABELS[p.ballWith]||'', p.kiv ? (p.kivComment || 'Yes') : '', p.brief||'',
           (p.tasks||[]).filter(t => t.done).length, (p.tasks||[]).length, projPct(p), (p.pics||[]).map(x => x.name + (x.role ? ` (${x.role})` : '')).join(', '),
           ss ? `${ss.title}${ss.date ? ' · ' + ss.date : ''}` : '', p.salesPerson||'', links(p.links)]; })],
@@ -3484,7 +3580,7 @@ function render(opts = {}){
   const [t, sub] = TITLES[S.page] || ['NPD Tracker',''];
   const pr = S.page === 'project' && DB.data ? findRec(DB.data, 'projects', S.proj) : null;
   const sub2 = S.page === 'dashboard' && DB.data ? esc(dashGreeting()) : sub;
-  $('#ttl').innerHTML = `<h1>${t}</h1>${pr ? `<span class="sub">All projects › ${esc(pr.name)}</span>` : sub2 ? `<span class="sub">${sub2}</span>` : ''}`;
+  $('#ttl').innerHTML = pr ? `<button type="button" class="ibtn pj-back" data-go="projects" aria-label="Back to all projects">${ico('back',18)}<span>Projects</span></button>` : `<h1>${t}</h1>${sub2 ? `<span class="sub">${sub2}</span>` : ''}`;
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
   $('#topx').innerHTML = !DB.data ? '' : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'tasks' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
@@ -3497,7 +3593,7 @@ function render(opts = {}){
     if (!opts.keep){ $('.top').classList.remove('elev'); $('#totop').classList.remove('show'); $('#app').classList.remove('bars-off'); v._off = false; v._y = 0; }
     if (!DB.data) return;
     if (S.page === 'dashboard'){ if (!opts.keep) countUp(v); wireChart(); }
-    if (S.page === 'project'){ const p = findRec(DB.data, 'projects', S.proj); if (p) setRing(projPct(p)); }
+    if (S.page === 'project'){ const r = $('.pj-msr'), t = r && $('.pj-today', r); if (t && r.scrollWidth > r.clientWidth) r.scrollLeft = Math.max(0, t.getBoundingClientRect().left - r.getBoundingClientRect().left - 160); }
   });
 }
 /* a data refresh re-draws the page; jump its entrance animations to the end so nothing fades in again */
@@ -3524,10 +3620,10 @@ function go(page, o = {}){
   if (o.src){ const tt = o.src.querySelector('.t'); if (tt) tt.style.viewTransitionName = 'hero'; if (o.src.matches('.pcard,.bcard')) o.src.style.viewTransitionName = 'herobox'; }
   const prevProj = S.proj;
   return vt(() => {
-    S.page = page; if (o.proj){ S.proj = o.proj; delete RING[o.proj]; } if (page === 'project' && !o.keepTab) S.tab = 'actions';
+    S.page = page; if (o.proj){ S.proj = o.proj; S.pdone = false; } if (page === 'project' && !o.keepTab) S.tab = 'actions';
     render();
     if (type === 'morphback'){ const c = $(`.pcard[data-proj="${CSS.escape(prevProj||'')}"],.bcard[data-proj="${CSS.escape(prevProj||'')}"]`); if (c){ c.style.viewTransitionName = 'herobox'; const tt = c.querySelector('.t'); if (tt) tt.style.viewTransitionName = 'hero'; c.scrollIntoView({block:'center'}); } }
-  }, type).then(() => { $$('[style*="view-transition-name"]').forEach(el => { if (!el.matches('.dh,.dh-title')) el.style.viewTransitionName = ''; }); });
+  }, type).then(() => { $$('[style*="view-transition-name"]').forEach(el => { if (!el.matches('.pj-head,.pj-name')) el.style.viewTransitionName = ''; }); });
 }
 
 /* ── task ticks with feedback ── */
@@ -3539,7 +3635,7 @@ function toggleProjTask(taskId, done, btn){
   const p = findRec(DB.data, 'projects', S.proj); const t = p && (p.tasks||[]).find(x => x.id === taskId); if (!t) return;
   tickFeedback(btn, done);
   setTimeout(() => {
-    vt(() => { setProjTaskDone(p.id, taskId, done); }, 'list').then(() => { setRing(projPct(findRec(DB.data, 'projects', p.id) || p)); });
+    vt(() => { setProjTaskDone(p.id, taskId, done); }, 'list');
     const pp = findRec(DB.data, 'projects', p.id);
     if (done && pp && (pp.tasks||[]).length && pp.tasks.every(x => x.done)){ burst(innerWidth/2, innerHeight/2.4, 60, 260); toast('Every action on this project is done', {icon:'trophy'}); }
     else toast(`“${esc(t.name)}” ${done ? 'done' : 'reopened'}`, {undo: () => setProjTaskDone(p.id, taskId, !done), actions: done && can('actions','add') ? [followUpAction('project', p.id, t.name, t.id)] : []});
@@ -4024,6 +4120,7 @@ function formProject(id){
       {k:'salesPerson', label:'Sales person', half:true, value: p ? p.salesPerson || '' : ''},
       {k:'deliveryDate', label:'Target delivery', type:'date', half:true, value: p ? p.deliveryDate || '' : ''},
       {k:'status', label:'Status', type:'select', half:true, value: p ? p.status || 'not-started' : 'not-started', options: withCur(PROJ_ST, p && p.status)},
+      {k:'stage', label:'Stage', type:'select', half:true, value: p ? p.stage || '' : '', options: withCur([['', 'Not set'], ...NPD_STAGES.map(x => [x, x])], p && p.stage)},
       {k:'links', label:'Links', type:'textarea', rows:2, value: p ? linksToText(p.links) : '', ph:'Drawings | https://drive.google.com/…', hint:'One per line. Optional name first, then a | and the link.'},
       {k:'kiv', label:'Keep in view (KIV)', type:'check', value: p ? !!p.kiv : false, hint:'Parked for now. It stays visible with a KIV tag.'},
       {k:'kivComment', label:'KIV reason', type:'textarea', rows:2, value: p ? p.kivComment || '' : '', ph:'Why is this project on KIV?', show: v => v.kiv},
@@ -4032,7 +4129,7 @@ function formProject(id){
     onSubmit: (v, ch) => {
       if (!p){ const nid = createProject({...v, links: textToLinks(v.links)}); done1(`Project ${esc(v.code)} created`, null, 'folder'); setTimeout(() => go('project', {proj: nid}), 60); return; }
       const patch = {};
-      ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
+      ['code','date','name','brief','classification','factory','customer','salesPerson','deliveryDate','status','stage','kiv','kivComment'].forEach(k => { if (k in ch) patch[k] = ch[k]; });
       if ('links' in ch && !sameLinks(textToLinks(v.links), p.links)) patch.links = textToLinks(v.links);
       if (!Object.keys(patch).length) return;
       editProject(p.id, patch);
@@ -4436,6 +4533,11 @@ document.addEventListener('click', e => {
       const u = deleteMTasks(ids); S.tsel = null; refresh(); toast(`Deleted ${ids.length} task${ids.length === 1 ? '' : 's'}`, {icon:'trash', undo: u}); }
     else if (act === 'toggledone'){ S.showDone = !S.showDone; vt(() => { $('#pbody').innerHTML = projBody(false); }, 'list'); }
     else if (act === 'pin-inq'){ const i = findRec(DB.data, 'inquiries', sheetId); if (i){ const on = !i.pinned; setPin('inquiries', i.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('inquiries', i.id, !on)}); } }
+    else if (act === 'pj-stage'){ if (can('projects','edit')) formStage(S.proj); }
+    else if (act === 'pj-done'){ S.pdone = !S.pdone; refresh(); }
+    else if (act === 'pj-delivery'){ const p = findRec(DB.data, 'projects', S.proj); if (!p || !can('projects','edit')) return;
+      if (DP.el && DP.field === a){ closeDP(false); return; }
+      openDP(a, d => { const was = p.deliveryDate || ''; if (d === was) return; editProject(p.id, {deliveryDate: d}); toast(`Delivery moved to ${fmtDate(d)}`, {icon:'cal', undo: () => editProject(p.id, {deliveryDate: was})}); }); }
     else if (act === 'pin-proj'){ const p = findRec(DB.data, 'projects', S.proj); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } }
     return; }
   if (!t.closest('#pop')) closePop();

@@ -67,6 +67,16 @@ Present mode shows the TPAC logo.
 - The date picker is shared (`gvDpShow`): tasks, meetings, asks and lists all use it.
 - Present: the same page read-only, with the TPAC logo; no inputs or add buttons.
 
+## Phase 4 (done): dashboard
+- Same blocks and the same gauges as before (your choice), restyled in V2's look: cards, headers in sentence case,
+  tile numbers, the health pill, stage-gate bars, remark fields, lists and milestones; the look's background shows
+  through. Scoped to `#dashView`, so the 1-page PDF (`onePagerHTML`) is untouched.
+- The top block (health, summary for the customer, meetings and dates) keeps its layout; only its look changed.
+- "Coming up" replaces "Next steps": tasks that start or are due before the next meeting (the next 3 weeks when no
+  meeting is set), with the date, "in 11 days", and starts / due.
+- Focus and Key milestones show labelled status chips (Running late, Late start…) instead of a bare number.
+- Stage-gate remarks are typed right in the gates table; read-only in Present.
+- The timeline's legend and Today button hide on the Dashboard tab.
+
 ## Next phases
-4. Dashboard: four tiles, task bar, stage gates with remarks.
 Later: phone layout.

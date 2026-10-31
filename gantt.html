@@ -1234,6 +1234,123 @@ button.sv-tag{cursor:pointer}
 @media (max-width:980px){ .sv-top,.sv-two{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:760px){ #statusView{padding:4px 12px 24px!important} .sv-sum{padding:16px} .sv-gl{font-size:11px} .sv-row{flex-wrap:wrap} .sv-end{width:100%;justify-content:flex-start;padding-left:34px} .sv-x,.sv-mv button{opacity:.6} }
 </style>
+<!-- ═══ Phase 4 (Oct 2026): the timeline dashboard in V2's style. Same blocks and gauges; only the look changes,
+     plus "Coming up" until the next meeting. Scoped to #dashView, so the 1-page PDF is untouched. ═══ -->
+<style id="v2dash">
+#dashView{padding:4px 24px 32px!important}
+#dashView .db-wrap{max-width:1240px;font:400 14px/20px var(--fb);color:var(--tx);background:transparent}   /* the look's background shows through, as on the other pages */
+#dashView .db-top{align-items:flex-end;margin-bottom:16px}
+#dashView .db-title{font-family:var(--fd)!important;font-weight:var(--h-w)!important;letter-spacing:var(--h-ls)!important;font-size:24px!important;line-height:32px;color:var(--tx)}
+#dashView .db-sub{font:400 14px/20px var(--fb);color:var(--mu);margin-top:2px}
+#dashView .db-sub b{color:var(--tx);font-weight:500}
+#dashView .db-status .l{font:500 12px/16px var(--fb)!important;color:var(--mu);text-transform:none!important;letter-spacing:0!important}
+#dashView .db-status .v{font:600 15px/20px var(--fb)!important;color:var(--tx);letter-spacing:0}
+#dashView .db-togbtn{height:32px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:var(--hover);color:var(--tx);font:600 13px/1 var(--fb)!important;cursor:pointer;text-transform:none;letter-spacing:0}
+#dashView .db-togbtn:hover{background:var(--sel)}
+#dashView .db-share{height:40px;padding:0 16px;font-size:13.5px!important}
+/* cards and their headers */
+#dashView .db-card{background:var(--surf-solid)!important;border:1px solid var(--line)!important;border-radius:var(--r-card)!important;box-shadow:var(--shadow)!important;overflow:hidden}
+#dashView .db-ch{font:600 15px/20px var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:var(--tx);padding:14px 18px 10px!important;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+#dashView .db-ch .tag{margin-left:auto;font:400 12.5px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important;background:none!important;padding:0!important}
+#dashView .db-gridtop{gap:16px;margin-bottom:16px}
+#dashView .db-gcap{color:var(--mu);font:400 11.5px/16px var(--fb)}
+#dashView .db-tiles{background:var(--line)}
+#dashView .db-tile{background:var(--surf-solid)}
+#dashView .db-tile .k{font:500 12px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important}
+#dashView .db-tile .v{font:600 24px/30px var(--fm)!important;color:var(--tx)!important;letter-spacing:-.02em}
+#dashView .db-tile.good .v{color:color-mix(in srgb,var(--ok) 55%,var(--tx))!important}
+#dashView .db-tile.crit .v{color:color-mix(in srgb,var(--bad) 55%,var(--tx))!important}
+#dashView .db-pill{font:600 11.5px/1 var(--fb)!important;text-transform:none!important;letter-spacing:0!important;padding:4px 10px!important;border-radius:11px!important}
+#dashView .db-pill.g{background:color-mix(in srgb,var(--ok) 17%,transparent)!important;color:color-mix(in srgb,var(--ok) 52%,var(--tx))!important}
+#dashView .db-pill.a{background:color-mix(in srgb,var(--warn) 18%,transparent)!important;color:color-mix(in srgb,var(--warn) 52%,var(--tx))!important}
+#dashView .db-pill.r{background:color-mix(in srgb,var(--bad) 16%,transparent)!important;color:color-mix(in srgb,var(--bad) 52%,var(--tx))!important}
+/* stage gates: bars, remarks typed right in the table */
+#dashView .db-ghead{font:500 12px/16px var(--fb)!important;color:var(--mu)!important;text-transform:none!important;letter-spacing:0!important;padding:10px 18px 6px!important}
+#dashView .db-grow{border-top:1px solid var(--line);padding:10px 18px;min-height:56px}
+#dashView .db-gno{border-radius:8px;width:26px;height:26px;font:600 12px/1 var(--fm)}
+#dashView .db-grow .gtx{font:500 14px/18px var(--fb);color:var(--tx)}
+#dashView .db-grow .cnt{font:400 12.5px/16px var(--fb);color:var(--mu)}
+#dashView .db-zm,#dashView .db-pb{height:22px;border-radius:11px!important;box-shadow:none!important}
+#dashView .db-pb{background:var(--track)!important}
+#dashView .db-pb .fill{background:var(--ac)!important;border-radius:11px}
+#dashView .db-zm .t,#dashView .db-pb .t{font:600 12px/22px var(--fb)!important}
+#dashView .db-gstate{background:var(--track)!important;border-radius:11px!important}
+#dashView .db-gstate .t{color:color-mix(in srgb,var(--mu) 72%,var(--tx))!important;font:500 12px/22px var(--fb)!important}
+#dashView .db-gstate.ok{background:color-mix(in srgb,var(--ok) 17%,transparent)!important}
+#dashView .db-gstate.ok .t{color:color-mix(in srgb,var(--ok) 52%,var(--tx))!important;font-weight:600!important}
+#dashView .db-rmk{height:34px;border:1px solid var(--line-2)!important;background:var(--surf-solid)!important;border-radius:10px!important;padding:0 12px;font:400 13.5px/1 var(--fb)!important;color:var(--tx)!important}
+#dashView .db-rmk::placeholder{color:var(--mu)}
+#dashView .db-rmk:focus{border-color:var(--ac)!important;outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+#dashView .db-rmkt{font:400 13.5px/20px var(--fb);color:var(--tx)}
+#dashView .db-legend{font:400 12px/16px var(--fb);color:var(--mu);margin:0;padding:10px 18px 14px;border-top:1px solid var(--line)}
+/* focus, coming up, milestones */
+#dashView .db-gridbot{gap:16px;margin-top:16px}
+#dashView .db-list{padding:0}
+#dashView .db-li{border-top:1px solid var(--line);padding:10px 18px;min-height:56px;gap:12px}
+#dashView .db-li:first-child{border-top:0}
+#dashView .db-li .n{font:500 14px/20px var(--fb);color:var(--tx)}
+#dashView .db-li .meta,#dashView .db-li .rt .meta{font:400 12.5px/16px var(--fb);color:var(--mu)}
+#dashView .db-li .gv-st{flex:none}
+#dashView .db-late{font:600 13px/18px var(--fb);color:color-mix(in srgb,var(--bad) 55%,var(--tx))}
+#dashView .db-when{font:600 13px/18px var(--fb);color:color-mix(in srgb,var(--ac) 60%,var(--tx))}
+#dashView .db-datebox{width:42px;height:42px;border-radius:12px;background:var(--track);color:var(--tx)}
+#dashView .db-datebox b{font:600 15px/1 var(--fb)} #dashView .db-datebox span{font:500 11px/1 var(--fb);color:var(--mu);text-transform:none}
+#dashView .db-empty{padding:16px 18px;font:400 13.5px/20px var(--fb);color:var(--mu)}
+#dashView .db-note{padding:0 18px 12px;margin:8px 0 0;font:400 12.5px/16px var(--fb);color:var(--mu);font-style:normal}
+#dashView .db-cost{padding:4px 18px 12px}
+#dashView .db-costrow{border-bottom:0;border-top:1px solid var(--line);padding:10px 0;gap:12px}
+#dashView .db-costrow .cl{font:500 14px/20px var(--fb);color:var(--tx)}
+#dashView .db-costrow .db-mono{font:500 12.5px/16px var(--fb)!important;color:var(--mu)!important}
+#dashView .db-st{font:400 13px/18px var(--fb)}
+#dashView .db-st th{font:600 12px/16px var(--fb)}
+#dashView .db-st td{border-color:var(--line)}
+/* the top block and the four lists keep their blocks; only their look follows V2 */
+#dashView .stp{--st-cust:var(--warn);max-width:none!important;margin-left:0!important;margin-right:0!important}
+/* the timeline's legend and Today button belong to the Gantt view */
+body[data-view=dash] .gv-legend,body[data-view=dash] #gvTodayBtn{display:none!important}
+#dashView .stp .hero{grid-template-columns:minmax(0,1fr) 360px;gap:16px;margin-bottom:16px}
+#dashView .stp .card{background:var(--surf-solid);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:16px 20px 18px}
+#dashView .stp .need{background:var(--surf-solid);border-color:var(--line);margin-bottom:16px}
+#dashView .stp .health{height:28px;padding:0 12px 0 10px;border-radius:14px;font:600 13px/1 var(--fb);background:color-mix(in srgb,var(--warn) 18%,transparent);color:color-mix(in srgb,var(--warn) 52%,var(--tx))}
+#dashView .stp .health.h-ok{background:color-mix(in srgb,var(--ok) 17%,transparent);color:color-mix(in srgb,var(--ok) 52%,var(--tx))}
+#dashView .stp .health.h-bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:color-mix(in srgb,var(--bad) 52%,var(--tx))}
+#dashView .stp .health.h-hold{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx))}
+#dashView .stp .health select{font:600 13px/1 var(--fb)!important;color:inherit!important;background:transparent!important;border:0!important}
+#dashView .stp .since{font:400 13px/18px var(--fb);color:var(--mu)}
+#dashView .stp .headline{font:400 15px/22px var(--fb);margin:8px 0 0;color:var(--tx)}
+#dashView .stp textarea.headline{min-height:48px;border:1px solid transparent!important;background:transparent!important;border-radius:10px!important;padding:6px 8px;margin:4px -8px -6px;width:calc(100% + 16px);color:var(--tx)!important;font:400 15px/22px var(--fb)!important}
+#dashView .stp textarea.headline:hover{border-color:var(--line-2)!important}
+#dashView .stp textarea.headline:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none}
+#dashView .stp .dates{background:var(--surf-solid);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:6px 20px}
+#dashView .stp .dates div{font:400 14px/20px var(--fb);color:var(--mu);border-color:var(--line);min-height:44px;padding:6px 0}
+#dashView .stp .dates b{font:600 14px/20px var(--fb)!important;color:var(--tx)}
+#dashView .stp .dates b.r,#dashView .stp .dates input.r{color:color-mix(in srgb,var(--bad) 60%,var(--tx))!important}
+#dashView .stp .st-in{font:400 14px/20px var(--fb)!important;color:var(--tx)!important;border-radius:8px!important;border:1px solid transparent!important;background:transparent!important}
+#dashView .stp .st-in:hover{border-color:var(--line-2)!important}
+#dashView .stp .st-in:focus{border-color:var(--ac)!important;background:var(--surf-solid)!important;outline:none}
+#dashView .stp .ph h3{font:600 16px/22px var(--fb);letter-spacing:0;color:var(--tx)}
+#dashView .stp .ph small{font:400 13px/16px var(--fb);color:var(--mu)}
+#dashView .stp td{font:400 14px/20px var(--fb);color:var(--tx);border-color:var(--line)}
+#dashView .stp .tag{font:600 11.5px/1 var(--fb)!important;border-radius:6px;padding:5px 8px;letter-spacing:0}
+#dashView .stp .tag.dec{background:color-mix(in srgb,var(--c2) 18%,transparent);color:color-mix(in srgb,var(--c2) 48%,var(--tx));border:0}
+#dashView .stp .tag.inf{background:var(--track);color:color-mix(in srgb,var(--mu) 72%,var(--tx));border:0}
+#dashView .stp .due{font:600 12.5px/16px var(--fb)!important;color:color-mix(in srgb,var(--bad) 55%,var(--tx))}
+#dashView .stp .d,#dashView .stp .age{font:400 12.5px/16px var(--fb)!important;color:var(--mu)}
+#dashView .stp .new{font:600 10.5px/16px var(--fb)!important;text-transform:uppercase;letter-spacing:.03em;background:color-mix(in srgb,var(--ac) 15%,transparent);color:color-mix(in srgb,var(--ac) 55%,var(--tx));border-radius:5px;padding:1px 6px}
+#dashView .stp .list li{border-color:var(--line);min-height:52px;font:400 14px/20px var(--fb)}
+#dashView .stp .list .tx{font-weight:500}
+#dashView .stp .chk{width:22px;height:22px;background:var(--ok)}
+#dashView .stp .ring{width:22px;height:22px;border:1.5px solid var(--line-2)}
+#dashView .stp button.ring:hover{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+#dashView .stp .pic{width:24px;height:24px;font:600 10.5px/1 var(--fb)!important;background:color-mix(in srgb,var(--c1) 20%,var(--surf-solid));color:color-mix(in srgb,var(--c1) 52%,var(--tx))}
+#dashView .stp .st-empty{font:400 14px/20px var(--fb);color:var(--mu)}
+#dashView .stp .st-add{border:0;background:var(--hover);color:var(--ac);font:600 13px/1 var(--fb);height:32px;padding:0 14px;border-radius:16px}
+#dashView .stp .st-add:hover{background:var(--sel)}
+#dashView .stp .st-link{color:var(--ac);font:inherit}
+#dashView .stp .st-ib{color:var(--mu)} #dashView .stp .st-ib:hover{background:var(--hover);color:var(--tx)}
+@media (max-width:980px){ #dashView .stp .hero{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:760px){ #dashView{padding:4px 12px 24px!important} }
+</style>
 <script>
 /* follow V2's light / dark (set on <html> by the boot script) when the Gantt opens, and when V2 changes it in another tab */
 document.addEventListener('DOMContentLoaded', function(){
@@ -2673,32 +2790,39 @@ function renderDashboard(){
     var ref=st===3?taskFinishDate(t,starts):taskStartDate(t,starts);
     return {t:t,st:st,ref:ref,days:Math.max(0,Math.round((today-ref)/DAY))};
   }).filter(Boolean).sort(function(a,b){return b.days-a.days;});
-  var next=tasks.filter(function(t){return taskStatus(t,starts,today)===1;})
-    .map(function(t){ var s=taskStartDate(t,starts); return {t:t,s:s,days:Math.round((s-today)/DAY)}; })
-    .sort(function(a,b){return a.s-b.s;});
-  var soon=next.filter(function(x){return x.days<=14;}).length;
+  /* Coming up: what starts or is due before the next meeting (the next 3 weeks when no meeting is set) */
+  var nmISO=(book&&book.nextMeeting)||'', nmD=parseDateLocal(nmISO), byMeeting=!!(nmD&&nmD>=today);
+  var winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY);
+  var next=[];
+  tasks.forEach(function(t){
+    var st=taskStatus(t,starts,today); if(st===5) return;
+    var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
+    if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
+    else if(!ms&&fD>=today&&fD<=winEnd) next.push({t:t,s:fD,what:'due',days:Math.round((fD-today)/DAY)});
+  });
+  next.sort(function(a,b){ return a.s-b.s; });
   h+='<div class="db-gridbot">';
   h+='<div class="db-card"><div class="db-ch">Focus &mdash; delayed tasks <span class="tag">'+late.length+(late.length===1?' task':' tasks')+'</span></div><div class="db-list">';
   if(late.length){
     late.slice(0,10).forEach(function(x){ var si=ST_INFO[x.st];
-      h+='<div class="db-li"><span class="st-chip" style="background:'+si.bg+';color:'+si.fg+'" title="'+si.label+'">'+x.st+'</span>'
+      h+='<div class="db-li"><span class="gv-st s'+x.st+'" title="'+si.label+'">'+gvIco('st'+x.st)+'<span>'+GV_ST_LABEL[x.st]+'</span></span>'
         +'<div class="nm"><div class="n">'+gvEsc(x.t.name)+'</div><div class="meta">'+phLbl(x.t)+'</div></div>'
         +'<div class="rt"><div class="db-late">'+(x.days?(x.days+(x.days===1?' day':' days')+' late'):'delayed')+'</div>'
-        +'<div class="meta">'+(x.st===3?'due ':(x.t.milestone||durW(x.t)===0?'was due ':'should have started '))+fmtDateShort(x.ref)+'</div></div></div>';
+        +'<div class="meta">'+(x.st===3?'due ':(x.t.milestone||durW(x.t)===0?'was due ':'should have started '))+gvDayLong(x.ref)+'</div></div></div>';
     });
     if(late.length>10) h+='<div class="db-note">+ '+(late.length-10)+' more delayed tasks</div>';
   } else h+='<div class="db-empty">Nothing delayed &mdash; every task is on plan.</div>';
   h+='</div></div>';
-  h+='<div class="db-card"><div class="db-ch">Next steps <span class="tag">'+soon+' starting in the next 14 days</span></div><div class="db-list">';
+  h+='<div class="db-card"><div class="db-ch">Coming up <span class="tag">'+(byMeeting?'until the meeting on '+gvDayLong(nmD):'the next 3 weeks')+'</span></div><div class="db-list">';
   if(next.length){
-    next.slice(0,8).forEach(function(x){
+    next.slice(0,10).forEach(function(x){
       var when=x.days<=0?'today':(x.days===1?'tomorrow':('in '+x.days+' days'));
-      h+='<div class="db-li"><div class="db-datebox"><b>'+x.s.getDate()+'</b><span>'+x.s.toLocaleString('en-GB',{month:'short'})+'</span></div>'
+      h+='<div class="db-li"><div class="db-datebox"><b>'+x.s.getDate()+'</b><span>'+GV_MON[x.s.getMonth()]+'</span></div>'
         +'<div class="nm"><div class="n">'+gvEsc(x.t.name)+'</div><div class="meta">'+phLbl(x.t)+'</div></div>'
-        +'<div class="rt"><div class="db-when">'+when+'</div><div class="meta">starts '+fmtDateShort(x.s)+'</div></div></div>';
+        +'<div class="rt"><div class="db-when">'+when+'</div><div class="meta">'+x.what+' '+gvDayLong(x.s)+'</div></div></div>';
     });
-    if(next.length>8) h+='<div class="db-note">+ '+(next.length-8)+' more tasks not started yet</div>';
-  } else h+='<div class="db-empty">No upcoming tasks &mdash; everything has started.</div>';
+    if(next.length>10) h+='<div class="db-note">+ '+(next.length-10)+' more</div>';
+  } else h+='<div class="db-empty">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</div>';
   h+='</div></div></div>';
   /* ---- milestones ---- */
   var ms=tasks.filter(function(t){return t.milestone;});
@@ -2706,7 +2830,7 @@ function renderDashboard(){
   if(ms.length){
     ms.slice(0,12).forEach(function(t){
       var d=taskStartDate(t,starts), st=taskStatus(t,starts,today), si=ST_INFO[st];
-      h+='<div class="db-costrow"><span class="st-chip" style="background:'+si.bg+';color:'+si.fg+'" title="'+si.label+'">'+st+'</span><span class="cl">'+gvEsc(t.name)+'</span><span class="db-mono" style="color:var(--text-hint);font-size:11px">'+fmtDateShort(d)+'</span></div>';
+      h+='<div class="db-costrow"><span class="gv-st s'+st+'" title="'+si.label+'">'+gvIco('st'+st)+'<span>'+GV_ST_LABEL[st]+'</span></span><span class="cl">'+gvEsc(t.name)+'</span><span class="db-mono" style="color:var(--text-hint);font-size:11px">'+gvDayLong(d)+'</span></div>';
     });
     if(ms.length>12) h+='<div class="db-note">+ '+(ms.length-12)+' more milestones</div>';
   } else h+='<div class="db-note">No milestones flagged. Mark gates/sign-offs as milestones in the task grid.</div>';

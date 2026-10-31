@@ -3703,7 +3703,7 @@ function pageProject(){
   const na = nextAction(p), keyOf = t => subKey(t, tasks.indexOf(t));
   const wd = p.deliveryDate ? workDaysBetween(today, p.deliveryDate) : null, closed = isClosedProj(p);
   const si = NPD_STAGES.indexOf(p.stage || '');
-  const gantt = `../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}`;
+  const gantt = `../gantt.html?project=${encodeURIComponent(p.id)}&name=${encodeURIComponent(p.name || '')}&code=${encodeURIComponent(p.code || '')}&customer=${encodeURIComponent(p.customer || '')}`;   // the Gantt keeps one book per customer
   const unset = '<span class="pj-unset">Not set</span>';
   const det = [['Project', p.code ? `<span class="mono">${esc(p.code)}</span>` : unset], ['Customer', p.customer ? `<span class="mono">${esc(p.customer)}</span>` : unset], ['Factory', esc(facOf(p)) || unset],
     ['Type', esc(CLASS_LABELS[p.classification] || p.classification || '') || unset], ['Sales', esc(p.salesPerson || '') || unset], ['Started', fmtDate(p.date, true) || unset],
@@ -3717,7 +3717,7 @@ function pageProject(){
     <header class="pj-head" style="view-transition-name:herobox">
       <div class="pj-h1"><h1 class="pj-name" style="view-transition-name:hero">${esc(p.name)}</h1>
         <div class="pj-hl"><span class="pill ${ST_PILL[h] || ''}">${ico(h === 'over' || h === 'risk' ? 'clock' : 'check', 13)}${HEALTH_LABEL[h]}</span><span>${esc(why[0])}</span>${why.length > 1 ? `<span class="r">· ${esc(why.slice(1).join(' · ').replace(/^./, c => c.toLowerCase()))}</span>` : ''}${p.status === 'on-hold' || p.status === 'not-started' ? `<span class="pill">${esc(statusLabel(p.status))}</span>` : ''}${p.kiv ? `<span class="pill warn" title="${esc(p.kivComment || '')}">KIV</span>` : ''}${tagChips(p.tags, 8)}</div></div>
-      <div class="pj-acts">${canE ? `<button class="btn sm" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit</button><button class="btn sm${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',15)} ${p.pinned ? 'Pinned' : 'Pin'}</button>` : ''}<a class="btn sm" href="${gantt}" target="_blank" rel="noopener">${ico('gantt',15)} Timeline</a></div>
+      <div class="pj-acts">${canE ? `<button class="btn sm" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit</button><button class="btn sm${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',15)} ${p.pinned ? 'Pinned' : 'Pin'}</button>` : ''}<a class="btn sm" href="${gantt}">${ico('gantt',15)} Timeline</a></div>
     </header>
     <section class="pj-l2">
       <div class="card pj-c pj-next st" style="--i:1"><div class="pj-lab">Next action<span>${openN ? `${openN} open` : ''}</span></div>
@@ -4183,8 +4183,18 @@ function settleAnims(el){
 }
 /* redraw the current page after a filter / selection change, without replaying entrance animations */
 function refresh(){ const v = $('#view'), top = v.scrollTop; render({keep:true}); settleAnims(v); v.scrollTop = top; }
+/* v2/?project=<id> (the Gantt's "‹ Project" button) opens that project once the app and its data are in, then the address goes back to plain v2/ */
+let DEEP = (() => { try { return new URLSearchParams(location.search).get('project') || ''; } catch(e){ return ''; } })();
+function openDeepLink(){
+  if (!DEEP || !DB.data || !AUTH.user || $('#app').classList.contains('pre')) return false;
+  const id = DEEP; DEEP = '';
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
+  if (!findRec(DB.data, 'projects', id)) return false;
+  go('project', {proj: id}); return true;
+}
 function softRender(first){
   if (!AUTH.user) return;
+  if (DEEP && openDeepLink()) return;
   if (first){ render(); return; }
   const v = $('#view'), top = v.scrollTop;
   render({keep:true}); settleAnims(v); v.scrollTop = top;
@@ -5006,7 +5016,7 @@ function initLogin(){
 }
 function enterApp(){
   const lg = $('#login'), restored = lg.classList.contains('checking') && !LG.viaForm;
-  const show = () => { lg.classList.add('out'); $('#app').classList.remove('pre'); S.page = S.page || 'dashboard'; render(); setTimeout(() => { $('#app').style.transform = 'none'; $('#app').style.filter = 'none'; }, 1200); };
+  const show = () => { lg.classList.add('out'); $('#app').classList.remove('pre'); S.page = S.page || 'dashboard'; render(); openDeepLink(); setTimeout(() => { $('#app').style.transform = 'none'; $('#app').style.filter = 'none'; }, 1200); };
   if (restored){ show(); return; }
   const b = $('#lg-go'); b.classList.remove('busy'); b.classList.add('done'); $('.lg-go-t', b).textContent = 'Signed in';
   if (navigator.vibrate) try { navigator.vibrate(12); } catch(_){}

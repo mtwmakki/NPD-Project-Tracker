@@ -3,7 +3,8 @@
 The usual address `https://mtwmakki.github.io/NPD-Project-Tracker/` now opens V2 directly
 (V2 itself lives at `…/v2/`). **V1 is retired (30 Oct 2026):** the root page only forwards to V2, old `/?v1`
 bookmarks land in V2, and V2 has no links to V1. V1's code is in git history (root `index.html` before the
-retirement commit). `gantt.html` stays at the root: V2's Gantt button opens it and each device keeps its plans there.
+retirement commit). `gantt.html` stays at the root: V2's Timeline button opens it (same tab) and each device keeps its plans
+there. It is now Gantt V3, the customer status book, in V2's look: see docs/GANTT-V3.md.
 
 ## Same data, same account
 - Signs in with the same Firebase account V1 used. The first sign-in of a new person creates their profile in
@@ -97,7 +98,9 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
 - Project page, top to bottom:
   - one "Projects" back button; the project name is the title, with Late / At risk / On track and the reason
     ("Delivery date 29 Oct passed · 2 actions overdue, the oldest by 10 working days")
-  - Edit, Pin and Timeline (opens the Gantt) beside the name
+  - Edit, Pin and Timeline beside the name. Timeline opens the Gantt in the same tab with the project's id, name, code
+    and customer (`gantt.html?project=&name=&code=&customer=`); the Gantt's "‹ Project" button comes back through
+    `v2/?project=<id>`, which opens that project once V2 has loaded and then tidies the address
   - three cards: Next action (complete it with the circle, tap the name to edit), Delivery ("Move date" opens
     the calendar; "1 working day late" / "12 working days left") and Stage
   - Stage: one of the 7 phases of the Gantt's NPD Procedure Template (Design, CAPEX Approval, Pilot Mold,

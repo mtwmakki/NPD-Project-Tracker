@@ -64,7 +64,8 @@ with Undo), changelog entries, own calendar picker, 10 styles, Ctrl+K search, me
 ## Decisions (Oct 2026)
 - My Day is not coming back as a page: its useful sections (overdue next actions, waiting on others,
   stale projects, new tasks on older items) are now on the V2 Dashboard and in My work.
-- Gantt stays a separate page (linked from each project in V2); its UI gets reworked later.
+- Gantt stays a separate page (linked from each project in V2). Gantt V3 (customer books) replaced it and is being
+  reworked in V2's look in four phases; Phase 1 (looks, header, tabs, toolbar, link fixes) is done. See docs/GANTT-V3.md.
 - Reports in use: Inquiry report, Project report, full Excel export. Excel import is still needed.
 
 ## Drop instead of porting

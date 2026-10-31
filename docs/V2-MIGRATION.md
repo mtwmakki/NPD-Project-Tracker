@@ -5,7 +5,7 @@ are now the list of V1 features V2 does not have yet. Their data stays in the Sh
 doesn't touch), so any of them can still be built in V2 later. Size: S = under half a day, M = about a day, L = several days.
 
 ## Already in V2
-Sign-in, Dashboard (KPIs, chart, SLA, won/lost, factory load, "Needs you"), Inquiries (filters, search,
+Sign-in, Dashboard ("Needs you", four tiles with week-on-week trends, this week's milestones, SLA, won/lost, factory load), Inquiries (filters, search,
 factory filter, pins, SLA sheet, tasks, next actions, ball in court, outcome, products, links, pipeline
 statuses), Projects (cards / board, project page with milestones, actions, updates, overview, history,
 KIV), Notifications (missed / due soon / awaiting reply, swipe done / snooze), create / edit / delete for

@@ -5,7 +5,7 @@ are now the list of V1 features V2 does not have yet. Their data stays in the Sh
 doesn't touch), so any of them can still be built in V2 later. Size: S = under half a day, M = about a day, L = several days.
 
 ## Already in V2
-Sign-in, Dashboard ("Needs you", four tiles with week-on-week trends, this week's milestones, SLA, won/lost, factory load), Inquiries (filters, search,
+Sign-in, Dashboard ("Needs you", four tiles with week-on-week trends, this week's milestones, SLA, won/lost, factory load), Inquiries (rows with next step and SLA meter, sort, docked panel on wide screens, turn into project, filters, search,
 factory filter, pins, SLA sheet, tasks, next actions, ball in court, outcome, products, links, pipeline
 statuses), custom tags (managed in Settings, on every kind of item, filterable), Projects (cards with filter and sort, board by status or stage with drag, project page with health and reason, next action, delivery, NPD stage, milestone strip, actions, updates, overview, history,
 KIV), My work (Tasks + Notifications in one list: overdue / today / this week / later / awaiting reply, swipe done / snooze, archive and bulk actions for personal tasks), create / edit / delete for

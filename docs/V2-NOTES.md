@@ -45,6 +45,20 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   products, links, pipeline statuses, mold cost, outcome reason), delete
 - Inquiry tasks and next actions: add, edit, delete, tick done
 - Ball in court, inquiry outcome, pin / unpin
+- Inquiries page:
+  - each row reads left to right: name (customer · factory · received · code · priority, tags), the next step and
+    when it is due, "Day N of 5" with a 5-part SLA meter, and the status top right ("2 days over", "Due today",
+    "On track", "SLA met", "On hold", "Won"…); no coloured edge on every row
+  - filters with zero items are greyed; tag filter; sort by SLA (most urgent), received (newest), customer or
+    estimated value (remembered on the device)
+  - on screens wider than about 1280px the panel docks beside the list: the list narrows, the open row is
+    highlighted, and clicking another row switches the panel. Tablets and phones keep the sliding panel
+  - panel: "Day 7 of 5" with the status and meter, when the SLA was due, the SLA steps with their dates, then one
+    task list (SLA tasks carry an "SLA" tag) with "+" in each section header
+  - Turn into project (footer): opens New project prefilled from the inquiry (name, customer, factory, brief from
+    the remark, tags, Improvement for IMP inquiries; the project code is yours to fill). Saving creates the
+    project with `fromInquiry`, sets the inquiry's `projectId`, marks it Won if no outcome was set, and logs it.
+    The inquiry then shows "Open project"; the project's Details link back to the inquiry; Excel has both columns
 - My work (replaces the Tasks and Notifications pages; old links open it): one dense list of everything assigned
   to you: project actions, inquiry tasks and next actions, personal tasks.
   - groups: Overdue, Today, This week, Later, No date, Awaiting reply, Done this week (folded); each group folds

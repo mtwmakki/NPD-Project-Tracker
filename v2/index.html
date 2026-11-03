@@ -20,8 +20,8 @@
 <script>
 /* Paint the saved style before anything renders (Vision + dark by default). Keys are V2-only (npd2-*). */
 (function(){ var L=['I','J','K','D','A','B','C','E','F','G','H'], r=document.documentElement, g=function(k,d){ try { return localStorage.getItem(k) || d; } catch(e){ return d; } };
-  var look=g('npd2-look','D'); if (L.indexOf(look) < 0) look='D'; r.dataset.look=look;
-  r.dataset.mat=g('npd2-mat','thin'); r.style.setProperty('--lg-t', (+g('npd2-gt','70') || 0)/100); r.style.setProperty('--lg-b', +g('npd2-gb','24') || 0); r.dataset.theme=g('npd2-theme', look==='K' ? (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light') : look==='I'?'light':'dark'); })();
+  var look=g('npd2-look','K'); if (L.indexOf(look) < 0) look='K';   /* default: Glass, light */ r.dataset.look=look;
+  r.dataset.mat=g('npd2-mat','thin'); r.style.setProperty('--lg-t', (+g('npd2-gt','70') || 0)/100); r.style.setProperty('--lg-b', +g('npd2-gb','24') || 0); r.dataset.theme=g('npd2-theme', look==='K' ? 'light' : look==='I'?'light':'dark'); })();
 </script>
 <style>
 /* Layout: one-screen app shell. Sidebar (icon rail on tablet portrait, bottom tab bar on phone) + topbar + scrolling #view.
@@ -649,7 +649,16 @@ button{font:inherit;color:inherit}
 #pop{position:fixed;z-index:55;width:384px;padding:16px;border-radius:22px;background:color-mix(in srgb,var(--surf-solid) 94%,transparent);border:1px solid var(--line-2);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);display:grid;gap:14px;
   transform-origin:var(--ox,0) var(--oy,100%);transform:scale(.85);opacity:0;pointer-events:none;transition:transform calc(var(--spring-d)*var(--k)) var(--spring),opacity calc(200ms*var(--k))}
 #pop.open{transform:none;opacity:1;pointer-events:auto}
-#pop{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}#pop::-webkit-scrollbar{display:none}
+#pop{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+#pop .pop-app{border-radius:16px;background:var(--hover);margin:-4px -6px 0}
+#pop .pop-app>summary{list-style:none;display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 8px;padding:10px 12px;cursor:pointer;border-radius:16px;color:var(--tx)}
+#pop .pop-app>summary::-webkit-details-marker{display:none}
+#pop .pop-app>summary span{font-weight:600}
+#pop .pop-app>summary small{grid-row:2;font-size:12px;color:var(--mu)}
+#pop .pop-app>summary svg{grid-row:1/3;grid-column:2;color:var(--mu);transition:transform .25s}
+#pop .pop-app[open]>summary svg{transform:rotate(90deg)}
+#pop .pop-app>summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+#pop .pop-app-in{display:grid;gap:14px;padding:4px 12px 14px}#pop::-webkit-scrollbar{display:none}
 #pop h4{margin:0 0 8px;font:600 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
 .looks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .looks button{font-size:10.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2174,7 +2183,7 @@ function hydrateIcons(scope = document){ $$('[data-ico]', scope).forEach(el => {
 
 /* ── prefs ── */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S = { look: root.dataset.look || 'D', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
+const S = { look: root.dataset.look || 'K', theme: root.dataset.theme || 'light', motion: store.get('npd2-motion', reduced ? 'off' : 'full'),
   page: 'dashboard', range: 'year', pview: store.get('npd2-pview', 'cards'), pfilt: store.get('npd2-pfilt', 'active'), psort: store.get('npd2-psort', 'urgent'), pgroup: store.get('npd2-pgroup', 'status'), filter: 'open', q: '', fac: 'all', proj: null, tab: 'actions',
   mat: store.get('npd2-mat', 'thin'), gt: +store.get('npd2-gt', '70') || 0, gb: +store.get('npd2-gb', '24') || 0,
   focus: store.get('npd2-focus', 'all'), tdone: false, tarch: false, tsel: null, wscope: 'mine', wtype: 'all', wq: '', wdens: store.get('npd2-wdens', 'compact'), wsnz: false, wfold: null, ptag: '', itag: '', wtag: '', isort: store.get('npd2-isort', 'sla') };
@@ -4911,17 +4920,17 @@ $('#cmd-q').addEventListener('keydown', e => {
 $('#cmdk').addEventListener('click', e => { const b = e.target.closest('.cmd-item'); if (b){ const it = cmdItems[+b.dataset.ci]; closeCmd(); it.run(); } else if (e.target.id === 'cmdk') closeCmd(); });
 
 /* ── settings popover ── */
-function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([k,n,g]) => `<button type="button" class="${S.look===k?'on':''}" data-look="${k}"><i style="background:${g}"></i>${n}</button>`).join('')}</div></div>
-  <div><h4>Focus</h4>${segHTML('focusseg', [['all','Inquiries + projects'],['projects','Projects only']], S.focus)}<p class="pop-note">Projects only hides inquiries everywhere: menu, Dashboard, alerts and search. Only on this device.</p></div>
+function popHTML(){ return `<details class="pop-app"${store.get('npd2-appear', '') === 'open' ? ' open' : ''}><summary><span>Appearance</span><small>Style, theme, glass, motion</small>${ico('chev',16)}</summary><div class="pop-app-in"><div><h4>Style</h4><div class="looks">${LOOKS.map(([k,n,g]) => `<button type="button" class="${S.look===k?'on':''}" data-look="${k}"><i style="background:${g}"></i>${n}</button>`).join('')}</div></div>
   <div><h4>Theme</h4>${segHTML('themeseg', [['dark','Dark'],['light','Light']], S.theme)}</div>
   ${S.look === 'K' ? glassHTML() : ''}
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
+  <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div></div></details>
+  <div><h4>Focus</h4>${segHTML('focusseg', [['all','Inquiries + projects'],['projects','Projects only']], S.focus)}<p class="pop-note">Projects only hides inquiries everywhere: menu, Dashboard, alerts and search. Only on this device.</p></div>
   <div><h4>Data</h4><div class="pop-data">${isLead() ? `<button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>` : ''}
     <button class="btn${inqOn() ? '' : ' wide'}" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
     ${isMasterAcct() ? `<button class="btn wide" type="button" data-act="open-people">${ico('user',15)} People</button>` : ''}
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
-  ${DB.data ? tagsPopHTML() : ''}
-  <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
+  ${DB.data ? tagsPopHTML() : ''}`; }
 const SL_IC = { solid:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   clear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="4"/></svg>',
   sharp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>',
@@ -4971,6 +4980,9 @@ function openPop(anchor){
   p.classList.add('open'); requestAnimationFrame(() => $$('#pop .seg').forEach(s => placeInd(s, false)));
 }
 function closePop(){ $('#pop').classList.remove('open'); }
+/* Appearance section: remember open / closed on this device; the segmented thumbs measure once it is visible */
+document.addEventListener('toggle', e => { const d = e.target; if (!d.classList || !d.classList.contains('pop-app')) return;
+  store.set('npd2-appear', d.open ? 'open' : ''); if (d.open) requestAnimationFrame(() => $$('.seg', d).forEach(x => placeInd(x, false))); }, true);
 /* pinned + factory panel: grows sideways out of its sidebar button (clip starts as the button's own shape) */
 function openShelf(btn){
   const p = $('#shelf'), r = btn.getBoundingClientRect(), side = btn.closest('.side').getBoundingClientRect();

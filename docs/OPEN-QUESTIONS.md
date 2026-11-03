@@ -47,6 +47,9 @@ Still to confirm:
 
 ## 3. Postponed — needs Google Apps Script (Code.gs) changes
 
+- [ ] **3.0 People (done Nov 2026):** Firestore rules now allow only signed-in people; only the master changes roles and
+      permissions. Settings › People (master only) edits each person's display name and role; a role change resets their
+      saved permissions to that role's defaults. Accounts are still created in the Firebase console.
 - [ ] **3.1 Secure saving:** Apps Script should only accept saves/loads from Adam's
       signed-in account (and retire the current shared access key). Needs: Code.gs,
       Firestore rules, list of allowed emails.

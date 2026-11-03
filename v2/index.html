@@ -2675,9 +2675,11 @@ function changelog(entry){
 
 /* people for PIC pickers: the user list from Firestore (like V1), plus anyone already named in the data */
 let USERS = [];
+let USER_DOCS = [];   // full profiles, for Settings › People (master only)
 async function loadUsers(){
-  try { const snap = await AUTH.db.collection('users').get(); USERS = snap.docs.map(d => d.data().name).filter(Boolean); } catch(e){ USERS = []; }
+  try { const snap = await AUTH.db.collection('users').get(); USER_DOCS = snap.docs.map(d => ({ uid: d.id, ...d.data() })); USERS = USER_DOCS.map(u => u.name).filter(Boolean); } catch(e){ USERS = []; USER_DOCS = []; }
 }
+const isMasterAcct = () => !!(AUTH.user && AUTH.user.email === MASTER_EMAIL) || !!(AUTH.profile && AUTH.profile.role === 'master');
 function people(extra){
   const set = new Set([...USERS, meName(), ...(extra ? [extra] : [])]);
   if (USERS.length < 2 && DB.data){ DB.data.projects.forEach(p => (p.tasks||[]).forEach(t => t.pic && set.add(t.pic))); DB.data.inquiries.forEach(i => (i.tasks||[]).forEach(t => t.pic && set.add(t.pic))); }
@@ -3149,7 +3151,7 @@ function setMe(){
 }
 
 /* ══════════ PAGES ══════════ */
-const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], work:['My work',''], styles:['Styles',''], bin:['Recycle bin',''] };
+const TITLES = { dashboard:['Dashboard',''], inquiries:['Inquiries',''], projects:['Projects',''], project:['Projects',''], work:['My work',''], styles:['Styles',''], bin:['Recycle bin',''], people:['People',''] };
 function greet(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
 function bootHTML(){
   return `${DB.err ? `<div class="banner warn">${ico('x',16)}<span>Can't reach the Sheet right now (${esc(DB.err)}). <button class="lnk" type="button" data-act="sync">Try again</button></span></div>` : ''}
@@ -3786,6 +3788,47 @@ function binList(){
       <div class="bin-tx"><b>${esc(binName(b))}</b><span>${binWhere(b)} · deleted ${b.deletedAt ? fmtDate(b.deletedAt) : 'earlier'}${b.deletedAt === today ? ' (today)' : ''}</span></div>
       <div class="bin-acts">${ok ? `<button class="btn" type="button" data-binrestore="${esc(b.id)}">${ico('refresh',15)} Restore</button>` : `<span class="bin-why">${esc(why)}</span>`}${binWipeable(b) ? `<button class="ibtn bin-wipe" type="button" data-binwipe="${esc(b.id)}" aria-label="Delete forever: ${esc(binName(b))}" title="Delete forever">${ico('trash',16)}</button>` : ''}</div></div>`; }).join('');
 }
+/* ══════════ PEOPLE (Settings › People, master only) ══════════
+   Everyone who has signed in at least once. Accounts are created in the Firebase console (Authentication › Add user);
+   here the master sets each person's display name and role. Changing the role also resets their saved permissions
+   to that role's defaults, so a stored member set can't keep a new manager from editing. Firestore rules allow
+   only the master account to write role and permissions. */
+const ROLE_LABEL = { master:'Master', manager:'Manager', member:'Member' };
+const ROLE_NOTE = { manager:'Adds, edits and deletes everything; exports Excel and backups.', member:'Views everything; adds and completes actions and tasks; no deleting, no Excel export.' };
+function peopleList(){
+  const list = [...USER_DOCS].sort((a, b) => (a.role === 'master' ? -1 : b.role === 'master' ? 1 : String(a.name || a.email).localeCompare(String(b.name || b.email))));
+  if (!list.length) return `<div class="empty"><b>No one here yet</b>People appear after they sign in once. Create their account in the Firebase console under Authentication › Add user.</div>`;
+  return list.map(u => { const n = u.name || String(u.email || '').split('@')[0] || 'Unnamed', ini = n.split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase(), r = u.role || 'member';
+    return `<div class="bin-row"><span class="bin-ic" style="font:600 13px/1 var(--fb);color:var(--tx)">${esc(ini)}</span>
+      <div class="bin-tx"><b>${esc(n)}${u.uid === (AUTH.user && AUTH.user.uid) ? ' <span style="color:var(--mu);font-weight:400">(you)</span>' : ''}</b><span>${esc(u.email || '')} · ${ROLE_LABEL[r] || r}</span></div>
+      <div class="bin-acts"><button class="btn" type="button" data-person="${esc(u.uid)}">${ico('pencil',15)} Edit</button></div></div>`; }).join('');
+}
+function pagePeople(){
+  if (!isMasterAcct()) return `<div class="empty"><b>Only the master account can manage people</b>Ask the master to change your name or role.</div>`;
+  return `<div class="toolbar st" style="--i:0"><span class="muted" style="flex:1;min-width:0">New people: create their account in the Firebase console (Authentication › Add user), ask them to sign in once, then set their role here.</span>
+      <button class="btn" type="button" data-act="people-reload">${ico('refresh',15)} Reload</button></div>
+    <div class="card bin-list st" style="--i:1" id="peoplelist">${peopleList()}</div>`;
+}
+function formPerson(uid){
+  const u = USER_DOCS.find(x => x.uid === uid); if (!u) return;
+  const master = u.role === 'master' || u.email === MASTER_EMAIL;
+  const fields = [{k:'name', label:'Display name', type:'text', value: u.name || '', req:true, hint:'Write it exactly as you write them as the owner (PIC) on tasks.'}];
+  if (!master) fields.push({k:'role', label:'Role', type:'chips', options:[['member','Member'],['manager','Manager']], value: u.role === 'manager' ? 'manager' : 'member', hint: 'Manager: ' + ROLE_NOTE.manager.toLowerCase() + ' Member: ' + ROLE_NOTE.member.toLowerCase()});
+  openForm({ title:'Edit person', eyebrow: u.email || '', fields, submit:'Save', onSubmit: (v, changed) => {
+    const name = v.name.trim(); if (!name) return { name: 'Required' };
+    const patch = {};
+    if (changed.name) patch.name = name;
+    if (!master && changed.role){ patch.role = v.role; patch.permissions = DEFAULT_PERMISSIONS[v.role]; }
+    if (!Object.keys(patch).length) return true;
+    AUTH.db.collection('users').doc(uid).update(patch).then(async () => {
+      await loadUsers();
+      if (AUTH.user && uid === AUTH.user.uid){ AUTH.profile = { ...AUTH.profile, ...patch }; setMe(); }
+      const l = $('#peoplelist'); if (l){ l.innerHTML = peopleList(); hydrateIcons(l); }
+      toast(patch.role ? `${name} is now ${ROLE_LABEL[patch.role].toLowerCase()}. They see it after they reload.` : `Saved ${name}`, {icon:'check'});
+    }).catch(e => { console.warn('person save', e); toast('Not saved: Firestore refused the change. Check that the new security rules are published.', {icon:'x'}); });
+    return true;
+  }});
+}
 function pageBin(){
   const all = DB.data.bin || [], c = g => all.filter(b => g === 'all' || (BIN_KIND[b.kind] || {}).g === g).length;
   return `<div class="toolbar st" style="--i:0">${segHTML('binseg', [['all','All',c('all')],['inquiries','Inquiries',c('inquiries')],['projects','Projects',c('projects')],['tasks','Tasks',c('tasks')]], S.binf || 'all')}
@@ -4165,7 +4208,7 @@ function render(opts = {}){
   const newBtn = (k, l) => `<button class="b1 top-new" type="button" data-fm="${k}">${ico('plus',16)}<span>${l}</span></button>`;
   $('#topx').innerHTML = !DB.data ? '' : S.page === 'inquiries' && can('inquiries','add') ? newBtn('inq', 'New inquiry') : S.page === 'projects' && can('projects','add') ? newBtn('proj', 'New project') : S.page === 'work' && can('tasks','add') && !S.tarch ? newBtn('mtask', 'New task') : '';
   const v = $('#view'), ae = document.activeElement, aeId = ae && ae.id, sel = ae && ae.selectionStart;
-  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, work: pageWork, styles: pageStyles, bin: pageBin })[S.page]();
+  v.innerHTML = !DB.data && S.page !== 'styles' ? bootHTML() : ({ dashboard: pageDashboard, inquiries: pageInquiries, projects: pageProjects, project: pageProject, work: pageWork, styles: pageStyles, bin: pageBin, people: pagePeople })[S.page]();
   if (!opts.keep) v.scrollTop = 0;
   if (aeId === 'q' || aeId === 'wq'){ const q = $('#' + aeId); if (q){ q.focus({preventScroll: true}); try { q.setSelectionRange(sel, sel); } catch(e){} } }
   hydrateIcons(v); counts(); moveNav(!opts.keep);
@@ -4875,6 +4918,7 @@ function popHTML(){ return `<div><h4>Style</h4><div class="looks">${LOOKS.map(([
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
   <div><h4>Data</h4><div class="pop-data">${isLead() ? `<button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>` : ''}
     <button class="btn${inqOn() ? '' : ' wide'}" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
+    ${isMasterAcct() ? `<button class="btn wide" type="button" data-act="open-people">${ico('user',15)} People</button>` : ''}
     <button class="btn wide" type="button" data-act="open-bin">${ico('trash',15)} Recycle bin${DB.data && (DB.data.bin || []).length ? ` <span class="n">${DB.data.bin.length}</span>` : ''}</button></div></div>
   ${DB.data ? tagsPopHTML() : ''}
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div>`; }
@@ -5069,6 +5113,7 @@ document.addEventListener('click', e => {
   const t = e.target;
   if (t.closest('#form')) return;
   const fm = t.closest('[data-fm]'); if (fm){ if (!DB.data) return; openFormFor(fm.dataset.fm); return; }
+  const pe = t.closest('[data-person]'); if (pe){ formPerson(pe.dataset.person); return; }
   const br = t.closest('[data-binrestore]'); if (br){ restoreBin(br.dataset.binrestore); return; }
   const bw = t.closest('[data-binwipe]'); if (bw){ wipeBin(bw.dataset.binwipe, bw); return; }
   const te = t.closest('[data-tagedit]'); if (te){ if (!isLead()) return; TAGEDIT = te.dataset.tagedit; TAGEC = ''; refreshPop(); const i = $('#tagedit-name'); if (i){ i.focus({preventScroll: true}); i.select(); } return; }
@@ -5123,6 +5168,8 @@ document.addEventListener('click', e => {
     else if (act === 'shelf'){ $('#shelf').classList.contains('open') ? closeShelf() : openShelf(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
     else if (act === 'open-bin'){ closePop(); go('bin'); }
+    else if (act === 'open-people'){ closePop(); loadUsers().then(() => { go('people'); }); }
+    else if (act === 'people-reload'){ loadUsers().then(() => { const l = $('#peoplelist'); if (l){ l.innerHTML = peopleList(); hydrateIcons(l); } }); }
     else if (act === 'export-xlsx'){ closePop(); exportExcel(); }
     else if (act === 'pdf-projects' || act === 'pdf-inquiries'){ closePop(); exportPDF(act === 'pdf-inquiries' ? 'inquiries' : 'projects'); }
     else if (act === 'export-json'){ closePop(); exportBackup(); }

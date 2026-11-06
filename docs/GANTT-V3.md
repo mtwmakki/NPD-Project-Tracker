@@ -2,8 +2,61 @@
 
 `gantt.html` is Gantt V3: one **book per customer**, holding that customer's projects. A project is either a
 **Timeline** (task table + timeline, dashboard) or **Status only** (needed from the customer, done, next, stage gates).
-Everything is saved in the browser of the device that made it (localStorage); nothing goes to the Sheet yet.
+The book is saved to the same Google Sheet as the NPD Tracker (the "Gantt" tab) and a copy stays in the browser.
 Mockup and review: the "NPD Gantt V3 Rework" artifact.
+
+## Saving (Sheet + this browser)
+Editing a plan saves it to the tracker's spreadsheet, tab **Gantt**, through the same Apps Script bridge the
+tracker already uses (`ganttRead` / `ganttWrite`). There is no second spreadsheet. The header rests on
+"Saved to the Sheet". The customer Excel file (⋯ → Customer file) still exports and imports the whole book,
+and that Open button still accepts a single-plan JSON file. `ganttSavePlanFile` still downloads the open plan.
+
+What a row holds:
+
+- **Project row.** Key = the project id (the same id V2 puts in `?project=`). Value = that project's plan JSON
+  (`tasks`, header fields, `status`, `savedAt`, …). This is the shape already on the tab from the plans last
+  updated around 23 Sep 2026, so those rows still open.
+- **Book row.** Key = `book-` + the book id (`book-cust-nestle`, `book-default`). Value = a small index only:
+  customer, meeting dates, project ids, and removals. The plans themselves stay in the project rows.
+- **Overflow rows.** A plan that does not fit in one cell (Google's limit is 50,000 characters) is stored as a
+  short manifest in the project row plus `projectId__p1`, `projectId__p2`, … The manifest is JSON
+  (`kind: "gantt-parts"`). Older plans are a single cell and are left that way.
+
+The browser copy is `localStorage` key `gantt3:book:<book id>`. It is written first. If the Sheet cannot be
+reached, the plan stays there and the header says "Saved on this device". Opening the page again retries.
+A failed save does not replace the plan with an empty chart.
+
+First open on a device, when both copies exist:
+
+- Per project, the newer `savedAt` wins. An empty "Untitled" plan does not replace a real plan, and a blank
+  Sheet row does not wipe a plan that already has work.
+- Projects only on this device are uploaded. Projects only on the Sheet are added. Nothing is deleted from
+  either side just because the other side has not seen it yet.
+- Removing a project from the customer file records a removal time. A newer edit of that project wins over
+  the removal. Opening that project again from V2 brings it back.
+- Customer name and meeting dates follow whichever side edited them later.
+- A plan from before V3 (a project row, no book index) is pulled into the book the first time that project
+  is opened, or when the general book is opened with no project id (the old `default` row). The row is not
+  rewritten if the Sheet copy is the one kept.
+- The page does not invent a new project while the Sheet could not be read. That avoids uploading a blank
+  plan over a book that was simply offline.
+
+The shared access key already in the page can write these Gantt rows as well as tracker data. Locking that
+down is still open question 3.1. The key was not copied into any new file.
+
+### What Adam does once
+1. Merge this to `main` so GitHub Pages serves the new `gantt.html` and `gantt-cloud.js`.
+2. Do **not** create a spreadsheet and do **not** deploy a new Apps Script URL. A read of the current web
+   app already returns Gantt plans from the Gantt tab (`{exists, projectId, updatedAt, data}`).
+3. Open a Gantt, edit one task, and confirm the header says "Saved to the Sheet". On another device, open
+   the same project and confirm the edit is there.
+4. Redeploy the bound script only if the header says "Sheet has no Gantt save yet" or a save never sticks.
+   Extensions → Apps Script on **NPD Tracker Data Store** → paste the Gantt section from
+   `docs/apps-script/Gantt.gs` into the existing script (do not replace the tracker's read/write) →
+   Deploy → Manage deployments → the current web app → pencil → New version → Deploy.
+   The URL and the access key stay the same. Before deploying, check that column A of the Gantt tab is the
+   project id, B the updated time, and C the JSON. The sample matches that layout and will not touch the
+   tracker tabs.
 
 ## Opening it from V2
 V2's Timeline button opens `gantt.html?project=<V2 id>&name=<name>&code=<code>&customer=<customer>` in the same tab.

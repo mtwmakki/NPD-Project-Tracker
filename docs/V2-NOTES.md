@@ -3,8 +3,9 @@
 The usual address `https://mtwmakki.github.io/NPD-Project-Tracker/` now opens V2 directly
 (V2 itself lives at `…/v2/`). **V1 is retired (30 Oct 2026):** the root page only forwards to V2, old `/?v1`
 bookmarks land in V2, and V2 has no links to V1. V1's code is in git history (root `index.html` before the
-retirement commit). `gantt.html` stays at the root: V2's Timeline button opens it (same tab) and each device keeps its plans
-there. It is now Gantt V3, the customer status book, in V2's look: see docs/GANTT-V3.md.
+retirement commit). `gantt.html` stays at the root: V2's Timeline button opens it (same tab). Plans are saved to the
+Gantt tab of the same Google Sheet, with a copy in the browser if the Sheet cannot be reached. It is Gantt V3, the
+customer status book, in V2's look: see docs/GANTT-V3.md.
 
 ## Same data, same account
 - Signs in with the same Firebase account V1 used. The first sign-in of a new person creates their profile in

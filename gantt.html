@@ -1395,7 +1395,7 @@ window.addEventListener('storage', function(e){
         </div></span>
     </div>
     <span class="nb-grow"></span>
-    <span class="nb-sync v3-edit-only" id="bbSync" aria-live="polite"><i></i><span>Saved on this device</span></span>
+    <span class="nb-sync v3-edit-only" id="bbSync" aria-live="polite"><i></i><span>Loading…</span></span>
     <div class="mode" role="group" aria-label="View mode"><button type="button" id="bbModeEdit" onclick="setViewMode('edit')">Edit</button><button type="button" id="bbModePresent" onclick="setViewMode('present')">Present</button></div>
     <span class="v3dd"><button type="button" class="btn pri" id="bbShareBtn" onclick="v3Menu(event,this)" aria-haspopup="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>Share</button>
         <div class="v3menu">
@@ -1571,6 +1571,7 @@ window.addEventListener('storage', function(e){
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="gantt-cloud.js"></script>
 <script>
 var PORDER=['study','pilot','commercial','production','tdesign','tcapex','tpmold','tcmold','tmachine','timl','tramp'];
 var PLABEL={study:'Study',pilot:'Pilot',commercial:'Commercial',production:'Production',tdesign:'Design',tcapex:'CAPEX Approval',tpmold:'Pilot Mold',tcmold:'Commercial Mold',tmachine:'Machine & Aux Equipment',timl:'IML Development',tramp:'Production Ramp-Up'};
@@ -2972,15 +2973,31 @@ var ganttProjectId = null;
 var ganttAutoSaveTimer = null;
 
 /* ══════════════════════════════════════════════════════
-   STANDALONE MODE
-   The Gantt is not connected to the NPD Tracker yet, so plans live in this
-   browser (localStorage) and move between devices as plan files
-   (Save file / Open file). The Google Sheets bridge code is kept intact but
-   switched off — set GANTT_CLOUD = true once it's time to connect.
+   SHARED SHEET
+   Plans save to the same Google Sheet as the NPD Tracker, on its existing
+   "Gantt" tab, through the tracker's Apps Script (ganttRead / ganttWrite).
+   A copy stays in this browser too, so a failed save does not drop the plan.
+   The customer Excel file, and a single-plan JSON file, still work as a backup.
    ══════════════════════════════════════════════════════ */
 window.GANTT_VERSION='v3';
-var GANTT_CLOUD = false;
-var ganttHandleLoaded = null;   /* set by ganttLoadFromFirebase(); reused when opening a plan file */
+var GANTT_CLOUD = true;
+if (typeof GanttCloud === 'undefined') GANTT_CLOUD = false;
+var ganttHandleLoaded = null;   /* ganttApplyLoaded; reused when opening a plan file */
+var ganttCloudPendingProjects = {};
+var ganttCloudBookDirty = false;
+var ganttCloudBusy = false;
+var ganttCloudAgain = false;
+var ganttCloudReady = false;
+var ganttCloudQuiet = false;
+var ganttCloudReached = false;
+var ganttCloudSeen = {};
+var ganttCloudTimer = null;
+var ganttCloudRetry = null;
+var ganttCloudRetryN = 0;
+var ganttSyncState = GANTT_CLOUD ? 'loading' : 'device';
+var ganttWantedId = null;
+var ganttStatusTimer = null;
+var ganttLoadedCanon = '';
 function ganttHandleLoadedFromFile(dataStr) { ganttHandleLoaded({ exists: true, data: dataStr }, true); }
 /* ══════════════════════════════════════════════════════
    CUSTOMER BOOK (v3)
@@ -2995,7 +3012,7 @@ function ganttLocalKey() { return 'gantt3:book:' + ((book && book.id) || 'defaul
 function bookKey(id) { return 'gantt3:book:' + (id || 'default'); }
 function bookThisMonday(now) { var d = now ? new Date(now.getTime()) : new Date(); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }   /* local calendar, not UTC */
 function bookTodayISO() { var d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function bookEmpty(id) { return { id: id || 'default', customer: '', nextMeeting: '', lastMeeting: '', activeId: null, projects: [] }; }
+function bookEmpty(id) { return { id: id || 'default', customer: '', customerAt: '', nextMeeting: '', nextMeetingAt: '', lastMeeting: '', lastMeetingAt: '', activeId: null, updatedAt: '', removed: [], projects: [] }; }
 function bookLoad(id) {
   var b = null;
   try { var raw = localStorage.getItem(bookKey(id)); if (raw) b = JSON.parse(raw); } catch (e) { console.error('Book load failed:', e); b = null;
@@ -3006,6 +3023,8 @@ function bookLoad(id) {
   b.id = id || 'default';
   if (!Array.isArray(b.projects)) b.projects = [];
   b.projects = b.projects.filter(function(p){ return p && p.id && p.payload && typeof p.payload === 'object'; });
+  if (!Array.isArray(b.removed)) b.removed = [];
+  b.removed = b.removed.filter(function(r){ return r && r.id && r.at; }).slice(-80);
   if (!b.projects.some(function(p){ return p.id === b.activeId; })) b.activeId = b.projects.length ? b.projects[0].id : null;
   return b;
 }
@@ -3036,6 +3055,8 @@ function bookAdoptNew(id, name, code) {
   book.projects.push({ id: String(id), payload: payload });
   book.activeId = String(id);
   bookSave();
+  ganttQueueProject(String(id));
+  ganttQueueBook();
 }
 function bookSave() {
   if (!book) return false;
@@ -3058,7 +3079,9 @@ function ganttLocalWrite(payloadStr) {
       try { localStorage.setItem(ganttLocalKey() + ':lastgood:' + p.id, prev); } catch (e) {}
     }
     p.payload = JSON.parse(payloadStr);
-    return bookSave();
+    var saved = bookSave();
+    if (saved) ganttQueueProject(p.id);
+    return saved;
   } catch (e) { console.error('Local save failed:', e); return false; }
 }
 /* Clears the per-project header fields and plan globals that ganttHandleLoaded only
@@ -3135,19 +3158,37 @@ function bookNewProject(kind, name) {
   }
   book.projects.push({ id: id, payload: payload });
   bookSave();
+  ganttQueueProject(id);
+  ganttQueueBook();
   bookSwitch(id);
   return id;
 }
 function bookSetCustomer(name) {
   name = String(name == null ? '' : name);
+  var now = new Date().toISOString();
   book.customer = name;
-  book.projects.forEach(function(p){ p.payload.iCust = name; });
+  book.customerAt = now;
+  book.projects.forEach(function(p){ p.payload.iCust = name; if (p.payload) p.payload.savedAt = now; ganttQueueProject(p.id); });
   var el = document.getElementById('iCust'); if (el) el.value = name;
   bookSave(); undoCapture();
+  ganttQueueBook();
   stRerender();
 }
-function bookSetMeeting(nextISO, quiet) { book.nextMeeting = nextISO || ''; bookSave(); undoCapture(); if (!quiet) stRerender(); }
-function bookStartNextCycle() { book.lastMeeting = book.nextMeeting || ''; book.nextMeeting = ''; bookSave(); undoCapture(); stRerender(); }
+function bookSetMeeting(nextISO, quiet) {
+  book.nextMeeting = nextISO || '';
+  book.nextMeetingAt = new Date().toISOString();
+  bookSave(); undoCapture(); ganttQueueBook();
+  if (!quiet) stRerender();
+}
+function bookStartNextCycle() {
+  var now = new Date().toISOString();
+  book.lastMeeting = book.nextMeeting || '';
+  book.lastMeetingAt = now;
+  book.nextMeeting = '';
+  book.nextMeetingAt = now;
+  bookSave(); undoCapture(); ganttQueueBook();
+  stRerender();
+}
 
 /* ══════════════════════════════════════════════════════
    BOOK BAR — header (logo, "Project status for …"), Edit/Present
@@ -3238,13 +3279,26 @@ function bbSetBack(id, name) {
   a.title = id ? 'Back to ' + (name || 'the project') + ' in NPD Tracker' : 'Back to NPD Tracker';
   a.hidden = false; if (vr) vr.hidden = false;
 }
-/* the header's save status mirrors the plan's own (Saving… / Saved on this device ✓ / Save failed), resting on "Saved on this device" */
+/* The header chip follows the plan status. A Sheet miss still says the plan is on this device. */
+function ganttChipLabel(text) {
+  var t = (text || '').trim();
+  if (/saving/i.test(t)) return 'Saving…';
+  if (/loading/i.test(t)) return 'Loading…';
+  if (/this device/i.test(t)) return 'Saved on this device';
+  if (/fail|did not store|no Gantt/i.test(t)) return 'Not saved';
+  if (/sheet/i.test(t)) return 'Saved to the Sheet';
+  if (ganttSyncState === 'device' || !GANTT_CLOUD) return 'Saved on this device';
+  if (ganttSyncState === 'err') return 'Not saved to the Sheet';
+  if (ganttSyncState === 'loading') return 'Loading…';
+  return 'Saved to the Sheet';
+}
 function bbWatchSave() {
   var src = document.getElementById('ganttSaveStatus'), chip = document.getElementById('bbSync'); if (!src || !chip || !window.MutationObserver) return;
   var show = function(){
-    var t = (src.textContent || '').trim(), busy = /saving|loading/i.test(t), err = /fail/i.test(t);
-    chip.className = 'nb-sync v3-edit-only' + (busy ? ' busy' : err ? ' err' : '');
-    chip.lastElementChild.textContent = err ? 'Not saved' : busy ? 'Saving…' : 'Saved on this device';
+    var t = (src.textContent || '').trim();
+    var busy = /saving|loading/i.test(t), bad = /fail|unreachable|did not store|no Gantt/i.test(t);
+    chip.className = 'nb-sync v3-edit-only' + (busy ? ' busy' : bad ? ' err' : '');
+    chip.lastElementChild.textContent = ganttChipLabel(t);
   };
   new MutationObserver(show).observe(src, { childList: true, characterData: true, subtree: true }); show();
 }
@@ -3285,7 +3339,12 @@ function bookRemoveProject(id) {
   var idx = book.projects.indexOf(p), wasActive = String(book.activeId) === String(id);
   clearTimeout(ganttAutoSaveTimer);
   if (!wasActive && book.activeId && bookProject(book.activeId)) ganttSaveToFirebase();   /* flush the open project first */
+  book.removed = book.removed || [];
+  book.removed.push({ id: String(id), at: new Date().toISOString() });
+  if (book.removed.length > 80) book.removed = book.removed.slice(-80);
+  delete ganttCloudPendingProjects[String(id)];
   book.projects.splice(idx, 1);
+  ganttQueueBook();
   if (wasActive) { book.activeId = null; bookSave(); bookSwitch(book.projects[Math.min(idx, book.projects.length - 1)].id); }
   else { bookSave(); renderBookBar(); }
   return true;
@@ -3388,39 +3447,57 @@ function ganttInitFirebase() {
   var wanted = params.get('project');
   var projName = params.get('name') || '';
   var projCode = params.get('code') || '';
+  ganttWantedId = wanted || null;
   if (wanted && !bookProject(wanted) && bookImportOldPlan(wanted, projName, projCode)) bookImported = true;
   var adding = !!(wanted && !bookProject(wanted));   /* opened from V2, no plan yet: starts from the template below */
   if (wanted && bookProject(wanted)) book.activeId = wanted;
-  ganttProjectId = book.activeId || 'default';
+  ganttProjectId = book.activeId || wanted || 'default';
   if (projName) document.getElementById('iProj').value = projName;
   if (projCode) document.getElementById('iRef').value = projCode;
   document.title = (projCode || projName || book.customer) ? 'Gantt · ' + (projCode || projName || book.customer) : 'Gantt · NPD Tracker';
-  if (adding) { bookAdoptNew(wanted, projName, projCode); ganttProjectId = wanted; }
-  ganttLoadFromFirebase();
   bbSetBack(wanted, projName);
   bbWatchSave();
-  if (bookImported && typeof gvToast === 'function') setTimeout(function(){ gvToast('Brought in this project\'s plan from the earlier Gantt'); }, 300);
-  /* Empty book: keep the old single-plan start (default Gantt) and make it the first TIMELINE project. */
-  if (!book.projects.length) {
-    var pid = uid();
-    if (!document.getElementById('iProj').value) document.getElementById('iProj').value = 'Untitled project';
-    if (book.customer) document.getElementById('iCust').value = book.customer;
-    if (!curStatus || curStatus.kind !== 'timeline') curStatus = stNew('timeline');
-    book.projects.push({ id: pid, payload: ganttBuildPayload() });
-    book.activeId = pid; ganttProjectId = pid;
-    bookSave();
-    undoReset();
+  if (!GANTT_CLOUD) {
+    if (adding) { bookAdoptNew(wanted, projName, projCode); ganttProjectId = wanted; }
+    ganttLoadFromFirebase();
+    if (bookImported && typeof gvToast === 'function') setTimeout(function(){ gvToast('Brought in this project\'s plan from the earlier Gantt'); }, 300);
+    /* Empty book: keep the old single-plan start (default Gantt) and make it the first TIMELINE project. */
+    if (!book.projects.length) {
+      var pid = uid();
+      if (!document.getElementById('iProj').value) document.getElementById('iProj').value = 'Untitled project';
+      if (book.customer) document.getElementById('iCust').value = book.customer;
+      if (!curStatus || curStatus.kind !== 'timeline') curStatus = stNew('timeline');
+      book.projects.push({ id: pid, payload: ganttBuildPayload() });
+      book.activeId = pid; ganttProjectId = pid;
+      bookSave();
+      undoReset();
+    }
+    ganttSyncState = 'device';
+    if (typeof renderBookBar === 'function') renderBookBar();
+    if (typeof showProjectView === 'function') showProjectView();
+    return;
   }
-  if (typeof renderBookBar === 'function') renderBookBar();
-  if (typeof showProjectView === 'function') showProjectView();
+  ganttSyncState = 'loading';
+  ganttSetStatus('Loading from the Sheet…');
+  if (bookProject(book.activeId)) ganttApplyLoaded({ exists: true, data: JSON.stringify(bookProject(book.activeId).payload), quietStatus: true });
+  ganttCloudLoad(book, wanted).then(function (got) {
+    var merged = ganttCloudApplyRemote(got);
+    ganttFinishOpen(wanted, projName, projCode, true);
+    if (bookImported && typeof gvToast === 'function') setTimeout(function(){ gvToast('Brought in this project\'s plan from the earlier Gantt'); }, 300);
+    if (merged.importedLegacy.length && typeof gvToast === 'function') setTimeout(function(){ gvToast('Brought in a plan saved on the shared Sheet'); }, 600);
+  }).catch(function (e) {
+    console.error('Gantt Sheet load failed:', e && e.message ? e.message : e);
+    ganttCloudReached = false;
+    ganttSyncState = 'device';
+    ganttSetStatus(ganttCloudFailMessage(e));
+    /* Keep this device's book. Do not invent a new project that a later retry would upload over the Sheet. */
+    ganttFinishOpen(wanted, projName, projCode, false);
+    if (bookImported && typeof gvToast === 'function') gvToast('Brought in this project\'s plan from the earlier Gantt');
+  });
 }
 
-function ganttLoadFromFirebase() {
-  if (!ganttProjectId) { console.warn('Load skipped — no project id'); return; }
+function ganttApplyLoaded(res, fromFile) {
   var statusEl = document.getElementById('ganttSaveStatus');
-  if (statusEl) statusEl.textContent = 'Loading…';
-  var url = SHEETS_BRIDGE_URL + '?action=ganttRead&project=' + encodeURIComponent(ganttProjectId) + '&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN);
-  ganttHandleLoaded = function(res, fromFile) {
     if (res && res.exists && res.data) {
       var d;
       try { d = JSON.parse(res.data); } catch(e) { d = null; }
@@ -3455,32 +3532,30 @@ function ganttLoadFromFirebase() {
         });
         sortTasks();
         curStatus = stEnsure(d, bookTodayISO()).status;
-        if (statusEl) statusEl.textContent = 'Loaded ✓';
+        if (statusEl && !(res && res.quietStatus)) statusEl.textContent = 'Loaded ✓';
       } else {
         loadDefaults(); curStatus = stNew('timeline');
-        if (statusEl) statusEl.textContent = 'New chart';
+        if (statusEl && !(res && res.quietStatus)) statusEl.textContent = 'New chart';
       }
     } else {
       loadDefaults(); curStatus = stNew('timeline');
-      if (statusEl) statusEl.textContent = 'New chart';
+      if (statusEl && !(res && res.quietStatus)) statusEl.textContent = 'New chart';
     }
     normalizeDurations();
     syncLogoButtons();
     renderPanel(); renderNotes(); setMode(scheduleMode); renderGantt(); renderWorkingView();
     updateHeaderProject();
     syncSettingsUI();
-    if (fromFile) undoCapture(true); else undoReset();
-  };
-  if (!GANTT_CLOUD) {
-    try { ganttHandleLoaded(ganttLocalRead()); }
-    catch (e) { console.error('Local load error:', e); loadDefaults(); renderPanel(); renderNotes(); renderGantt(); renderWorkingView(); }
-    return;
-  }
-  fetch(url).then(function(r){ return r.json(); }).then(ganttHandleLoaded).catch(function(e) {
-    console.error('Load error:', e);
-    loadDefaults(); renderPanel(); renderNotes(); renderGantt();
-    if (statusEl) statusEl.textContent = 'Load failed';
-  });
+    if (fromFile) undoCapture(true); else if (!(res && res.keepUndo)) undoReset();
+    try { ganttLoadedCanon = ganttCanonPayload(ganttBuildPayload()); } catch (e) {}
+}
+ganttHandleLoaded = ganttApplyLoaded;
+function ganttLoadFromFirebase() {
+  if (!ganttProjectId) { console.warn('Load skipped — no project id'); return; }
+  var statusEl = document.getElementById('ganttSaveStatus');
+  if (statusEl && !GANTT_CLOUD) statusEl.textContent = 'Loading…';
+  try { ganttApplyLoaded(ganttLocalRead()); }
+  catch (e) { console.error('Local load error:', e); loadDefaults(); renderPanel(); renderNotes(); renderGantt(); renderWorkingView(); if (statusEl) statusEl.textContent = 'Load failed'; }
 }
 
 /* Single source of truth for the full plan payload — used by cloud save AND
@@ -3515,40 +3590,351 @@ function ganttBuildPayload() {
   };
 }
 function ganttSaveToFirebase() {
-  if (!ganttProjectId) { console.warn('Save skipped — no project id'); return; }
-  var statusEl = document.getElementById('ganttSaveStatus');
-  if (statusEl) statusEl.textContent = 'Saving…';
-  var payload = ganttBuildPayload();
-  if (!GANTT_CLOUD) {
-    var ok = ganttLocalWrite(JSON.stringify(payload));
-    if (statusEl) { statusEl.textContent = ok ? 'Saved on this device ✓' : 'Save failed'; if (ok) setTimeout(function(){ statusEl.textContent = ''; }, 2000); }
+  if (!book || !book.activeId || !bookProject(book.activeId)) {
+    if (ganttCloudBookDirty) ganttCloudFlush();
     return;
   }
-  fetch(SHEETS_BRIDGE_URL + '?action=ganttWrite', {
-    method: 'POST',
-    body: JSON.stringify({
-      token: SHEETS_BRIDGE_TOKEN,
-      action: 'ganttWrite',
-      project: ganttProjectId,
-      data: JSON.stringify(payload)
-    })
-  }).then(function(r){ return r.json(); }).then(function(res) {
-    if (res && res.error) {
-      if (statusEl) statusEl.textContent = 'Save failed';
-      console.error('Save error:', res.error);
-      return;
-    }
-    if (statusEl) { statusEl.textContent = 'Saved ✓'; setTimeout(function(){ statusEl.textContent = ''; }, 2000); }
-  }).catch(function(e) {
-    if (statusEl) statusEl.textContent = 'Save failed';
-    console.error('Save error:', e);
-  });
+  var payload = ganttBuildPayload();
+  var ok = ganttLocalWrite(JSON.stringify(payload));
+  if (!ok) { ganttSyncState = 'err'; ganttSetStatus('Save failed'); return; }
+  if (!GANTT_CLOUD) {
+    ganttSyncState = 'device';
+    ganttSetStatus('Saved on this device ✓', 2000);
+    return;
+  }
+  ganttCloudFlush();
 }
 
 function ganttAutoSave() {
   undoCapture();
   clearTimeout(ganttAutoSaveTimer);
   ganttAutoSaveTimer = setTimeout(ganttSaveToFirebase, 1500);
+}
+
+/* ---- Sheet sync (same bridge and Gantt tab as the tracker) ---- */
+function ganttSetStatus(text, clearMs) {
+  var el = document.getElementById('ganttSaveStatus');
+  if (el) el.textContent = text || '';
+  clearTimeout(ganttStatusTimer);
+  if (clearMs) ganttStatusTimer = setTimeout(function () { if (el && el.textContent === text) el.textContent = ''; }, clearMs);
+}
+function ganttQueueProject(id) {
+  if (!GANTT_CLOUD || ganttCloudQuiet || !id) return;
+  ganttCloudPendingProjects[String(id)] = true;
+}
+function ganttQueueBook() {
+  if (!GANTT_CLOUD || ganttCloudQuiet) return;
+  ganttCloudBookDirty = true;
+  if (ganttCloudReady) ganttScheduleCloud();
+}
+function ganttScheduleCloud() {
+  if (!GANTT_CLOUD || !ganttCloudReady || ganttCloudQuiet) return;
+  clearTimeout(ganttCloudTimer);
+  ganttCloudTimer = setTimeout(ganttCloudFlush, 800);
+}
+function ganttCloudFailMessage(err) {
+  var code = (err && (err.code || err.message)) || '';
+  if (code === 'unknown_action' || code === 'missing_project') return 'Saved on this device · Sheet has no Gantt save yet';
+  return 'Saved on this device · Sheet unreachable';
+}
+function ganttRemember(id, payload, sheetAt) {
+  var t = GanttCloud.planTime(payload, sheetAt);
+  if (t) ganttCloudSeen[String(id)] = t;
+}
+/* savedAt and the timeline cache change on their own; they are not an edit. */
+function ganttCanonPayload(p) {
+  var c; try { c = JSON.parse(JSON.stringify(p || {})); } catch (e) { return ''; }
+  delete c.savedAt;
+  if (c.status && typeof c.status === 'object') delete c.status.cache;
+  return JSON.stringify(c);
+}
+function ganttCaptureActive() {
+  if (!book || !book.activeId || !bookProject(book.activeId) || !document.getElementById('iDate')) return false;
+  var next;
+  try { next = ganttBuildPayload(); } catch (e) { console.error('Capture before Sheet sync failed:', e); return false; }
+  if (ganttCanonPayload(next) === ganttLoadedCanon) return false;
+  ganttCloudQuiet = true;
+  try { ganttLocalWrite(JSON.stringify(next)); }
+  catch (e2) { console.error('Capture before Sheet sync failed:', e2); return false; }
+  finally { ganttCloudQuiet = false; }
+  return true;
+}
+function ganttCloudMap(items, limit, fn) {
+  items = items || [];
+  if (!items.length) return Promise.resolve([]);
+  var i = 0, out = new Array(items.length);
+  function next() {
+    if (i >= items.length) return Promise.resolve();
+    var idx = i++;
+    return Promise.resolve(fn(items[idx], idx)).then(function (v) { out[idx] = v; return next(); });
+  }
+  var jobs = [];
+  for (var n = 0; n < Math.min(limit, items.length); n++) jobs.push(next());
+  return Promise.all(jobs).then(function () { return out; });
+}
+function ganttCloudReadRaw(project) {
+  var url = SHEETS_BRIDGE_URL + '?action=ganttRead&project=' + encodeURIComponent(project) + '&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN) + '&_=' + Date.now();
+  return fetch(url, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (res) {
+    if (!res || res.error) {
+      var err = new Error((res && res.error) || 'empty');
+      err.code = res && res.error;
+      throw err;
+    }
+    return res;
+  });
+}
+function ganttCloudWriteRaw(project, data) {
+  var url = SHEETS_BRIDGE_URL + '?action=ganttWrite&token=' + encodeURIComponent(SHEETS_BRIDGE_TOKEN) + '&_=' + Date.now();
+  return fetch(url, {
+    method: 'POST', cache: 'no-store',
+    body: JSON.stringify({ token: SHEETS_BRIDGE_TOKEN, action: 'ganttWrite', project: project, data: data })
+  }).then(function (r) { return r.json(); }).then(function (res) {
+    if (!res || res.error) {
+      var err = new Error((res && res.error) || 'empty');
+      err.code = res && res.error;
+      throw err;
+    }
+    return res;
+  });
+}
+function ganttCloudWritePlan(project, json, savedAt) {
+  var split = GanttCloud.splitPayload(json, savedAt || '');
+  if (!split.parts) return ganttCloudWriteRaw(project, split.stored);
+  var writes = [ganttCloudWriteRaw(project, split.stored)];
+  split.parts.forEach(function (part, idx) { writes.push(ganttCloudWriteRaw(GanttCloud.partKey(project, idx + 1), part)); });
+  return Promise.all(writes);
+}
+function ganttCloudReadPlan(project) {
+  return ganttCloudReadRaw(project).then(function (res) {
+    if (!res.exists || res.data == null || res.data === '') return { missing: true, sheetUpdatedAt: res.updatedAt || '' };
+    var text = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+    var obj = null;
+    try { obj = JSON.parse(text); } catch (e) { obj = null; }
+    if (GanttCloud.isManifest(obj)) {
+      var reqs = [];
+      for (var n = 1; n <= obj.n; n++) reqs.push(ganttCloudReadRaw(GanttCloud.partKey(project, n)));
+      return Promise.all(reqs).then(function (parts) {
+        var joined = GanttCloud.joinParts(parts.map(function (p) { return p && p.exists ? p.data : ''; }));
+        if (!joined) return { error: true, sheetUpdatedAt: res.updatedAt || '' };
+        try { return { payload: JSON.parse(joined), sheetUpdatedAt: res.updatedAt || '' }; }
+        catch (e2) { return { error: true, sheetUpdatedAt: res.updatedAt || '' }; }
+      });
+    }
+    if (!obj || typeof obj !== 'object') return { error: true, sheetUpdatedAt: res.updatedAt || '' };
+    return { payload: obj, sheetUpdatedAt: res.updatedAt || '' };
+  }).catch(function (e) {
+    if (e && (e.code === 'unknown_action' || e.code === 'missing_project')) throw e;
+    return { error: true };
+  });
+}
+function ganttCloudPlanIds(liveBook, wanted, env) {
+  var ids = {};
+  ((liveBook && liveBook.projects) || []).forEach(function (p) { if (p && p.id) ids[String(p.id)] = true; });
+  if (wanted) ids[String(wanted)] = true;
+  /* The pre-V3 "default" row is the general plan, not a customer book. Pull it when this is that book and no specific project was requested. */
+  if (((liveBook && liveBook.id) || 'default') === 'default' && (!wanted || String(wanted) === 'default')) ids['default'] = true;
+  ((env && env.projects) || []).forEach(function (p) { if (p && p.id) ids[String(p.id)] = true; });
+  return Object.keys(ids);
+}
+function ganttCloudLoad(liveBook, wanted) {
+  return ganttCloudReadRaw(GanttCloud.bookKey(liveBook.id)).then(function (res) {
+    var env = null;
+    if (res && res.exists && res.data) {
+      try {
+        var obj = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+        if (GanttCloud.isEnvelope(obj)) env = obj;
+      } catch (e) { env = null; }
+    }
+    var ids = ganttCloudPlanIds(liveBook, wanted, env);
+    return ganttCloudMap(ids, 4, function (id) {
+      return ganttCloudReadPlan(id).then(function (plan) { return { id: id, plan: plan }; });
+    }).then(function (rows) {
+      var plans = {};
+      rows.forEach(function (row) { plans[row.id] = row.plan; });
+      return { env: env, plans: plans };
+    });
+  });
+}
+function ganttCloudApplyRemote(got) {
+  ganttCaptureActive();
+  var merged = GanttCloud.mergeBook(book, got.env, got.plans, {
+    resurrectId: ganttWantedId, activeId: book && book.activeId, bookId: book && book.id
+  });
+  ganttCloudQuiet = true;
+  try { book = merged.book; bookSave(); }
+  finally { ganttCloudQuiet = false; }
+  ganttCloudReached = true;
+  (book.projects || []).forEach(function (p) {
+    var entry = got.plans[p.id];
+    if (entry && !entry.error) ganttRemember(p.id, p.payload, entry.sheetUpdatedAt);
+  });
+  merged.uploadProjectIds.forEach(ganttQueueProject);
+  if (merged.uploadBook) ganttQueueBook();
+  return merged;
+}
+function ganttFinishOpen(wanted, projName, projCode, fromCloud) {
+  var allowCreate = !GANTT_CLOUD || ganttCloudReached;
+  if (wanted && !bookProject(wanted) && allowCreate) {
+    bookAdoptNew(wanted, projName, projCode);
+    ganttProjectId = String(wanted);
+  }
+  if (!book.projects.length && allowCreate) {
+    var pid = uid();
+    if (!document.getElementById('iProj').value) document.getElementById('iProj').value = projName || 'Untitled project';
+    if (book.customer) { var cEl = document.getElementById('iCust'); if (cEl) cEl.value = book.customer; }
+    loadDefaults();
+    if (!curStatus || curStatus.kind !== 'timeline') curStatus = stNew('timeline');
+    book.projects.push({ id: pid, payload: ganttBuildPayload() });
+    book.activeId = pid; ganttProjectId = pid;
+    bookSave();
+    ganttQueueProject(pid);
+    ganttQueueBook();
+  }
+  if (wanted && bookProject(wanted)) { book.activeId = String(wanted); ganttProjectId = String(wanted); }
+  else if (book.activeId) ganttProjectId = book.activeId;
+  var active = bookProject(book.activeId);
+  if (active) ganttApplyLoaded({ exists: true, data: JSON.stringify(active.payload), quietStatus: true });
+  if (typeof renderBookBar === 'function') renderBookBar();
+  if (typeof showProjectView === 'function') showProjectView();
+  ganttCloudReady = true;
+  if (GANTT_CLOUD && ganttCloudReached && (Object.keys(ganttCloudPendingProjects).length || ganttCloudBookDirty)) ganttCloudFlush();
+  else if (fromCloud && ganttCloudReached) { ganttSyncState = 'sheet'; ganttSetStatus('Loaded from the Sheet ✓', 2000); }
+}
+function ganttAdoptRemote(id, payload, bookStamp) {
+  if (!book || book !== bookStamp || !bookProject(id)) return;
+  bookProject(id).payload = payload;
+  delete ganttCloudPendingProjects[String(id)];
+  ganttRemember(id, payload, payload && payload.savedAt);
+  ganttCloudQuiet = true;
+  try { bookSave(); } finally { ganttCloudQuiet = false; }
+  if (String(book.activeId) === String(id)) {
+    ganttApplyLoaded({ exists: true, data: JSON.stringify(payload), quietStatus: true, keepUndo: true });
+    if (typeof renderBookBar === 'function') renderBookBar();
+    if (typeof showProjectView === 'function') showProjectView();
+    if (typeof gvToast === 'function') gvToast('Kept the newer plan from the Sheet');
+  }
+}
+function ganttCloudPushOne(job) {
+  var payload = null;
+  try { payload = JSON.parse(job.json); } catch (e) { return Promise.resolve(); }
+  var localT = GanttCloud.planTime(payload, 0);
+  var seen = ganttCloudSeen[job.id] || 0;
+  function write() {
+    return ganttCloudWritePlan(job.id, job.json, payload.savedAt).then(function () {
+      ganttCloudSeen[job.id] = localT || Date.now();
+      ganttCloudReached = true;
+    });
+  }
+  if (seen && localT >= seen) return write();
+  return ganttCloudReadPlan(job.id).then(function (remote) {
+    if (remote.error) { var err = new Error('read failed'); err.code = 'read'; throw err; }
+    ganttCloudReached = true;
+    var chosen = GanttCloud.choosePlan(payload, remote.missing ? null : remote.payload, remote.sheetUpdatedAt);
+    if (chosen && chosen.source === 'cloud') { ganttAdoptRemote(job.id, chosen.payload, job.bookStamp); return; }
+    return write();
+  });
+}
+function ganttCloudPushBook(bookStamp) {
+  if (!book || book !== bookStamp) return Promise.resolve();
+  var key = GanttCloud.bookKey(book.id);
+  return ganttCloudReadRaw(key).then(function (res) {
+    if (!book || book !== bookStamp) return;
+    var env = null;
+    if (res && res.exists && res.data) {
+      try {
+        var obj = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+        if (GanttCloud.isEnvelope(obj)) env = obj;
+      } catch (e) { env = null; }
+    }
+    var merged = GanttCloud.mergeEnvelope(book, env);
+    var missing = merged.envelope.projects.filter(function (p) { return !bookProject(p.id); }).map(function (p) { return p.id; });
+    var write = merged.changed ? ganttCloudWriteRaw(key, JSON.stringify(merged.envelope)) : Promise.resolve();
+    return write.then(function () {
+      ganttCloudReached = true;
+      if (!book || book !== bookStamp || !missing.length) return;
+      return ganttCloudMap(missing, 4, ganttCloudReadPlan).then(function (plans) {
+        if (!book || book !== bookStamp) return;
+        var added = false;
+        missing.forEach(function (id, idx) {
+          var remote = plans[idx];
+          if (remote && remote.payload && !bookProject(id)) {
+            book.projects.push({ id: id, payload: remote.payload });
+            ganttRemember(id, remote.payload, remote.sheetUpdatedAt);
+            added = true;
+          }
+        });
+        if (!added) return;
+        ganttCloudQuiet = true;
+        try { bookSave(); } finally { ganttCloudQuiet = false; }
+        if (typeof renderBookBar === 'function') renderBookBar();
+        if (typeof gvToast === 'function') gvToast('Added a project saved on another device');
+      });
+    });
+  });
+}
+function ganttCloudFlush() {
+  if (!GANTT_CLOUD || !ganttCloudReady || ganttCloudQuiet) return;
+  if (ganttCloudBusy) { ganttCloudAgain = true; return; }
+  if (!ganttCloudReached) {
+    ganttCloudBusy = true;
+    ganttSyncState = 'saving';
+    ganttSetStatus('Saving…');
+    ganttCaptureActive();
+    ganttCloudLoad(book, ganttWantedId).then(function (got) {
+      ganttCloudApplyRemote(got);
+      ganttCloudBusy = false;
+      var active = bookProject(book.activeId);
+      if (active) ganttApplyLoaded({ exists: true, data: JSON.stringify(active.payload), quietStatus: true, keepUndo: true });
+      if (typeof renderBookBar === 'function') renderBookBar();
+      ganttCloudFlush();
+    }).catch(function (e) {
+      ganttCloudBusy = false;
+      ganttSyncState = 'device';
+      ganttSetStatus(ganttCloudFailMessage(e));
+      ganttCloudRetryN = Math.min((ganttCloudRetryN || 0) + 1, 6);
+      clearTimeout(ganttCloudRetry);
+      ganttCloudRetry = setTimeout(ganttCloudFlush, 2000 * ganttCloudRetryN);
+    });
+    return;
+  }
+  if (ganttCaptureActive() && book.activeId) ganttCloudPendingProjects[String(book.activeId)] = true;
+  var ids = Object.keys(ganttCloudPendingProjects);
+  var bookDirty = ganttCloudBookDirty;
+  if (!ids.length && !bookDirty) return;
+  var bookStamp = book;
+  var jobs = ids.map(function (id) {
+    var p = bookProject(id);
+    return { id: id, bookStamp: bookStamp, json: p && p.payload ? JSON.stringify(p.payload) : '' };
+  }).filter(function (job) { return job.json; });
+  ganttCloudPendingProjects = {};
+  ganttCloudBookDirty = false;
+  ganttCloudBusy = true;
+  ganttSyncState = 'saving';
+  ganttSetStatus('Saving…');
+  ganttCloudMap(jobs, 3, ganttCloudPushOne).then(function () {
+    if (!bookDirty && !ganttCloudBookDirty) return;
+    return ganttCloudPushBook(bookStamp);
+  }).then(function () {
+    ganttCloudBusy = false;
+    ganttCloudRetryN = 0;
+    if (ganttCloudAgain || Object.keys(ganttCloudPendingProjects).length || ganttCloudBookDirty) {
+      ganttCloudAgain = false;
+      ganttCloudFlush();
+      return;
+    }
+    ganttSyncState = 'sheet';
+    ganttSetStatus('Saved to the Sheet ✓', 2000);
+  }).catch(function (e) {
+    jobs.forEach(function (job) { ganttCloudPendingProjects[job.id] = true; });
+    if (bookDirty) ganttCloudBookDirty = true;
+    ganttCloudBusy = false;
+    ganttSyncState = 'device';
+    ganttSetStatus(ganttCloudFailMessage(e));
+    console.error('Gantt Sheet save failed:', e && e.message ? e.message : e);
+    ganttCloudRetryN = Math.min((ganttCloudRetryN || 0) + 1, 6);
+    clearTimeout(ganttCloudRetry);
+    ganttCloudRetry = setTimeout(ganttCloudFlush, 2000 * ganttCloudRetryN);
+  });
 }
 
 window.onload = function(){
@@ -3902,9 +4288,14 @@ function undoApply(snap){
     Object.keys(s.f||{}).forEach(function(k){ var el=document.getElementById(k); if(el) el.value=s.f[k]; });
     if(s.curStatus) curStatus=s.curStatus;
     if(s.book&&book){
-      book.nextMeeting=s.book.nextMeeting||''; book.lastMeeting=s.book.lastMeeting||'';
-      if(s.book.customer!==book.customer){ book.customer=s.book.customer||''; book.projects.forEach(function(p){ p.payload.iCust=book.customer; }); }
-      bookSave();
+      var nowIso=new Date().toISOString();
+      book.nextMeeting=s.book.nextMeeting||''; book.nextMeetingAt=nowIso;
+      book.lastMeeting=s.book.lastMeeting||''; book.lastMeetingAt=nowIso;
+      if(s.book.customer!==book.customer){
+        book.customer=s.book.customer||''; book.customerAt=nowIso;
+        book.projects.forEach(function(p){ p.payload.iCust=book.customer; p.payload.savedAt=nowIso; ganttQueueProject(p.id); });
+      }
+      bookSave(); ganttQueueBook();
       if(typeof renderBookBar==='function') renderBookBar();
     }
     PORDER.forEach(function(p){
@@ -5757,7 +6148,7 @@ function bookAddPayload(payload){
   if(setCust) book.customer=String(payload.iCust).trim();
   payload.iCust=book.customer;
   var id=uid(); book.projects.push({id:id,payload:payload});
-  bookSave(); bookSwitch(id);
+  bookSave(); ganttQueueProject(id); ganttQueueBook(); bookSwitch(id);
   if(setCust) bookSetCustomer(book.customer);
   var msg='Added '+(payload.iProj||'project')+' to '+(book.customer||'this file');
   if(typeof gvToast==='function') gvToast(msg);
@@ -5799,7 +6190,10 @@ function importWorkbook(wb, fileName){
       try{ localStorage.setItem(bookKey(book.id)+':replaced:'+Date.now(), JSON.stringify(book)); }catch(e){} }
     var keep=b.activeId&&b.projects.some(function(p){ return p.id===b.activeId; })?b.activeId:b.projects[0].id;
     b.id=book.id; b.activeId=null;
-    book=b; bookSave(); bookSwitch(keep);
+    book=b; bookSave();
+    book.projects.forEach(function(p){ ganttQueueProject(p.id); });
+    ganttQueueBook();
+    bookSwitch(keep);
     if(typeof gvToast==='function') gvToast('Opened '+(fileName||'customer file'));
     return 'replaced';
   }

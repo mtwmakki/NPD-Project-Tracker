@@ -3,7 +3,7 @@
 Questions waiting on Adam before the related features can be built.
 Tick a box and write the answer underneath when decided.
 
-_Last updated: 8 Oct 2026 (V77.6)_
+_Last updated: 6 Nov 2026_
 
 ---
 
@@ -13,9 +13,10 @@ Plan: the tracker reads each project's Gantt (read-only) and shows on the card:
 current phase + days in phase vs plan, next gate, number of delayed tasks,
 progress and Gantt finish vs target delivery. No copying Gantt tasks into the tracker.
 
-- [ ] **1.1 Same-device first?** Gantt plans are currently saved only on the device
-      they were made on. OK to start with the tracker reading plans on the same device,
-      and add all-devices later (needs Gantt cloud saving via Apps Script)?
+- [ ] **1.1 Read Gantt on project cards?** As of 6 Nov 2026 the plans themselves
+      save to the Gantt tab of the tracker Sheet (see docs/GANTT-V3.md), so another
+      device can open them. The tracker still does not read those rows onto the
+      project card. Build that read next, or leave the card as it is?
 - [ ] **1.2 What does ICU stand for?** (Added as a project type already — label only.)
 - [ ] **1.3 Phases per project type.** Which of the Gantt's 7 phases does each type use?
       Phases: Design · CAPEX Approval · Pilot Mold · Commercial Mold ·
@@ -53,8 +54,13 @@ Still to confirm:
 - [ ] **3.1 Secure saving:** Apps Script should only accept saves/loads from Adam's
       signed-in account (and retire the current shared access key). Needs: Code.gs,
       Firestore rules, list of allowed emails.
-- [ ] **3.2 Gantt cloud saving:** so Gantt plans are available on every device
+- [x] **3.2 Gantt cloud saving:** so Gantt plans are available on every device
       (and the tracker can read them everywhere).
+      Decided 6 Nov 2026: save into the existing Gantt tab of NPD Tracker Data Store,
+      through the bridge the tracker already uses. A book index row plus one row per
+      project. The deployed web app already answers `ganttRead`; redeploy only if a
+      save reports that the Sheet has no Gantt handler (`docs/apps-script/Gantt.gs`).
+      The tracker reading those rows onto project cards is still 1.1.
 - [ ] **3.3 Weekly management summary email** — every Monday? To whom?
 - [ ] **3.4 Read-only progress link** for management / factories / customers —
       which fields may each audience see (hide prices? other customers?).

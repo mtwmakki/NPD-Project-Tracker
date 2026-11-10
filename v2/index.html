@@ -2338,7 +2338,8 @@ const meName = () => (AUTH.profile && AUTH.profile.name) || 'Adam';
 const isLead = () => AUTH.profile && (AUTH.profile.role === 'master' || AUTH.profile.role === 'manager' || (AUTH.user && AUTH.user.email === MASTER_EMAIL));
 
 /* ══════════ DATA: read, merge-safe save ══════════ */
-const DB = { data: null, ts: '', by: '', source: '', ops: [], saving: false, timer: null, lastPull: 0, err: '', retry: 0 };
+const DB = { data: null, ts: '', by: '', source: '', ops: [], saving: false, timer: null, lastPull: 0, err: '', retry: 0,
+  fmt: '', rev: '', base: {}, metaBase: {} };   // fmt/rev/base: row storage (rows-v1): what the Sheet held when we last read it
 function normalize(d){ d = d || {}; d.inquiries = d.inquiries || []; d.projects = d.projects || []; d.mtasks = d.mtasks || []; d.bin = d.bin || []; d.schedule = d.schedule || {}; d.tags = d.tags || []; return d; }
 const coll = (d, name) => (d && d[name]) || [];
 const findRec = (d, name, id) => coll(d, name).find(x => x.id === id);
@@ -2349,6 +2350,74 @@ async function bridgeRead(){
   if (!j || !j._data) throw new Error('empty');
   return j;
 }
+/* ── Row storage (rows-v1) ──
+   The Sheet keeps one row per record. We remember each record as it was when read (DB.base) and on save send only
+   the records that differ from it. The bridge writes only the rows that changed and refuses (conflict) any row that
+   somebody else changed in the meantime. Against the old one-blob bridge none of this is used. */
+const ROW_COLLS = ['inquiries', 'projects', 'mtasks', 'bin'];
+const META_KEYS = ['tags', 'schedule'];
+function snapBase(d){
+  const base = {}, meta = {};
+  ROW_COLLS.forEach(c => coll(d, c).forEach(r => { if (typeof r.id === 'string') base[c + ':' + r.id] = JSON.stringify(r); }));
+  META_KEYS.forEach(k => { meta[k] = JSON.stringify(d[k]); });
+  return { base, meta };
+}
+function opKeys(op, keys, metas){
+  if (!ROW_COLLS.includes(op.coll)){ metas.add(op.coll); return; }
+  if (op.add) keys.add(op.coll + ':' + op.add.id);
+  else if (op.remove){ keys.add(op.coll + ':' + op.remove); if (op.bin) keys.add('bin:' + op.bin.id); }
+  else keys.add(op.coll + ':' + op.id);
+}
+/* the writeRows ops for the touched records: current version vs the version we last read */
+function buildRowOps(data, base, metaBase, ops){
+  const keys = new Set(), metas = new Set(), out = [];
+  ops.forEach(o => opKeys(o, keys, metas));
+  keys.forEach(k => {
+    const i = k.indexOf(':'), c = k.slice(0, i), id = k.slice(i + 1), list = coll(data, c), ix = list.findIndex(x => x.id === id);
+    const cur = ix >= 0 ? list[ix] : null, b = base[k] ? JSON.parse(base[k]) : null;
+    if (!cur && !b) return;
+    if (cur && b && JSON.stringify(cur) === base[k]) return;
+    out.push({ coll: c, id, base: b, record: cur ? JSON.parse(JSON.stringify(cur)) : null, after: cur && !b ? (ix > 0 ? list[ix - 1].id : null) : undefined });
+  });
+  metas.forEach(m => {
+    if (!META_KEYS.includes(m)) return;
+    if (JSON.stringify(data[m]) === metaBase[m]) return;
+    out.push({ meta: m, base: metaBase[m] === undefined ? undefined : JSON.parse(metaBase[m]), value: JSON.parse(JSON.stringify(data[m])) });
+  });
+  return out;
+}
+/* after a save: what the Sheet holds for each record we wrote is now what we sent */
+function markWritten(sent, conflicts){
+  const bad = new Set((conflicts || []).map(c => c.coll + ':' + c.id));
+  sent.forEach(o => {
+    if (o.meta){ if (!bad.has('meta:' + o.meta)) DB.metaBase[o.meta] = JSON.stringify(o.value); return; }
+    const k = o.coll + ':' + o.id; if (bad.has(k)) return;
+    if (o.record) DB.base[k] = JSON.stringify(o.record); else delete DB.base[k];
+  });
+}
+const recLabel = (c, id) => { const r = findRec(DB.data, c, id) || {}; return r.code || r.name || r.title || id; };
+/* Somebody else changed a record we also edited. Ask once, for all of them. Returns true when anything was kept (resave needed). */
+async function resolveConflicts(cs){
+  const names = [...new Set(cs.map(c => c.coll === 'meta' ? 'the ' + c.id + ' list' : recLabel(c.coll, c.id)))];
+  const who = [...new Set(cs.map(c => c.by).filter(Boolean))].join(', ') || 'someone else';
+  const keep = window.confirm(names.slice(0, 5).join(', ') + (names.length > 5 ? ' and ' + (names.length - 5) + ' more' : '') + ' ' + (names.length > 1 ? 'were' : 'was') +
+    ' changed by ' + who + ' after you opened ' + (names.length > 1 ? 'them' : 'it') + '.\n\nOK = keep MY version (overwrites their change)\nCancel = drop my change and show THEIR version');
+  const j = await bridgeRead(), fresh = normalize(JSON.parse(j._data));
+  let resave = false;
+  cs.forEach(c => {
+    if (c.coll === 'meta'){
+      if (keep){ DB.metaBase[c.id] = JSON.stringify(fresh[c.id]); resave = true; } else { DB.data[c.id] = fresh[c.id]; DB.metaBase[c.id] = JSON.stringify(fresh[c.id]); }
+      return;
+    }
+    const k = c.coll + ':' + c.id, theirs = findRec(fresh, c.coll, c.id), list = DB.data[c.coll] = DB.data[c.coll] || [], ix = list.findIndex(x => x.id === c.id);
+    if (keep){ if (theirs) DB.base[k] = JSON.stringify(theirs); else delete DB.base[k]; DB.ops.push({ coll: c.coll, id: c.id, fn: () => {} }); resave = true; return; }
+    if (theirs){ ix >= 0 ? list.splice(ix, 1, theirs) : list.push(theirs); DB.base[k] = JSON.stringify(theirs); } else { if (ix >= 0) list.splice(ix, 1); delete DB.base[k]; }
+  });
+  DB.rev = '';                                        // next poll reloads everything
+  toast(keep ? 'Kept your version' : 'Your change was dropped. Showing the latest version', { icon: keep ? 'check' : 'refresh' });
+  return resave;
+}
+
 /* Instant first paint: the last data seen on this device (also shown when the Sheet can't be reached).
    npd_tracker_v3 is the copy the retired V1 left behind; it is read once and then replaced by V2's own. */
 const CACHE_KEY = 'npd2-cache';
@@ -2365,9 +2434,12 @@ async function pull(opts = {}){
   try {
     const j = await bridgeRead();
     DB.lastPull = Date.now(); DB.err = '';
-    const changed = j._updatedAt !== DB.ts || DB.source !== 'live';
+    DB.fmt = j._format || '';
+    const changed = (DB.fmt === 'rows-v1' ? j._rev !== DB.rev : j._updatedAt !== DB.ts) || DB.source !== 'live';
     if (changed && !DB.ops.length && !DB.saving){
-      DB.data = normalize(JSON.parse(j._data)); DB.ts = j._updatedAt || ''; DB.by = j._updatedBy || ''; DB.source = 'live'; saveCache();
+      DB.data = normalize(JSON.parse(j._data)); DB.ts = j._updatedAt || ''; DB.by = j._updatedBy || ''; DB.source = 'live'; DB.rev = j._rev || '';
+      if (DB.fmt === 'rows-v1'){ const sn = snapBase(DB.data); DB.base = sn.base; DB.metaBase = sn.meta; }
+      saveCache();
       if (!opts.silent || opts.first) softRender(opts.first); else renderWhenIdle();
     }
     setSync('ok');
@@ -2423,8 +2495,36 @@ async function commit(){
   let failed = false;
   const ops = DB.ops.splice(0);
   try {
+    /* rows-v1, data already loaded from the Sheet: send only the records that changed */
+    if (DB.fmt === 'rows-v1' && DB.source === 'live'){
+      const sent = buildRowOps(DB.data, DB.base, DB.metaBase, ops);
+      if (!sent.length){ setSync('saved'); return; }
+      const res = await (await fetch(SHEETS_BRIDGE_URL, { method: 'POST', body: JSON.stringify({ token: SHEETS_BRIDGE_TOKEN, action: 'writeRows', by: meName() + ' (V2)', ops: sent }) })).json();
+      if (res && res.error) throw new Error(res.error);
+      markWritten(sent, res.conflicts);
+      DB.ts = res._updatedAt || DB.ts; DB.by = res._updatedBy || DB.by; DB.rev = ''; DB.retry = 0; saveCache(); setSync('saved');
+      if (res.conflicts && res.conflicts.length){ const again = await resolveConflicts(res.conflicts); if (again) DB.timer = setTimeout(commit, 50); }
+      softRender(false);
+      return;
+    }
     const j = await bridgeRead();                                   // 1. latest data from the Sheet
     const fresh = normalize(JSON.parse(j._data));
+    if (j._format === 'rows-v1'){                                   // first save before the Sheet was read: build on what it holds now
+      DB.fmt = 'rows-v1';
+      const sn = snapBase(fresh); let missing = 0;
+      ops.forEach(op => { if (!applyOp(fresh, op) && !op.remove) missing++; });
+      const sent = buildRowOps(fresh, sn.base, sn.meta, ops);
+      const res = sent.length ? await (await fetch(SHEETS_BRIDGE_URL, { method: 'POST', body: JSON.stringify({ token: SHEETS_BRIDGE_TOKEN, action: 'writeRows', by: meName() + ' (V2)', ops: sent }) })).json() : { _updatedAt: j._updatedAt };
+      if (res && res.error) throw new Error(res.error);
+      DB.base = sn.base; DB.metaBase = sn.meta; markWritten(sent, res.conflicts);
+      DB.data = fresh; DB.ts = res._updatedAt || DB.ts; DB.by = res._updatedBy || DB.by; DB.source = 'live'; DB.rev = ''; DB.retry = 0;
+      DB.ops.forEach(op => applyOp(DB.data, op));
+      saveCache(); setSync('saved');
+      if (missing) toast(`${missing} change${missing > 1 ? 's' : ''} skipped: the item was removed on another device`, {icon:'x'});
+      if (res.conflicts && res.conflicts.length){ const again = await resolveConflicts(res.conflicts); if (again) DB.timer = setTimeout(commit, 50); }
+      softRender(false);
+      return;
+    }
     const otherSaved = j._updatedAt && j._updatedAt !== DB.ts;
     let missing = 0;
     ops.forEach(op => { if (!applyOp(fresh, op) && !op.remove) missing++; });   // 2. our patches only
@@ -5112,7 +5212,7 @@ async function onSignedIn(user){
 }
 function onSignedOut(){
   if (PROFILE_UNSUB){ PROFILE_UNSUB(); PROFILE_UNSUB = null; }
-  AUTH.user = null; AUTH.profile = null; DB.data = null; DB.ts = ''; DB.source = ''; closeForm(true); closeSheet(); closePop();
+  AUTH.user = null; AUTH.profile = null; DB.data = null; DB.ts = ''; DB.source = ''; DB.fmt = ''; DB.rev = ''; DB.base = {}; DB.metaBase = {}; closeForm(true); closeSheet(); closePop();
   showLogin();
 }
 function signOut(){

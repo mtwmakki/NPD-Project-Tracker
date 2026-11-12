@@ -4712,7 +4712,7 @@ function renderTaskGrid(starts){
     h+='<tr class="gv-row'+(selectedTaskId===t.id?' sel':'')+'" data-tid="'+t.id+'" draggable="true"'
       +' ondragstart="gvDragStart(event,'+t.id+')" ondragover="gvDragOver(event,'+t.id+')" ondragleave="gvDragLeave(event)"'
       +' ondrop="gvDrop(event,'+t.id+')" ondragend="gvDragEnd(event)" onclick="selectTask('+t.id+')" ondblclick="openTaskDetails('+t.id+')">';
-    h+='<td class="gv-num"><span class="gv-grip" title="Drag to reorder">'+gvIco('grip')+'</span><span class="gv-n">'+n+'</span></td>';
+    h+='<td class="gv-num"><span class="gv-grip" title="Drag to reorder">'+gvIco('grip')+'</span><span class="gv-n" title="Task number: the same number Depends on and the dropdown use">'+(idx+1)+'</span></td>';   /* real position in the whole plan, so it matches Depends on even when a gate is collapsed */
     var _tt=((t.code?('['+t.code+'] '):'')+(t.block?('\nBlock: '+t.block):'')+(t.desc?('\n'+t.desc):'')+(t.risk?('\n⚠ '+t.risk):'')).trim();
     h+='<td class="c-name"><div class="gv-name">'+(t.milestone?'<i class="gv-dia" title="Milestone"></i>':'')
       +'<input class="gv-in" value="'+gvEsc(t.name)+'" aria-label="Task name" title="'+gvEsc(_tt||t.name)+'" onclick="event.stopPropagation()" onchange="setTaskName('+t.id+',this.value)">'

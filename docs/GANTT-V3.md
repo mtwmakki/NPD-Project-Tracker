@@ -163,6 +163,9 @@ Present mode shows the TPAC logo.
   tasks). Task codes are the master IDs, so an exported Excel can be matched back to the master list. Ctrl+Z undoes it.
   It saves through the normal save, so it reaches the Sheet like any other edit (big plans use the overflow rows).
 - The timeline header stays pinned while you scroll the plan.
+- The **#** column is the task's real number in the whole plan (the same number Depends on and its dropdown use),
+  even when a gate is collapsed. Before, it counted only the rows on screen, so a collapsed gate made # and
+  Depends on disagree. Deleting or moving a task renumbers both together.
 - Start and Finish columns are wider so 2027 dates ("11 Jan ’27") are not cut off in the mono font.
 
 ## Next phases

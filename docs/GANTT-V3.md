@@ -157,5 +157,13 @@ Present mode shows the TPAC logo.
 - Screen type like V2 (`#v2type`): card headings, panel titles and the date picker month use the look's heading font
   and weight; codes, dates and day counts use the look's mono font. The old V3 stylesheet's fixed fonts are removed.
 
+## SOP master template (Nov 2026)
+- File menu › **Start from SOP master**: replaces the open project's tasks with a template from the NPD Master Task List
+  v0.8 (IML injection molding, EBM / ISBM / IBM, injection without artwork; options for the pilot mold and conditional
+  tasks). Task codes are the master IDs, so an exported Excel can be matched back to the master list. Ctrl+Z undoes it.
+  It saves through the normal save, so it reaches the Sheet like any other edit (big plans use the overflow rows).
+- The timeline header stays pinned while you scroll the plan.
+- Start and Finish columns are wider so 2027 dates ("11 Jan ’27") are not cut off in the mono font.
+
 ## Next phases
 Later: phone layout.

@@ -1708,7 +1708,10 @@ function loadSopMaster(o){
 }
 /* Dashboard scoring (TPAC style): when tasks carry a dash flag, only those score the stage gates. All other tasks are Gantt detail. Set DASH_KEY_ONLY=false to count every task. */
 var DASH_KEY_ONLY=true;   /* true = only tasks flagged dash score the gates (key tasks, 45 in the SOP master); false = every task counts. List: NPD Master Task List, sheet Dashboard tasks */
-function dbScoreTasks(list){ if(!DASH_KEY_ONLY) return list; for(var i=0;i<tasks.length;i++) if(tasks[i].dash) return list.filter(function(t){ return t.dash; }); return list; }
+/* Tasks of the phases switched on in Project settings. A hidden phase is out of scope everywhere: table, chart, exports, dashboard, reports. */
+function tasksInScope(){ return tasks.filter(function(t){ return activePhases[t.phase]!==false; }); }
+function dbScoreTasks(list){ list=list.filter(function(t){ return activePhases[t.phase]!==false; });   /* a phase hidden in Project settings is out of scope: not scored */
+  if(!DASH_KEY_ONLY) return list; for(var i=0;i<tasks.length;i++) if(tasks[i].dash&&activePhases[tasks[i].phase]!==false) return list.filter(function(t){ return t.dash; }); return list; }
 
 /* ===== Project Dashboard — reads the open project's live tasks ===== */
 var dashOn=false;
@@ -2494,12 +2497,12 @@ function onePagerHTML(opts){
   var pctx=stCtx(); pctx.mode='print'; pctx.customer=cust||pctx.customer;
   h+='<div class="stp st-print acts">'+stListsHTML(stS,pctx)+'</div>';
   /* delayed + next steps */
-  var late=tasks.map(function(t){ var st=taskStatus(t,starts,today); if(st!==3&&st!==4) return null;
+  var late=tasksInScope().map(function(t){ var st=taskStatus(t,starts,today); if(st!==3&&st!==4) return null;
       var r=st===3?taskFinishDate(t,starts):taskStartDate(t,starts); return {t:t,days:Math.max(0,Math.round((today-r)/DAY))}; })
     .filter(Boolean).sort(function(a,b){return b.days-a.days;});
   /* Coming up (same rule as the on-screen dashboard): what starts or is due before the next meeting, or in the next 3 weeks */
   var nmD=parseDateLocal((book&&book.nextMeeting)||''), byMeeting=!!(nmD&&nmD>=today), winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY), next=[];
-  tasks.forEach(function(t){
+  tasksInScope().forEach(function(t){
     var st=taskStatus(t,starts,today); if(st===5) return;
     var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
     if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
@@ -2517,7 +2520,7 @@ function onePagerHTML(opts){
   else h+='<li class="mut">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</li>';
   if(next.length>5) h+='<li class="mut">+ '+(next.length-5)+' more</li>';
   h+='</ul></div>';
-  var ms=tasks.filter(function(t){return t.milestone;});
+  var ms=tasksInScope().filter(function(t){return t.milestone;});
   h+='<div class="card"><div class="ch">Key milestones &amp; sign-offs <span class="tag">'+ms.length+'</span></div><ul class="list">';
   if(ms.length) ms.slice(0,5).forEach(function(t){ var st=taskStatus(t,starts,today), d=taskStartDate(t,starts);
       var lab=st===5?['ok','Done']:(st===3||st===4?['bad','Delayed']:(st===2?['run','In progress']:['','Upcoming']));
@@ -2853,7 +2856,7 @@ function renderDashboard(){
     +'</div></div>';
   h+='</div>';
   /* ---- Stage gates: weekly performance · completed · remarks (typed by the user) ---- */
-  h+='<div class="db-card db-gates"><div class="db-ch">Stage gates <span class="tag">weekly performance excludes gates that are complete or not due yet'+(DASH_KEY_ONLY&&tasks.some(function(t){return t.dash;})?' &middot; scores '+tasks.filter(function(t){return t.dash;}).length+' key tasks of '+tasks.length:'')+'</span></div>';
+  h+='<div class="db-card db-gates"><div class="db-ch">Stage gates <span class="tag">weekly performance excludes gates that are complete or not due yet'+(DASH_KEY_ONLY&&tasks.some(function(t){return t.dash;})?' &middot; scores '+tasks.filter(function(t){return t.dash&&activePhases[t.phase]!==false;}).length+' key tasks of '+tasks.filter(function(t){return activePhases[t.phase]!==false;}).length:'')+'</span></div>';
   h+='<div class="db-grow db-ghead"><span>Gate</span><span>Weekly performance</span><span>Completed</span><span>Remarks</span></div>';
   var any=false, gn=0;
   PORDER.forEach(function(ph){
@@ -2878,7 +2881,7 @@ function renderDashboard(){
   /* ---- Focus (delayed tasks) + Next steps (upcoming starts) ---- */
   var DAY=86400000;
   var phLbl=function(t){ return '<span class="dot" style="background:'+((PC[t.phase]||{}).bar||'#888')+'"></span>'+gvEsc(PLABEL[t.phase]||t.phase)+(t.resp?(' &middot; '+gvEsc(t.resp)):''); };
-  var late=tasks.map(function(t){
+  var late=tasksInScope().map(function(t){
     var st=taskStatus(t,starts,today); if(st!==3&&st!==4) return null;
     var ref=st===3?taskFinishDate(t,starts):taskStartDate(t,starts);
     return {t:t,st:st,ref:ref,days:Math.max(0,Math.round((today-ref)/DAY))};
@@ -2887,7 +2890,7 @@ function renderDashboard(){
   var nmISO=(book&&book.nextMeeting)||'', nmD=parseDateLocal(nmISO), byMeeting=!!(nmD&&nmD>=today);
   var winEnd=byMeeting?nmD:new Date(today.getTime()+21*DAY);
   var next=[];
-  tasks.forEach(function(t){
+  tasksInScope().forEach(function(t){
     var st=taskStatus(t,starts,today); if(st===5) return;
     var sD=taskStartDate(t,starts), fD=taskFinishDate(t,starts), ms=t.milestone||durW(t)===0;
     if(st===1&&sD>=today&&sD<=winEnd) next.push({t:t,s:sD,what:ms?'due':'starts',days:Math.round((sD-today)/DAY)});
@@ -2918,7 +2921,7 @@ function renderDashboard(){
   } else h+='<div class="db-empty">Nothing starts or is due '+(byMeeting?'before the next meeting':'in the next 3 weeks')+'.</div>';
   h+='</div></div></div>';
   /* ---- milestones ---- */
-  var ms=tasks.filter(function(t){return t.milestone;});
+  var ms=tasksInScope().filter(function(t){return t.milestone;});
   h+='<div class="db-card" style="margin-top:14px"><div class="db-ch">Key milestones &amp; sign-offs <span class="tag">'+ms.length+'</span></div><div class="db-cost db-ms">';
   if(ms.length){
     ms.slice(0,12).forEach(function(t){
@@ -4048,7 +4051,7 @@ function computeCriticalPath(starts){
      day-based lengths and delays leave fractional weeks (2 days = 0.4, 1 calendar day = 0.14). */
   if(!tasks.length) return {};
   var EPS=0.15, es={}, succ={}, projEnd=0;
-  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; projEnd=Math.max(projEnd,es[t.id]+durW(t)); succ[t.id]=[]; });
+  tasks.forEach(function(t){ es[t.id]=starts[t.id]||1; if(activePhases[t.phase]!==false) projEnd=Math.max(projEnd,es[t.id]+durW(t)); succ[t.id]=[]; });
   var link=function(pid,t,lag){ if(succ[pid]&&pid!==t.id) succ[pid].push({t:t,lag:lag}); };
   tasks.forEach(function(t,i){
     resolvePredsForTask(t,i).forEach(function(pid){ link(pid,t,t.lag||0); });
@@ -4897,7 +4900,7 @@ function renderChartPane(starts){
   var critMap=colVis.crit?computeCriticalPath(starts):{};   /* Settings > Gantt display > Critical Path */
   if(!rows.length){ host.innerHTML='<div class="gv-chart-empty">No tasks yet. Add one to begin.</div>'; renderGvLegend(pal,used); return; }
   var sd=projStartDate();
-  var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); });
+  var maxW=1; tasksInScope().forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); });
   var WW=GV_WW;
   /* draw at least far enough to fill the visible pane */
   var wrapEl=document.getElementById('gvChartWrap'), availW=wrapEl?wrapEl.clientWidth:900;
@@ -5053,8 +5056,8 @@ function renderWorkingView(){
   renderChartPane(starts);
   var meta=document.getElementById('gvMeta');
   if(meta){
-    var mx=0; tasks.forEach(function(t){ mx=Math.max(mx,(starts[t.id]||1)+durW(t)); });
-    meta.textContent=tasks.length+' tasks · '+r1(mx-1)+' wks'+(allowPhaseOverlap?' · phases may overlap':'');
+    var mx=0; tasksInScope().forEach(function(t){ mx=Math.max(mx,(starts[t.id]||1)+durW(t)); });
+    meta.textContent=tasksInScope().length+' tasks · '+r1(mx-1)+' wks'+(allowPhaseOverlap?' · phases may overlap':'');
   }
 }
 
@@ -5277,7 +5280,11 @@ function computeStarts(){
       for(var pi=0;pi<myPI;pi++){var pp=PORDER[pi];if(!activePhases[pp]) continue;for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+durW(tasks[j]));}
     }
     var durW2=durW(t);
-    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined){s=Math.max(s,(starts[p2.id]||1)+durW(p2)+(t.lag||0));}});
+    /* A predecessor in a phase hidden in Project settings is out of scope: the task follows that hidden task's own predecessors instead, so the gap closes. */
+    var addPred=function(pid,lag,depth){var p2=getById(pid);if(!p2) return;
+      if(activePhases[p2.phase]===false&&depth<30){ resolvePredsForTask(p2,getIdx(p2.id)).forEach(function(q){ addPred(q,lag+(p2.lag||0),depth+1); }); return; }
+      if(starts[pid]!==undefined) s=Math.max(s,(starts[p2.id]||1)+durW(p2)+lag); };
+    resolvePredsForTask(t,i).forEach(function(pid){ addPred(pid,t.lag||0,0); });
     /* Pin wins over the dependency-driven start (Adam's call). We still keep
        the dependency result so an impossible pin is surfaced, not silently
        swallowed — a pin that starts before its predecessor finishes is a
@@ -5297,7 +5304,7 @@ function computeStarts(){
    the start date that makes it land exactly on the target delivery date. */
 function projectSpanWeeks(){
   var starts=computeStarts(), mn=Infinity, mx=0;
-  tasks.forEach(function(t){
+  tasksInScope().forEach(function(t){
     var s=starts[t.id]||1;
     if(s<mn) mn=s;
     if(s+durW(t)>mx) mx=s+durW(t);
@@ -5513,12 +5520,13 @@ function onDrop(e,targetId){
 /* ---- Render task panel ---- */
 function renderPanel(){
   var starts=computeStarts();
-  document.getElementById('tcnt').textContent=tasks.length;
+  document.getElementById('tcnt').textContent=tasksInScope().length;
   var c=document.getElementById('tcon');
   if(!tasks.length){c.innerHTML='<p style="font-size:12px;color:#9AA0B2;text-align:center;padding:14px 0">No tasks yet.</p>';return;}
   var html='',lastPh=null;
   for(var i=0;i<tasks.length;i++){
     var t=tasks[i];
+    if(activePhases[t.phase]===false) continue;   /* hidden phase: out of scope */
     if(t.phase!==lastPh){
       var pc=PC[t.phase];
       html+='<div class="phdr"><span style="color:'+pc.text+'">'+PLABEL[t.phase].toUpperCase()+' PHASE</span><div class="phdr-line"></div><button onclick="addTaskToPhase(\''+t.phase+'\')" style="flex-shrink:0;padding:2px 8px;font-size:10px;font-weight:600;color:'+pc.text+';background:'+pc.light+';border:1px solid '+pc.bar+';border-radius:4px;cursor:pointer">+ Task</button><button onclick="addTaskToPhase(\''+t.phase+'\',true)" style="flex-shrink:0;padding:2px 7px;font-size:10px;font-weight:600;color:#7C3AED;background:#EDE9FE;border:1px solid #c4b5fd;border-radius:4px;cursor:pointer">◆</button></div>';
@@ -5739,7 +5747,7 @@ function openLogViewer(){
   // View 2: Baseline vs Actual
   html+='<h3>View 2 — Baseline vs Current Actual</h3>';
   html+='<table><tr><th>Phase</th><th>Task</th><th>Baseline Start</th><th>Baseline Dur</th><th>Actual Start</th><th>Actual Dur</th><th>End Variance</th><th>Status</th></tr>';
-  tasks.forEach(function(t){
+  tasksInScope().forEach(function(t){
     var bs=starts1[t.id]||1,bd=durW(t),as2=t.actStart||bs,ad=t.actDur||bd;
     var v=r1((as2+ad)-(bs+bd)); var cls=v>0?'pos':v<0?'neg':'neu';
     html+='<tr><td>'+t.phase+'</td><td>'+t.name+'</td><td>W'+bs+'</td><td>'+bd+'w</td><td>W'+as2+'</td><td>'+ad+'w</td><td class="'+cls+'">'+(v===0?'—':(v>0?'+':'')+v+'w')+'</td><td class="'+cls+'">'+(v===0?'On track':v>0?'+'+v+'w delayed':Math.abs(v)+'w ahead')+'</td></tr>';
@@ -5759,7 +5767,7 @@ function exportLogExcel(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'Weekly Changes');
   var starts2=computeStarts();
   var rows2=[['Phase','Task','Baseline Start (w)','Baseline Dur (w)','Actual Start (w)','Actual Dur (w)','Variance (w)','Status']];
-  tasks.forEach(function(t){var bs=starts2[t.id]||1,bd=durW(t),as2=t.actStart||bs,ad=t.actDur||bd,v=r1((as2+ad)-(bs+bd));rows2.push([t.phase,t.name,bs,bd,as2,ad,v,v===0?'On track':v>0?'Delayed +'+v+'w':'Ahead '+Math.abs(v)+'w']);});
+  tasksInScope().forEach(function(t){var bs=starts2[t.id]||1,bd=durW(t),as2=t.actStart||bs,ad=t.actDur||bd,v=r1((as2+ad)-(bs+bd));rows2.push([t.phase,t.name,bs,bd,as2,ad,v,v===0?'On track':v>0?'Delayed +'+v+'w':'Ahead '+Math.abs(v)+'w']);});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows2),'Baseline vs Actual');
   var today2=new Date(),dd2=String(today2.getFullYear())+String(today2.getMonth()+1).padStart(2,'0')+String(today2.getDate()).padStart(2,'0');
   XLSX.writeFile(wb,dd2+' - Timeline Log - '+(document.getElementById('iProj').value||'Project').trim()+'.xlsx');
@@ -5945,7 +5953,8 @@ function renderGantt(){
   var CK=[['status','Status',100],['resp','Owner',112],['gvStart','Start',74],['gvFinish','Finish',74],['gvDur','Length',66],['gvPred','Depends on',70]].filter(function(c){ return !!colVis[c[0]]; });
   if(act&&colVis.variance) CK.push(['_var','Variance',60]);
   var PL=16, PR=16, CID=28, CTK=232, LEFT=CID+CTK; CK.forEach(function(c){ LEFT+=c[2]; });
-  var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); if(act&&(t.actStart||t.actDur)) maxW=Math.max(maxW,(t.actStart||starts[t.id]||1)+(t.actDur>0?t.actDur:durW(t))); });
+  var shown=function(t){ return !!activePhases[t.phase]; };   /* a phase hidden in Project settings is left out of the export, as on screen */
+  var maxW=1; tasks.forEach(function(t){ if(!shown(t)) return; maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); if(act&&(t.actStart||t.actDur)) maxW=Math.max(maxW,(t.actStart||starts[t.id]||1)+(t.actDur>0?t.actDur:durW(t))); });
   var TW=Math.ceil(Math.max(maxW+3,20)), TARGET_W=1400;
   var WW=Math.max(12,Math.min(28,Math.floor((TARGET_W-PL-PR-LEFT)/TW)));
   var CX=PL+LEFT, W=CX+TW*WW+PR;
@@ -5995,6 +6004,7 @@ function renderGantt(){
   /* ---- rows ---- */
   var y=y0+HH, bg='', grid='', tbl='', fg='', bpos={}, lastPh=null, ri=0, used={}, nRows=0;
   tasks.forEach(function(t,ti){
+    if(!shown(t)) return;
     if(t.phase!==lastPh){
       lastPh=t.phase; var pc=phaseClr(t.phase), nm=(PLABEL[t.phase]||t.phase)+' phase', sum=phaseSummaryFor(t.phase,starts), mid=y+PHR/2;
       var cnt=tasks.filter(function(q){ return q.phase===t.phase; }).length;

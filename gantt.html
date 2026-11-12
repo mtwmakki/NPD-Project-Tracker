@@ -5280,7 +5280,11 @@ function computeStarts(){
       for(var pi=0;pi<myPI;pi++){var pp=PORDER[pi];if(!activePhases[pp]) continue;for(var j=0;j<tasks.length;j++) if(tasks[j].phase===pp) s=Math.max(s,(starts[tasks[j].id]||1)+durW(tasks[j]));}
     }
     var durW2=durW(t);
-    resolvePredsForTask(t,i).forEach(function(pid){var p2=getById(pid);if(p2&&starts[pid]!==undefined){s=Math.max(s,(starts[p2.id]||1)+durW(p2)+(t.lag||0));}});
+    /* A predecessor in a phase hidden in Project settings is out of scope: the task follows that hidden task's own predecessors instead, so the gap closes. */
+    var addPred=function(pid,lag,depth){var p2=getById(pid);if(!p2) return;
+      if(activePhases[p2.phase]===false&&depth<30){ resolvePredsForTask(p2,getIdx(p2.id)).forEach(function(q){ addPred(q,lag+(p2.lag||0),depth+1); }); return; }
+      if(starts[pid]!==undefined) s=Math.max(s,(starts[p2.id]||1)+durW(p2)+lag); };
+    resolvePredsForTask(t,i).forEach(function(pid){ addPred(pid,t.lag||0,0); });
     /* Pin wins over the dependency-driven start (Adam's call). We still keep
        the dependency result so an impossible pin is surfaced, not silently
        swallowed — a pin that starts before its predecessor finishes is a

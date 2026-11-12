@@ -5945,7 +5945,8 @@ function renderGantt(){
   var CK=[['status','Status',100],['resp','Owner',112],['gvStart','Start',74],['gvFinish','Finish',74],['gvDur','Length',66],['gvPred','Depends on',70]].filter(function(c){ return !!colVis[c[0]]; });
   if(act&&colVis.variance) CK.push(['_var','Variance',60]);
   var PL=16, PR=16, CID=28, CTK=232, LEFT=CID+CTK; CK.forEach(function(c){ LEFT+=c[2]; });
-  var maxW=1; tasks.forEach(function(t){ maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); if(act&&(t.actStart||t.actDur)) maxW=Math.max(maxW,(t.actStart||starts[t.id]||1)+(t.actDur>0?t.actDur:durW(t))); });
+  var shown=function(t){ return !!activePhases[t.phase]; };   /* a phase hidden in Project settings is left out of the export, as on screen */
+  var maxW=1; tasks.forEach(function(t){ if(!shown(t)) return; maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); if(act&&(t.actStart||t.actDur)) maxW=Math.max(maxW,(t.actStart||starts[t.id]||1)+(t.actDur>0?t.actDur:durW(t))); });
   var TW=Math.ceil(Math.max(maxW+3,20)), TARGET_W=1400;
   var WW=Math.max(12,Math.min(28,Math.floor((TARGET_W-PL-PR-LEFT)/TW)));
   var CX=PL+LEFT, W=CX+TW*WW+PR;
@@ -5995,6 +5996,7 @@ function renderGantt(){
   /* ---- rows ---- */
   var y=y0+HH, bg='', grid='', tbl='', fg='', bpos={}, lastPh=null, ri=0, used={}, nRows=0;
   tasks.forEach(function(t,ti){
+    if(!shown(t)) return;
     if(t.phase!==lastPh){
       lastPh=t.phase; var pc=phaseClr(t.phase), nm=(PLABEL[t.phase]||t.phase)+' phase', sum=phaseSummaryFor(t.phase,starts), mid=y+PHR/2;
       var cnt=tasks.filter(function(q){ return q.phase===t.phase; }).length;

@@ -64,6 +64,9 @@ function rsIsEmpty_(v) { return v === undefined || v === null || v === '' || (Ar
 function rsIsObj_(v) { return v !== null && typeof v === 'object' && !Array.isArray(v); }
 function rsSplit_(str) { var out = []; for (var i = 0; i < str.length; i += RS_CELL_MAX) out.push(str.substr(i, RS_CELL_MAX)); return out; }
 function rsUsableId_(id) { return typeof id === 'string' && id !== '' && id.indexOf(RS_SYN) !== 0; }
+/** Sheets drops one leading apostrophe on write (even in text-format cells), so double it. Reads need no change. */
+function rsEsc_(v) { return (typeof v === 'string' && v.charAt(0) === "'") ? "'" + v : v; }
+function rsEscRow_(vals) { return vals.map(rsEsc_); }
 function rsCellString_(v) {
   if (v === null || v === undefined || v === '') return '';
   if (Object.prototype.toString.call(v) === '[object Date]') return Utilities.formatDate(v, Session.getScriptTimeZone(), 'yyyy-MM-dd');
@@ -313,7 +316,7 @@ function rsFlush_(M) {
   RS_TAB_ORDER.forEach(function (tab) {
     var T = M.tabs[tab], n = T.header.length, count = 0;
     T.rows.forEach(function (row) {
-      if (row.dirty && !row.deleted && row.r) { T.sh.getRange(row.r, 1, 1, n).setValues([row.vals]); count++; }
+      if (row.dirty && !row.deleted && row.r) { T.sh.getRange(row.r, 1, 1, n).setValues([rsEscRow_(row.vals)]); count++; }
       row.dirty = false;
     });
     var del = T.rows.filter(function (r) { return r.deleted && r.r; }).sort(function (a, b) { return b.r - a.r; });
@@ -327,7 +330,7 @@ function rsFlush_(M) {
     if (add.length) {
       var start = Math.max(T.sh.getLastRow(), 1) + 1, need = start + add.length - 1;
       if (need > T.sh.getMaxRows()) T.sh.insertRowsAfter(T.sh.getMaxRows(), need - T.sh.getMaxRows());
-      T.sh.getRange(start, 1, add.length, n).setValues(add.map(function (r) { return r.vals; }));
+      T.sh.getRange(start, 1, add.length, n).setValues(add.map(function (r) { return rsEscRow_(r.vals); }));
       add.forEach(function (r, i) { r.r = start + i; r.isNew = false; });
       count += add.length;
     }
@@ -608,7 +611,7 @@ function rsWriteBackup_(blobText, at) {
   if (chunks.length > sh.getMaxColumns()) sh.insertColumnsAfter(sh.getMaxColumns(), chunks.length - sh.getMaxColumns());
   sh.getRange(1, 1, 1, 3).setValues([['Read-only backup of the JSON blob taken before the move to row storage. Do not edit.', at, blobText.length + ' characters in ' + chunks.length + ' cells (row 2, left to right)']]);
   sh.getRange(2, 1, 1, chunks.length).setNumberFormat('@');
-  sh.getRange(2, 1, 1, chunks.length).setValues([chunks]);
+  sh.getRange(2, 1, 1, chunks.length).setValues([rsEscRow_(chunks)]);
   try { sh.protect().setWarningOnly(true).setDescription('Backup of the old JSON blob'); } catch (e) {}
 }
 function rsReadBackup_() {

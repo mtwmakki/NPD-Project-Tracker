@@ -30,7 +30,7 @@ class MockSheet {
         if (v.length !== nr || v.some(row => row.length !== nc)) throw new Error('setValues size mismatch on ' + sh.name);
         v.forEach(row => row.forEach(x => { if (typeof x === 'string' && x.length > 50000) throw new Error('cell over 50,000 characters in ' + sh.name); }));
         sh._need(r + nr - 1, c + nc - 1);
-        for (let i = 0; i < nr; i++) for (let j = 0; j < nc; j++) sh.grid[r - 1 + i][c - 1 + j] = v[i][j];
+        for (let i = 0; i < nr; i++) for (let j = 0; j < nc; j++) sh.grid[r - 1 + i][c - 1 + j] = (typeof v[i][j] === 'string' && v[i][j].charAt(0) === "'") ? v[i][j].slice(1) : v[i][j]; /* real Sheets drops one leading apostrophe */
         sh.writes.push({ r, nr });
       },
       setNumberFormat() {}, setFontWeight() {}

@@ -58,7 +58,7 @@ Fast, no data loss:
 
 Hard rollback (the old blob is gone or wrong): `Backup_Blob` row 2 holds the blob taken at migration (cells joined left to right). Paste it into `Sheet1` the way `Code.gs` stores it, or `rsReadBackup_()` returns it as text. Everything saved after migration is only in the row tabs, so prefer `rsSwitchToBlob`.
 
-If the old `Code.gs` is not reachable via `OLD_BRIDGE_URL`, define `legacyWriteBlob_(jsonText, by)` in the project and `rsSwitchToBlob` uses it instead.
+If the old `Code.gs` is not reachable via `OLD_BRIDGE_URL`, define `legacyWriteBlob_(jsonText, by)` in the project and `rsSwitchToBlob` uses it instead. `GoLive.gs` has the helper (`legacyWriteBlob_`) and the one-shot `goLive()` cut-over used on the live project.
 
 ## How conflicts work
 

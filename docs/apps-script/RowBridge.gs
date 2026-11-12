@@ -15,7 +15,7 @@
  *   GET  ?action=read                          rows mode: { _data, _updatedAt, _updatedBy, _rev, _format:'rows-v1' }
  *   POST { action:'writeRows', by, ops:[…] }   per-record writes, see RowStore.gs rsApplyRecord_
  *   POST { _data, _updatedAt, _updatedBy }     old blob write, diffed into rows (bots and old pages keep working)
- *   GET  ?action=ganttRead / POST ganttWrite   unchanged
+ *   GET  ?action=ganttRead / POST ganttWrite   always delegated to legacyDoGet_/legacyDoPost_ (any action starting "gantt")
  */
 
 function rbJson_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
@@ -27,6 +27,8 @@ function doGet(e) {
   var p = (e && e.parameter) || {}, action = p.action || 'read';
   try {
     if (rbMode_() === 'blob' && typeof legacyDoGet_ === 'function') return legacyDoGet_(e);
+    // Gantt always goes to the legacy handlers (ganttRead/ganttWrite live in the old Code.gs, which does its own auth), whatever the storage mode.
+    if (/^gantt/.test(String(action)) && typeof legacyDoGet_ === 'function') return legacyDoGet_(e);
     if (!rbAuth_(p.token)) return rbJson_({ error: 'unauthorized' });
     if (action === 'ganttRead' && typeof ganttRead_ === 'function') return ganttJson_(ganttRead_(p.project));
     if (rbMode_() === 'blob') return rbJson_({ error: 'storage_mode_blob_without_legacy_handler' });
@@ -41,8 +43,9 @@ function doPost(e) {
     var body = {};
     try { body = JSON.parse(e.postData && e.postData.contents || '{}'); } catch (x) { body = {}; }
     var p = (e && e.parameter) || {};
-    if (!rbAuth_(body.token || p.token)) return rbJson_({ error: 'unauthorized' });
     var action = body.action || p.action;
+    if (/^gantt/.test(String(action)) && typeof legacyDoPost_ === 'function') return legacyDoPost_(e);
+    if (!rbAuth_(body.token || p.token)) return rbJson_({ error: 'unauthorized' });
     if (action === 'ganttWrite' && typeof ganttWrite_ === 'function') return ganttJson_(ganttWrite_(body.project, body.data));
     if (rbMode_() === 'blob') return rbJson_({ error: 'storage_mode_blob_without_legacy_handler' });
     if (action === 'writeRows') return rbJson_(rsWriteRows_(body));

@@ -166,6 +166,10 @@ Present mode shows the TPAC logo.
   - The Task column widens to fit the longest name (232–380 px); only longer names get "…". Owner initials skip
     brackets ("PJM (FN)" → "PJ"). Arrows to a task that starts before its predecessor ends now drop into the gap
     between rows and come back left, instead of doubling back over the bar.
+- Milestone dates (Nov 2026): a milestone finishes the day it starts (Finish no longer shows the day before Start),
+  in the table, export, PDFs and Excel. Picking a Finish date for a milestone moves the milestone. No finish date is
+  ever before its start (plan and actual). A gate made only of milestones reads "11 Dec · milestone"; a gate
+  shorter than a week shows days ("2 days") instead of "0 wks".
   - The preview card's bottom no longer shows the chart's square corner over the rounded card.
 - Screen type like V2 (`#v2type`): card headings, panel titles and the date picker month use the look's heading font
   and weight; codes, dates and day counts use the look's mono font. The old V3 stylesheet's fixed fonts are removed.

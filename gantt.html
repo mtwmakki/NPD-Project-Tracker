@@ -4128,9 +4128,10 @@ function taskStartDate(t,startsMap){
    not the next Monday, so subtract a day off the exclusive boundary. */
 function taskFinishDate(t,startsMap){
   var m=startsMap||computeStarts();
-  var endW=(m[t.id]||1)+durW(t);
+  var stW=m[t.id]||1, endW=stW+durW(t);
+  if(endW<=stW) return dateFromWeek(stW);          /* milestone: finishes the day it starts */
   var d=dateFromWeek(endW);
-  return new Date(d.getTime()-86400000);
+  return new Date(Math.max(dateFromWeek(stW).getTime(), d.getTime()-86400000));
 }
 function setTaskStart(id,val){
   var t=getById(id); if(!t) return;
@@ -4139,6 +4140,7 @@ function setTaskStart(id,val){
 }
 function setTaskFinish(id,val){
   var t=getById(id); if(!t) return;
+  if(t.milestone||durW(t)===0){ setTaskStart(id,val); return; }   /* a milestone is one day: its finish is its start */
   var fin=parseDateLocal(val); if(!fin){ refreshAll(); return; }
   var starts=computeStarts();
   var sW=starts[t.id]||1;
@@ -4635,8 +4637,12 @@ function phaseSummaryFor(ph,starts){
   var mn=Infinity,mx=0;
   pt.forEach(function(t){ var st=starts[t.id]||1; mn=Math.min(mn,st); mx=Math.max(mx,st+durW(t)); });
   if(!isFinite(mn)) return null;
-  return {start:dateFromWeek(mn),finish:new Date(dateFromWeek(mx).getTime()-86400000),weeks:Math.round(mx-mn)};
+  var sd=dateFromWeek(mn);
+  return {start:sd,finish:mx>mn?new Date(Math.max(sd.getTime(),dateFromWeek(mx).getTime()-86400000)):sd,weeks:Math.round(mx-mn),days:Math.round((mx-mn)*5),milestones:mx<=mn};
 }
+/* "25 Nov → 25 Dec · 4 wks"; a gate made only of milestones: "11 Dec · milestone" */
+function gvPhaseRange(sum,arrow){ if(!sum) return ''; if(sum.milestones) return gvDay(sum.start)+' · milestone';
+  return gvDay(sum.start)+(arrow||' → ')+gvDay(sum.finish)+' · '+(sum.weeks>=1?gvWks(sum.weeks):sum.days+' day'+(sum.days===1?'':'s')); }
 /* ── Task table (Phase 2, Oct 2026): status chips, owner avatars, "23 Nov" dates with a picker, row numbers for
    dependencies, 36px rows. Columns follow colVis; the table's Segment and Depends-on columns use their own keys
    (gvSeg, gvPred) so the preview / export keeps its own column choice. ── */
@@ -4715,7 +4721,7 @@ function renderTaskGrid(starts){
   rows.forEach(function(r){
     if(r.type==='phase'){
       var pc=PC[r.phase]||{bar:'#98A2AE'}, sum=phaseSummaryFor(r.phase,starts), nm=PLABEL[r.phase]||r.phase;
-      var rng=(sum&&(gvPhaseSummaryIn==='list'||gvPhaseSummaryIn==='both'||gvPhaseSummaryIn==='chart'))?gvDay(sum.start)+' &rarr; '+gvDay(sum.finish)+' &middot; '+gvWks(sum.weeks):'';
+      var rng=(sum&&(gvPhaseSummaryIn==='list'||gvPhaseSummaryIn==='both'||gvPhaseSummaryIn==='chart'))?gvPhaseRange(sum,' &rarr; ').replace(' · ',' &middot; '):'';
       h+='<tr class="gv-phaserow'+(r.collapsed?' col':'')+'" title="Click to '+(r.collapsed?'show':'hide')+' the tasks in '+gvEsc(nm)+'" onclick="togglePhaseCollapse(\''+r.phase+'\')">'
         +'<td colspan="'+span+'" style="--pc:'+pc.bar+'"><div class="gv-phase-bar">'
         +'<span class="pcv">'+gvIco('chev')+'</span><i class="psw"></i><b>'+gvEsc(nm)+' phase</b><span class="pn">'+r.count+'</span>'
@@ -4740,7 +4746,7 @@ function renderTaskGrid(starts){
     var aS, aDw, aSD, aFD, slipD=0;
     if(act){
       aS=t.actStart>0?t.actStart:(starts[t.id]||1); aDw=t.actDur>0?t.actDur:durW(t);
-      aSD=dateFromWeek(aS); aFD=new Date(dateFromWeek(aS+aDw).getTime()-86400000); slipD=Math.round((aFD-fD)/86400000);
+      aSD=dateFromWeek(aS); aFD=aDw>0?new Date(Math.max(aSD.getTime(),dateFromWeek(aS+aDw).getTime()-86400000)):aSD; slipD=Math.round((aFD-fD)/86400000);
     }
     var planTip='Plan: '+gvDayLong(sD)+' → '+gvDayLong(fD)+(act?(slipD?(' · actual is '+Math.abs(slipD)+(slipD>0?' days later':' days earlier')):' · on plan'):'');
     COLS.forEach(function(c){
@@ -4832,7 +4838,7 @@ function gvDpValue(t,field){
   if(field==='start') return taskStartDate(t,starts);
   if(field==='finish') return taskFinishDate(t,starts);
   var aS=t.actStart>0?t.actStart:(starts[t.id]||1), aDw=t.actDur>0?t.actDur:durW(t);
-  return field==='astart'?dateFromWeek(aS):new Date(dateFromWeek(aS+aDw).getTime()-86400000);
+  return field==='astart'?dateFromWeek(aS):(aDw>0?new Date(Math.max(dateFromWeek(aS).getTime(),dateFromWeek(aS+aDw).getTime()-86400000)):dateFromWeek(aS));
 }
 function gvDpOpen(ev,id,field,btn){
   ev.stopPropagation();
@@ -4976,7 +4982,7 @@ function renderChartPane(starts){
           if(gvPhaseSummaryIn==='chart'||gvPhaseSummaryIn==='both'){
             var ps=phaseSummaryFor(r.phase,starts);
             if(ps){
-              var lbl=gvDay(ps.start)+' → '+gvDay(ps.finish)+' · '+gvWks(ps.weeks), lx=pbx+pbw+8, anchor='start';
+              var lbl=gvPhaseRange(ps), lx=pbx+pbw+8, anchor='start';
               if(lx+lbl.length*6.2>W){ lx=Math.max(2,pbx-8); anchor='end'; }
               fg+='<text x="'+lx+'" y="'+(y+GV_ROW/2+4)+'" font-size="11.5" fill="'+th.mu+'" text-anchor="'+anchor+'">'+lbl+'</text>';
             }
@@ -6020,7 +6026,7 @@ function renderGantt(){
       lastPh=t.phase; var pc=phaseClr(t.phase), nm=(PLABEL[t.phase]||t.phase)+' phase', sum=phaseSummaryFor(t.phase,starts), mid=y+PHR/2;
       var cnt=tasks.filter(function(q){ return q.phase===t.phase; }).length;
       bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+PHR+'" fill="'+gvMix(pc,'#FFFFFF',0.09)+'"/><line x1="0" y1="'+(y+PHR-.5)+'" x2="'+W+'" y2="'+(y+PHR-.5)+'" stroke="'+X.line+'"/>';
-      var rng=sum?gvDay(sum.start)+' → '+gvDay(sum.finish)+' · '+gvWks(sum.weeks):'', rngW=rng?tw(rng,8.5,400,true):0, cntW=tw(String(cnt),9.5,500);
+      var rng=sum?gvPhaseRange(sum):'', rngW=rng?tw(rng,8.5,400,true):0, cntW=tw(String(cnt),9.5,500);
       var nmTx=fit(nm,10.5,600,LEFT-24-cntW-rngW-26);
       tbl+='<rect x="'+(PL+8)+'" y="'+(mid-4)+'" width="8" height="8" rx="2" fill="'+pc+'"/>'+T(PL+22,mid+3.8,nmTx,{fs:10.5,fw:600});
       var nx=PL+22+tw(nmTx,10.5,600)+8; tbl+=T(nx,mid+3.8,cnt,{fs:9.5,fw:500,c:X.hint}); nx+=cntW+10;

@@ -26,6 +26,10 @@ customer status book, in V2's look: see docs/GANTT-V3.md.
 - Phones (iPhone 15 Pro 393 px, Galaxy Z Fold 7 cover 360 px wide): the top bar and tab bar slide away while you
   scroll down and come back when you scroll up; tighter margins and type under 430 px; sheets open full height there.
   On touch screens, fields use 16 px text (stops iPhone zooming in) and icon buttons are 44 px.
+  Search (hidden in the sidebar on phones) is a round button at the right end of the tab bar: in Glass it sits beside
+  the floating pill and stays when the pill folds; in the other styles it slides away with the bar. It opens search
+  full screen with the keyboard already up, results end above the keyboard, and Cancel closes it. Tablets and
+  laptops keep the sidebar search and the centred panel.
   Under 430 px everything is more compact (headings, pills, buttons, tabs, task rows with the date beside the title,
   a small progress ring beside the project name). The page is sized from the measured window height to avoid the
   blank band iOS 26.0 Safari leaves under the tab bar.

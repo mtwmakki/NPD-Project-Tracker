@@ -163,6 +163,20 @@ Next step, Outcome and Est. value. Health and status cells are coloured like the
 <name> · date time" and "Page x of y". The PDF tool (jsPDF 2.5.1 + AutoTable 3.8.2) loads from jsDelivr the first time.
 Its built-in font has no Chinese characters or emoji, so those are left out of the PDF (Excel keeps them).
 Backup downloads everything as JSON, including the bin.
+Desktop alerts (Settings → Desktop alerts; master account only while it is tested): pop-ups on the computer from the
+browser's own notifications, sent by the open tracker tab. Nothing runs on a server and nothing is emailed: with every
+tracker tab closed, nothing is sent. Turning it on asks the browser for permission; if notifications are blocked for
+the site, the switch stays Off and says how to allow them (lock icon in the address bar). Kinds: overdue items, items
+due today or tomorrow (your own, the same as My work; snoozed ones stay quiet), inquiries at risk on their 5-day SLA
+(one per inquiry, its worst stage; managers and the master see every inquiry, members only stages they own), and items
+newly assigned to you. "Assigned to you" compares your open items with the ones this device has already seen and only
+alerts for changes that arrived from the Sheet, so items you add for yourself stay quiet; the first check on a device
+only remembers what is there. Each item alerts once a day per kind (an SLA stage again if it moves from at risk to
+missed); more than 3 of one kind at once become one summary pop-up ("22 overdue items") that opens My work, or
+Inquiries for the SLA summary. Clicking a single alert opens the inquiry, project or task. Checks run after every
+data change, every 5 minutes, and a hidden tab keeps checking the Sheet once a minute while alerts are on (instead of
+pausing). "Send a test alert" shows one straight away. The on/off choice, the sent list and the seen list are kept on
+this device (localStorage: npd2-dnotify, npd2-dn-sent, npd2-dn-seen:<uid>).
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

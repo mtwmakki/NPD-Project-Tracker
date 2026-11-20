@@ -2825,6 +2825,14 @@ function dnCollect(remote){
     const st = hit.find(x => x.state === 'overdue') || hit[0]; if (!st) return;
     out.push({ kind: 'sla', key: `sla:${i.id}:${st.key}:${st.state}`, title: `${st.state === 'overdue' ? 'SLA missed' : 'SLA at risk'} · ${st.label}`,
       body: `${i.code || ''} ${i.name || ''} · due ${st.due} (day ${s.elapsed} of ${SLA_DAYS})`.trim(), line: `${i.code || i.name || ''} · ${st.label}`, open: () => openSheet(i.id) }); });
+  /* waiting on others: open inquiries and active projects whose ball has sat with someone else for CHASE_DAYS or
+     more, the same list and count as the Dashboard's "Waiting on others" panel (every factory) */
+  [...(inqOn() ? d.inquiries.filter(i => !i.outcome && !isClosedInq(i)).map(x => ({x, k: 'inq'})) : []),
+   ...d.projects.filter(p => !isClosedProj(p)).map(x => ({x, k: 'proj'}))]
+    .filter(({x}) => x.ballWith && x.ballWith !== 'us' && ballDays(x) >= CHASE_DAYS).forEach(({x, k}) => { const dd = ballDays(x), who = BALL_LABELS[x.ballWith] || x.ballWith;
+      out.push({ kind: 'wait', key: `wait:${k}:${x.id}:${x.ballSince || ''}`, title: `Chase ${who} · ${x.name || x.code || ''}`,
+        body: `${x.code ? x.code + ' · ' : ''}waiting on ${who} for ${dd} days${x.customer ? ' · ' + x.customer : ''}`, line: `${x.code || x.name || ''} · ${who} ${dd}d`,
+        open: () => k === 'inq' ? openSheet(x.id) : go('project', {proj: x.id}) }); });
   /* assigned to you: open items that are new to this device */
   const fac0 = S.fac; S.fac = 'all'; let mine; try { mine = workItems(false).filter(n => !n.done); } finally { S.fac = fac0; }   // every factory, whatever the menu shows
   let seen = null; try { seen = JSON.parse(store.get(dnSeenKey(), 'null')); } catch(e){ seen = null; }
@@ -2835,7 +2843,7 @@ function dnCollect(remote){
   store.set(dnSeenKey(), JSON.stringify([...all, ...mine.map(n => n.key)].slice(-4000)));
   return out;
 }
-const DN_KINDS = { over: ['overdue item', 'overdue items'], due: ['item due soon', 'items due today or tomorrow'], sla: ['inquiry at risk on its SLA', 'inquiries at risk on their SLA'], new: ['new item assigned to you', 'new items assigned to you'] };
+const DN_KINDS = { over: ['overdue item', 'overdue items'], due: ['item due soon', 'items due today or tomorrow'], sla: ['inquiry at risk on its SLA', 'inquiries at risk on their SLA'], new: ['new item assigned to you', 'new items assigned to you'], wait: ['item to chase', 'items waiting on others to chase'] };
 /* runs after every data change (debounced), every 5 minutes, and when the tab comes back */
 function dnCheck(remote){
   if (!dnOn() || dnPerm() !== 'granted' || !AUTH.user || !DB.data) return 0;
@@ -2844,7 +2852,7 @@ function dnCheck(remote){
   if (!fresh.length) return 0;
   let shown = 0;
   Object.keys(DN_KINDS).forEach(k => { const g = fresh.filter(x => x.kind === k); if (!g.length) return;
-    if (g.length > 3){ if (dnShow(`${g.length} ${DN_KINDS[k][1]}`, g.slice(0, 3).map(x => x.line).join('\n') + `\n+${g.length - 3} more · open ${k === 'sla' ? 'Inquiries' : 'My work'}`, 'npd-' + k, () => go(k === 'sla' ? 'inquiries' : 'work'))) shown++; }
+    if (g.length > 3){ if (dnShow(`${g.length} ${DN_KINDS[k][1]}`, g.slice(0, 3).map(x => x.line).join('\n') + `\n+${g.length - 3} more · open ${k === 'sla' ? 'Inquiries' : k === 'wait' ? 'Dashboard' : 'My work'}`, 'npd-' + k, () => go(k === 'sla' ? 'inquiries' : k === 'wait' ? 'dashboard' : 'work'))) shown++; }
     else g.forEach(x => { if (dnShow(x.title, x.body, x.key, x.open)) shown++; }); });
   fresh.forEach(x => sent.keys.push(x.key)); store.set('npd2-dn-sent', JSON.stringify(sent));
   return shown;
@@ -2864,7 +2872,7 @@ function dnPopHTML(){
   if (!isMasterAcct()) return '';
   const on = dnOn() && dnPerm() === 'granted', perm = dnPerm();
   const note = perm === 'unsupported' ? 'This browser cannot show desktop alerts.' : perm === 'denied' ? 'Blocked in this browser. Allow notifications for this site from the lock icon in the address bar, then turn this on.'
-    : on ? 'Pop-ups for overdue items, items due today or tomorrow, inquiry SLAs at risk and items newly assigned to you. Only while a tracker tab is open, on this device. Testing: master account only.'
+    : on ? 'Pop-ups for overdue items, items due today or tomorrow, inquiry SLAs at risk, items newly assigned to you, and anything waiting on others for ' + CHASE_DAYS + '+ days. Overdue, due, SLA and waiting items repeat once a day until dealt with. Only while a tracker tab is open, on this device. Testing: master account only.'
     : 'Get a pop-up on this computer when something needs you. Works while a tracker tab is open.';
   return `<div><h4>Desktop alerts</h4>${segHTML('dnseg', [['off','Off'],['on','On']], on ? 'on' : 'off')}<p class="pop-note">${note}</p>${on ? `<button class="btn" type="button" data-act="dn-test" style="margin-top:8px;width:100%;justify-content:center">${ico('bell',15)} Send a test alert</button>` : ''}</div>`;
 }
@@ -5459,7 +5467,7 @@ if (!window.firebase || !firebase.initializeApp){
   try { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); AUTH.db = firebase.firestore(); } catch(e){ console.error(e); }
   firebase.auth().onAuthStateChanged(u => { if (u) onSignedIn(u); else onSignedOut(); });
 }
-window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render, openFormFor, closeForm, dnCheck, counts, addProjTask, closePop, factories, meName };
+window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render, openFormFor, closeForm, dnCheck, DN, counts, addProjTask, closePop, factories, meName };
 })();
 
 </script>

@@ -2045,6 +2045,29 @@ html.sheet-dock #scrim{display:none}
 :root[data-look] .brand i,:root[data-look] .lg-logo{background:#111110;color:#F2F1EC;border:0;border-radius:24%;box-shadow:none;font-size:0}
 :root[data-look][data-theme="dark"] .brand i,:root[data-look][data-theme="dark"] .lg-logo{background:#FFFFFF;color:#111110}
 .brand i svg,.lg-logo svg{width:60.5%;height:auto;display:block}
+/* ── phones: search sits in a round button beside the tab bar (the sidebar that holds it on bigger screens is hidden),
+   and opens full screen with the keyboard up ── */
+.tabsearch,.cmd-x{display:none}
+@media (max-width:720px){
+  .tabsearch{position:absolute;z-index:5;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:grid;place-items:center;width:48px;height:48px;padding:0;border-radius:50%;border:1px solid var(--line-2);background:var(--sel);color:var(--tx);cursor:pointer;transition:transform calc(320ms*var(--k)) var(--ease-out)}
+  .tabsearch .i{width:22px;height:22px}
+  :root[data-look] .tabbar{padding-right:68px}
+  #app.bars-off .tabsearch{transform:translateY(calc(100% + 40px))}
+  :root[data-look="K"] .tabbar{right:91px;padding-right:4px}
+  :root[data-look="K"] #tabbar{--tbw:calc((100vw - 126px) / 4)}
+  :root[data-focus="projects"][data-look="K"] #tabbar{--tbw:calc((100vw - 126px) / 3)}
+  :root[data-look="K"] .tabsearch{right:25px;bottom:calc(max(env(safe-area-inset-bottom,0px) - 9px,0px) + 14px);width:58px;height:58px;border:1px solid var(--glass-bd);background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh);color:var(--glass-ink)}
+  :root[data-look="K"] .tabsearch .i{width:24px;height:24px}
+  :root[data-look="K"] #app.bars-off .tabsearch{transform:none}
+  :root[data-look] #cmdk{padding:0;display:block;bottom:auto;height:var(--cmd-h,100%);background:var(--surf-solid);backdrop-filter:none;-webkit-backdrop-filter:none}
+  :root[data-look] .cmd{width:100%;height:100%;display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none;background:var(--surf-solid);backdrop-filter:none;-webkit-backdrop-filter:none;transform:translateY(14px)}
+  :root[data-look] #cmdk.open .cmd{transform:none}
+  .cmd-in{padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px}
+  .cmd-in .mono{display:none}
+  .cmd-x{display:block;flex:none;border:0;background:none;color:var(--ac);font:600 16px var(--fb);padding:8px 0 8px 4px;cursor:pointer}
+  .cmd-list{flex:1;min-height:0;max-height:none;padding:8px 8px calc(env(safe-area-inset-bottom,0px) + 12px)}
+  .cmd-item{padding:13px 12px}
+}
 </style>
 
 </head>
@@ -2120,12 +2143,13 @@ html.sheet-dock #scrim{display:none}
     <button type="button" data-go="projects" aria-label="Projects" title="Projects"><span data-ico="folder"></span>Projects</button>
     <button type="button" data-go="work" aria-label="My work" title="My work"><span data-ico="work"></span>My work</button>
   </nav>
+  <button class="tabsearch" type="button" data-act="cmdk" aria-label="Search or jump to" title="Search"><span data-ico="search"></span></button>
 </div>
 
 <div id="scrim"></div>
 <aside id="sheet" aria-label="Inquiry details"></aside>
 <div id="cmdk" aria-hidden="true"><div class="cmd" role="dialog" aria-label="Search and jump">
-  <div class="cmd-in"><span data-ico="search"></span><input id="cmd-q" placeholder="Search inquiries, projects, pages…" autocomplete="off"><span class="mono">Esc</span></div>
+  <div class="cmd-in"><span data-ico="search"></span><input id="cmd-q" type="search" enterkeyhint="go" placeholder="Search inquiries, projects, pages…" autocomplete="off"><span class="mono">Esc</span><button class="cmd-x" type="button" data-cmdx>Cancel</button></div>
   <div class="cmd-list" id="cmd-list"></div></div></div>
 <div id="pop" role="dialog" aria-label="Style and motion"></div>
 <div id="shelf" role="dialog" aria-label="Pinned and factories" aria-hidden="true"><div class="shelf-h">Pinned</div><div id="pins"></div><div class="shelf-h">Factory</div><div id="facs"></div></div>
@@ -5009,15 +5033,21 @@ function cmdBuild(q){
   cmdIdx = 0; let g = '', i = 0;
   $('#cmd-list').innerHTML = cmdItems.map((x, n) => `${x.g !== g ? `<div class="cmd-grp">${g = x.g}</div>` : ''}<button type="button" class="cmd-item ${n===0?'on':''}" data-ci="${n}" style="--i:${i++}">${ico(x.ic,17)}<span>${esc(x.t)}</span>${x.k ? `<span class="k">${esc(x.k)}</span>` : ''}</button>`).join('') || '<div class="empty">No matches</div>';
 }
-function openCmd(){ const c = $('#cmdk'); c.classList.add('open'); c.setAttribute('aria-hidden','false'); $('#cmd-q').value = ''; cmdBuild(''); setTimeout(() => $('#cmd-q').focus(), 30); }
-function closeCmd(){ const c = $('#cmdk'); if (!c.classList.contains('open')) return; c.classList.remove('open'); c.setAttribute('aria-hidden','true'); }
+function openCmd(){ const c = $('#cmdk'), q = $('#cmd-q'); c.classList.add('open'); c.setAttribute('aria-hidden','false'); q.value = ''; cmdBuild(''); cmdFit();
+  q.focus({preventScroll:true}); setTimeout(() => q.focus({preventScroll:true}), 30); }   // focus inside the tap itself, so phones raise the keyboard
+/* phones: full-screen search follows the visible area, so results end above the keyboard */
+function cmdFit(){ const c = $('#cmdk'), vv = window.visualViewport;
+  if (!vv || !PHONE.matches || !c.classList.contains('open')){ c.style.removeProperty('--cmd-h'); c.style.top = ''; return; }
+  c.style.setProperty('--cmd-h', vv.height + 'px'); c.style.top = vv.offsetTop + 'px'; }
+if (window.visualViewport){ visualViewport.addEventListener('resize', cmdFit); visualViewport.addEventListener('scroll', cmdFit); }
+function closeCmd(){ const c = $('#cmdk'); if (!c.classList.contains('open')) return; c.classList.remove('open'); c.setAttribute('aria-hidden','true'); $('#cmd-q').blur(); }
 $('#cmd-q').addEventListener('input', e => cmdBuild(e.target.value));
 $('#cmd-q').addEventListener('keydown', e => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); if (!cmdItems.length) return; cmdIdx = (cmdIdx + (e.key === 'ArrowDown' ? 1 : -1) + cmdItems.length) % cmdItems.length;
     $$('.cmd-item').forEach((b,i) => b.classList.toggle('on', i === cmdIdx)); $$('.cmd-item')[cmdIdx]?.scrollIntoView({block:'nearest'}); }
   if (e.key === 'Enter' && cmdItems[cmdIdx]){ const it = cmdItems[cmdIdx]; closeCmd(); it.run(); }
 });
-$('#cmdk').addEventListener('click', e => { const b = e.target.closest('.cmd-item'); if (b){ const it = cmdItems[+b.dataset.ci]; closeCmd(); it.run(); } else if (e.target.id === 'cmdk') closeCmd(); });
+$('#cmdk').addEventListener('click', e => { if (e.target.closest('[data-cmdx]')){ closeCmd(); return; } const b = e.target.closest('.cmd-item'); if (b){ const it = cmdItems[+b.dataset.ci]; closeCmd(); it.run(); } else if (e.target.id === 'cmdk') closeCmd(); });
 
 /* ── settings popover ── */
 function popHTML(){ return `<details class="pop-app"${store.get('npd2-appear', '') === 'open' ? ' open' : ''}><summary><span>Appearance</span><small>Style, theme, glass, motion</small>${ico('chev',16)}</summary><div class="pop-app-in"><div><h4>Style</h4><div class="looks">${LOOKS.map(([k,n,g]) => `<button type="button" class="${S.look===k?'on':''}" data-look="${k}"><i style="background:${g}"></i>${n}</button>`).join('')}</div></div>

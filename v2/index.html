@@ -2439,7 +2439,7 @@ async function pull(opts = {}){
     if (changed && !DB.ops.length && !DB.saving){
       DB.data = normalize(JSON.parse(j._data)); DB.ts = j._updatedAt || ''; DB.by = j._updatedBy || ''; DB.source = 'live'; DB.rev = j._rev || '';
       if (DB.fmt === 'rows-v1'){ const sn = snapBase(DB.data); DB.base = sn.base; DB.metaBase = sn.meta; }
-      saveCache();
+      saveCache(); dnCheck(true);
       if (!opts.silent || opts.first) softRender(opts.first); else renderWhenIdle();
     }
     setSync('ok');
@@ -2555,7 +2555,8 @@ async function commit(){
   }
 }
 addEventListener('beforeunload', e => { if (DB.ops.length || DB.saving){ e.preventDefault(); e.returnValue = ''; } });
-setInterval(() => { if (AUTH.user && document.visibilityState === 'visible' && Date.now() - DB.lastPull > POLL_MS - 500) pull({silent:true}); }, 5000);
+setInterval(() => { if (!AUTH.user) return; const age = Date.now() - DB.lastPull;   // a hidden tab still checks once a minute while desktop alerts are on
+  if (document.visibilityState === 'visible' ? age > POLL_MS - 500 : dnOn() && age > 60000) pull({silent:true}); }, 5000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && AUTH.user && Date.now() - DB.lastPull > 8000) pull({silent:true}); });
 
 /* sync pill */
@@ -2762,6 +2763,88 @@ function completeNotif(n, done = true){
   if (n.type === 'project') return setProjTaskDone(n.parentId, n.taskId, done);
   return setMTaskDone(n.parentId, done);
 }
+
+/* ── Desktop alerts: the browser's own pop-ups (Notification API), sent by this page while a tab is open.
+   Nothing runs on a server: with every tab closed, nothing is sent. Master account only while it is tested.
+   Each item alerts once a day per kind (the sent list is kept on this device); snoozed items stay quiet.
+   "Assigned to you" compares your open items with the ones this device has already seen, and only alerts
+   for changes that arrived from the Sheet, so items you add for yourself stay quiet. ── */
+const DN = { timer: null, sent: null };
+const dnSupported = () => typeof window.Notification === 'function';
+const dnOn = () => dnSupported() && store.get('npd2-dnotify', '') === 'on' && isMasterAcct();
+const dnPerm = () => dnSupported() ? Notification.permission : 'unsupported';
+function dnSent(){ const today = todayStr();
+  if (!DN.sent || DN.sent.date !== today){ try { DN.sent = JSON.parse(store.get('npd2-dn-sent', '{}')) || {}; } catch(e){ DN.sent = {}; }
+    if (DN.sent.date !== today) DN.sent = { date: today, keys: [] }; }
+  return DN.sent; }
+const dnSeenKey = () => 'npd2-dn-seen:' + ((AUTH.user && AUTH.user.uid) || 'me');
+function dnShow(title, body, tag, open){
+  try {
+    const n = new Notification(title, { body, tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' });
+    n.onclick = () => { try { window.focus(); n.close(); if (open) open(); } catch(e){ console.warn('alert click', e); } };
+    return true;
+  } catch(e){ console.warn('alert', e); return false; }
+}
+const dnOpenNotif = n => () => { if (n.type === 'inquiry' || n.type === 'na') openSheet(n.parentId); else if (n.type === 'project') go('project', {proj: n.parentId}); else formMTask(n.parentId); };
+const dnWhere = n => n.type === 'mtask' ? 'Personal task' : `${n.parentCode || ''} ${n.parentName || ''}`.trim();
+/* what should alert right now; remote = the data just came from the Sheet */
+function dnCollect(remote){
+  const d = DB.data, today = todayStr(), tmr = addDays(today, 1), me = meName(), out = [];
+  const N = collectNotifications('mine');
+  const line = n => `${n.taskName}${n.type === 'mtask' ? '' : ` (${n.parentCode || ''})`}`;   // one line in a summary alert
+  N.missed.forEach(n => out.push({ kind: 'over', key: `over:${n.key}`, title: `Overdue · ${n.taskName}`, body: `${dnWhere(n)} · was due ${n.deadline}`, line: line(n), open: dnOpenNotif(n) }));
+  N.upcoming.filter(n => n.deadline === today || n.deadline === tmr).forEach(n => out.push({ kind: 'due', key: `due:${n.key}:${n.deadline}`,
+    title: `Due ${n.deadline === today ? 'today' : 'tomorrow'} · ${n.taskName}`, body: dnWhere(n), line: line(n), open: dnOpenNotif(n) }));
+  /* one alert per inquiry: its worst SLA stage (missed beats at risk) */
+  if (inqOn()) d.inquiries.forEach(i => { const s = inquirySLA(i); if (!s || s.complete) return;
+    const hit = s.stages.filter(st => (st.state === 'risk' || st.state === 'overdue') && (isLead() || (st.task && (st.task.pic || 'Adam') === me)));
+    const st = hit.find(x => x.state === 'overdue') || hit[0]; if (!st) return;
+    out.push({ kind: 'sla', key: `sla:${i.id}:${st.key}:${st.state}`, title: `${st.state === 'overdue' ? 'SLA missed' : 'SLA at risk'} · ${st.label}`,
+      body: `${i.code || ''} ${i.name || ''} · due ${st.due} (day ${s.elapsed} of ${SLA_DAYS})`.trim(), line: `${i.code || i.name || ''} · ${st.label}`, open: () => openSheet(i.id) }); });
+  /* assigned to you: open items that are new to this device */
+  const fac0 = S.fac; S.fac = 'all'; let mine; try { mine = workItems(false).filter(n => !n.done); } finally { S.fac = fac0; }   // every factory, whatever the menu shows
+  let seen = null; try { seen = JSON.parse(store.get(dnSeenKey(), 'null')); } catch(e){ seen = null; }
+  if (Array.isArray(seen) && remote){ const had = new Set(seen);
+    mine.filter(n => !had.has(n.key)).forEach(n => out.push({ kind: 'new', key: `new:${n.key}`, title: `Assigned to you · ${n.taskName}`,
+      body: `${dnWhere(n)}${n.deadline ? ` · due ${n.deadline}` : ''}`, line: line(n), open: dnOpenNotif(n) })); }
+  const now = new Set(mine.map(n => n.key)), all = Array.isArray(seen) ? seen.filter(k => !now.has(k)) : [];   // keep what was seen before (hidden by a filter, or reassigned), newest last
+  store.set(dnSeenKey(), JSON.stringify([...all, ...mine.map(n => n.key)].slice(-4000)));
+  return out;
+}
+const DN_KINDS = { over: ['overdue item', 'overdue items'], due: ['item due soon', 'items due today or tomorrow'], sla: ['inquiry at risk on its SLA', 'inquiries at risk on their SLA'], new: ['new item assigned to you', 'new items assigned to you'] };
+/* runs after every data change (debounced), every 5 minutes, and when the tab comes back */
+function dnCheck(remote){
+  if (!dnOn() || dnPerm() !== 'granted' || !AUTH.user || !DB.data) return 0;
+  let items; try { items = dnCollect(remote); } catch(e){ console.warn('alert check', e); return 0; }
+  const sent = dnSent(), done = new Set(sent.keys), fresh = items.filter(x => !done.has(x.key));
+  if (!fresh.length) return 0;
+  let shown = 0;
+  Object.keys(DN_KINDS).forEach(k => { const g = fresh.filter(x => x.kind === k); if (!g.length) return;
+    if (g.length > 3){ if (dnShow(`${g.length} ${DN_KINDS[k][1]}`, g.slice(0, 3).map(x => x.line).join('\n') + `\n+${g.length - 3} more · open ${k === 'sla' ? 'Inquiries' : 'My work'}`, 'npd-' + k, () => go(k === 'sla' ? 'inquiries' : 'work'))) shown++; }
+    else g.forEach(x => { if (dnShow(x.title, x.body, x.key, x.open)) shown++; }); });
+  fresh.forEach(x => sent.keys.push(x.key)); store.set('npd2-dn-sent', JSON.stringify(sent));
+  return shown;
+}
+function dnSoon(remote){ clearTimeout(DN.timer); DN.timer = setTimeout(() => dnCheck(remote), remote ? 50 : 1500); }
+async function dnEnable(on){
+  if (!on){ store.set('npd2-dnotify', ''); toast('Desktop alerts off', {icon:'bell'}); return false; }
+  if (!dnSupported()){ toast('This browser cannot show desktop alerts', {icon:'x'}); return false; }
+  let p = Notification.permission; if (p === 'default'){ try { p = await Notification.requestPermission(); } catch(e){ p = 'denied'; } }
+  if (p !== 'granted'){ store.set('npd2-dnotify', ''); toast('Alerts are blocked for this site. Allow them from the lock icon in the address bar.', {icon:'x'}); return false; }
+  store.set('npd2-dnotify', 'on'); toast('Desktop alerts on while a tracker tab is open', {icon:'bell'});
+  setTimeout(() => dnCheck(false), 300); return true;
+}
+function dnTest(){ if (dnPerm() !== 'granted') return dnEnable(true);
+  dnShow('NPD Tracker · test alert', 'Desktop alerts are working. Click to open My work.', 'npd-test', () => go('work')); }
+function dnPopHTML(){
+  if (!isMasterAcct()) return '';
+  const on = dnOn() && dnPerm() === 'granted', perm = dnPerm();
+  const note = perm === 'unsupported' ? 'This browser cannot show desktop alerts.' : perm === 'denied' ? 'Blocked in this browser. Allow notifications for this site from the lock icon in the address bar, then turn this on.'
+    : on ? 'Pop-ups for overdue items, items due today or tomorrow, inquiry SLAs at risk and items newly assigned to you. Only while a tracker tab is open, on this device. Testing: master account only.'
+    : 'Get a pop-up on this computer when something needs you. Works while a tracker tab is open.';
+  return `<div><h4>Desktop alerts</h4>${segHTML('dnseg', [['off','Off'],['on','On']], on ? 'on' : 'off')}<p class="pop-note">${note}</p>${on ? `<button class="btn" type="button" data-act="dn-test" style="margin-top:8px;width:100%;justify-content:center">${ico('bell',15)} Send a test alert</button>` : ''}</div>`;
+}
+setInterval(() => dnCheck(false), 5 * 60 * 1000);
 
 /* ══════════ CREATE · EDIT · DELETE (same record shapes as V1) ══════════ */
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -3243,6 +3326,7 @@ function counts(){
   $('#c-proj').textContent = d ? d.projects.filter(p => !isClosedProj(p)).filter(facMatch).length : '';
   const N = d ? collectNotifications('mine') : {missed:[], awaiting:[]};
   const u = N.missed.length + N.awaiting.length; $('#c-work').textContent = u || ''; $('#c-work').style.display = u ? '' : 'none';
+  if (d) dnSoon(false);
   const activeOf = f => d ? (inqOn() ? openInq.filter(i => facOf(i) === f).length : 0) + d.projects.filter(p => !isClosedProj(p) && facOf(p) === f).length : '';
   $('#facs').innerHTML = [['all','All factories','var(--mu)'], ...factories().map(f => [f, f, facColor(f)])].map(([k,l,c]) =>
     `<button type="button" class="fac ${S.fac===k?'on':''}" data-fac="${esc(k)}" title="${esc(l)}"><i class="dot" style="--dc:${c}"></i>${esc(l)}<span class="cnt">${k==='all' ? (d ? (inqOn() ? openInq.length : 0) + d.projects.filter(p => !isClosedProj(p)).length : '') : activeOf(k)}</span></button>`).join('');
@@ -5026,6 +5110,7 @@ function popHTML(){ return `<details class="pop-app"${store.get('npd2-appear', '
   <div><h4>Motion</h4>${segHTML('motionseg', [['full','Full'],['calm','Calm'],['off','Off']], S.motion)}</div>
   <div style="display:flex;gap:8px"><button class="btn" type="button" data-act="styles" style="flex:1;justify-content:center">Compare styles</button></div></div></details>
   <div><h4>Focus</h4>${segHTML('focusseg', [['all','Inquiries + projects'],['projects','Projects only']], S.focus)}<p class="pop-note">Projects only hides inquiries everywhere: menu, Dashboard, alerts and search. Only on this device.</p></div>
+  ${dnPopHTML()}
   <div><h4>Data</h4><div class="pop-data">${isLead() ? `<button class="btn" type="button" data-act="export-xlsx" title="Every collection and field, one sheet each">${ico('file',15)} Excel · all data</button><button class="btn" type="button" data-act="export-json">${ico('arrowup',15)} Backup</button>` : ''}
     <button class="btn${inqOn() ? '' : ' wide'}" type="button" data-act="pdf-projects">${ico('file',15)} Projects PDF</button>${inqOn() ? `<button class="btn" type="button" data-act="pdf-inquiries">${ico('file',15)} Inquiries PDF</button>` : ''}
     ${isMasterAcct() ? `<button class="btn wide" type="button" data-act="open-people">${ico('user',15)} People</button>` : ''}
@@ -5269,6 +5354,7 @@ document.addEventListener('click', e => {
     else if (seg.id === 'wscope' || seg.id === 'wtype' || seg.id === 'wdens'){ S[seg.id] = v; if (seg.id === 'wdens') store.set('npd2-wdens', v); const from = indNow(seg); vt(() => { refresh(); slideInd(seg.id, from); }, 'list'); }
     else if (seg.id === 'focusseg'){ S.focus = v; store.set('npd2-focus', v); applyPrefs(); closeSheet(); if (S.page === 'inquiries' && v === 'projects') S.page = 'dashboard';
       vt(() => { refresh(); counts(); }, 'fwd').then(() => moveNav(false)); toast(v === 'projects' ? 'Projects only: inquiries are hidden' : 'Showing inquiries and projects', {icon: v === 'projects' ? 'folder' : 'grid'}); }
+    else if (seg.id === 'dnseg'){ dnEnable(v === 'on').then(() => { const p = $('#pop'); if (!p.classList.contains('open')) return; p.innerHTML = popHTML(); hydrateIcons(p); requestAnimationFrame(() => $$('#pop .seg').forEach(x => placeInd(x, false))); }); }
     else if (seg.id === 'themeseg'){ if (v !== S.theme) toggleTheme(sb); }
     else if (seg.id === 'motionseg'){ S.motion = v; store.set('npd2-motion', v); applyPrefs(); toast(`Motion: ${sb.textContent}`, {icon:'spark'}); }
     else if (seg.id === 'binseg'){ S.binf = v; const from = indNow(seg); vt(() => { refresh(); slideInd('binseg', from); }, 'list'); }
@@ -5280,6 +5366,7 @@ document.addEventListener('click', e => {
     else if (act === 'shelf'){ $('#shelf').classList.contains('open') ? closeShelf() : openShelf(a); } else if (act === 'closesheet') closeSheet();
     else if (act === 'styles'){ closePop(); go('styles'); }
     else if (act === 'open-bin'){ closePop(); go('bin'); }
+    else if (act === 'dn-test'){ dnTest(); }
     else if (act === 'open-people'){ closePop(); loadUsers().then(() => { go('people'); }); }
     else if (act === 'people-reload'){ loadUsers().then(() => { const l = $('#peoplelist'); if (l){ l.innerHTML = peopleList(); hydrateIcons(l); } }); }
     else if (act === 'export-xlsx'){ closePop(); exportExcel(); }
@@ -5342,7 +5429,7 @@ if (!window.firebase || !firebase.initializeApp){
   try { if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); AUTH.db = firebase.firestore(); } catch(e){ console.error(e); }
   firebase.auth().onAuthStateChanged(u => { if (u) onSignedIn(u); else onSignedOut(); });
 }
-window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render, openFormFor, closeForm };
+window.__npd2 = { S, DB, AUTH, go, openSheet, pull, commit, mutate, render, openFormFor, closeForm, dnCheck, counts, addProjTask, closePop, factories, meName };
 })();
 
 </script>

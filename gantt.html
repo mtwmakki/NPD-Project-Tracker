@@ -335,7 +335,13 @@ body.dark .col-tog.active{background:#1E4678;border-color:#2a5a9a}
 .zctrl{display:flex;align-items:center;gap:5px;background:var(--white);border:1px solid var(--border);border-radius:var(--rsm);padding:3px 8px;font-size:11px;color:var(--text-sub)}
 .zctrl button{background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-sub);padding:0 2px}
 .zctrl button:hover{color:var(--navy)}
-#gc{background:white;border-radius:var(--rlg);box-shadow:0 8px 32px rgba(11,31,58,0.13),0 4px 8px rgba(11,31,58,0.07);transform-origin:top left;transition:transform .18s;display:inline-block}
+#gc{background:white;border-radius:var(--rlg);box-shadow:0 8px 32px rgba(11,31,58,0.13),0 4px 8px rgba(11,31,58,0.07);transform-origin:top left;transition:transform .18s;display:inline-block;overflow:hidden;vertical-align:top;margin-bottom:28px}
+#gc>svg{display:block}   /* the chart's square corners stay inside the rounded card, and no strip under it */
+.ptbar .pexp{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ptbar .pexp button{font:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line,#d9d9de);background:var(--bg-card,#fff);color:inherit;cursor:pointer}
+.ptbar .pexp button.pri{background:var(--ac,#0088FF);border-color:transparent;color:#fff}
+.ptbar .pexp button:hover{filter:brightness(.97)}
+.ptbar .plbl b{font-weight:700}
 body.dark #gc{box-shadow:0 8px 32px rgba(0,0,0,0.4)}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:320px;color:var(--text-hint);text-align:center;gap:10px;padding:40px}
 .empty p{font-size:13px;line-height:1.6}
@@ -830,7 +836,7 @@ header.hdr{display:none!important}
 .gv-segmenu>button.cur{font-weight:600;background:var(--g100)}
 .gv-segmenu .gv-sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
 [data-mode=present] .gv-more,[data-mode=present] #psScrim{display:none!important}
-body[data-view=dash] .tb-mode,body[data-view=dash] .zctrl,body[data-view=dash] #gvColItem,body[data-view=dash] #gvPreviewItem,body[data-view=dash] .v3menu hr.gv-ganttonly{display:none!important}
+body[data-view=dash] .tb-mode,body[data-view=dash] .zctrl,body[data-view=dash] #gvColItem,body[data-view=dash] #gvPreviewItem,body[data-view=dash] .v3menu hr.gv-ganttonly:not(.gv-exp){display:none!important}
 .db-rmkt{font-size:12.5px;color:var(--text-main);padding:6px 4px;overflow-wrap:anywhere;white-space:pre-wrap}
 @media print{#bookBar{display:none}}
 </style>
@@ -1398,14 +1404,18 @@ window.addEventListener('storage', function(e){
     <span class="nb-grow"></span>
     <span class="nb-sync v3-edit-only" id="bbSync" aria-live="polite"><i></i><span>Loading…</span></span>
     <div class="mode" role="group" aria-label="View mode"><button type="button" id="bbModeEdit" onclick="setViewMode('edit')">Edit</button><button type="button" id="bbModePresent" onclick="setViewMode('present')">Present</button></div>
-    <span class="v3dd"><button type="button" class="btn pri" id="bbShareBtn" onclick="v3Menu(event,this)" aria-haspopup="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>Share</button>
+    <span class="v3dd"><button type="button" class="btn pri" id="bbShareBtn" onclick="v3Menu(event,this)" aria-haspopup="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>Export</button>
         <div class="v3menu">
+          <div class="v3lab">Dashboard report (status, gauges, gates)</div>
           <button type="button" onclick="shareCurrent()">This project<small>1-page PDF</small></button>
           <button type="button" id="bbShareAllItem" onclick="shareAllPDF()">All projects<small>one PDF</small></button>
           <hr>
-          <div class="v3lab">Pictures for PowerPoint</div>
+          <div class="v3lab">Dashboard slides for PowerPoint</div>
           <button type="button" onclick="exportPptPNG(false)">This project<small>16:9 PNG</small></button>
           <button type="button" onclick="exportPptPNG(true)">All projects<small>PNG each</small></button>
+          <hr class="gv-ganttonly gv-exp">
+          <div class="v3lab gv-ganttonly">Gantt chart (timeline with all tasks)</div>
+          <button type="button" class="gv-ganttonly" onclick="v3CloseMenus();setGanttView(false);openPreview()">Preview and export<small>PNG / PDF</small></button>
         </div></span>
     <span class="v3dd v3-edit-only"><button type="button" class="btn ic" id="bbMoreBtn" title="More" aria-label="More options" aria-haspopup="menu" onclick="v3Menu(event,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="19" cy="12" r="1.2" fill="currentColor"/></svg></button>
       <div class="v3menu">
@@ -1561,7 +1571,12 @@ window.addEventListener('storage', function(e){
 
   <main class="parea" id="previewArea" style="display:none">
     <div class="ptbar">
-      <span class="plbl">Live Preview &mdash; updates automatically</span>
+      <span class="plbl"><b>Gantt chart</b> &middot; export preview, updates as you edit</span>
+      <div class="pexp">
+        <button type="button" class="pri" onclick="gvExportPNG()" title="The whole Gantt chart as one sharp picture">Download Gantt PNG</button>
+        <button type="button" class="pri" onclick="exportPDF()" title="The whole Gantt chart on A4 landscape pages; long plans continue on the next page with the header repeated">Save Gantt as PDF</button>
+        <button type="button" onclick="closePreview()">Close</button>
+      </div>
       <div class="zctrl">
         <button onclick="adjZoom(-0.1)">&#8722;</button>
         <span id="zlbl">100%</span>
@@ -4647,7 +4662,7 @@ function gvDay(d){ if(!d||isNaN(d.getTime())) return '–'; return d.getDate()+'
 function gvDayLong(d){ if(!d||isNaN(d.getTime())) return ''; return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+GV_MON[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():''); }
 function gvWks(w){ w=Math.round(w*10)/10; return w+' wk'+(w===1?'':'s'); }
 function gvLenText(t){ if(t.milestone) return 'Milestone'; var n=+t.dur||0; return t.durUnit==='days'?n+' day'+(n===1?'':'s'):gvWks(n); }
-function gvInitials(n){ var w=String(n||'').trim().split(/[\s,\/&+]+/).filter(Boolean); if(!w.length) return ''; return (w[0].charAt(0)+(w[1]?w[1].charAt(0):w[0].charAt(1))).toUpperCase(); }
+function gvInitials(n){ var w=String(n||'').replace(/[()\[\]{}.\-_:;]+/g,' ').trim().split(/[\s,\/&+]+/).filter(Boolean); if(!w.length) return ''; return (w[0].charAt(0)+(w[1]?w[1].charAt(0):w[0].charAt(1))).toUpperCase(); }
 function gvAvTone(n){ var h=0; n=String(n||'').toLowerCase(); for(var i=0;i<n.length;i++) h=(h*31+n.charCodeAt(i))>>>0; return h%5; }
 /* the table's own defaults for the columns (applied once to plans saved before Phase 2) */
 var GV_COL_DEFAULTS={status:true,resp:true,gvStart:true,gvFinish:true,gvDur:true,gvPred:true,gvSeg:false,milestone:false,lag:false,link:false};
@@ -5136,14 +5151,7 @@ function openPreview(){
      below a full-height .gv and was clipped by .ws{overflow:hidden}. */
   pa.style.display='block';
   pa.classList.add('preview-open');
-  if(!document.getElementById('previewCloseBtn')){
-    var b=document.createElement('button');
-    b.id='previewCloseBtn'; b.className='preview-close';
-    b.textContent='✕  Close Preview';
-    b.onclick=closePreview;
-    document.body.appendChild(b);
-  }
-  document.getElementById('previewCloseBtn').style.display='block';
+  var ob=document.getElementById('previewCloseBtn'); if(ob) ob.style.display='none';   /* Close now sits in the preview bar */
   renderGantt();
 }
 function closePreview(){
@@ -5952,10 +5960,12 @@ function renderGantt(){
   /* ---- columns (same as the table on screen) ---- */
   var CK=[['status','Status',100],['resp','Owner',112],['gvStart','Start',74],['gvFinish','Finish',74],['gvDur','Length',66],['gvPred','Depends on',70]].filter(function(c){ return !!colVis[c[0]]; });
   if(act&&colVis.variance) CK.push(['_var','Variance',60]);
-  var PL=16, PR=16, CID=28, CTK=232, LEFT=CID+CTK; CK.forEach(function(c){ LEFT+=c[2]; });
   var shown=function(t){ return !!activePhases[t.phase]; };   /* a phase hidden in Project settings is left out of the export, as on screen */
+  /* Task column fits the longest task name (milestone diamond included), between 232 and 380 px; only longer names get "…" */
+  var nameW=0; tasks.forEach(function(t){ if(shown(t)) nameW=Math.max(nameW,tw(t.name,10,600)+((t.milestone||durW(t)===0)?13:0)); });
+  var PL=16, PR=16, CID=28, CTK=Math.round(Math.max(232,Math.min(380,nameW+18))), LEFT=CID+CTK; CK.forEach(function(c){ LEFT+=c[2]; });
   var maxW=1; tasks.forEach(function(t){ if(!shown(t)) return; maxW=Math.max(maxW,(starts[t.id]||1)+durW(t)); if(act&&(t.actStart||t.actDur)) maxW=Math.max(maxW,(t.actStart||starts[t.id]||1)+(t.actDur>0?t.actDur:durW(t))); });
-  var TW=Math.ceil(Math.max(maxW+3,20)), TARGET_W=1400;
+  var TW=Math.ceil(Math.max(maxW+3,20)), TARGET_W=Math.max(1400,LEFT+PL+PR+TW*16);
   var WW=Math.max(12,Math.min(28,Math.floor((TARGET_W-PL-PR-LEFT)/TW)));
   var CX=PL+LEFT, W=CX+TW*WW+PR;
   var LH=84, MH=44, YR=18, MO=26, HH=62, RH=24, PHR=26;
@@ -6002,10 +6012,11 @@ function renderGantt(){
   }
 
   /* ---- rows ---- */
-  var y=y0+HH, bg='', grid='', tbl='', fg='', bpos={}, lastPh=null, ri=0, used={}, nRows=0;
+  var y=y0+HH, bg='', grid='', tbl='', fg='', bpos={}, lastPh=null, ri=0, used={}, nRows=0, rowTops=[];
   tasks.forEach(function(t,ti){
     if(!shown(t)) return;
     if(t.phase!==lastPh){
+      rowTops.push({y:y,phase:1});
       lastPh=t.phase; var pc=phaseClr(t.phase), nm=(PLABEL[t.phase]||t.phase)+' phase', sum=phaseSummaryFor(t.phase,starts), mid=y+PHR/2;
       var cnt=tasks.filter(function(q){ return q.phase===t.phase; }).length;
       bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+PHR+'" fill="'+gvMix(pc,'#FFFFFF',0.09)+'"/><line x1="0" y1="'+(y+PHR-.5)+'" x2="'+W+'" y2="'+(y+PHR-.5)+'" stroke="'+X.line+'"/>';
@@ -6019,6 +6030,7 @@ function renderGantt(){
           if(gvPhaseSummaryIn==='chart'||gvPhaseSummaryIn==='both'){ var lw=tw(rng,8.5,400), lxx=pbx+pbw+6, la='start'; if(lxx+lw>W-PR){ lxx=pbx-6; la='end'; } if(la==='start'||lxx-lw>CX) fg+=T(lxx,mid+3.5,rng,{fs:8.5,c:X.mu,a:la}); } } }
       y+=PHR; nRows++;
     }
+    rowTops.push({y:y});
     var st=starts[t.id]||1, dw=durW(t), stt=taskStatus(t,starts,today), crit=!!critMap[t.id], mid=y+RH/2;
     if(crit){ bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+RH+'" fill="'+gvMix(X.bad,'#FFFFFF',0.08)+'"/><rect x="0" y="'+y+'" width="3" height="'+RH+'" fill="'+X.bad+'" opacity=".75"/>'; used.crit=1; }
     else if(ri%2) bg+='<rect x="0" y="'+y+'" width="'+W+'" height="'+RH+'" fill="'+X.alt+'"/>';
@@ -6076,8 +6088,11 @@ function renderGantt(){
   var arr='';
   if(colVis.arrows) tasks.forEach(function(at,ai){ resolvePredsForTask(at,ai).forEach(function(pid){
     var f=bpos[pid], to=bpos[at.id]; if(!f||!to) return;
-    var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, mx2=Math.max(x1+6,x2-6), cc=critMap[pid]&&critMap[at.id], ac=cc?X.bad:X.mu;
-    arr+='<path d="M'+x1+' '+y1+' H'+mx2+' V'+y2+' H'+x2+'" fill="none" stroke="'+ac+'" stroke-width="'+(cc?1.4:1)+'" opacity="'+(cc?.85:.5)+'"/><path d="M'+x2+' '+y2+' l-4.5 -3 l0 6 z" fill="'+ac+'" opacity="'+(cc?.9:.65)+'"/>'; }); });
+    var x1=f.x+f.w, y1=f.midY, x2=to.x, y2=to.midY, cc=critMap[pid]&&critMap[at.id], ac=cc?X.bad:X.mu, d;
+    if(x2-x1>=10) d='M'+x1+' '+y1+' H'+(x2-6)+' V'+y2+' H'+x2;                       /* room: one elbow just before the bar */
+    else { var gy=y2+(y2>y1?-1:1)*(RH/2), ex=x1+6, ix=Math.max(CX+2,x2-8);           /* no room: down to the row gap, back left, in */
+      d='M'+x1+' '+y1+' H'+ex+' V'+gy+' H'+ix+' V'+y2+' H'+x2; }
+    arr+='<path d="'+d+'" fill="none" stroke="'+ac+'" stroke-width="'+(cc?1.4:1)+'" stroke-linejoin="round" opacity="'+(cc?.85:.5)+'"/><path d="M'+x2+' '+y2+' l-4.5 -3 l0 6 z" fill="'+ac+'" opacity="'+(cc?.9:.65)+'"/>'; }); });
   /* today: red dashed line with a pill on the week row */
   var tdy='', todayW=weekFromDate(toISODate(new Date()),sd);
   if(colVis.today_col&&todayW!==null&&todayW>=1&&todayW<=TW+1){ var tx=CX+(todayW-1)*WW, px=Math.min(Math.max(tx,CX+21),W-PR-21);   /* pill stays inside the timeline */
@@ -6109,6 +6124,31 @@ function renderGantt(){
     +'<defs><style>'+SVG_FONTS+'</style></defs><rect width="'+W+'" height="'+H+'" fill="'+X.bg+'"/>'
     +hd+cal+bg+grid+tbl+fg+arr+tdy+ft+'</svg>';
   gc.innerHTML=s;
+  gvExportLayout={W:W,H:H,headEnd:y0+HH,bodyEnd:bodyEnd,rowTops:rowTops};   /* used by the PNG / PDF export */
+}
+var gvExportLayout=null;
+function gvExportName(kind){
+  var td=new Date(), dd=String(td.getFullYear())+String(td.getMonth()+1).padStart(2,'0')+String(td.getDate()).padStart(2,'0');
+  var proj=String((document.getElementById('iProj')||{}).value||'Project').replace(/[\\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim()||'Project';
+  return dd+' - '+proj+' - Gantt'+(kind?'.'+kind:'');
+}
+/* The whole Gantt chart as one PNG, at 2x for sharp text — always the full chart, whatever the preview zoom or scroll. */
+function gvExportPNG(){
+  renderGantt();
+  var svgEl=document.querySelector('#gc svg'); if(!svgEl){ alert('No chart to export.'); return; }
+  var L=gvExportLayout, W=L.W, H=L.H, k=Math.min(2, 16000/Math.max(W,H));   /* stay under the browser's canvas limit */
+  var url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(svgEl));
+  var img=new Image();
+  img.onload=function(){
+    var c=document.createElement('canvas'); c.width=Math.round(W*k); c.height=Math.round(H*k);
+    var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(function(b){ if(!b){ alert('Could not make the picture.'); return; }
+      var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=gvExportName('png'); document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1500);
+      if(typeof gvToast==='function') gvToast('Saved the Gantt chart (PNG)'); },'image/png');
+  };
+  img.onerror=function(){ alert('Could not make the picture.'); };
+  img.src=url;
 }
 
 /* ---- Helpers ---- */
@@ -6133,51 +6173,60 @@ function adjZoom(d){
   c.parentElement.style.minHeight=(c.scrollHeight*zoom+80)+'px';
   document.getElementById('zlbl').textContent=Math.round(zoom*100)+'%';
 }
+/* Gantt chart as a PDF, A4 landscape. The chart is fitted to the page width so text stays readable;
+   a long chart is split between rows over several pages, each with the title and calendar header
+   repeated, and the legend on the last page. */
 function exportPDF(){
-  var svgEl = document.querySelector('#gc svg');
-  if (!svgEl) { alert('No chart to export.'); return; }
-
-  // Get true SVG dimensions
-  var svgW = parseFloat(svgEl.getAttribute('width')||svgEl.viewBox.baseVal.width||1200);
-  var svgH = parseFloat(svgEl.getAttribute('height')||svgEl.viewBox.baseVal.height||600);
-
-  // Serialize SVG with all styles inlined
-  var svgData = new XMLSerializer().serializeToString(svgEl);
-
-  // A4 landscape printable area at 96dpi: ~1050 x 740px usable
-  var pageW = 1050, pageH = 740;
-  var scale = Math.min(pageW / svgW, pageH / svgH);
-  var dispW = Math.round(svgW * scale);
-  var dispH = Math.round(svgH * scale);
-
-  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-    '<title>Gantt Chart</title>' +
-    '<style>' +
-    '*{margin:0;padding:0;box-sizing:border-box}' +
-    'html,body{width:' + dispW + 'px;height:' + dispH + 'px;background:#fff;overflow:hidden}' +
-    'svg{display:block;width:' + dispW + 'px!important;height:' + dispH + 'px!important}' +
-    '@page{size:A4 landscape;margin:6mm}' +
-    '@media print{' +
-    'html,body{width:100%;height:auto}' +
-    'svg{width:100%!important;height:auto!important;max-height:100vh}' +
-    '}' +
-    '</style></head><body>' +
-    svgData +
-    '<script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};}<\/script>' +
-    '</body></html>';
-
-  // Same filename as Excel export
-  var today2=new Date();
-  var dd2=String(today2.getFullYear())+String(today2.getMonth()+1).padStart(2,'0')+String(today2.getDate()).padStart(2,'0');
-  var proj2=(document.getElementById('iProj').value||'GanttChart').trim();
-  var pdfName=dd2+' - Timeline - '+proj2;
-
-  var win = window.open('','_blank','width='+dispW+',height='+dispH);
-  if (!win) { alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
-  // Inject suggested filename via title so browser uses it when saving PDF
-  html = html.replace('<title>Gantt Chart</title>', '<title>'+pdfName+'</title>');
-  win.document.write(html);
-  win.document.close();
+  renderGantt();
+  var svgEl=document.querySelector('#gc svg'); if(!svgEl||!gvExportLayout){ alert('No chart to export.'); return; }
+  var L=gvExportLayout, W=L.W, H=L.H;
+  var PW=1123-2*30, PH=794-2*30;                  /* A4 landscape at 96 dpi, less 8 mm margins */
+  var k=PW/W;                                      /* fit to width */
+  var pages=[];                                    /* [top, bottom] slices of the body */
+  if(H*k<=PH) pages=[[0,H,true]];
+  else if(PH/H>=k*0.82){ k=PH/H; pages=[[0,H,true]]; }   /* only a little too tall: shrink onto one page */
+  else {
+    var room=PH/k-L.headEnd, foot=H-L.bodyEnd, tops=L.rowTops.map(function(r){ return r.y; }).concat([L.bodyEnd]);
+    var start=L.headEnd, i=0;
+    while(start<L.bodyEnd){
+      var end=start, j=i;
+      while(j+1<tops.length && tops[j+1]-start<=room){ j++; end=tops[j]; }
+      if(end===start){ j=Math.min(i+1,tops.length-1); end=tops[j]; }      /* one row always fits; guard anyway */
+      /* do not leave a phase heading alone at the bottom of a page */
+      if(end<L.bodyEnd && j-1>i && L.rowTops[j-1] && L.rowTops[j-1].phase){ j--; end=tops[j]; }
+      pages.push([start,end,false]); start=end; i=j;
+    }
+    /* legend goes under the last slice if it fits, else on a page of its own */
+    var last=pages[pages.length-1];
+    if((last[1]-last[0])+foot<=room){ last[1]=H; last[2]=true; } else pages.push([L.bodyEnd,H,true,true]);
+  }
+  var data=new XMLSerializer().serializeToString(svgEl), defs=data.indexOf('<defs>'), defsEnd=data.indexOf('</defs>')+7;
+  var fonts=data.slice(defs,defsEnd), inner=data.slice(data.indexOf('>',data.indexOf('<svg'))+1, data.lastIndexOf('</svg>')).replace(fonts,'');
+  var NS='http://www.w3.org/2000/svg';
+  var view=function(y0,h){ var dw=Math.round(W*k), dh=Math.round(h*k);
+    return '<svg xmlns="'+NS+'" width="'+dw+'" height="'+dh+'" viewBox="0 '+y0+' '+W+' '+h+'" preserveAspectRatio="xMinYMin meet"><use href="#gvAll"/></svg>'; };
+  var body='<svg xmlns="'+NS+'" width="0" height="0" style="position:absolute">'+fonts.replace('</defs>','<g id="gvAll" font-family="Geist,Segoe UI,Arial,sans-serif">'+inner+'</g></defs>')+'</svg>';
+  pages.forEach(function(p,n){
+    body+='<section class="pg">';
+    if(p.length<4) body+=view(0,p[0]===0?Math.min(p[1],H):L.headEnd);                   /* header (whole chart on a one-page export) */
+    if(p[0]!==0) body+=view(p[0],p[1]-p[0]);
+    if(pages.length>1) body+='<div class="pn">Page '+(n+1)+' of '+pages.length+'</div>';
+    body+='</section>';
+  });
+  var name=gvExportName('');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+name.replace(/</g,'')+'</title><style>'
+    +'*{margin:0;padding:0;box-sizing:border-box}html,body{background:#fff}'
+    +'@page{size:A4 landscape;margin:8mm}'
+    +'.pg{width:'+PW+'px;height:'+PH+'px;position:relative;overflow:hidden;break-after:page;page-break-after:always}'
+    +'.pg:last-child{break-after:auto;page-break-after:auto}.pg svg{display:block}'
+    +'.pn{position:absolute;right:0;bottom:0;font:10px Geist,Segoe UI,Arial,sans-serif;color:#8a94a6}'
+    +'@media screen{body{background:#e9edf2;padding:16px}.pg{background:#fff;margin:0 auto 16px;box-shadow:0 1px 4px rgba(0,0,0,.15)}}'
+    +'</style></head><body>'+body
+    +'<script>window.onload=function(){setTimeout(function(){window.print();},350);window.onafterprint=function(){window.close();};}<\/script></body></html>';
+  var win=window.open('','_blank','width=1180,height=860');
+  if(!win){ alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
+  win.document.write(html); win.document.close();
+  if(typeof gvToast==='function') gvToast('Opening print — choose "Save as PDF"');
 }
 
 /* ===== One Excel file per customer =====

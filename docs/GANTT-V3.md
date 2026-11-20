@@ -154,6 +154,23 @@ Present mode shows the TPAC logo.
   embedded in the chart image (`SVG_FONTS`). DM Sans, DM Mono, Tomorrow and Google Sans are gone; Excel stays Calibri.
   The in-app preview shows the export's own fonts. The old default note about bar colours now says "Bar colours show
   the segment (see the legend)".
+- Gantt export (Nov 2026). The Export button (was "Share") is split into labelled sections: "Dashboard report"
+  (1-page PDF, all projects PDF), "Dashboard slides for PowerPoint" (PNG) and "Gantt chart" → Preview and export.
+  The preview's top bar says "Gantt chart · export preview" and has **Download Gantt PNG**, **Save Gantt as PDF** and
+  Close (the floating close button is gone). Both always export the whole chart, whatever the zoom or scroll.
+  - PNG (`gvExportPNG`): the full chart at 2x (kept under 16000 px), file `YYYYMMDD - <project> - Gantt.png`.
+  - PDF (`exportPDF`): A4 landscape, fitted to the page width. A chart that is only a little too tall is shrunk onto
+    one page; a longer one is split between rows (never leaving a gate heading alone at a page foot), with the
+    title strip and calendar header repeated on every page, the notes and legend on the last, and "Page n of m".
+    `renderGantt` records the row positions in `gvExportLayout` for this.
+  - The Task column widens to fit the longest name (232–380 px); only longer names get "…". Owner initials skip
+    brackets ("PJM (FN)" → "PJ"). Arrows to a task that starts before its predecessor ends now drop into the gap
+    between rows and come back left, instead of doubling back over the bar.
+- Milestone dates (Nov 2026): a milestone finishes the day it starts (Finish no longer shows the day before Start),
+  in the table, export, PDFs and Excel. Picking a Finish date for a milestone moves the milestone. No finish date is
+  ever before its start (plan and actual). A gate made only of milestones reads "11 Dec · milestone"; a gate
+  shorter than a week shows days ("2 days") instead of "0 wks".
+  - The preview card's bottom no longer shows the chart's square corner over the rounded card.
 - Screen type like V2 (`#v2type`): card headings, panel titles and the date picker month use the look's heading font
   and weight; codes, dates and day counts use the look's mono font. The old V3 stylesheet's fixed fonts are removed.
 

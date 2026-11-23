@@ -821,6 +821,26 @@ body{padding:0}
 .fm-sel{position:relative}
 .fm-sel select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer}
 .fm-sel::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;border-right:1.8px solid var(--mu);border-bottom:1.8px solid var(--mu);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+/* person picker: a text box that looks like the selects, with its own list (#pp) */
+#form .fm-person input{padding-right:40px;text-overflow:ellipsis;cursor:text}
+.fm-person::after{transition:transform calc(200ms*var(--k)) var(--ease-out)}
+.fm-person.open::after{transform:translateY(-25%) rotate(-135deg)}
+#pp{position:fixed;z-index:73;overflow:hidden;border-radius:calc(var(--r-sm) + 6px);background:color-mix(in srgb,var(--surf-solid) 97%,transparent);border:1px solid var(--line-2);box-shadow:0 24px 60px -18px rgba(0,0,0,.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:var(--tx);
+  opacity:0;transform:translateY(-6px);transition:opacity calc(140ms*var(--k)),transform calc(200ms*var(--k)) var(--ease-out)}
+#pp.up{transform:translateY(6px)}
+#pp.open{opacity:1;transform:none}
+.pp-in{overflow-y:auto;overscroll-behavior:contain;padding:6px;max-height:320px;scrollbar-width:thin}
+.pp-h{padding:10px 10px 4px;font:600 11px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+.pp-g+.pp-g{margin-top:4px;border-top:1px solid var(--line);padding-top:2px}
+.pp-o{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 10px;border-radius:calc(var(--r-sm) - 2px);cursor:pointer;font:500 14.5px/1.25 var(--fb);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.pp-o .pp-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-o .pj-av{width:24px;height:24px;font-size:10px}
+.pp-o.ext .pj-av{background:var(--line-2);color:var(--tx)}
+.pp-o.new .pj-av{background:none;border:1.5px dashed var(--line-2);color:var(--mu)}
+.pp-o.new .pp-n{color:var(--ac);font-weight:600}
+.pp-o>.i{flex:none;color:var(--ac)}
+.pp-o.hi{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.pp-none{padding:12px 10px;font-size:13px;color:var(--mu)}
 .fm-chips{display:flex;flex-wrap:wrap;gap:6px}
 .fm-chips button{padding:9px 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:none;color:var(--mu);font:600 13.5px var(--fb);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform calc(var(--spring-d)*var(--k)) var(--spring)}
 .fm-chips button:hover{color:var(--tx)}
@@ -990,6 +1010,7 @@ body{padding:0}
 @media (hover:none) and (pointer:coarse){
   input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select{font-size:16px!important}
   .ibtn,.fm-prod .ibtn,.dp-nav{width:44px;height:44px}
+  .pp-o{min-height:44px;font-size:16px}
   .fac{height:44px}
   .seg button{padding-top:12px;padding-bottom:12px}
   .cb{position:relative}
@@ -1187,7 +1208,7 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .ph h3{font:var(--w-emph) var(--t3)/var(--t3-l) var(--fb);letter-spacing:var(--t3-t)}
 :root[data-look="K"] .ph span{font:400 var(--sub)/var(--sub-l) var(--fb);letter-spacing:var(--sub-t);text-transform:none;color:var(--mu)}
 /* group labels (kit: list header "Nested" = Headline, secondary label, sentence case) */
-:root[data-look="K"] .tgroup,:root[data-look="K"] .sec,:root[data-look="K"] .fm-sec,:root[data-look="K"] .hero .eyebrow,:root[data-look="K"] #pop h4{font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t);text-transform:none;color:var(--mu)}
+:root[data-look="K"] .tgroup,:root[data-look="K"] .sec,:root[data-look="K"] .fm-sec,:root[data-look="K"] .hero .eyebrow,:root[data-look="K"] #pop h4,:root[data-look="K"] .pp-h{font:var(--w-hl) var(--hl)/var(--hl-l) var(--fb);letter-spacing:var(--body-t);text-transform:none;color:var(--mu)}
 :root[data-look="K"] .tgroup{padding:14px 0 6px}
 
 /* top bar */
@@ -1265,8 +1286,10 @@ html,body{height:var(--app-h,100%)}
 :root[data-look="K"] .fm-tog input:checked+i::after,:root[data-look="K"] .keep input:checked+.sw::after{transform:translateX(22px);background:#fff}
 
 /* menus, popovers, toasts, pickers, command bar: glass (kit material for floating controls) */
-:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd,:root[data-look="K"] .toast,:root[data-look="K"] .selbar{background:var(--glass-thick);border:1px solid var(--glass-bd);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
+:root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] #pp,:root[data-look="K"] .cmd,:root[data-look="K"] .toast,:root[data-look="K"] .selbar{background:var(--glass-thick);border:1px solid var(--glass-bd);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
 :root[data-look="K"] #pop,:root[data-look="K"] #dp,:root[data-look="K"] .cmd{border-radius:var(--r-card)}
+:root[data-look="K"] #pp{border-radius:calc(var(--r-sm) + 8px)}
+:root[data-look="K"] .pp-o{font:400 var(--body)/var(--body-l) var(--fb);letter-spacing:var(--body-t)}
 :root[data-look="K"] .toast{border-radius:var(--r-card);font:400 var(--sub)/var(--sub-l) var(--fb)}
 :root[data-look="K"] .looks button{border:0;background:var(--fill4);color:var(--tx);border-radius:var(--r-sm)}
 :root[data-look="K"] .looks button.on{box-shadow:0 0 0 2px var(--ac)}
@@ -1290,15 +1313,15 @@ html,body{height:var(--app-h,100%)}
    Content sits on the thin frosted material; colour only on the primary action, the current tab, late and at-risk work. */
 :root[data-look="K"] .ibtn,:root[data-look="K"] .sync{position:relative}
 :root[data-look="K"] .top .seg{background:var(--glass);border:1px solid var(--glass-bd);box-shadow:var(--glass-sh);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg){isolation:isolate}
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,#pp,.cmd,.selbar,.top .seg){isolation:isolate}
 :root[data-look="K"] #shelf{background:var(--glass-thick);border:1px solid var(--glass-bd);border-radius:var(--r-card);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-sh),0 20px 50px rgba(0,0,0,.18)}
 :root[data-look="K"] #shelf :is(.fac,.pin){height:40px;border-radius:16px;font:400 15px/20px var(--fb);letter-spacing:-.2px;color:var(--tx)}
 :root[data-look="K"] #shelf .fac.on{background:var(--sel)}
 :root[data-look="K"] .shelf-btn[aria-expanded="true"]{background:var(--sel)}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,#pp,.cmd,.selbar,.top .seg)::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:-1;
   background:linear-gradient(140deg,rgba(255,255,255,var(--rim-a)) 0%,rgba(255,255,255,var(--rim-m)) 34%,rgba(255,255,255,var(--rim-m)) 64%,rgba(255,255,255,var(--rim-b)) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+:root[data-look="K"] :is(.ibtn,.sync,#totop,.tabbar,.side,#pop,#shelf,.toast,#dp,#pp,.cmd,.selbar,.top .seg)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   background:radial-gradient(130% 90% at 50% -30%,rgba(255,255,255,var(--sheen)) 0%,rgba(255,255,255,0) 58%),
              radial-gradient(90px circle at var(--mx,-200px) var(--my,-200px),rgba(255,255,255,var(--glint)),rgba(255,255,255,0) 70%);
   mix-blend-mode:soft-light}
@@ -2915,6 +2938,32 @@ function people(extra){
   if (USERS.length < 2 && DB.data){ DB.data.projects.forEach(p => (p.tasks||[]).forEach(t => t.pic && set.add(t.pic))); DB.data.inquiries.forEach(i => (i.tasks||[]).forEach(t => t.pic && set.add(t.pic))); }
   if (set.size < 2){ set.add('Adam'); set.add("Muti'ah"); }
   return [...set].filter(Boolean).sort((a,b) => a.localeCompare(b));
+}
+/* names the "Person in charge" picker suggests: the team (accounts) first, then everyone else already named
+   as a PIC anywhere (project actions, inquiry tasks, next actions, personal task owners), so someone outside
+   the team who never signs in is spelled the same every time. Matching ignores case and extra spaces.
+   If the account list can't be read, there is no way to tell team from others, so it is one list. */
+const cleanName = s => String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+function picNames(extra){
+  const seen = new Map(), team = [], others = [], known = USERS.length >= 2;
+  const add = (n, to) => { n = cleanName(n); const k = n.toLowerCase(); if (!n || seen.has(k)) return; seen.set(k, n); to.push(n); };
+  (known ? [...USERS, meName()] : [meName()]).forEach(n => add(n, team));
+  const d = DB.data;
+  if (d){
+    (d.projects || []).forEach(p => (p.tasks || []).forEach(t => add(t.pic, others)));
+    (d.inquiries || []).forEach(i => { (i.tasks || []).forEach(t => add(t.pic, others)); (i.nextActions || []).forEach(na => add(na.pic, others)); });
+    (d.mtasks || []).forEach(t => add(t.owner, others));
+  }
+  (extra || []).forEach(n => add(n, others));
+  const az = (a, b) => a.localeCompare(b);
+  return known ? [{label:'Team', names: team.sort(az)}, {label:'Others', names: others.sort(az), ext: true}]
+               : [{label:'', names: [...team, ...others].sort(az)}];
+}
+/* the saved spelling: an existing name if it matches whatever the case, else the typed name tidied */
+function picResolve(v, extra){
+  const n = cleanName(v), k = n.toLowerCase(); if (!n) return '';
+  for (const g of picNames(extra)){ const hit = g.names.find(x => x.toLowerCase() === k); if (hit) return hit; }
+  return n;
 }
 
 /* ── project actions (V1 "Rolling Action Plan") ── */
@@ -4699,7 +4748,8 @@ document.addEventListener('scroll', e => { if (DP.el && !DP.el.classList.contain
 
 /* ══════════ FORMS: one dialog for every add / edit ══════════
    field: {k, label, type, value, req, ph, half, hint, options:[[v,l]], show: vals => bool}
-   types: text · textarea · date · number · select · chips · check · checks · products · sec */
+   types: text · textarea · date · number · select · person · chips · check · checks · products · sec
+   person: any typed name, with suggestions (see the person picker); {fallback} when left empty, {extra: names} to suggest too */
 const FM = { cfg: null, init: '', armed: false };
 const formOpen = () => $('#form').classList.contains('open');
 function fieldHTML(f){
@@ -4708,6 +4758,7 @@ function fieldHTML(f){
   let ctl = '';
   if (f.type === 'sec') return `<div class="fm-sec" data-fk="${f.k}">${esc(f.label)}</div>`;
   if (f.type === 'textarea') ctl = `<textarea id="${id}" data-k="${f.k}" rows="${f.rows || 3}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>`;
+  else if (f.type === 'person') ctl = `<div class="fm-sel fm-person"><input id="${id}" data-k="${f.k}" data-person type="text" value="${esc(v)}" placeholder="${esc(f.ph || 'Type a name')}" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="pp-lb" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done"></div>`;
   else if (f.type === 'select') ctl = `<div class="fm-sel"><select id="${id}" data-k="${f.k}">${f.options.map(([o, l]) => `<option value="${esc(o)}" ${String(o) === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
   else if (f.type === 'chips') ctl = `<div class="fm-chips" role="radiogroup" data-k="${f.k}" data-chips>${f.options.map(([o, l]) => `<button type="button" role="radio" data-v="${esc(o)}" class="${String(o) === String(v) ? 'on' : ''}" aria-checked="${String(o) === String(v)}">${esc(l)}</button>`).join('')}</div>`;
   else if (f.type === 'check') return `<div class="ff ${f.half ? 'half' : ''}" data-fk="${f.k}"><label class="fm-tog"><input type="checkbox" id="${id}" data-k="${f.k}" ${v ? 'checked' : ''}><i></i><span>${esc(f.label)}</span></label>${f.hint ? `<small>${esc(f.hint)}</small>` : ''}</div>`;
@@ -4729,6 +4780,7 @@ function readForm(){
     else if (f.type === 'checks') out[f.k] = $$('input:checked', box).map(x => x.value);
     else if (f.type === 'tags') out[f.k] = $$('[data-tagpick] button.on', box).map(b => b.dataset.v);
     else if (f.type === 'date') out[f.k] = $('.fm-date', box).dataset.v || '';
+    else if (f.type === 'person') out[f.k] = picResolve($('[data-k]', box).value, f.extra) || f.fallback || '';
     else if (f.type === 'products') out[f.k] = $$('.fm-prod', box).map(r => ({id: r.dataset.id, name: $('[data-pf="name"]', r).value.trim(), volume: parseFloat($('[data-pf="volume"]', r).value) || 0, cost: parseFloat($('[data-pf="cost"]', r).value) || 0})).filter(p => p.name);
     else { const el = $('[data-k]', box); out[f.k] = f.type === 'textarea' ? el.value.trim() : String(el.value).trim(); }
   });
@@ -4742,7 +4794,7 @@ function formSync(){
   if (rev){ const t = (vals.products || []).reduce((s, p) => s + p.volume * p.cost, 0); rev.textContent = t > 0 ? 'Est. revenue ' + fmtRM(t) + ' / yr' : ''; }
 }
 function openForm(cfg){
-  FM.cfg = cfg; FM.armed = false;
+  ppClose(); FM.cfg = cfg; FM.armed = false;
   const f = $('#form');
   f.innerHTML = `<div class="fm-card" role="dialog" aria-modal="true" aria-labelledby="fm-title">
     <div class="fm-head"><div style="min-width:0">${cfg.eyebrow ? `<span class="fm-eye">${esc(cfg.eyebrow)}</span>` : ''}<h2 id="fm-title">${esc(cfg.title)}</h2></div><button type="button" class="ibtn" data-fmx="cancel" aria-label="Close">${ico('x',18)}</button></div>
@@ -4755,7 +4807,7 @@ function openForm(cfg){
 }
 function closeForm(force){
   const f = $('#form'); if (!formOpen()) return true;
-  closeDP(false);
+  closeDP(false); ppClose();
   if (!force && FM.cfg && JSON.stringify(readForm()) !== FM.init && !FM.leave){
     FM.leave = true; formMsg('Unsaved changes. Press Esc again or Cancel to discard.'); nudge(); setTimeout(() => FM.leave = false, 3000); return false;
   }
@@ -4803,8 +4855,119 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); submitForm(); }
 }, true);
 
+/* ══════════ PERSON PICKER — "Person in charge" takes any name ══════════
+   A text box styled like the selects. Tapping it or typing opens a list (#pp, on <body> so the dialog
+   can't clip it): Team first, then Others (names already used), filtered as you type, and
+   Use "…" for a new name. ↑/↓ move, Enter picks, Esc closes the list, Tab keeps what was typed. */
+const PP = { el: null, input: null, items: [], hi: -1, typed: false, down: false };
+const ppExtra = inp => { const f = FM.cfg && FM.cfg.fields.find(x => x.k === inp.dataset.k); return f && f.extra; };
+const ppFallback = inp => { const f = FM.cfg && FM.cfg.fields.find(x => x.k === inp.dataset.k); return (f && f.fallback) || ''; };
+function ppOpen(inp){
+  if (PP.input && PP.input !== inp) ppClose();
+  PP.input = inp;
+  if (!PP.el){
+    const el = document.createElement('div'); el.id = 'pp';
+    el.innerHTML = `<div class="pp-in" role="listbox" id="pp-lb" aria-label="${esc((inp.closest('.ff') && $('label', inp.closest('.ff')) || {}).textContent || 'People')}"></div>`;
+    document.body.appendChild(el); PP.el = el;
+    requestAnimationFrame(() => el.classList.add('open'));
+  }
+  inp.setAttribute('aria-expanded', 'true'); inp.parentElement.classList.add('open');
+  ppRender(); ppPlace(); ppHi(PP.hi, true);
+}
+function ppClose(){
+  const el = PP.el, inp = PP.input;
+  PP.el = null; PP.input = null; PP.items = []; PP.hi = -1; PP.typed = false; PP.down = false;
+  if (inp){ inp.setAttribute('aria-expanded', 'false'); inp.removeAttribute('aria-activedescendant'); inp.parentElement.classList.remove('open'); }
+  if (el){ el.classList.remove('open'); $$('[id]', el).forEach(x => x.removeAttribute('id')); setTimeout(() => el.remove(), 180); }
+}
+function ppRender(){
+  const inp = PP.input, box = PP.el && $('.pp-in', PP.el); if (!inp || !box) return;
+  const typed = cleanName(inp.value), q = PP.typed ? typed.toLowerCase() : '', cur = typed.toLowerCase();
+  const rank = n => { const l = n.toLowerCase(); if (!q) return 0; if (l.startsWith(q)) return 0; if (l.split(/[\s.'’-]+/).some(w => w.startsWith(q))) return 1; return l.includes(q) ? 2 : -1; };
+  const groups = picNames(ppExtra(inp)), items = []; let html = '', exact = false;
+  groups.forEach((g, gi) => {
+    const ns = g.names.map(n => [n, rank(n)]).filter(x => x[1] >= 0).sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0])).map(x => x[0]);
+    if (!ns.length) return;
+    html += `<div class="pp-g" role="group"${g.label ? ` aria-labelledby="pp-h${gi}"` : ''}>${g.label ? `<div class="pp-h" id="pp-h${gi}" role="presentation">${esc(g.label)}</div>` : ''}`;
+    ns.forEach(n => { const i = items.length, on = n.toLowerCase() === cur; if (q && n.toLowerCase() === q) exact = true;
+      items.push(n); html += `<div class="pp-o${g.ext ? ' ext' : ''}" role="option" id="pp-o${i}" data-i="${i}" aria-selected="false"><span class="pj-av" aria-hidden="true">${initials(n)}</span><span class="pp-n">${esc(n)}</span>${on ? ico('check', 16) : ''}</div>`; });
+    html += '</div>';
+  });
+  if (q && !exact){ const i = items.length; items.push(typed);
+    html += `<div class="pp-g" role="group"><div class="pp-o new" role="option" id="pp-o${i}" data-i="${i}" aria-selected="false"><span class="pj-av" aria-hidden="true">${ico('plus', 13)}</span><span class="pp-n">Use “${esc(typed)}”</span></div></div>`; }
+  if (!items.length) html = '<div class="pp-none">Type a name</div>';
+  box.innerHTML = html; PP.items = items;
+  ppHi(q ? 0 : items.findIndex(n => n.toLowerCase() === cur), !q);
+}
+function ppHi(i, center){
+  PP.hi = i; const box = PP.el && $('.pp-in', PP.el); if (!box) return;
+  $$('.pp-o', box).forEach(o => { const on = +o.dataset.i === i; o.classList.toggle('hi', on); o.setAttribute('aria-selected', on); });
+  const o = i >= 0 && $(`#pp-o${i}`, box);
+  if (o){ PP.input.setAttribute('aria-activedescendant', o.id); o.scrollIntoView({block: center ? 'center' : 'nearest'}); }
+  else PP.input.removeAttribute('aria-activedescendant');
+}
+function ppPlace(){
+  const el = PP.el, inp = PP.input; if (!el || !inp) return;
+  const r = inp.getBoundingClientRect(), vv = window.visualViewport;
+  const vt = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight, vl = vv ? vv.offsetLeft : 0, vw = vv ? vv.width : innerWidth;
+  /* the field scrolled out of the dialog: close rather than float over the header */
+  const body = inp.closest('.fm-body'), br = body && body.getBoundingClientRect();
+  if (br && (r.bottom < br.top + 8 || r.top > br.bottom - 8)){ ppClose(); return; }
+  const w = Math.min(Math.max(r.width, 240), vw - 16), left = Math.max(vl + 8, Math.min(r.left, vl + vw - w - 8));
+  const below = vt + vh - r.bottom - 14, above = r.top - vt - 14, box = $('.pp-in', el);
+  const st = box.scrollTop; box.style.maxHeight = 'none'; const need = box.scrollHeight;
+  const up = below < Math.min(need, 220) && above > below, room = Math.max(96, up ? above : below);
+  box.style.maxHeight = Math.min(320, room) + 'px'; box.scrollTop = st;
+  el.style.width = w + 'px'; el.style.left = left + 'px';
+  el.style.top = (up ? r.top - 6 - el.offsetHeight : r.bottom + 6) + 'px';
+  el.classList.toggle('up', up);
+}
+function ppPick(i){
+  const inp = PP.input; if (!inp || i < 0 || i >= PP.items.length) return;
+  inp.value = PP.items[i]; ppClose();
+  const box = inp.closest('.ff'); if (box){ box.classList.remove('bad'); const e = $('.fm-err', box); if (e) e.textContent = ''; }
+  if (FM.cfg) formSync();
+  if (finePointer) inp.focus({preventScroll: true}); else inp.blur();
+}
+/* leaving the field: tidy what was typed, match an existing name's spelling, empty → the default */
+function ppCommit(inp){ inp.value = picResolve(inp.value, ppExtra(inp)) || ppFallback(inp); if (FM.cfg) formSync(); }
+document.addEventListener('focusin', e => { const inp = e.target.closest && e.target.closest('[data-person]'); if (inp) setTimeout(() => { if (document.activeElement === inp) try { inp.select(); } catch(x){} }, 0); });
+document.addEventListener('focusout', e => {
+  const inp = e.target.closest && e.target.closest('[data-person]'); if (!inp) return;
+  setTimeout(() => { if (document.activeElement === inp || PP.down) return; if (PP.input === inp) ppClose(); if (inp.isConnected) ppCommit(inp); }, 120);
+});
+document.addEventListener('click', e => { const inp = e.target.closest('[data-person]'); if (inp && PP.input !== inp){ ppOpen(inp); try { inp.select(); } catch(x){} } });
+document.addEventListener('input', e => { const inp = e.target.closest('[data-person]'); if (!inp) return; if (PP.input !== inp) ppOpen(inp); PP.typed = true; ppRender(); ppPlace(); }, true);
+document.addEventListener('keydown', e => {
+  const inp = e.target.closest && e.target.closest('[data-person]'); if (!inp || e.isComposing) return;
+  const open = PP.input === inp, n = PP.items.length;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    e.preventDefault();
+    if (!open){ ppOpen(inp); return; }
+    if (!n) return;
+    const d = e.key === 'ArrowDown' ? 1 : -1; ppHi(PP.hi < 0 ? (d > 0 ? 0 : n - 1) : (PP.hi + d + n) % n);
+  } else if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && open && PP.hi >= 0){ e.preventDefault(); e.stopPropagation(); ppPick(PP.hi); }
+  else if (e.key === 'Escape' && open){ e.preventDefault(); e.stopPropagation(); ppClose(); }
+  else if (e.key === 'Tab' && open) ppClose();
+}, true);
+/* the list: mouse keeps focus in the box; a finger may scroll it, so only a tap (click) picks */
+addEventListener('pointerdown', e => {
+  if (!PP.el) return;
+  if (PP.el.contains(e.target)){ PP.down = true; if (e.pointerType === 'mouse') e.preventDefault(); return; }
+  if (PP.input && !PP.input.contains(e.target)){ const inp = PP.input; ppClose(); if (document.activeElement !== inp) ppCommit(inp); }
+}, true);
+addEventListener('mousedown', e => { if (PP.el && PP.el.contains(e.target)) e.preventDefault(); }, true);
+addEventListener('pointerup', () => { if (PP.down) setTimeout(() => PP.down = false, 0); }, true);
+addEventListener('pointercancel', () => { PP.down = false; }, true);
+document.addEventListener('click', e => { if (!PP.el || !PP.el.contains(e.target)) return; e.stopPropagation(); const o = e.target.closest('.pp-o'); if (o) ppPick(+o.dataset.i); }, true);
+document.addEventListener('mousemove', e => { if (!PP.el) return; const o = e.target.closest && e.target.closest('#pp .pp-o'); if (o && +o.dataset.i !== PP.hi) ppHi(+o.dataset.i); });
+document.addEventListener('scroll', e => { if (PP.el && !PP.el.contains(e.target)) ppPlace(); }, true);
+addEventListener('resize', () => { if (PP.el) ppPlace(); });
+if (window.visualViewport){ visualViewport.addEventListener('resize', () => { if (PP.el) ppPlace(); }); visualViewport.addEventListener('scroll', () => { if (PP.el) ppPlace(); }); }
+
 /* ── option lists (same values V1 saves) ── */
 const peopleOpts = (cur, blank) => [...(blank ? [['', blank]] : []), ...people(cur).map(n => [n, n])];
+const picField = cur => ({k:'pic', label:'Person in charge', type:'person', half:true, value: cur || meName(), fallback: meName()});
 function factoryOpts(cur){ const s = new Set(Object.keys(FAC_COLORS)); if (DB.data) [...DB.data.inquiries, ...DB.data.projects].forEach(x => facOf(x) && s.add(facOf(x))); if (cur) s.add(cur); return [['', '— Not set —'], ...[...s].map(f => [f, f])]; }
 const TASK_ST = [['todo','To do'],['inprogress','In progress'],['awaiting-reply','Awaiting reply'],['done','Done']];
 const SS_ST = [['not-started','Not started'],['ongoing','Ongoing'],['pending','Pending'],['completed','Completed'],['blocked','Blocked']];
@@ -4836,7 +4999,7 @@ function formProjTask(projId, key, preset){
   openForm({ eyebrow: p.code || p.name, title: t ? 'Edit action' : 'New action', submit: t ? 'Save' : 'Add action',
     fields: [
       {k:'name', label:'Action', req:true, value: t ? t.name : preset ? preset.name : '', ph:'e.g. Send drawing to factory for review'},
-      {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
+      picField(t && t.pic),
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : todayStr()},
       {k:'status', label:'Status', type:'chips', value: t ? t.status || (t.done ? 'done' : 'todo') : 'todo', options: TASK_ST},
       {k:'reminder', label:'Chase on', type:'date', value: t ? t.reminder || '' : addWorkDays(todayStr(), 3), hint:'If no reply by this day it shows under Awaiting reply.', show: v => v.status === 'awaiting-reply'},
@@ -4858,7 +5021,7 @@ function formInqTask(inqId, key, preset){
   openForm({ eyebrow: i.code || i.name, title: t ? 'Edit task' : 'New task', submit: t ? 'Save' : 'Add task',
     fields: [
       {k:'name', label:'Task', req:true, value: t ? t.name : preset ? preset.name : '', ph:'e.g. Follow up mold quote'},
-      {k:'pic', label:'Person in charge', type:'select', half:true, value: t ? t.pic || meName() : meName(), options: peopleOpts(t && t.pic)},
+      picField(t && t.pic),
       {k:'deadline', label:'Deadline', type:'date', half:true, value: t ? t.deadline || '' : preset ? preset.deadline : addWorkDays(todayStr(), 2)},
       ...tagField(t && t.tags),
     ],
@@ -4872,7 +5035,7 @@ function formInqNA(inqId, key, preset){
   openForm({ eyebrow: i.code || i.name, title: na ? 'Edit next action' : 'New next action', submit: na ? 'Save' : 'Add',
     fields: [
       {k:'action', label:'Next action', req:true, value: na ? na.action || na.text || '' : preset ? preset.name : '', ph:'e.g. Chase customer for artwork'},
-      {k:'pic', label:'Person in charge', type:'select', half:true, value: na ? na.pic || meName() : meName(), options: peopleOpts(na && na.pic)},
+      picField(na && na.pic),
       {k:'deadline', label:'Deadline', type:'date', half:true, value: na ? na.deadline || '' : preset ? preset.deadline : ''},
       ...tagField(na && na.tags),
     ],
@@ -5053,7 +5216,7 @@ function formPIC(projId, key){
   const orig = key ? (p.pics || [])[+key.slice(1)] : null; if (key && !orig) return;
   openForm({ eyebrow: p.code || p.name, title: orig ? 'Edit person' : 'Add person', submit: orig ? 'Save' : 'Add person',
     fields: [
-      {k:'name', label:'Name', req:true, value: orig ? orig.name : '', ph:'Type a name', list: people()},
+      {k:'name', label:'Name', req:true, type:'person', value: orig ? orig.name : '', extra: DB.data.projects.flatMap(x => (x.pics||[]).map(y => y.name))},
       {k:'role', label:'Role', value: orig ? orig.role || '' : '', ph:'e.g. Factory PE, Customer QA, Designer', list: [...new Set(DB.data.projects.flatMap(x => (x.pics||[]).map(y => y.role)).filter(Boolean))].slice(0, 30)},
     ],
     del: orig ? {label:'Remove', run: () => { const u = deletePIC(projId, key, orig); done1(`Removed ${esc(orig.name)}`, u, 'trash'); }} : null,

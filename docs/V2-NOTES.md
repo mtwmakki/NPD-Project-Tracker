@@ -139,6 +139,15 @@ Every date is picked from V2's own calendar (never the phone's or Windows' date 
 on Monday, weekends are dimmed, and shortcuts give Today, Tomorrow, +2 / +5 working days and Next
 Monday. Optional dates have a small × to clear them.
 
+Person in charge (project actions, inquiry tasks, next actions, and the Name of a person added to a
+project) is a type-to-search field that takes any name, so people outside the team can own work. The
+list shows Team (accounts) first, then Others: every name already used as a person in charge or as a
+personal-task owner. If nothing matches it offers Use "…". Matching ignores case and extra spaces, so
+"clark tan " saves as the existing "Clark Tan". An empty field means you. It saves the plain name in the
+same field as before, so the data does not change, and nothing is added to People or accounts. If the
+account list can't be read, it shows one list without the Team/Others split. ↑/↓, Enter and Esc work
+in it. On phones the rows are 44px tall and the text is 16px.
+
 Deletes go to the recycle bin (`data.bin`, same format V1 used) and every delete has an Undo.
 Settings → Data → Recycle bin (or Ctrl K "Open the recycle bin") lists everything deleted, newest first, with
 filters (Inquiries / Projects / Tasks) and search. Restore puts an item back (an action or task back into its

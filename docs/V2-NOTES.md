@@ -191,6 +191,14 @@ Dashboard for the chase summary. Clicking a single alert opens the inquiry, proj
 data change, every 5 minutes, and a hidden tab keeps checking the Sheet once a minute while alerts are on (instead of
 pausing). "Send a test alert" shows one straight away. The on/off choice, the sent list and the seen list are kept on
 this device (localStorage: npd2-dnotify, npd2-dn-sent, npd2-dn-seen:<uid>).
+Actions tab: a project's actions are grouped into segments (new projects start with Design, Mold, Artwork, Trial,
+Delivery; older projects show the same defaults). Actions with no segment sit under "Unsorted", shown only when it has
+something. The "Segments" button on the Actions tab adds, renames, reorders and removes segments; removing one that
+still has actions asks where they go. Each segment folds (remembered per device, localStorage: npd2-segfold; a segment
+with nothing open starts folded) and has its own "+". Under the open actions, each segment shows its last 3 done
+actions as quiet one-line rows (newest first), with "Show N more done" for the rest. Ticking an action records the day
+it was done (`completedAt`); Edit action shows a "Done on" date that can be moved back to the real day (not later than
+today). Stored per project as `segments` [{id, name}] and per action as `segment` (the segment id).
 Each change is written to the item's history and to the Firestore changelog (no page reads it yet).
 Features V1 had and V2 doesn't yet: see docs/V2-MIGRATION.md.
 

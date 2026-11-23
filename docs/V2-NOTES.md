@@ -101,6 +101,8 @@ can't be reached; the copy V1 left (`npd_tracker_v3`) is read once and then remo
   - the view, filter, sort and board grouping are remembered on the device
 - Pin from a card (on hover) or from the project page
 - Project page, top to bottom:
+  - the project code sits on its own small muted mono line above the name; tap it to copy it ("Copied …" toast).
+    No code, no line
   - one "Projects" back button; the project name is the title, with Late / At risk / On track and the reason
     ("Delivery date 29 Oct passed · 2 actions overdue, the oldest by 10 working days")
   - Edit, Pin and Timeline beside the name. Timeline opens the Gantt in the same tab with the project's id, name, code

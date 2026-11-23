@@ -1589,6 +1589,12 @@ html,body{height:var(--app-h,100%)}
 :root .ibtn.pj-back{width:auto;display:inline-flex;align-items:center;gap:2px;padding:0 16px 0 10px;border-radius:var(--r-pill);font:600 15px/1 var(--fb);white-space:nowrap}
 .pj-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 24px;padding:2px 4px 0;min-width:0}
 .pj-h1{flex:1 1 420px;min-width:0;display:grid;gap:8px}
+/* the project code sits on its own small line above the name; tap copies it. On touch the hit area grows to 44px without
+   making the line taller: mostly downwards over the name (not tappable), since the floating top bar sits just above */
+.pj-code{justify-self:start;position:relative;max-width:100%;margin:0 0 -4px -4px;padding:0 4px;border:0;border-radius:4px;background:none;font:500 12px/16px var(--fm);letter-spacing:.02em;color:var(--mu);text-align:left;overflow-wrap:anywhere;cursor:pointer;transition:color calc(150ms*var(--k)),background-color calc(150ms*var(--k))}
+:root[data-look="K"] .pj-code{font:500 var(--cap)/var(--cap-l) var(--fm);letter-spacing:0}
+@media (hover:hover){.pj-code:hover{color:var(--tx);background:color-mix(in srgb,var(--tx) 8%,transparent)}}
+@media (pointer:coarse){.pj-code{z-index:1}.pj-code::after{content:'';position:absolute;inset:-2px -10px -26px}}
 .pj-name{margin:0;font-family:var(--fd);font-weight:var(--h-w);font-size:24px;line-height:30px;letter-spacing:-.02em;text-transform:none;text-wrap:balance;width:fit-content;max-width:100%;overflow-wrap:anywhere}
 .pj-hl{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font:400 14px/20px var(--fb)}
 .pj-hl .pill svg{flex:none}
@@ -1671,7 +1677,7 @@ button.pj-pp:hover{background:var(--hover)}
 .tg-fold svg{transition:transform calc(250ms*var(--k)) var(--ease-out)}
 .tg-fold[aria-expanded="true"] svg{transform:rotate(90deg)}
 .tg-fold:hover{color:var(--tx)}
-.pj :is(.pj-c,.pj-vb,.pj-mini,.pj-mn,.pj-add,.pj-pp,.db-cc,.tg-fold):focus-visible,.ibtn.pj-back:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.pj :is(.pj-code,.pj-c,.pj-vb,.pj-mini,.pj-mn,.pj-add,.pj-pp,.db-cc,.tg-fold):focus-visible,.ibtn.pj-back:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 @media (max-width:1040px){.pj-body{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:720px){
   .pj-name{font-size:22px;line-height:28px}
@@ -3942,7 +3948,7 @@ function pageProject(){
       <span class="pj-stl"><span>${NPD_STAGES[0]}</span><span>${NPD_STAGES[NPD_STAGES.length - 1]}</span></span>`;
   return `${staleBanner()}<div class="dash pj">
     <header class="pj-head" style="view-transition-name:herobox">
-      <div class="pj-h1"><h1 class="pj-name" style="view-transition-name:hero">${esc(p.name)}</h1>
+      <div class="pj-h1">${p.code ? `<button type="button" class="pj-code" data-act="copy-code" data-v="${esc(p.code)}" aria-label="Copy project code ${esc(p.code)}" title="Copy code">${esc(p.code)}</button>` : ''}<h1 class="pj-name" style="view-transition-name:hero">${esc(p.name)}</h1>
         <div class="pj-hl"><span class="pill ${ST_PILL[h] || ''}">${ico(h === 'over' || h === 'risk' ? 'clock' : 'check', 13)}${HEALTH_LABEL[h]}</span><span>${esc(why[0])}</span>${why.length > 1 ? `<span class="r">· ${esc(why.slice(1).join(' · ').replace(/^./, c => c.toLowerCase()))}</span>` : ''}${p.status === 'on-hold' || p.status === 'not-started' ? `<span class="pill">${esc(statusLabel(p.status))}</span>` : ''}${p.kiv ? `<span class="pill warn" title="${esc(p.kivComment || '')}">KIV</span>` : ''}${tagChips(p.tags, 8)}</div></div>
       <div class="pj-acts">${canE ? `<button class="btn sm" type="button" data-fm="proj|${esc(p.id)}">${ico('pencil',15)} Edit</button><button class="btn sm${p.pinned ? ' on' : ''}" type="button" data-act="pin-proj" aria-pressed="${!!p.pinned}">${ico('pin',15)} ${p.pinned ? 'Pinned' : 'Pin'}</button>` : ''}<a class="btn sm" href="${gantt}">${ico('gantt',15)} Timeline</a></div>
     </header>
@@ -5434,6 +5440,9 @@ document.addEventListener('click', e => {
     else if (act === 'pj-delivery'){ const p = findRec(DB.data, 'projects', S.proj); if (!p || !can('projects','edit')) return;
       if (DP.el && DP.field === a){ closeDP(false); return; }
       openDP(a, d => { const was = p.deliveryDate || ''; if (d === was) return; editProject(p.id, {deliveryDate: d}); toast(`Delivery moved to ${fmtDate(d)}`, {icon:'cal', undo: () => editProject(p.id, {deliveryDate: was})}); }); }
+    else if (act === 'copy-code'){ const c = a.dataset.v || '', ok = () => toast(`Copied ${esc(c)}`, {icon:'check'});
+      const old = () => { const ta = document.createElement('textarea'); ta.value = c; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta); ta.select(); let y = false; try { y = document.execCommand('copy'); } catch(e){} ta.remove(); a.focus({preventScroll:true}); y ? ok() : toast('Could not copy the code', {icon:'x'}); };
+      navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(c).then(ok, old) : old(); }
     else if (act === 'pin-proj'){ const p = findRec(DB.data, 'projects', S.proj); if (p){ const on = !p.pinned; setPin('projects', p.id, on); toast(on ? 'Pinned to the sidebar' : 'Unpinned', {icon:'pin', undo: () => setPin('projects', p.id, !on)}); } }
     return; }
   if (!t.closest('#pop')) closePop();
